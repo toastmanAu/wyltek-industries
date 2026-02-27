@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>BlackBox — CKB Point of Sale | Wyltek Industries</title>
+  <meta name="description" content="BlackBox — open-source CKB crypto point-of-sale hardware. Accept CKB payments instantly with a thermal printer, barcode scanner, and no middlemen." />
+  <style>
+    :root {
+      --bg:      #0a0c0f;
+      --surface: #111318;
+      --surf2:   #181c23;
+      --border:  #1e2430;
+      --accent:  #00c8ff;
+      --accent2: #7b5cfa;
+      --green:   #00e5a0;
+      --orange:  #ff8c42;
+      --text:    #e2e8f0;
+      --muted:   #64748b;
+      /* BlackBox brand colours */
+      --bb:      #00d4ff;
+      --bb2:     #0099cc;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Header ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      position: sticky; top: 0;
+      background: rgba(10,12,15,0.93);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 1.1rem; color: var(--text);
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 17px;
+    }
+    nav { display: flex; gap: 1.5rem; }
+    nav a { color: var(--muted); font-size: 0.9rem; transition: color 0.2s; }
+    nav a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Hero ── */
+    .hero {
+      position: relative; overflow: hidden;
+      padding: 6rem 2rem 4rem;
+      text-align: center;
+    }
+    .hero::before {
+      content: '';
+      position: absolute; top: -150px; left: 50%; transform: translateX(-50%);
+      width: 700px; height: 700px;
+      background: radial-gradient(circle, rgba(0,212,255,0.07) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .hero-inner { max-width: 760px; margin: 0 auto; position: relative; }
+    .badge {
+      display: inline-flex; align-items: center; gap: 8px;
+      background: rgba(0,212,255,0.07); border: 1px solid rgba(0,212,255,0.2);
+      border-radius: 20px; padding: 5px 16px; margin-bottom: 1.8rem;
+      font-size: 0.75rem; color: var(--bb); letter-spacing: 0.1em; text-transform: uppercase;
+    }
+    .badge-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--bb); animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.3} }
+
+    .bb-logo {
+      font-size: clamp(3rem, 10vw, 6rem);
+      font-weight: 900; letter-spacing: 0.15em; line-height: 1;
+      color: #e8f0ff; margin-bottom: 0.5rem;
+    }
+    .bb-logo span { color: var(--bb); }
+    .bb-tagline {
+      font-size: clamp(1rem, 2.5vw, 1.3rem);
+      color: var(--muted); margin-bottom: 2.5rem;
+    }
+    .hero-desc {
+      font-size: 1.05rem; color: var(--muted);
+      max-width: 580px; margin: 0 auto 2.5rem;
+      line-height: 1.75;
+    }
+    .hero-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.7rem 1.4rem; border-radius: 8px;
+      font-size: 0.95rem; font-weight: 600; transition: all 0.2s;
+    }
+    .btn-bb { background: var(--bb); color: #000; }
+    .btn-bb:hover { background: #33ddff; transform: translateY(-2px); box-shadow: 0 8px 30px rgba(0,212,255,0.25); text-decoration: none; }
+    .btn-outline { border: 1px solid var(--border); color: var(--text); background: var(--surface); }
+    .btn-outline:hover { border-color: var(--bb); color: var(--bb); text-decoration: none; }
+
+    /* ── Device mock ── */
+    .device-section {
+      max-width: 480px; margin: 3rem auto;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 20px; overflow: hidden;
+    }
+    .device-screen {
+      background: #060a12;
+      padding: 1.5rem;
+      border-bottom: 1px solid var(--border);
+      font-family: 'Consolas', monospace;
+    }
+    .device-header {
+      display: flex; justify-content: space-between; align-items: center;
+      margin-bottom: 1.2rem;
+    }
+    .device-brand { font-size: 0.7rem; letter-spacing: 0.2em; color: var(--bb); font-weight: 700; }
+    .device-status { font-size: 0.7rem; color: var(--green); }
+    .device-amount {
+      text-align: center;
+      font-size: 2.8rem; font-weight: 800; color: #e8f0ff;
+      margin-bottom: 0.3rem;
+    }
+    .device-amount span { color: var(--bb); font-size: 1.2rem; }
+    .device-sub { text-align: center; color: var(--muted); font-size: 0.78rem; margin-bottom: 1.2rem; }
+    .device-qr {
+      width: 100px; height: 100px; margin: 0 auto;
+      background: repeating-linear-gradient(
+        45deg, #1a2535 0px, #1a2535 3px, #0d1525 3px, #0d1525 9px
+      );
+      border-radius: 6px; border: 2px solid var(--border);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.65rem; color: var(--muted);
+    }
+    .device-footer {
+      display: flex; justify-content: space-between;
+      margin-top: 1rem; font-size: 0.72rem; color: var(--muted);
+    }
+    .device-footer span { color: var(--bb); }
+    .device-body { padding: 0.8rem 1.2rem; display: flex; gap: 0.5rem; }
+    .device-chip {
+      flex: 1; text-align: center; padding: 0.4rem;
+      background: var(--surf2); border-radius: 6px; border: 1px solid var(--border);
+      font-size: 0.72rem; color: var(--muted);
+    }
+    .device-chip strong { display: block; color: var(--text); font-size: 0.8rem; }
+
+    /* ── Content sections ── */
+    .section { max-width: 1100px; margin: 0 auto; padding: 3.5rem 2rem; }
+    .section-label {
+      font-size: 0.72rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--bb); margin-bottom: 0.8rem;
+    }
+    .section h2 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem); font-weight: 800;
+      letter-spacing: -0.02em; margin-bottom: 0.8rem;
+    }
+    .section-sub { color: var(--muted); font-size: 0.95rem; max-width: 540px; margin-bottom: 2.5rem; }
+    hr.div { max-width: 1100px; margin: 0 auto; border: none; border-top: 1px solid var(--border); }
+
+    /* ── How it works steps ── */
+    .steps { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.5rem; }
+    .step {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem; position: relative;
+    }
+    .step-num {
+      font-size: 2.5rem; font-weight: 900; line-height: 1;
+      color: rgba(0,212,255,0.12); margin-bottom: 0.8rem;
+      font-variant-numeric: tabular-nums;
+    }
+    .step h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.4rem; }
+    .step p { font-size: 0.85rem; color: var(--muted); line-height: 1.6; }
+
+    /* ── Features grid ── */
+    .features { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.2rem; }
+    .feature {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem; transition: border-color 0.2s, transform 0.15s;
+    }
+    .feature:hover { border-color: rgba(0,212,255,0.3); transform: translateY(-2px); }
+    .feat-icon { font-size: 1.6rem; margin-bottom: 0.8rem; }
+    .feature h3 { font-size: 0.95rem; font-weight: 700; margin-bottom: 0.5rem; }
+    .feature p { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+
+    /* ── Hardware specs ── */
+    .specs-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; }
+    @media (max-width: 600px) { .specs-grid { grid-template-columns: 1fr; } }
+    .spec-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.2rem 1.4rem;
+    }
+    .spec-card-title {
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--bb); margin-bottom: 1rem;
+    }
+    .spec-row {
+      display: flex; justify-content: space-between; align-items: center;
+      padding: 0.45rem 0; border-bottom: 1px solid var(--border);
+    }
+    .spec-row:last-child { border-bottom: none; }
+    .spec-key { color: var(--muted); font-size: 0.85rem; }
+    .spec-val { color: var(--text); font-size: 0.85rem; font-weight: 600; }
+    .spec-val.ckb { color: var(--bb); }
+
+    /* ── Status / roadmap ── */
+    .roadmap { display: flex; flex-direction: column; gap: 0.8rem; max-width: 640px; }
+    .rm-item {
+      display: flex; align-items: flex-start; gap: 1rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 10px; padding: 1rem 1.2rem;
+    }
+    .rm-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 0.05rem; }
+    .rm-title { font-size: 0.9rem; font-weight: 700; margin-bottom: 0.2rem; }
+    .rm-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+    .rm-tag {
+      display: inline-block; font-size: 0.68rem; font-weight: 700;
+      padding: 0.1rem 0.5rem; border-radius: 999px; margin-left: 0.5rem;
+      text-transform: uppercase; letter-spacing: 0.05em; vertical-align: middle;
+    }
+    .rm-done { background: #00e5a015; color: var(--green); border: 1px solid #00e5a030; }
+    .rm-wip  { background: #ff8c4215; color: var(--orange); border: 1px solid #ff8c4230; }
+    .rm-next { background: #7b5cfa15; color: var(--accent2); border: 1px solid #7b5cfa30; }
+
+    /* ── CTA ── */
+    .cta-section {
+      text-align: center;
+      padding: 4rem 2rem;
+      background: linear-gradient(180deg, transparent, rgba(0,212,255,0.04));
+      border-top: 1px solid var(--border);
+    }
+    .cta-section h2 { font-size: 1.8rem; font-weight: 800; margin-bottom: 0.8rem; }
+    .cta-section p { color: var(--muted); margin-bottom: 1.8rem; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem;
+      text-align: center; color: var(--muted); font-size: 0.85rem;
+    }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+
+    @media (max-width: 600px) { nav { display: none; } }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">
+      <div class="logo-icon">⚙️</div>
+      Wyltek Industries
+    </a>
+    <nav>
+      <a href="index.html">Projects</a>
+      <a href="blog.html">Devlog</a>
+      <a href="flasher.html">Flasher</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div class="hero-inner">
+    <div class="badge"><div class="badge-dot"></div>Built on Nervos CKB</div>
+    <div class="bb-logo">BLACK<span>BOX</span></div>
+    <div class="bb-tagline">Open hardware crypto payments.</div>
+    <p class="hero-desc">
+      An open-source point-of-sale system that lets any merchant accept CKB payments instantly —
+      thermal receipt, barcode scanning, full on-chain settlement. No apps required. No middlemen.
+    </p>
+    <div class="hero-btns">
+      <a class="btn btn-bb" href="https://github.com/toastmanAu/blackboxdata-site" target="_blank">View on GitHub</a>
+      <a class="btn btn-outline" href="#how">How it works</a>
+      <a class="btn btn-outline" href="https://blackboxdata.xyz" target="_blank">blackboxdata.xyz ↗</a>
+    </div>
+  </div>
+
+  <!-- Device mockup -->
+  <div class="device-section" style="margin-top:3rem">
+    <div class="device-screen">
+      <div class="device-header">
+        <span class="device-brand">BLACKBOX</span>
+        <span class="device-status">● READY</span>
+      </div>
+      <div class="device-amount">450 <span>CKB</span></div>
+      <div class="device-sub">≈ AU$12.40 · Scan to pay</div>
+      <div class="device-qr">QR CODE</div>
+      <div class="device-footer">
+        <span>Fee <span>0.001 CKB</span></span>
+        <span>On-chain settlement</span>
+      </div>
+    </div>
+    <div class="device-body">
+      <div class="device-chip"><strong>ESP32</strong>HMI 3.5"</div>
+      <div class="device-chip"><strong>QR204</strong>Thermal</div>
+      <div class="device-chip"><strong>GM861S</strong>Scanner</div>
+    </div>
+  </div>
+</div>
+
+<!-- HOW IT WORKS -->
+<hr class="div" />
+<section class="section" id="how">
+  <div class="section-label">Process</div>
+  <h2>From scan to settlement<br>in seconds</h2>
+  <p class="section-sub">No app required on the customer's side. Scan the QR code, send CKB from any wallet, done. Merchant gets a thermal receipt.</p>
+  <div class="steps">
+    <div class="step">
+      <div class="step-num">01</div>
+      <h3>Enter amount</h3>
+      <p>Merchant types in the sale price on the touchscreen. BlackBox converts to CKB live using current price data.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">02</div>
+      <h3>Generate invoice</h3>
+      <p>A CKB payment address QR code is displayed. Customer scans it with any CKB wallet — Neuron, JoyID, anything.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">03</div>
+      <h3>On-chain confirmation</h3>
+      <p>BlackBox monitors the chain directly via your local CKB node. When payment lands, the screen updates.</p>
+    </div>
+    <div class="step">
+      <div class="step-num">04</div>
+      <h3>Print receipt</h3>
+      <p>Thermal receipt prints automatically — transaction hash, amount, timestamp. No paper required if customer doesn't want one.</p>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES -->
+<hr class="div" />
+<section class="section" id="features">
+  <div class="section-label">Why BlackBox</div>
+  <h2>Built different</h2>
+  <p class="section-sub">Open source, open hardware. You own the device, the keys, and the settlement. Nothing goes through a third party.</p>
+  <div class="features">
+    <div class="feature">
+      <div class="feat-icon">🔗</div>
+      <h3>No intermediaries</h3>
+      <p>Payments settle directly on-chain. No payment processor, no API, no account required. Your keys, your CKB.</p>
+    </div>
+    <div class="feature">
+      <div class="feat-icon">📄</div>
+      <h3>Thermal receipts</h3>
+      <p>QR204 thermal printer built in. Transaction hash, amount, timestamp — permanent paper record without ink cartridges.</p>
+    </div>
+    <div class="feature">
+      <div class="feat-icon">📷</div>
+      <h3>Barcode scanner</h3>
+      <p>Grow GM861S barcode scanner for product lookup and inventory. Scan items to add to the sale, not just scan payments.</p>
+    </div>
+    <div class="feature">
+      <div class="feat-icon">🌐</div>
+      <h3>Node-connected</h3>
+      <p>Monitors your local CKB full node directly via RPC. No dependency on third-party APIs or cloud services.</p>
+    </div>
+    <div class="feature">
+      <div class="feat-icon">🔓</div>
+      <h3>Fully open source</h3>
+      <p>Hardware design, firmware, everything. Build your own, modify it, audit it. No black boxes inside the BlackBox.</p>
+    </div>
+    <div class="feature">
+      <div class="feat-icon">💡</div>
+      <h3>Single merchant address</h3>
+      <p>One CKB address loaded at setup. Every transaction settles to your wallet directly — simple, verifiable, audit-friendly.</p>
+    </div>
+  </div>
+</section>
+
+<!-- HARDWARE -->
+<hr class="div" />
+<section class="section" id="hardware">
+  <div class="section-label">Hardware</div>
+  <h2>What's inside</h2>
+  <p class="section-sub">Off-the-shelf components, easy to source globally. Total BOM under $60 AUD.</p>
+  <div class="specs-grid">
+    <div class="spec-card">
+      <div class="spec-card-title">Core</div>
+      <div class="spec-row"><span class="spec-key">MCU</span><span class="spec-val">Elecrow ESP32 HMI 3.5"</span></div>
+      <div class="spec-row"><span class="spec-key">Display</span><span class="spec-val">ST7789 480×320 IPS</span></div>
+      <div class="spec-row"><span class="spec-key">Touch</span><span class="spec-val">LovyanGFX resistive</span></div>
+      <div class="spec-row"><span class="spec-key">Connectivity</span><span class="spec-val">WiFi 802.11 b/g/n</span></div>
+      <div class="spec-row"><span class="spec-key">Flash</span><span class="spec-val">4MB</span></div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-card-title">Peripherals</div>
+      <div class="spec-row"><span class="spec-key">Printer</span><span class="spec-val">QR204 thermal, 57mm</span></div>
+      <div class="spec-row"><span class="spec-key">Scanner</span><span class="spec-val">Grow GM861S barcode</span></div>
+      <div class="spec-row"><span class="spec-key">Interface</span><span class="spec-val">Arduino UART bridge</span></div>
+      <div class="spec-row"><span class="spec-key">Power</span><span class="spec-val">USB-C 5V</span></div>
+      <div class="spec-row"><span class="spec-key">Node</span><span class="spec-val ckb">CKB RPC via WiFi</span></div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-card-title">Software</div>
+      <div class="spec-row"><span class="spec-key">Framework</span><span class="spec-val">Arduino / ESP-IDF</span></div>
+      <div class="spec-row"><span class="spec-key">Graphics</span><span class="spec-val">LovyanGFX</span></div>
+      <div class="spec-row"><span class="spec-key">CKB library</span><span class="spec-val ckb">CKB-ESP32</span></div>
+      <div class="spec-row"><span class="spec-key">Price feed</span><span class="spec-val">CoinGecko API</span></div>
+      <div class="spec-row"><span class="spec-key">Settlement</span><span class="spec-val ckb">On-chain, direct</span></div>
+    </div>
+    <div class="spec-card">
+      <div class="spec-card-title">CKB Integration</div>
+      <div class="spec-row"><span class="spec-key">Address</span><span class="spec-val">Single merchant</span></div>
+      <div class="spec-row"><span class="spec-key">QR format</span><span class="spec-val">ckb: URI standard</span></div>
+      <div class="spec-row"><span class="spec-key">Confirmation</span><span class="spec-val">1 block (~6s)</span></div>
+      <div class="spec-row"><span class="spec-key">Monitoring</span><span class="spec-val">Local node RPC</span></div>
+      <div class="spec-row"><span class="spec-key">Settlement</span><span class="spec-val ckb">Non-custodial</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- STATUS / ROADMAP -->
+<hr class="div" />
+<section class="section" id="status">
+  <div class="section-label">Status</div>
+  <h2>Where things are at</h2>
+  <p class="section-sub">Active development. Core payment flow works; polishing toward a releasable v1.</p>
+  <div class="roadmap">
+    <div class="rm-item">
+      <div class="rm-icon">✅</div>
+      <div>
+        <div class="rm-title">Core payment flow <span class="rm-tag rm-done">Done</span></div>
+        <div class="rm-desc">QR generation, CKB address encoding, on-chain monitoring via local node RPC. Basic receipt printing.</div>
+      </div>
+    </div>
+    <div class="rm-item">
+      <div class="rm-icon">✅</div>
+      <div>
+        <div class="rm-title">CKB-ESP32 library <span class="rm-tag rm-done">Done</span></div>
+        <div class="rm-desc">Full RPC client, secp256k1 signing on-device, E2E mainnet transfer confirmed. Foundation for all CKB ESP32 builds.</div>
+      </div>
+    </div>
+    <div class="rm-item">
+      <div class="rm-icon">✅</div>
+      <div>
+        <div class="rm-title">Barcode scanner integration <span class="rm-tag rm-done">Done</span></div>
+        <div class="rm-desc">GM861S UART driver integrated. Scan products to add to sale total.</div>
+      </div>
+    </div>
+    <div class="rm-item">
+      <div class="rm-icon">🔧</div>
+      <div>
+        <div class="rm-title">Cloudflare Worker payment monitor <span class="rm-tag rm-wip">In progress</span></div>
+        <div class="rm-desc">For deployments without a local node — Cloudflare Worker polls a public CKB RPC and notifies the device.</div>
+      </div>
+    </div>
+    <div class="rm-item">
+      <div class="rm-icon">🔜</div>
+      <div>
+        <div class="rm-title">Enclosure design <span class="rm-tag rm-next">Planned</span></div>
+        <div class="rm-desc">3D printable enclosure integrating the display, printer, and scanner into a countertop unit.</div>
+      </div>
+    </div>
+    <div class="rm-item">
+      <div class="rm-icon">🔜</div>
+      <div>
+        <div class="rm-title">Web flasher integration <span class="rm-tag rm-next">Planned</span></div>
+        <div class="rm-desc">Flash BlackBox firmware directly from this site. Enter your merchant address, WiFi credentials — flash and go.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<div class="cta-section">
+  <h2>Build your own BlackBox</h2>
+  <p>All hardware, firmware, and documentation is open source. Build it, modify it, deploy it.</p>
+  <div style="display:flex; gap:1rem; justify-content:center; flex-wrap:wrap;">
+    <a class="btn btn-bb" href="https://github.com/toastmanAu/blackboxdata-site" target="_blank">GitHub</a>
+    <a class="btn btn-outline" href="https://blackboxdata.xyz" target="_blank">blackboxdata.xyz ↗</a>
+    <a class="btn btn-outline" href="blog.html">Follow development</a>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>
+    <a href="index.html">← Wyltek Industries</a> &nbsp;·&nbsp;
+    <a href="https://github.com/toastmanAu/blackboxdata-site" target="_blank">GitHub</a> &nbsp;·&nbsp;
+    <a href="https://blackboxdata.xyz" target="_blank">blackboxdata.xyz</a>
+  </p>
+  <p style="font-size:0.78rem; margin-top:0.4rem; opacity:0.5">Wyltek Industries &mdash; wouldn't you like to know</p>
+</footer>
+
+</body>
+</html>
