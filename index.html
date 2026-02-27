@@ -209,6 +209,147 @@
   </div>
 </header>
 
+<!-- ── CKB Live Chain Stats Banner ── -->
+<div id="chain-banner" style="
+  background:#0d1018;
+  border-bottom:1px solid #1e2430;
+  padding:0;
+  overflow:hidden;
+  height:32px;
+  position:relative;
+  font-family:'Consolas','Monaco',monospace;
+  font-size:12px;
+">
+  <!-- Gradient fade edges -->
+  <div style="position:absolute;left:0;top:0;bottom:0;width:60px;background:linear-gradient(90deg,#0d1018,transparent);z-index:2;pointer-events:none"></div>
+  <div style="position:absolute;right:0;top:0;bottom:0;width:60px;background:linear-gradient(270deg,#0d1018,transparent);z-index:2;pointer-events:none"></div>
+
+  <div id="chain-ticker" style="
+    display:flex;
+    align-items:center;
+    height:100%;
+    white-space:nowrap;
+    will-change:transform;
+    animation:ticker-scroll 40s linear infinite;
+  ">
+    <!-- Content injected by JS; duplicated for seamless loop -->
+    <span id="ticker-a" style="padding:0 3rem;color:#64748b">⬡ Loading CKB chain data…</span>
+    <span id="ticker-b" style="padding:0 3rem;color:#64748b" aria-hidden="true"></span>
+  </div>
+</div>
+
+<style>
+@keyframes ticker-scroll {
+  0%   { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+#chain-ticker:hover { animation-play-state: paused; }
+
+.ckb-stat { color: #64748b; }
+.ckb-stat .sv { color: #00c8ff; font-weight: 700; }
+.ckb-stat .sep { color: #1e2430; margin: 0 0.4rem; }
+.ckb-stat .ok  { color: #00e5a0; }
+.ckb-stat .dim { color: #374151; }
+</style>
+
+<script>
+(function(){
+  const RPC    = 'https://mainnet.ckbapp.dev/rpc';
+  const PRICE  = 'https://api.coingecko.com/api/v3/simple/price?ids=nervos-network&vs_currencies=usd';
+  const TICK_A = document.getElementById('ticker-a');
+  const TICK_B = document.getElementById('ticker-b');
+
+  let lastBlock = null;
+  let ckbPrice  = null;
+
+  function rpc(method, params=[]) {
+    return fetch(RPC, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id:1, jsonrpc:'2.0', method, params })
+    }).then(r => r.json()).then(r => r.result);
+  }
+
+  function parseEpoch(epochHex) {
+    const v   = BigInt(epochHex);
+    const num = Number(v & 0xFFFFFFn);
+    const idx = Number((v >> 24n) & 0xFFFFn);
+    const len = Number((v >> 40n) & 0xFFFFn);
+    const pct = len ? Math.round(idx / len * 100) : 0;
+    return { num, idx, len, pct };
+  }
+
+  function fmtNum(n) {
+    return Number(n).toLocaleString('en-AU');
+  }
+
+  function fmtHash(h) {
+    return h.slice(0,6) + '…' + h.slice(-4);
+  }
+
+  function buildHTML(tip, info, price) {
+    const block = parseInt(tip.number, 16);
+    const ep    = parseEpoch(tip.epoch);
+    const hash  = tip.hash;
+    const ts    = parseInt(tip.timestamp, 16);
+    const age   = Math.round((Date.now() - ts) / 1000);
+    const ageStr = age < 60 ? age + 's ago' : Math.round(age/60) + 'm ago';
+    const priceStr = price ? '$' + price.toFixed(4) + ' USD' : null;
+
+    const items = [
+      `<span class="ckb-stat">⬡ CKB &nbsp;<span class="sep">·</span>&nbsp; Block <span class="sv">#${fmtNum(block)}</span></span>`,
+      `<span class="ckb-stat dim">·</span>`,
+      `<span class="ckb-stat">Tip <span class="sv">${fmtHash(hash)}</span> <span style="color:#374151">${ageStr}</span></span>`,
+      `<span class="ckb-stat dim">·</span>`,
+      `<span class="ckb-stat">Epoch <span class="sv">${fmtNum(ep.num)}</span> &nbsp;<span style="color:#374151">${ep.idx}/${ep.len}</span> &nbsp;<span class="ok">${ep.pct}%</span></span>`,
+      `<span class="ckb-stat dim">·</span>`,
+      `<span class="ckb-stat">Chain <span class="ok">${info.is_initial_block_download ? 'syncing' : 'synced'}</span></span>`,
+    ];
+
+    if (priceStr) {
+      items.push(`<span class="ckb-stat dim">·</span>`);
+      items.push(`<span class="ckb-stat">CKB <span class="sv">${priceStr}</span></span>`);
+    }
+
+    return items.join('&nbsp;&nbsp;&nbsp;') + '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;';
+  }
+
+  async function fetchPrice() {
+    try {
+      const r = await fetch(PRICE);
+      const j = await r.json();
+      ckbPrice = j?.['nervos-network']?.usd ?? null;
+    } catch(_) { ckbPrice = null; }
+  }
+
+  async function update() {
+    try {
+      const [tip, info] = await Promise.all([
+        rpc('get_tip_header'),
+        rpc('get_blockchain_info'),
+      ]);
+      const block = parseInt(tip.number, 16);
+      if (block === lastBlock) return; // no new block
+      lastBlock = block;
+
+      const html = buildHTML(tip, info, ckbPrice);
+      TICK_A.innerHTML = html;
+      TICK_B.innerHTML = html;
+    } catch(e) {
+      // silently fail — don't break the page
+      console.warn('CKB banner:', e.message);
+    }
+  }
+
+  // Fetch price once every 5 minutes, chain every 6s
+  fetchPrice();
+  setInterval(fetchPrice, 5 * 60 * 1000);
+
+  update();
+  setInterval(update, 6000);
+})();
+</script>
+
 <!-- HERO -->
 <div class="hero">
   <div>
