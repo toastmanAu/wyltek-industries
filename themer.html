@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Board Themer | Wyltek Industries</title>
+<meta name="description" content="Configure ESP32 firmware — WiFi, CKB node, colours. Send over USB or download config.h." />
+<link rel="canonical" href="https://wyltekindustries.com/themer.html" />
+<style>
+:root{--bg:#0a0c0f;--sur:#111318;--s2:#181c23;--s3:#1e2430;--bor:#1e2430;--acc:#00c8ff;--a2:#7b5cfa;--grn:#00e5a0;--org:#ff8c42;--red:#ff4d4d;--txt:#e2e8f0;--mut:#64748b}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--txt);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.6;min-height:100vh}
+a{color:var(--acc);text-decoration:none}a:hover{text-decoration:underline}
+code{font-family:Consolas,monospace;background:var(--s2);padding:.1em .4em;border-radius:4px;font-size:.88em;color:var(--grn)}
+header{border-bottom:1px solid var(--bor);padding:0 2rem;position:sticky;top:0;background:rgba(10,12,15,.95);backdrop-filter:blur(12px);z-index:100}
+.hi{max-width:1200px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;color:var(--txt)}
+.li{width:32px;height:32px;background:linear-gradient(135deg,var(--acc),var(--a2));border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:17px}
+nav{display:flex;gap:1.5rem}
+nav a{color:var(--mut);font-size:.9rem;transition:color .2s}
+nav a:hover,nav a.act{color:var(--txt);text-decoration:none}
+nav a.act{color:var(--acc)}
+.hero{max-width:1200px;margin:0 auto;padding:2.5rem 2rem 1.5rem}
+.hero h1{font-size:clamp(1.6rem,4vw,2.2rem);font-weight:800;letter-spacing:-.02em;margin-bottom:.5rem}
+.hero h1 span{color:var(--acc)}
+.hero p{color:var(--mut);font-size:.95rem;max-width:600px;line-height:1.7}
+.tabs{max-width:1200px;margin:0 auto;padding:0 2rem 1.5rem;display:flex;gap:.6rem}
+.tab{padding:.55rem 1.2rem;border-radius:8px;border:1px solid var(--bor);background:var(--sur);color:var(--mut);font-size:.88rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:inherit}
+.tab:hover{border-color:var(--acc);color:var(--txt)}
+.tab.on{background:var(--acc);color:#000;border-color:var(--acc)}
+.main{max-width:1200px;margin:0 auto;padding:0 2rem 4rem;display:grid;grid-template-columns:370px 1fr;gap:1.5rem;align-items:start}
+@media(max-width:860px){.main{grid-template-columns:1fr}}
+.fp{display:flex;flex-direction:column;gap:1rem}
+.card{background:var(--sur);border:1px solid var(--bor);border-radius:14px;overflow:hidden}
+.ct{padding:.85rem 1.2rem;border-bottom:1px solid var(--bor);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--acc)}
+.cb{padding:1.2rem;display:flex;flex-direction:column;gap:.9rem}
+.bg{display:grid;grid-template-columns:1fr 1fr;gap:.5rem}
+.bo{padding:.7rem .8rem;border:1px solid var(--bor);border-radius:8px;background:var(--s2);cursor:pointer;transition:all .15s;text-align:center}
+.bo:hover{border-color:var(--acc)}
+.bo.on{border-color:var(--acc);background:rgba(0,200,255,.08)}
+.bi{font-size:1.3rem;margin-bottom:.2rem}
+.bn{font-size:.8rem;font-weight:700}
+.bc{font-size:.68rem;color:var(--mut);margin-top:.1rem}
+.f{display:flex;flex-direction:column;gap:.35rem}
+.f label{font-size:.8rem;color:var(--mut);font-weight:600}
+.f input[type=text],.f input[type=password],.f input[type=number],.f select{background:var(--s2);border:1px solid var(--bor);border-radius:8px;color:var(--txt);font-size:.88rem;padding:.6rem .85rem;outline:none;transition:border-color .15s;font-family:inherit;width:100%}
+.f input:focus,.f select:focus{border-color:var(--acc)}
+.f input::placeholder{color:var(--mut)}
+.hint{font-size:.73rem;color:var(--mut);line-height:1.5}
+.cr{display:flex;gap:.5rem;align-items:center}
+.cr input[type=color]{width:44px;height:36px;border:1px solid var(--bor);border-radius:8px;background:var(--s2);cursor:pointer;padding:3px;flex-shrink:0}
+.cr input[type=text]{flex:1}
+.rr{display:flex;gap:.8rem;align-items:center}
+.f input[type=range]{-webkit-appearance:none;appearance:none;height:4px;background:var(--s3);border-radius:2px;outline:none;border:none;padding:0;flex:1}
+.f input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:16px;height:16px;border-radius:50%;background:var(--acc);cursor:pointer}
+.rv{font-size:.82rem;color:var(--txt);font-weight:600;min-width:3ch;text-align:right}
+.btn{display:flex;align-items:center;justify-content:center;gap:.5rem;padding:.75rem 1.2rem;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;border:none;transition:all .15s;font-family:inherit;width:100%}
+.bs{background:var(--acc);color:#000}
+.bs:hover:not(:disabled){opacity:.88;transform:translateY(-1px)}
+.bd{background:var(--s2);border:1px solid var(--bor);color:var(--txt)}
+.bd:hover:not(:disabled){border-color:var(--acc);color:var(--acc)}
+.btn:disabled{opacity:.4;cursor:not-allowed;transform:none!important}
+.ds{display:flex;gap:.6rem;align-items:center;background:var(--s2);border:1px solid var(--bor);border-radius:8px;padding:.65rem .9rem;font-size:.82rem}
+.dt{color:var(--mut);flex:1}
+.ds.ok{border-color:rgba(0,229,160,.4)}.ds.ok .dt{color:var(--grn)}
+.ds.err{border-color:rgba(255,77,77,.3)}.ds.err .dt{color:var(--red)}
+.db{padding:.35rem .9rem;border-radius:6px;border:1px solid var(--bor);background:var(--s3);color:var(--txt);font-size:.78rem;font-weight:600;cursor:pointer;transition:all .15s;font-family:inherit;flex-shrink:0}
+.db:hover{border-color:var(--acc);color:var(--acc)}
+.db:disabled{opacity:.5;cursor:not-allowed}
+.lw{background:var(--s2);border:1px solid var(--bor);border-radius:8px;overflow:hidden}
+.lh{padding:.5rem .8rem;border-bottom:1px solid var(--bor);font-size:.7rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--mut)}
+.log{font-family:Consolas,monospace;font-size:.78rem;color:var(--grn);min-height:70px;max-height:130px;overflow-y:auto;padding:.7rem .8rem;white-space:pre-wrap}
+.log .err{color:var(--red)}.log .ok{color:var(--grn)}.log .dm{color:var(--mut)}
+.rp{display:flex;flex-direction:column;gap:1.2rem;position:sticky;top:80px}
+.pcard{background:var(--sur);border:1px solid var(--bor);border-radius:14px;overflow:hidden}
+.pct{padding:.85rem 1.2rem;border-bottom:1px solid var(--bor);font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--mut);display:flex;justify-content:space-between;align-items:center}
+.pct em{color:var(--acc);font-style:normal}
+.pscr{padding:1.2rem;background:var(--s2)}
+.pd{border-radius:10px;overflow:hidden;border:2px solid var(--s3);max-width:290px;margin:0 auto}
+.ptb{height:36px;display:flex;align-items:center;justify-content:space-between;padding:0 12px;font-size:.7rem;font-weight:700;letter-spacing:.08em}
+.pb{padding:.9rem;min-height:145px}
+.pl{font-size:.58rem;opacity:.5;text-transform:uppercase;letter-spacing:.1em;margin-bottom:.1rem}
+.pbig{font-size:1.4rem;font-weight:800;margin-bottom:.7rem}
+.prow{display:grid;grid-template-columns:1fr 1fr 1fr;gap:.5rem;margin-bottom:.5rem}
+.pvl{font-size:.9rem;font-weight:700}
+.pep{height:4px;border-radius:2px;background:rgba(255,255,255,.1);margin-top:.6rem;overflow:hidden}
+.pef{height:100%;border-radius:2px;width:67%}
+.pmr{display:flex;justify-content:space-between;margin-bottom:.45rem;font-size:.78rem}
+.pmv{font-weight:700}
+.cocard{background:var(--sur);border:1px solid var(--bor);border-radius:14px;overflow:hidden}
+.coh{padding:.85rem 1.2rem;border-bottom:1px solid var(--bor);display:flex;justify-content:space-between;align-items:center}
+.coh span{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.12em;color:var(--mut)}
+.cpb{padding:.3rem .8rem;border-radius:6px;border:1px solid var(--bor);background:var(--s2);color:var(--mut);font-size:.75rem;cursor:pointer;transition:all .15s;font-family:inherit}
+.cpb:hover{border-color:var(--acc);color:var(--acc)}
+.cpb.cp{background:rgba(0,229,160,.15);border-color:var(--grn);color:var(--grn)}
+pre.cc{font-family:Consolas,Monaco,monospace;font-size:.78rem;line-height:1.65;padding:1rem 1.2rem;overflow-x:auto;max-height:440px;overflow-y:auto;color:var(--txt)}
+.note{background:var(--sur);border:1px solid var(--bor);border-radius:12px;padding:1rem 1.2rem;font-size:.82rem;color:var(--mut);line-height:1.65}
+.note strong{color:var(--txt)}
+footer{border-top:1px solid var(--bor);padding:2rem;text-align:center;color:var(--mut);font-size:.85rem}
+footer a{color:var(--mut)}footer a:hover{color:var(--acc)}
+@media(max-width:600px){nav{display:none}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="hi">
+    <a class="logo" href="index.html"><div class="li">⚙️</div>Wyltek Industries</a>
+    <nav>
+      <a href="index.html">Projects</a>
+      <a href="blog.html">Devlog</a>
+      <a href="flasher.html">Flasher</a>
+      <a href="themer.html" class="act">Themer</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<div class="hero">
+  <h1>Board <span>Themer</span></h1>
+  <p>Configure your ESP32 firmware without touching code. Set WiFi, CKB node URL, colours, brightness —
+  then <strong>send it live over USB</strong> or <strong>download a <code>config.h</code></strong> to drop into your build.</p>
+</div>
+
+<div class="tabs">
+  <button class="tab on" id="ts" onclick="setMode('serial')">⚡ Send over USB</button>
+  <button class="tab"    id="tf" onclick="setMode('file')">📄 Download config.h</button>
+</div>
+
+<div class="main">
+
+<!-- ─── LEFT ─── -->
+<div class="fp">
+
+  <div class="card">
+    <div class="ct">Board</div>
+    <div class="cb">
+      <div class="bg">
+        <div class="bo on" data-board="guition4848" onclick="selB(this)"><div class="bi">📡</div><div class="bn">S3 Node Monitor</div><div class="bc">Guition 4848S040</div></div>
+        <div class="bo"    data-board="nerdminer"   onclick="selB(this)"><div class="bi">⛏️</div><div class="bn">NerdMiner CKB</div><div class="bc">CYD 2432S028R</div></div>
+        <div class="bo"    data-board="ckb-cyd"     onclick="selB(this)"><div class="bi">🖥️</div><div class="bn">CKB CYD Node</div><div class="bc">CYD 2432S028R</div></div>
+        <div class="bo"    data-board="blackbox"    onclick="selB(this)"><div class="bi">🧾</div><div class="bn">BlackBox POS</div><div class="bc">Elecrow HMI 3.5"</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Network</div>
+    <div class="cb">
+      <div class="f"><label>WiFi SSID</label><input type="text" id="ssid" placeholder="Your network name" autocomplete="off" oninput="ua()"></div>
+      <div class="f"><label>WiFi Password</label><input type="password" id="wpass" placeholder="Leave blank to keep existing" autocomplete="new-password"></div>
+      <div class="f">
+        <label>CKB Node URL</label>
+        <input type="text" id="node_url" value="http://192.168.68.87:8114" oninput="ua()">
+        <span class="hint">Local node, light client, or public: <code>https://mainnet.ckbapp.dev</code></span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="ct">Display</div>
+    <div class="cb">
+      <div class="f">
+        <label>Accent colour</label>
+        <div class="cr">
+          <input type="color" id="acp" value="#00c8ff" oninput="sid('ach',this.value);ua()">
+          <input type="text"  id="ach" value="#00c8ff" maxlength="7" oninput="if(/^#[0-9a-fA-F]{6}$/.test(this.value)){sid('acp',this.value);ua()}">
+        </div>
+      </div>
+      <div class="f">
+        <label>Background colour</label>
+        <div class="cr">
+          <input type="color" id="bgp" value="#0a0c0f" oninput="sid('bgh',this.value);ua()">
+          <input type="text"  id="bgh" value="#0a0c0f" maxlength="7" oninput="if(/^#[0-9a-fA-F]{6}$/.test(this.value)){sid('bgp',this.value);ua()}">
+        </div>
+      </div>
+      <div class="f">
+        <label>Brightness</label>
+        <div class="rr">
+          <input type="range" id="bri" min="10" max="255" value="180" oninput="sid('briv',this.value);ua()">
+          <span class="rv" id="briv">180</span>
+        </div>
+      </div>
+      <div class="f">
+        <label>Refresh interval (seconds)</label>
+        <input type="number" id="ref" value="6" min="1" max="60" oninput="ua()">
+        <span class="hint">CKB block time ~6s</span>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="mCard" style="display:none">
+    <div class="ct">⛏️ Mining Config</div>
+    <div class="cb">
+      <div class="f"><label>Pool host</label><input type="text" id="phost" value="ckb.viabtc.com" oninput="ua()"><span class="hint">Or your local stratum proxy IP</span></div>
+      <div class="f"><label>Pool port</label><input type="number" id="pport" value="3333" oninput="ua()"></div>
+      <div class="f"><label>Wallet address (worker)</label><input type="text" id="wallet" placeholder="ckb1qyq…" oninput="ua()"></div>
+      <div class="f"><label>Pool password</label><input type="text" id="ppass" value="x"></div>
+    </div>
+  </div>
+
+  <div class="card" id="bbCard" style="display:none">
+    <div class="ct">🧾 Merchant Config</div>
+    <div class="cb">
+      <div class="f"><label>CKB merchant address</label><input type="text" id="merchant" placeholder="ckb1qyq…" oninput="ua()"><span class="hint">All payments settle directly here</span></div>
+      <div class="f">
+        <label>Display currency</label>
+        <select id="currency" onchange="ua()">
+          <option value="AUD">AUD — Australian Dollar</option>
+          <option value="USD">USD — US Dollar</option>
+          <option value="EUR">EUR — Euro</option>
+          <option value="GBP">GBP — British Pound</option>
+          <option value="CNY">CNY — Chinese Yuan</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Serial actions -->
+  <div class="card" id="saCard">
+    <div class="ct">Send over USB</div>
+    <div class="cb">
+      <div class="ds" id="dstrip">
+        <span class="dt" id="dtext">No device detected yet</span>
+        <button class="db" id="dbtn" onclick="detect()">🔌 Detect</button>
+      </div>
+      <button class="btn bs" id="sendBtn" onclick="sendCfg()">⚡ Connect &amp; Send Config</button>
+      <div class="lw">
+        <div class="lh">Serial log</div>
+        <div class="log" id="log"><span class="dm">Ready — fill in config above, then click Connect &amp; Send.</span></div>
+      </div>
+      <div class="note">
+        On each boot the firmware listens for <strong>3 seconds</strong> on USB serial.
+        Click Connect &amp; Send, select the USB port, and the config is written to flash.
+        Blank fields keep existing values. Device reboots automatically.
+      </div>
+    </div>
+  </div>
+
+  <!-- File actions -->
+  <div class="card" id="faCard" style="display:none">
+    <div class="ct">Download config.h</div>
+    <div class="cb">
+      <button class="btn bd" onclick="dlCfg()">📄 Download config.h</button>
+      <div class="note">
+        Drop the downloaded <code>config.h</code> into your firmware's <code>src/</code> directory alongside <code>main.cpp</code>, then rebuild and flash via PlatformIO or the <a href="flasher.html">Flasher</a>.
+        All <code>#define</code>s override firmware defaults at compile time.
+      </div>
+    </div>
+  </div>
+
+</div><!-- /fp -->
+
+<!-- ─── RIGHT ─── -->
+<div class="rp">
+
+  <div class="pcard">
+    <div class="pct">Live preview <em id="plabel">S3 Node Monitor</em></div>
+    <div class="pscr">
+
+      <!-- Node / CYD preview -->
+      <div id="prevNode">
+        <div class="pd">
+          <div class="ptb" id="ptb" style="background:#00c8ff;color:#000">
+            <span id="ptitle">CKB NODE</span>
+            <span style="font-size:.6rem;opacity:.7" id="pssid">●</span>
+          </div>
+          <div class="pb" id="pbd" style="background:#0a0c0f">
+            <div class="pl">block height</div>
+            <div class="pbig" id="pbig" style="color:#00c8ff">18,751,204</div>
+            <div class="prow">
+              <div><div class="pl">Peers</div><div class="pvl" style="color:#00e5a0">21</div></div>
+              <div><div class="pl">Mempool</div><div class="pvl" style="color:#e2e8f0">14 TX</div></div>
+              <div><div class="pl">Epoch</div><div class="pvl" style="color:#e2e8f0">3,142</div></div>
+            </div>
+            <div class="pl">epoch progress — 67%</div>
+            <div class="pep"><div class="pef" id="pef" style="background:#00c8ff"></div></div>
+            <div style="font-size:.58rem;margin-top:.5rem;opacity:.35;font-family:monospace" id="pnurl">192.168.68.87:8114</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Miner preview -->
+      <div id="prevMiner" style="display:none">
+        <div class="pd">
+          <div class="ptb" id="pmtb" style="background:#00c8ff;color:#000">
+            <span>NERDMINER CKB</span><span style="font-size:.6rem">⛏️</span>
+          </div>
+          <div class="pb" id="pmbd" style="background:#0a0c0f;font-family:Consolas,monospace">
+            <div class="pmr"><span class="pl">hashrate</span><span class="pmv" id="phash" style="color:#00c8ff">48.2 kH/s</span></div>
+            <div class="pmr"><span class="pl">shares</span><span class="pmv" style="color:#00e5a0">7 accepted</span></div>
+            <div class="pmr"><span class="pl">pool</span><span class="pmv" id="ppool" style="color:#e2e8f0">viabtc:3333</span></div>
+            <div class="pmr"><span class="pl">uptime</span><span class="pmv" style="color:#e2e8f0">02:14:37</span></div>
+            <div class="pmr"><span class="pl">status</span><span class="pmv" style="color:#00e5a0">● MINING</span></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- BlackBox preview -->
+      <div id="prevBB" style="display:none">
+        <div class="pd">
+          <div class="ptb" id="bbtb" style="background:#00d4ff;color:#000">
+            <span style="font-weight:900;letter-spacing:.1em;font-size:.72rem">BLACKBOX</span>
+            <span style="font-size:.6rem">● READY</span>
+          </div>
+          <div class="pb" id="bbbd" style="background:#07090f;text-align:center">
+            <div style="font-size:1.4rem;font-weight:800;color:#00d4ff;margin:.3rem 0" id="bbamt">450 CKB</div>
+            <div style="font-size:.72rem;color:#5a7090;margin-bottom:.7rem" id="bbcur">≈ AU$12.40</div>
+            <div style="width:72px;height:72px;margin:0 auto;border:2px solid #1a2540;border-radius:6px;background:repeating-linear-gradient(45deg,#1a2535,#1a2535 3px,#0d1525 3px,#0d1525 9px);display:flex;align-items:center;justify-content:center;font-size:.6rem;color:#5a7090">QR CODE</div>
+            <div style="font-size:.65rem;color:#5a7090;margin-top:.6rem">Scan to pay</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- config.h output -->
+  <div class="cocard">
+    <div class="coh">
+      <span id="cfgfn">config.h</span>
+      <button class="cpb" id="cpbtn" onclick="copyCfg()">Copy</button>
+    </div>
+    <pre class="cc" id="cfgpre">// generating...</pre>
+  </div>
+
+</div><!-- /rp -->
+
+</div><!-- /main -->
+
+<footer>
+  <p><a href="index.html">← Wyltek Industries</a> &nbsp;·&nbsp; <a href="flasher.html">Flasher</a> &nbsp;·&nbsp; <a href="blog.html">Devlog</a></p>
+  <p style="font-size:.78rem;margin-top:.4rem;opacity:.5">Wyltek Industries — wouldn't you like to know</p>
+</footer>
+
+<script>
+// ─── State ────────────────────────────────────────────────────────
+let board = 'guition4848';
+let mode  = 'serial';
+const BNAMES = {guition4848:'S3 Node Monitor',nerdminer:'NerdMiner CKB','ckb-cyd':'CKB CYD Node',blackbox:'BlackBox POS'};
+const BTITLES= {guition4848:'CKB NODE',nerdminer:'NERDMINER CKB','ckb-cyd':'CKB NODE',blackbox:'BLACKBOX'};
+
+// ─── Helpers ──────────────────────────────────────────────────────
+const $  = id => document.getElementById(id);
+const sid = (id,v) => { const e=$(id); if(e) e.value=v; };
+const gv  = id => { const e=$(id); return e ? e.value.trim() : ''; };
+function h2r(h){ return {r:parseInt(h.slice(1,3),16),g:parseInt(h.slice(3,5),16),b:parseInt(h.slice(5,7),16)} }
+function r565(r,g,b){ return ((r>>3)<<11)|((g>>2)<<5)|(b>>3) }
+function h565(h){ const {r,g,b}=h2r(h); return '0x'+r565(r,g,b).toString(16).toUpperCase().padStart(4,'0') }
+const acc = () => gv('ach')||'#00c8ff';
+const bgc = () => gv('bgh')||'#0a0c0f';
+const ua  = () => { updatePreview(); updateConfig(); };
+
+// ─── Board select ─────────────────────────────────────────────────
+function selB(el){
+  document.querySelectorAll('.bo').forEach(b=>b.classList.remove('on'));
+  el.classList.add('on');
+  board = el.dataset.board;
+  $('plabel').textContent = BNAMES[board]||board;
+  $('mCard').style.display  = board==='nerdminer' ? '' : 'none';
+  $('bbCard').style.display = board==='blackbox'  ? '' : 'none';
+  $('prevNode').style.display   = (board!=='nerdminer'&&board!=='blackbox') ? '' : 'none';
+  $('prevMiner').style.display  = board==='nerdminer' ? '' : 'none';
+  $('prevBB').style.display     = board==='blackbox'  ? '' : 'none';
+  $('cfgfn').textContent = BNAMES[board]?.replace(/ /g,'_').toLowerCase()+'_config.h';
+  ua();
+}
+
+// ─── Mode tabs ────────────────────────────────────────────────────
+function setMode(m){
+  mode = m;
+  $('ts').className  = 'tab'+(m==='serial'?' on':'');  $('tf').className  = 'tab'+(m==='file'?' on':'');
+  $('saCard').style.display = m==='serial' ? '' : 'none';
+  $('faCard').style.display = m==='file'   ? '' : 'none';
+  $('cfgpre').parentElement.parentElement.style.opacity = m==='file' ? '1' : '0.5';
+}
+
+// ─── Live preview ─────────────────────────────────────────────────
+function updatePreview(){
+  const a = acc(), b = bgc();
+  const ssid = gv('ssid')||'Connected';
+  const nu   = gv('node_url')||'—';
+  const nuShort = nu.replace(/https?:\/\//,'').split('/')[0].slice(0,22);
+
+  // node / cyd preview
+  $('ptb').style.background = a;
+  $('ptb').style.color = isDark(a) ? '#fff' : '#000';
+  $('ptitle').textContent = BTITLES[board]||'CKB NODE';
+  $('pbd').style.background = b;
+  $('pbig').style.color = a;
+  $('pef').style.background = a;
+  $('pssid').textContent = ssid ? '● '+ssid : '●';
+  $('pnurl').textContent = nuShort;
+
+  // miner preview
+  $('pmtb').style.background = a;
+  $('pmtb').style.color = isDark(a) ? '#fff' : '#000';
+  $('pmbd').style.background = b;
+  $('phash').style.color = a;
+  const ph = gv('phost')||'viabtc';
+  const pp = gv('pport')||'3333';
+  $('ppool').textContent = ph.split('.')[0]+':'+pp;
+
+  // blackbox preview
+  $('bbtb').style.background = a;
+  $('bbtb').style.color = isDark(a) ? '#fff' : '#000';
+  $('bbbd').style.background = b;
+  $('bbamt').style.color = a;
+  const cur = gv('currency')||'AUD';
+  $('bbcur').textContent = '≈ '+cur+'$12.40';
+}
+
+function isDark(hex){
+  const {r,g,b}=h2r(hex);
+  return (0.299*r+0.587*g+0.114*b) < 128;
+}
+
+// ─── Config generator ─────────────────────────────────────────────
+function buildConfig(){
+  const a = acc(), b = bgc();
+  const {r:ar,g:ag,b:ab} = h2r(a);
+  const {r:br,g:bg_,b:bb} = h2r(b);
+  const ssid  = gv('ssid');
+  const wpass = gv('wpass');
+  const node  = gv('node_url');
+  const bri   = gv('bri')||'180';
+  const ref   = gv('ref')||'6';
+  const ts    = new Date().toISOString().slice(0,10);
+
+  let lines = [];
+  lines.push('// config.h — generated by Wyltek Board Themer');
+  lines.push('// '+BNAMES[board]+' — '+ts);
+  lines.push('// https://wyltekindustries.com/themer');
+  lines.push('#pragma once');
+  lines.push('');
+  lines.push('// ── Network ───────────────────────────────────────');
+  if(ssid)  lines.push('#define CFG_WIFI_SSID     "'+ssid+'"');
+  if(wpass) lines.push('#define CFG_WIFI_PASS     "'+wpass+'"');
+  if(node)  lines.push('#define CFG_NODE_URL      "'+node+'"');
+  lines.push('');
+  lines.push('// ── Display ───────────────────────────────────────');
+  lines.push('#define CFG_ACCENT_R      '+ar);
+  lines.push('#define CFG_ACCENT_G      '+ag);
+  lines.push('#define CFG_ACCENT_B      '+ab);
+  lines.push('#define CFG_ACCENT_565    '+h565(a));
+  lines.push('#define CFG_BG_R          '+br);
+  lines.push('#define CFG_BG_G          '+bg_);
+  lines.push('#define CFG_BG_B          '+bb);
+  lines.push('#define CFG_BG_565        '+h565(b));
+  lines.push('#define CFG_BRIGHTNESS    '+bri);
+  lines.push('#define CFG_REFRESH_S     '+ref);
+  lines.push('');
+
+  if(board==='nerdminer'){
+    const ph = gv('phost'); const pp = gv('pport')||'3333';
+    const wl = gv('wallet'); const ps = gv('ppass')||'x';
+    lines.push('// ── Mining ────────────────────────────────────────');
+    if(ph) lines.push('#define CFG_POOL_HOST     "'+ph+'"');
+    lines.push('#define CFG_POOL_PORT     '+pp);
+    if(wl) lines.push('#define CFG_WALLET_ADDR   "'+wl+'"');
+    lines.push('#define CFG_POOL_PASS     "'+ps+'"');
+    lines.push('');
+  }
+
+  if(board==='blackbox'){
+    const ma = gv('merchant'); const cu = gv('currency')||'AUD';
+    lines.push('// ── Merchant ──────────────────────────────────────');
+    if(ma) lines.push('#define CFG_MERCHANT_ADDR "'+ma+'"');
+    lines.push('#define CFG_CURRENCY      "'+cu+'"');
+    lines.push('');
+  }
+
+  lines.push('// ── Board ─────────────────────────────────────────');
+  lines.push('#define CFG_BOARD_ID      "'+board+'"');
+
+  return lines.join('\n');
+}
+
+function updateConfig(){
+  $('cfgpre').textContent = buildConfig();
+}
+
+// ─── Copy config ──────────────────────────────────────────────────
+function copyCfg(){
+  navigator.clipboard.writeText(buildConfig()).then(()=>{
+    const b = $('cpbtn');
+    b.textContent='Copied!'; b.classList.add('cp');
+    setTimeout(()=>{ b.textContent='Copy'; b.classList.remove('cp'); },2000);
+  });
+}
+
+// ─── Download config ──────────────────────────────────────────────
+function dlCfg(){
+  const txt = buildConfig();
+  const fn  = (BNAMES[board]||board).replace(/ /g,'_').toLowerCase()+'_config.h';
+  const a   = document.createElement('a');
+  a.href    = 'data:text/plain;charset=utf-8,'+encodeURIComponent(txt);
+  a.download= fn;
+  a.click();
+}
+
+// ─── Build JSON for serial ────────────────────────────────────────
+function buildJson(){
+  const a=acc(), b=bgc();
+  const {r:ar,g:ag,b:ab}=h2r(a);
+  const {r:br,g:bg_,b:bb}=h2r(b);
+  const o={};
+  const ssid=gv('ssid'),wpass=gv('wpass'),node=gv('node_url');
+  if(ssid)  o.wifi_ssid=ssid;
+  if(wpass) o.wifi_pass=wpass;
+  if(node)  o.node_url=node;
+  o.accent_r=ar;o.accent_g=ag;o.accent_b=ab;
+  o.bg_r=br;o.bg_g=bg_;o.bg_b=bb;
+  o.brightness=parseInt(gv('bri')||'180');
+  o.refresh_s =parseInt(gv('ref')||'6');
+  if(board==='nerdminer'){
+    const ph=gv('phost'),pp=gv('pport')||'3333',wl=gv('wallet'),ps=gv('ppass')||'x';
+    if(ph)o.pool_host=ph;
+    o.pool_port=parseInt(pp);
+    if(wl)o.wallet=wl;
+    o.pool_pass=ps;
+  }
+  if(board==='blackbox'){
+    const ma=gv('merchant'),cu=gv('currency')||'AUD';
+    if(ma)o.merchant=ma;
+    o.currency=cu;
+  }
+  return JSON.stringify(o);
+}
+
+// ─── Detect board ─────────────────────────────────────────────────
+async function detect(){
+  if(!navigator.serial){ alert('Web Serial requires Chrome or Edge.'); return; }
+  const btn=$('dbtn'); btn.disabled=true; btn.textContent='⏳ Detecting…';
+  let port;
+  try{
+    port=await navigator.serial.requestPort();
+    await port.open({baudRate:115200});
+    const dec=new TextDecoderStream();
+    port.readable.pipeTo(dec.writable);
+    const rd=dec.readable.getReader();
+    const wr=port.writable.getWriter();
+    const readLine=async(ms=5000)=>{
+      let buf='';const dl=Date.now()+ms;
+      while(Date.now()<dl){
+        const res=await Promise.race([rd.read(),new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),200))]).catch(()=>({value:null,done:false}));
+        if(res.done||!res.value)continue;
+        buf+=res.value;const nl=buf.indexOf('\n');if(nl!==-1)return buf.slice(0,nl).trim();
+      }throw new Error('timeout');
+    };
+    await wr.write(new TextEncoder().encode('CKBCFG\n'));
+    const resp=await readLine(6000);
+    wr.releaseLock();rd.cancel();
+    const parts=resp.split(':');
+    const bid=parts.length>1?parts[1].trim():null;
+    const ds=$('dstrip'),dt=$('dtext');
+    if(resp.startsWith('READY')&&bid&&BNAMES[bid]){
+      ds.className='ds ok';dt.textContent='✅ Detected: '+BNAMES[bid];
+      document.querySelectorAll('.bo').forEach(b=>{ if(b.dataset.board===bid) selB(b); });
+    } else {
+      ds.className='ds';dt.textContent='❓ Unknown device — proceed manually';
+    }
+  }catch(e){
+    const ds=$('dstrip'),dt=$('dtext');
+    ds.className='ds err';dt.textContent='❌ '+e.message;
+  }finally{
+    try{port&&await port.close();}catch(_){}
+    btn.disabled=false;btn.textContent='🔌 Detect';
+  }
+}
+
+// ─── Send config over serial ──────────────────────────────────────
+const logEl=$('log');
+const lg=(m,c='')=>{ logEl.innerHTML+=`<span class="${c}">${m}\n</span>`; logEl.scrollTop=logEl.scrollHeight; };
+const lc=()=>{ logEl.innerHTML=''; };
+
+async function sendCfg(){
+  if(!navigator.serial){ lg('❌ Web Serial requires Chrome or Edge.','err'); return; }
+  const btn=$('sendBtn'); btn.disabled=true; lc();
+  let port,wr,rd;
+  try{
+    lg('Requesting serial port…','dm');
+    port=await navigator.serial.requestPort();
+    await port.open({baudRate:115200});
+    lg('Port opened ✓','ok');
+    wr=port.writable.getWriter();
+    const dec=new TextDecoderStream();
+    port.readable.pipeTo(dec.writable);
+    rd=dec.readable.getReader();
+    const readLine=async(ms=5000)=>{
+      let buf='';const dl=Date.now()+ms;
+      while(Date.now()<dl){
+        const res=await Promise.race([rd.read(),new Promise((_,r)=>setTimeout(()=>r(new Error('timeout')),200))]).catch(()=>({value:null,done:false}));
+        if(res.done||!res.value)continue;
+        buf+=res.value;const nl=buf.indexOf('\n');if(nl!==-1)return buf.slice(0,nl).trim();
+      }throw new Error('Device did not respond. Is firmware loaded? Try reconnecting and retrying within 3s of boot.');
+    };
+    lg('Sending CKBCFG handshake…','dm');
+    await wr.write(new TextEncoder().encode('CKBCFG\n'));
+    const resp=await readLine(6000);
+    if(!resp.startsWith('READY'))throw new Error('Unexpected response: "'+resp+'"');
+    const bid=resp.split(':')[1]?.trim();
+    lg('Device ready ✓'+(bid&&BNAMES[bid]?' ['+BNAMES[bid]+']':''),'ok');
+    const payload=buildJson();
+    lg('Sending: '+payload,'dm');
+    await wr.write(new TextEncoder().encode(payload+'\nEND\n'));
+    lg('Waiting for OK…','dm');
+    const ok=await readLine(5000);
+    if(ok!=='OK')throw new Error('Expected OK, got: "'+ok+'"');
+    lg('✅ Config saved. Device is rebooting…','ok');
+    $('dstrip').className='ds ok';$('dtext').textContent='✅ Config sent successfully';
+  }catch(e){ lg('❌ '+e.message,'err'); }
+  finally{
+    try{wr&&wr.releaseLock();}catch(_){}
+    try{rd&&rd.cancel();}catch(_){}
+    try{port&&await port.close();}catch(_){}
+    btn.disabled=false;
+  }
+}
+
+// ─── Init ─────────────────────────────────────────────────────────
+setMode('serial');
+updatePreview();
+updateConfig();
+</script>
+
+</body>
+</html>
