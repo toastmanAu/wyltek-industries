@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Wyltek Industries</title>
+  <meta name="description" content="ESP32 firmware, embedded systems, blockchain tools, and open source hardware projects." />
+  <style>
+    :root {
+      --bg:       #0a0c0f;
+      --surface:  #111318;
+      --surface2: #181c23;
+      --border:   #1e2430;
+      --accent:   #00c8ff;
+      --accent2:  #7b5cfa;
+      --green:    #00e5a0;
+      --orange:   #ff8c42;
+      --text:     #e2e8f0;
+      --muted:    #64748b;
+      --tag-bg:   #1a2035;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.6;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Header ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      position: sticky; top: 0;
+      background: rgba(10,12,15,0.93);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 1.1rem; letter-spacing: 0.02em;
+      color: var(--text);
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 17px;
+    }
+    nav { display: flex; gap: 1.5rem; }
+    nav a { color: var(--muted); font-size: 0.9rem; transition: color 0.2s; }
+    nav a:hover { color: var(--text); text-decoration: none; }
+
+    /* ── Hero ── */
+    .hero {
+      max-width: 1100px; margin: 0 auto;
+      padding: 5rem 2rem 3.5rem;
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 3rem; align-items: center;
+    }
+    .eyebrow {
+      font-size: 0.75rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 1rem;
+    }
+    h1 {
+      font-size: clamp(2rem, 5vw, 3.2rem);
+      font-weight: 800; line-height: 1.1; letter-spacing: -0.02em;
+      margin-bottom: 1.2rem;
+    }
+    h1 span {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero-desc { color: var(--muted); font-size: 1.05rem; max-width: 520px; margin-bottom: 2rem; }
+    .hero-links { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn {
+      display: inline-flex; align-items: center; gap: 0.4rem;
+      padding: 0.6rem 1.2rem; border-radius: 8px;
+      font-size: 0.9rem; font-weight: 600; transition: all 0.2s;
+    }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-primary:hover { background: #33d6ff; text-decoration: none; }
+    .btn-outline { border: 1px solid var(--border); color: var(--text); background: var(--surface); }
+    .btn-outline:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+    .hero-stats { display: flex; flex-direction: column; gap: 1rem; align-items: flex-end; }
+    .stat-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1rem 1.4rem; text-align: right; min-width: 145px;
+    }
+    .stat-num {
+      font-size: 2.1rem; font-weight: 800; line-height: 1;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    }
+    .stat-label { color: var(--muted); font-size: 0.78rem; margin-top: 0.2rem; }
+
+    /* ── Sections ── */
+    .section { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; }
+    .section-header {
+      display: flex; align-items: baseline; gap: 1rem;
+      margin-bottom: 1.8rem; padding-bottom: 0.8rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .section-title { font-size: 1.25rem; font-weight: 700; }
+    .section-count {
+      font-size: 0.78rem; color: var(--muted);
+      background: var(--surface); padding: 0.15rem 0.5rem;
+      border-radius: 999px; border: 1px solid var(--border);
+    }
+    hr.divider { max-width: 1100px; margin: 0 auto; border: none; border-top: 1px solid var(--border); }
+
+    /* ── Cards ── */
+    .cards { display: grid; grid-template-columns: repeat(auto-fill, minmax(310px, 1fr)); gap: 1.2rem; }
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 12px;
+      padding: 1.4rem; transition: border-color 0.2s, transform 0.15s;
+      display: flex; flex-direction: column; gap: 0.8rem;
+    }
+    .card:hover { border-color: var(--accent); transform: translateY(-2px); }
+    .card-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 0.8rem; }
+    .card-icon {
+      font-size: 1.4rem; flex-shrink: 0;
+      width: 40px; height: 40px; background: var(--surface2); border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .card-title { font-weight: 700; font-size: 0.95rem; line-height: 1.3; }
+    .card-title a { color: var(--text); }
+    .card-title a:hover { color: var(--accent); text-decoration: none; }
+    .card-gh { color: var(--muted); font-size: 0.75rem; flex-shrink: 0; opacity: 0.6; transition: opacity 0.2s; }
+    .card:hover .card-gh { opacity: 1; color: var(--accent); }
+    .card-desc { color: var(--muted); font-size: 0.875rem; line-height: 1.55; flex: 1; }
+    .card-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; }
+    .tag {
+      font-size: 0.71rem; padding: 0.15rem 0.5rem; border-radius: 999px;
+      background: var(--tag-bg); border: 1px solid var(--border); color: var(--muted); font-weight: 500;
+    }
+    .tag-esp  { border-color: #ff8c4240; color: var(--orange); }
+    .tag-ckb  { border-color: #00e5a040; color: var(--green); }
+    .tag-ard  { border-color: #00c8ff40; color: var(--accent); }
+    .tag-node { border-color: #7b5cfa40; color: var(--accent2); }
+    .tag-new  { border-color: #00e5a060; color: var(--green); background: #00e5a010; font-weight: 700; }
+
+    /* ── Featured ── */
+    .card-featured {
+      grid-column: 1 / -1;
+      display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; align-items: start;
+      background: linear-gradient(135deg, var(--surface) 0%, #141824 100%);
+      border-color: #1e2a40;
+    }
+    .card-featured:hover { border-color: var(--accent); }
+    .card-featured .card-title { font-size: 1.15rem; margin: 0.5rem 0 0.2rem; }
+    .feat-points { display: flex; flex-direction: column; gap: 0.55rem; padding-top: 0.5rem; }
+    .feat-point { display: flex; gap: 0.6rem; font-size: 0.85rem; color: var(--muted); align-items: flex-start; }
+    .feat-point::before { content: '→'; color: var(--accent); flex-shrink: 0; }
+    .feat-label { font-size: 0.75rem; color: var(--muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 0.4rem; }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem;
+      text-align: center; color: var(--muted); font-size: 0.85rem;
+    }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+
+    /* ── Responsive ── */
+    @media (max-width: 700px) {
+      .hero { grid-template-columns: 1fr; padding-top: 3rem; }
+      .hero-stats { flex-direction: row; flex-wrap: wrap; align-items: flex-start; }
+      .stat-card { text-align: left; min-width: 110px; flex: 1; }
+      .card-featured { grid-template-columns: 1fr; }
+      nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <div class="logo">
+      <div class="logo-icon">⚙️</div>
+      Wyltek Industries
+    </div>
+    <nav>
+      <a href="#embedded">Embedded</a>
+      <a href="#ckb">CKB</a>
+      <a href="#tools">Tools</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<!-- HERO -->
+<div class="hero">
+  <div>
+    <div class="eyebrow">Open Source Hardware &amp; Software</div>
+    <h1>Building at the<br><span>edge of embedded</span><br>and blockchain.</h1>
+    <p class="hero-desc">
+      ESP32 firmware, sensor libraries, Nervos CKB tooling, and community infrastructure.
+      Hardware-first, open source, built for the real world.
+    </p>
+    <div class="hero-links">
+      <a class="btn btn-primary" href="https://github.com/toastmanAu" target="_blank">↗ GitHub</a>
+      <a class="btn btn-outline" href="#embedded">View Projects</a>
+    </div>
+  </div>
+  <div class="hero-stats">
+    <div class="stat-card">
+      <div class="stat-num">38+</div>
+      <div class="stat-label">Sensor drivers</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">19</div>
+      <div class="stat-label">Board targets</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-num">30+</div>
+      <div class="stat-label">Public repos</div>
+    </div>
+  </div>
+</div>
+
+<!-- EMBEDDED SECTION -->
+<hr class="divider" />
+<section class="section" id="embedded">
+  <div class="section-header">
+    <h2 class="section-title">🔧 Embedded &amp; ESP32</h2>
+    <span class="section-count">8 projects</span>
+  </div>
+  <div class="cards">
+
+    <!-- FEATURED -->
+    <div class="card card-featured">
+      <div>
+        <div class="card-header">
+          <div class="card-icon">🏗️</div>
+          <a class="card-gh" href="https://github.com/toastmanAu/wyltek-embedded-builder" target="_blank">GitHub ↗</a>
+        </div>
+        <div class="card-title">
+          <a href="https://github.com/toastmanAu/wyltek-embedded-builder" target="_blank">wyltek-embedded-builder</a>
+          <span class="tag tag-new" style="margin-left:0.5rem">NEW</span>
+        </div>
+        <p class="card-desc" style="margin-top:0.5rem">
+          A modular, board-agnostic embedded SDK for ESP32. Zero external dependencies —
+          38+ sensor drivers, 19 display board targets, camera support, animated UI modules.
+          Every driver shares the same <code>WySensorData</code> interface: consistent, composable,
+          and flash-efficient via conditional compilation.
+        </p>
+        <div class="card-tags" style="margin-top:0.8rem">
+          <span class="tag tag-esp">ESP32</span>
+          <span class="tag tag-ard">Arduino</span>
+          <span class="tag tag-esp">C++</span>
+          <span class="tag tag-new">Active</span>
+        </div>
+      </div>
+      <div>
+        <div class="feat-label">What's inside</div>
+        <div class="feat-points">
+          <div class="feat-point">38+ sensor drivers — BME280, MLX90640, LD2410, DS18B20, INA219, Wind, UV, and more</div>
+          <div class="feat-point">19 board targets — CYD, Guition 4848S040, LilyGo T-Display S3, Waveshare, M5Stack, ESP32-CAM</div>
+          <div class="feat-point">WyCamera — MJPEG stream server + motion detection for ESP32-CAM</div>
+          <div class="feat-point">WyEyes — animated dual round-display robot eyes (GC9A01)</div>
+          <div class="feat-point">WySensors registry — uniform addI2C / addSPI / addGPIO / addUART API</div>
+          <div class="feat-point">Conditional compilation throughout — unused drivers cost zero flash</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">📡</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/TelegramSerial" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/TelegramSerial" target="_blank">TelegramSerial</a></div>
+      <p class="card-desc">Drop-in <code>Serial</code> replacement for ESP32. Replace <code>Serial.println()</code> with <code>TelegramSerial.println()</code> and your debug output goes straight to Telegram. Live in the Arduino Library Manager.</p>
+      <div class="card-tags">
+        <span class="tag tag-esp">ESP32</span>
+        <span class="tag tag-ard">Arduino Library</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">⛏️</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/NerdMiner_CKB" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/NerdMiner_CKB" target="_blank">NerdMiner CKB</a></div>
+      <p class="card-desc">ESP32 Eaglesong miner adapted from NerdMiner V2. Turns a CYD board into a solo CKB mining device with live stats on the built-in display. Because why not mine from a $10 board.</p>
+      <div class="card-tags">
+        <span class="tag tag-esp">ESP32</span>
+        <span class="tag tag-ckb">CKB</span>
+        <span class="tag tag-esp">Eaglesong</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🖥️</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/ckb-firmware" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/ckb-firmware" target="_blank">CKB Firmware Monorepo</a></div>
+      <p class="card-desc">ESP32-S3 firmware collection for CKB node operators. Includes the S3 node dashboard (live chain stats, HTTP broadcast relay) and S3 wallet. Targets Guition 4848S040 and similar HMI boards.</p>
+      <div class="card-tags">
+        <span class="tag tag-esp">ESP32-S3</span>
+        <span class="tag tag-ckb">CKB</span>
+        <span class="tag tag-esp">HMI</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">📚</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/CKB-ESP32" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/CKB-ESP32" target="_blank">CKB-ESP32 Library</a></div>
+      <p class="card-desc">Arduino library bringing the Nervos CKB RPC API to ESP32. Query nodes, build transactions, sign with on-device secp256k1 — no intermediary needed. E2E mainnet transfer confirmed.</p>
+      <div class="card-tags">
+        <span class="tag tag-esp">ESP32</span>
+        <span class="tag tag-ckb">CKB</span>
+        <span class="tag tag-ard">Arduino Library</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">⚡</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/ckb-light-esp" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/ckb-light-esp" target="_blank">CKB Light Client — ESP32-P4</a></div>
+      <p class="card-desc">C99 CKB light client implementation targeting the ESP32-P4 RISC-V chip. No external dependencies, RFC 0044 compliant. Groundwork for a full hardware wallet / signing device.</p>
+      <div class="card-tags">
+        <span class="tag tag-esp">ESP32-P4</span>
+        <span class="tag tag-ckb">CKB</span>
+        <span class="tag tag-esp">C99</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🔲</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/CKB-Block-Clock" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/CKB-Block-Clock" target="_blank">CKB Block Clock</a></div>
+      <p class="card-desc">ESP32 HUB75E LED matrix block clock for Nervos CKB. Displays live block height from a local node on a large LED panel. The kind of desk piece that makes people ask questions.</p>
+      <div class="card-tags">
+        <span class="tag tag-esp">ESP32</span>
+        <span class="tag tag-ckb">CKB</span>
+        <span class="tag tag-esp">HUB75E</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🖨️</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/CatGFX" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/CatGFX" target="_blank">CatGFX</a></div>
+      <p class="card-desc">Adafruit GFX-compatible Arduino library for cat thermal printers on ESP32. Print receipts, labels, graphics from your ESP32 project. Because thermal printers are underrated.</p>
+      <div class="card-tags">
+        <span class="tag tag-esp">ESP32</span>
+        <span class="tag tag-ard">Arduino Library</span>
+        <span class="tag tag-esp">Thermal Print</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- CKB SECTION -->
+<hr class="divider" />
+<section class="section" id="ckb">
+  <div class="section-header">
+    <h2 class="section-title">⛓️ CKB / Blockchain Infrastructure</h2>
+    <span class="section-count">7 projects</span>
+  </div>
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">📊</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/ckb-node-dashboard" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/ckb-node-dashboard" target="_blank">CKB Node Dashboard</a></div>
+      <p class="card-desc">Real-time CKB node monitoring for arm64 SBCs (Orange Pi, Raspberry Pi). Node.js proxy + lightweight HTML polling UI. Block height, sync status, peer count, epoch progress — at a glance.</p>
+      <div class="card-tags">
+        <span class="tag tag-ckb">CKB</span>
+        <span class="tag tag-node">Node.js</span>
+        <span class="tag tag-esp">Monitoring</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🐳</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/ckb-whale-bot" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/ckb-whale-bot" target="_blank">CKB Whale Alert Bot</a></div>
+      <p class="card-desc">Monitors a local CKB node for large transactions and fires Telegram alerts. Live USD threshold via CoinGecko, skips cellbase and self-transfers. Running in the Nervos Nation community group.</p>
+      <div class="card-tags">
+        <span class="tag tag-ckb">CKB</span>
+        <span class="tag tag-node">Node.js</span>
+        <span class="tag tag-esp">Telegram Bot</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">⛏️</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/ckb-stratum-proxy" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/ckb-stratum-proxy" target="_blank">CKB Stratum Proxy</a></div>
+      <p class="card-desc">Local Stratum proxy for CKB Eaglesong mining. Per-miner extranonce allocation, ViaBTC quirk handling, HTTP stats endpoint. Connect any ASIC or NerdMiner to your LAN.</p>
+      <div class="card-tags">
+        <span class="tag tag-ckb">CKB</span>
+        <span class="tag tag-node">Node.js</span>
+        <span class="tag tag-esp">Mining</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🔗</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/ckb-esp-flasher" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/ckb-esp-flasher" target="_blank">CKB ESP Flasher</a></div>
+      <p class="card-desc">Web-based flasher for CKB ESP32 client firmware. Flash a node display device from the browser — no IDE, no drivers, no command line. One click from unboxing to running node display.</p>
+      <div class="card-tags">
+        <span class="tag tag-ckb">CKB</span>
+        <span class="tag tag-esp">ESP32</span>
+        <span class="tag tag-esp">Web Flash</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🛡️</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/ckb-antiscam" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/ckb-antiscam" target="_blank">CKB Anti-Scam Bot</a></div>
+      <p class="card-desc">Telegram bot that detects and bans fake moderator impersonators in CKB community groups. Behavioural scoring: lurk rate, fresh accounts, trading spam patterns. Community protection, automated.</p>
+      <div class="card-tags">
+        <span class="tag tag-ckb">CKB</span>
+        <span class="tag tag-node">Node.js</span>
+        <span class="tag tag-esp">Community</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🟡</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/CKB-Node" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/CKB-Node" target="_blank">CKB Node — Orange Pi 3B Guide</a></div>
+      <p class="card-desc">Complete guide to running a Nervos CKB full node on an Orange Pi 3B. Step-by-step from fresh board to synced node. Community resource for the hardware-minded CKB operator.</p>
+      <div class="card-tags">
+        <span class="tag tag-ckb">CKB</span>
+        <span class="tag tag-esp">Orange Pi</span>
+        <span class="tag tag-esp">Guide</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🔍</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/Nervos-Doc-Search-Bot" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/Nervos-Doc-Search-Bot" target="_blank">Nervos Doc Search Bot</a></div>
+      <p class="card-desc">Telegram bot for searching Nervos Network documentation. Built for the 2023 Nervos Doc-a-thon. Search the CKB docs without leaving your Telegram group.</p>
+      <div class="card-tags">
+        <span class="tag tag-ckb">CKB</span>
+        <span class="tag tag-node">Node.js</span>
+        <span class="tag tag-esp">Telegram Bot</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- TOOLS SECTION -->
+<hr class="divider" />
+<section class="section" id="tools">
+  <div class="section-header">
+    <h2 class="section-title">🛠️ Tools &amp; Utilities</h2>
+    <span class="section-count">4 projects</span>
+  </div>
+  <div class="cards">
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">☀️</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/uv-tracker" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/uv-tracker" target="_blank">UV Index Australia</a></div>
+      <p class="card-desc">Live BOM UV index data for any Australian suburb. Lightweight web app — because checking the BOM website every morning is too many clicks.</p>
+      <div class="card-tags">
+        <span class="tag tag-node">Node.js</span>
+        <span class="tag tag-esp">BOM API</span>
+        <span class="tag tag-esp">Web App</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🔑</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/ckb-halving-rfid-reader" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/ckb-halving-rfid-reader" target="_blank">CKB Halving RFID Clock</a></div>
+      <p class="card-desc">ESP32 desk clock with RFID-activated CKB halving calculator. Tap your card to reveal the countdown. Equal parts useful and a conversation piece.</p>
+      <div class="card-tags">
+        <span class="tag tag-esp">ESP32</span>
+        <span class="tag tag-ckb">CKB</span>
+        <span class="tag tag-esp">RFID</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🔷</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/ESP32-Dot-Bit-Lookup-Tool" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/ESP32-Dot-Bit-Lookup-Tool" target="_blank">ESP32 .bit Lookup Tool</a></div>
+      <p class="card-desc">Record query and QR code generator for the .bit DID service on Nervos Network. Look up .bit domain records and generate QR codes — directly from an ESP32.</p>
+      <div class="card-tags">
+        <span class="tag tag-esp">ESP32</span>
+        <span class="tag tag-ckb">Nervos</span>
+        <span class="tag tag-esp">.bit DID</span>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="card-header">
+        <div class="card-icon">🖥️</div>
+        <a class="card-gh" href="https://github.com/toastmanAu/ckb-s3-node" target="_blank">GitHub ↗</a>
+      </div>
+      <div class="card-title"><a href="https://github.com/toastmanAu/ckb-s3-node" target="_blank">CKB S3 Node Display</a></div>
+      <p class="card-desc">CKB node stats dashboard for ESP32-S3 HMI boards. Displays live chain data on the Guition 4848S040 and similar 480×480 boards. Runs as an embedded HTTP relay node.</p>
+      <div class="card-tags">
+        <span class="tag tag-esp">ESP32-S3</span>
+        <span class="tag tag-ckb">CKB</span>
+        <span class="tag tag-esp">HMI</span>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- FOOTER -->
+<hr class="divider" />
+<footer>
+  <p style="margin-bottom:0.5rem">
+    Built by <a href="https://github.com/toastmanAu" target="_blank">toastmanAu</a> &nbsp;·&nbsp;
+    All projects open source on <a href="https://github.com/toastmanAu" target="_blank">GitHub</a> &nbsp;·&nbsp;
+    Nervos CKB community contributor
+  </p>
+  <p style="font-size:0.78rem; margin-top:0.4rem; opacity:0.5">
+    Wyltek Industries &mdash; wouldn't you like to know
+  </p>
+</footer>
+
+</body>
+</html>
