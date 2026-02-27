@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Devlog — Wyltek Industries</title>
+  <meta name="description" content="What we're building — a running log of projects, milestones, and builds from Wyltek Industries." />
+  <style>
+    :root {
+      --bg:       #0a0c0f;
+      --surface:  #111318;
+      --surface2: #181c23;
+      --border:   #1e2430;
+      --accent:   #00c8ff;
+      --accent2:  #7b5cfa;
+      --green:    #00e5a0;
+      --orange:   #ff8c42;
+      --red:      #ff4560;
+      --text:     #e2e8f0;
+      --muted:    #64748b;
+      --tag-bg:   #1a2035;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      font-size: 15px;
+      line-height: 1.65;
+    }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    /* ── Header ── */
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      position: sticky; top: 0;
+      background: rgba(10,12,15,0.93);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 860px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 1.1rem; color: var(--text);
+    }
+    .logo-icon {
+      width: 32px; height: 32px;
+      background: linear-gradient(135deg, var(--accent), var(--accent2));
+      border-radius: 8px;
+      display: flex; align-items: center; justify-content: center; font-size: 17px;
+    }
+    nav { display: flex; gap: 1.5rem; }
+    nav a { color: var(--muted); font-size: 0.9rem; transition: color 0.2s; }
+    nav a:hover { color: var(--text); text-decoration: none; }
+    nav a.active { color: var(--accent); }
+
+    /* ── Page header ── */
+    .page-header {
+      max-width: 860px; margin: 0 auto;
+      padding: 3.5rem 2rem 2rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .page-eyebrow {
+      font-size: 0.72rem; font-weight: 600;
+      letter-spacing: 0.15em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 0.7rem;
+    }
+    .page-header h1 {
+      font-size: clamp(1.6rem, 4vw, 2.4rem);
+      font-weight: 800; letter-spacing: -0.02em; line-height: 1.15;
+      margin-bottom: 0.8rem;
+    }
+    .page-header h1 span {
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .page-desc { color: var(--muted); font-size: 0.95rem; max-width: 520px; }
+
+    /* ── Filter bar ── */
+    .filter-bar {
+      max-width: 860px; margin: 0 auto;
+      padding: 1.2rem 2rem;
+      display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center;
+      border-bottom: 1px solid var(--border);
+    }
+    .filter-label { color: var(--muted); font-size: 0.8rem; margin-right: 0.3rem; }
+    .filter-tag {
+      font-size: 0.75rem; padding: 0.2rem 0.7rem;
+      border-radius: 999px; border: 1px solid var(--border);
+      background: var(--surface); color: var(--muted);
+      cursor: pointer; transition: all 0.15s; user-select: none;
+    }
+    .filter-tag:hover { border-color: var(--accent); color: var(--accent); }
+    .filter-tag.active { background: var(--accent); border-color: var(--accent); color: #000; font-weight: 600; }
+
+    /* ── Feed ── */
+    .feed {
+      max-width: 860px; margin: 0 auto;
+      padding: 2rem;
+      display: flex; flex-direction: column; gap: 2rem;
+    }
+
+    /* ── Post card ── */
+    .post {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      overflow: hidden;
+      transition: border-color 0.2s;
+    }
+    .post:hover { border-color: #2a3448; }
+    .post:target { border-color: var(--accent); }
+
+    .post-strip {
+      background: var(--surface2);
+      border-bottom: 1px solid var(--border);
+      padding: 0.6rem 1.4rem;
+      display: flex; align-items: center; justify-content: space-between;
+      gap: 1rem;
+    }
+    .post-project {
+      font-size: 0.75rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.1em; color: var(--accent);
+    }
+    .post-date { font-size: 0.75rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+    .post-body { padding: 1.6rem 1.8rem; }
+    .post-body h2 {
+      font-size: 1.2rem; font-weight: 800; line-height: 1.25;
+      margin-bottom: 1rem; letter-spacing: -0.01em;
+    }
+    .post-body h2 a { color: var(--text); }
+    .post-body h2 a:hover { color: var(--accent); text-decoration: none; }
+
+    .post-tags { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-bottom: 1.2rem; }
+    .ptag {
+      font-size: 0.71rem; padding: 0.15rem 0.55rem; border-radius: 999px;
+      background: var(--tag-bg); border: 1px solid var(--border); color: var(--muted);
+    }
+    .ptag-ESP32, .ptag-esp32      { border-color: #ff8c4240; color: var(--orange); }
+    .ptag-CKB                     { border-color: #00e5a040; color: var(--green); }
+    .ptag-Arduino                 { border-color: #00c8ff40; color: var(--accent); }
+    .ptag-release, .ptag-milestone{ border-color: #00e5a060; color: var(--green); background: #00e5a010; }
+    .ptag-sensors, .ptag-C\+\+   { border-color: #7b5cfa40; color: var(--accent2); }
+
+    /* post content */
+    .post-content { display: flex; flex-direction: column; gap: 0.9rem; }
+    .post-content p { color: var(--muted); font-size: 0.9rem; line-height: 1.7; }
+    .post-content p code {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 4px; padding: 0.1em 0.4em;
+      font-family: 'Consolas', 'Fira Code', monospace; font-size: 0.85em;
+      color: var(--accent);
+    }
+    .post-content h3 {
+      font-size: 0.9rem; font-weight: 700; text-transform: uppercase;
+      letter-spacing: 0.08em; color: var(--text); margin-top: 0.4rem;
+    }
+    .post-content ul {
+      list-style: none; display: flex; flex-direction: column; gap: 0.45rem;
+    }
+    .post-content ul li {
+      color: var(--muted); font-size: 0.88rem; line-height: 1.6;
+      padding-left: 1.2rem; position: relative;
+    }
+    .post-content ul li::before {
+      content: '→'; color: var(--accent);
+      position: absolute; left: 0;
+    }
+    .post-content pre {
+      background: var(--surface2); border: 1px solid var(--border);
+      border-radius: 8px; padding: 1rem 1.2rem;
+      overflow-x: auto;
+    }
+    .post-content pre code {
+      font-family: 'Consolas', 'Fira Code', monospace;
+      font-size: 0.82rem; color: #c9d1d9; line-height: 1.6;
+    }
+    .post-cta {
+      display: inline-flex; align-items: center; gap: 0.3rem;
+      color: var(--accent); font-size: 0.85rem; font-weight: 600;
+      transition: gap 0.15s;
+    }
+    .post-cta:hover { gap: 0.5rem; text-decoration: none; }
+
+    /* post footer */
+    .post-footer {
+      border-top: 1px solid var(--border);
+      padding: 0.9rem 1.8rem;
+      display: flex; gap: 0.8rem; flex-wrap: wrap; align-items: center;
+    }
+    .post-link {
+      font-size: 0.8rem; color: var(--muted); border: 1px solid var(--border);
+      padding: 0.25rem 0.8rem; border-radius: 6px; background: var(--surface2);
+      transition: all 0.15s;
+    }
+    .post-link:hover { border-color: var(--accent); color: var(--accent); text-decoration: none; }
+
+    /* ── Empty state ── */
+    #no-results {
+      display: none;
+      text-align: center; color: var(--muted);
+      padding: 3rem 2rem; font-size: 0.9rem;
+    }
+
+    /* ── Footer ── */
+    footer {
+      border-top: 1px solid var(--border); padding: 2rem;
+      text-align: center; color: var(--muted); font-size: 0.85rem;
+      max-width: 860px; margin: 2rem auto 0;
+    }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+
+    @media (max-width: 600px) {
+      .post-body { padding: 1.2rem; }
+      .post-footer { padding: 0.8rem 1.2rem; }
+      nav { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">
+      <div class="logo-icon">⚙️</div>
+      Wyltek Industries
+    </a>
+    <nav>
+      <a href="index.html">Projects</a>
+      <a href="blog.html" class="active">Devlog</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <div class="page-eyebrow">Build Log</div>
+  <h1>What we're <span>building</span></h1>
+  <p class="page-desc">A running log of what's being built, shipped, and figured out. No polish — just the work.</p>
+</div>
+
+<!-- FILTER BAR (populated by JS) -->
+<div class="filter-bar">
+  <span class="filter-label">Filter:</span>
+  <span class="filter-tag active" data-tag="all">All</span>
+</div>
+
+<!-- FEED (populated by JS) -->
+<div class="feed" id="feed"></div>
+<div id="no-results">No posts match that filter.</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>
+    <a href="index.html">← Back to projects</a> &nbsp;·&nbsp;
+    <a href="https://github.com/toastmanAu" target="_blank">GitHub</a>
+  </p>
+  <p style="font-size:0.78rem; margin-top:0.4rem; opacity:0.5">Wyltek Industries &mdash; wouldn't you like to know</p>
+</footer>
+
+<script src="posts/posts.js"></script>
+<script>
+// ── Render engine ──────────────────────────────────────────────────
+
+function formatDate(iso) {
+  const d = new Date(iso + 'T12:00:00Z');
+  return d.toLocaleDateString('en-AU', { year:'numeric', month:'long', day:'numeric' });
+}
+
+function renderBody(body) {
+  return body.map(item => {
+    if (typeof item === 'string') {
+      // inline code support
+      const html = item.replace(/<code>(.*?)<\/code>/g, '<code>$1</code>');
+      return `<p>${html}</p>`;
+    }
+    switch (item.type) {
+      case 'h3':
+        return `<h3>${item.content}</h3>`;
+      case 'ul':
+        return `<ul>${item.content.map(li => `<li>${li}</li>`).join('')}</ul>`;
+      case 'code':
+        return `<pre><code>${item.content.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</code></pre>`;
+      case 'link':
+        return `<p><a class="post-cta" href="${item.href}" target="_blank">${item.text} →</a></p>`;
+      default:
+        return '';
+    }
+  }).join('\n');
+}
+
+function tagClass(tag) {
+  const safe = tag.replace(/[^a-zA-Z0-9]/g, '\\$&');
+  return `ptag ptag-${safe}`;
+}
+
+function renderPost(post) {
+  const tagPills = post.tags.map(t => `<span class="${tagClass(t)}">${t}</span>`).join('');
+  const footerLinks = post.links.map(l =>
+    `<a class="post-link" href="${l.href}" target="_blank">${l.text} ↗</a>`
+  ).join('');
+
+  return `
+  <article class="post" id="${post.id}" data-tags="${post.tags.join(',').toLowerCase()}">
+    <div class="post-strip">
+      <span class="post-project">${post.project}</span>
+      <span class="post-date">${formatDate(post.date)}</span>
+    </div>
+    <div class="post-body">
+      <h2><a href="#${post.id}">${post.title}</a></h2>
+      <div class="post-tags">${tagPills}</div>
+      <div class="post-content">${renderBody(post.body)}</div>
+    </div>
+    ${post.links.length ? `<div class="post-footer">${footerLinks}</div>` : ''}
+  </article>`;
+}
+
+// ── Build filter tags ──────────────────────────────────────────────
+const allTags = new Set();
+POSTS.forEach(p => p.tags.forEach(t => allTags.add(t)));
+
+const filterBar = document.querySelector('.filter-bar');
+allTags.forEach(tag => {
+  const el = document.createElement('span');
+  el.className = 'filter-tag';
+  el.dataset.tag = tag.toLowerCase();
+  el.textContent = tag;
+  filterBar.appendChild(el);
+});
+
+// ── Render all posts ───────────────────────────────────────────────
+const feed = document.getElementById('feed');
+feed.innerHTML = POSTS.map(renderPost).join('');
+
+// ── Filter logic ───────────────────────────────────────────────────
+let activeTag = 'all';
+
+filterBar.addEventListener('click', e => {
+  const el = e.target.closest('.filter-tag');
+  if (!el) return;
+
+  activeTag = el.dataset.tag;
+  document.querySelectorAll('.filter-tag').forEach(t => t.classList.remove('active'));
+  el.classList.add('active');
+
+  let visible = 0;
+  document.querySelectorAll('.post').forEach(post => {
+    const tags = post.dataset.tags.split(',');
+    const show = activeTag === 'all' || tags.includes(activeTag);
+    post.style.display = show ? '' : 'none';
+    if (show) visible++;
+  });
+
+  document.getElementById('no-results').style.display = visible ? 'none' : 'block';
+});
+
+// ── Scroll to post if hash in URL ─────────────────────────────────
+if (location.hash) {
+  const el = document.querySelector(location.hash);
+  if (el) setTimeout(() => el.scrollIntoView({ behavior: 'smooth', block: 'start' }), 100);
+}
+</script>
+</body>
+</html>
