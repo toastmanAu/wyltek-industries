@@ -1,0 +1,30 @@
+{
+  "name": "CKB Node Monitor — Guition ESP32-S3 4848S040",
+  "version": "0ac2ca46",
+  "home_assistant_domain": "esphome",
+  "funding_url": "https://github.com/toastmanAu",
+  "new_install_prompt_erase": true,
+  "builds": [
+    {
+      "chipFamily": "ESP32-S3",
+      "parts": [
+        {
+          "path": "bootloader.bin",
+          "offset": 0
+        },
+        {
+          "path": "partitions.bin",
+          "offset": 32768
+        },
+        {
+          "path": "boot_app0.bin",
+          "offset": 57344
+        },
+        {
+          "path": "firmware.bin",
+          "offset": 65536
+        }
+      ]
+    }
+  ]
+}
