@@ -421,24 +421,30 @@
       </div>
     </div>
 
-    <!-- BlackBox POS — coming soon -->
+    <!-- BlackBox POS — not flashable, build it yourself -->
     <div class="fw-card fw-soon">
       <div class="fw-card-img">
         🧾
         <div class="fw-chip-badge">ESP32 · Elecrow HMI 3.5"</div>
-        <div class="fw-soon-badge">Coming soon</div>
+        <div class="fw-soon-badge">Build it yourself</div>
       </div>
       <div class="fw-body">
         <div class="fw-title">BlackBox POS</div>
         <div class="fw-desc">
-          CKB point-of-sale firmware for the Elecrow ESP32 HMI 3.5". Accept CKB payments,
-          print thermal receipts, scan barcodes. Flash your merchant address in — no code required.
+          BlackBox is a self-build project — your merchant address is baked into the firmware
+          at compile time. Clone the repo, set your CKB address in <code>config.h</code>,
+          and build with PlatformIO. No generic binary exists by design.
         </div>
         <div class="fw-meta">
           <span>ST7789 · 480×320</span>
           <a href="blackbox.html">BlackBox project ↗</a>
         </div>
-        <button class="fw-soon-btn" disabled>Coming soon</button>
+        <a href="https://github.com/toastmanAu/blackbox-pos" target="_blank"
+           style="display:flex;align-items:center;justify-content:center;gap:.4rem;margin-top:.4rem;padding:.65rem;border-radius:8px;border:1px solid var(--border);background:var(--surf2);color:var(--muted);font-size:.88rem;font-weight:600;text-decoration:none;transition:all .15s"
+           onmouseover="this.style.borderColor='var(--accent)';this.style.color='var(--accent)'"
+           onmouseout="this.style.borderColor='var(--border)';this.style.color='var(--muted)'">
+          View source on GitHub ↗
+        </a>
       </div>
     </div>
 
