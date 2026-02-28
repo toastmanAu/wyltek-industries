@@ -216,112 +216,248 @@
   <div class="section-title">⚡ How to flash</div>
 
   <div class="flash-tabs">
-    <button class="flash-tab active" onclick="switchTab('etcher')">Balena Etcher</button>
-    <button class="flash-tab" onclick="switchTab('linux')">Linux / macOS</button>
-    <button class="flash-tab" onclick="switchTab('verify')">Verify image</button>
+    <button class="flash-tab active" data-tab="windows">🪟 Windows</button>
+    <button class="flash-tab" data-tab="macos">🍎 macOS</button>
+    <button class="flash-tab" data-tab="linux">🐧 Linux</button>
+    <button class="flash-tab" data-tab="verify">🔒 Verify</button>
   </div>
 
-  <!-- Etcher tab -->
-  <div class="flash-panel active" id="tab-etcher">
-    <div class="tip-box"><strong>Recommended for most users.</strong> Balena Etcher handles everything — decompression, writing, verification. Works on Windows, macOS, and Linux.</div>
+  <!-- Windows tab -->
+  <div class="flash-panel active" id="tab-windows">
+    <div class="tip-box"><strong>Windows users:</strong> Balena Etcher is the easiest path — no command line needed, handles compressed images automatically, verifies after writing.</div>
 
     <div class="step">
       <div class="step-num">1</div>
       <div class="step-body">
-        <h4>Download Etcher</h4>
-        <p>Get it free from <a href="https://etcher.balena.io" target="_blank">etcher.balena.io</a>. Available for Windows (.exe), macOS (.dmg), and Linux (.AppImage).</p>
+        <h4>Download the image</h4>
+        <p>Click the Download button above. Save the <code>.img.xz</code> file somewhere you can find it — Desktop is fine. Do <strong>not</strong> extract it, Etcher reads compressed images directly.</p>
       </div>
     </div>
     <div class="step">
       <div class="step-num">2</div>
       <div class="step-body">
-        <h4>Download the image</h4>
-        <p>Grab the <code>.img.xz</code> file from above. You don't need to extract it — Etcher handles compressed images directly.</p>
+        <h4>Verify the download (recommended)</h4>
+        <p>Open <strong>PowerShell</strong> and run:</p>
+        <pre><code>Get-FileHash .\wyltek-opi3b-ckbnode-*.img.xz -Algorithm SHA256</code></pre>
+        <p>Compare the hash shown against the <code>.sha256</code> file linked on the download card. They must match exactly. If they don't, re-download.</p>
       </div>
     </div>
     <div class="step">
       <div class="step-num">3</div>
       <div class="step-body">
-        <h4>Flash</h4>
-        <p>Open Etcher → <strong>Flash from file</strong> → select your image → select your SD card → <strong>Flash!</strong>. Takes 3–8 minutes depending on card speed. Etcher verifies after writing automatically.</p>
+        <h4>Install Balena Etcher</h4>
+        <p>Download from <a href="https://etcher.balena.io" target="_blank">etcher.balena.io</a> and run the installer. It's free, open source, and takes about 30 seconds to install.</p>
       </div>
     </div>
     <div class="step">
       <div class="step-num">4</div>
       <div class="step-body">
-        <h4>First boot</h4>
-        <p>Insert card, power on. First boot takes 60–90 seconds while it expands the filesystem. SSH is enabled by default — <code>ssh root@&lt;ip&gt;</code> or check your router for the IP. Default password is in the release notes.</p>
+        <h4>Insert your SD card</h4>
+        <p>Plug in your SD card or microSD via adapter. Use a card that's at least 16 GB. Class 10 / A1 or faster recommended — cheap slow cards will make the system painful to use.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Flash with Etcher</h4>
+        <p>Open Etcher, then:</p>
+        <ol style="margin:.5rem 0 0 1.2rem;color:var(--muted);font-size:.85rem;line-height:1.8">
+          <li>Click <strong>Flash from file</strong> → select your <code>.img.xz</code></li>
+          <li>Click <strong>Select target</strong> → choose your SD card (double-check the size matches)</li>
+          <li>Click <strong>Flash!</strong> — Windows may ask for admin permission, allow it</li>
+          <li>Wait 3–10 minutes. Etcher shows progress and automatically verifies when done</li>
+        </ol>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h4>Eject and boot</h4>
+        <p>Etcher ejects automatically when done. Remove the SD card, insert it into your board, and power on. First boot takes 60–90 seconds while the filesystem expands — this is normal. SSH is enabled by default:</p>
+        <pre><code>ssh root@&lt;board-ip&gt;</code></pre>
+        <p style="margin-top:.4rem">Find the IP in your router's DHCP table, or connect a monitor on first boot to see it printed to the console. Default credentials are listed in the release notes.</p>
       </div>
     </div>
   </div>
 
-  <!-- Linux/macOS tab -->
-  <div class="flash-panel" id="tab-linux">
-    <div class="tip-box"><strong>For Linux and macOS users.</strong> Faster than Etcher once you know your disk device. Be careful with the device path — double-check before running.</div>
+  <!-- macOS tab -->
+  <div class="flash-panel" id="tab-macos">
+    <div class="tip-box"><strong>macOS users:</strong> Two options — Etcher (easiest, no terminal) or <code>dd</code> via Terminal (faster, no app install). Both work perfectly. The <code>dd</code> path is shown here since most macOS users are comfortable with Terminal.</div>
 
     <div class="step">
       <div class="step-num">1</div>
       <div class="step-body">
-        <h4>Find your SD card device</h4>
-        <pre><code># Linux
-lsblk
-# Look for your card — e.g. /dev/sdb or /dev/mmcblk0
-
-# macOS
-diskutil list
-# Look for your card — e.g. /dev/disk2</code></pre>
+        <h4>Download the image</h4>
+        <p>Click the Download button above. Save the <code>.img.xz</code> file to your Downloads folder or Desktop.</p>
       </div>
     </div>
     <div class="step">
       <div class="step-num">2</div>
       <div class="step-body">
-        <h4>Flash with progress bar</h4>
-        <pre><code># Linux — install pv first: sudo apt install pv
-xz -dc wyltek-opi3b-ckbnode-*.img.xz | \
-  pv -s $(xz -l wyltek-opi3b-ckbnode-*.img.xz | tail -1 | awk '{print $5}') | \
-  sudo dd of=/dev/sdX bs=4M conv=fsync
-
-# macOS (no pv needed, use disk not rdisk for safety check)
-xz -d wyltek-opi3b-ckbnode-*.img.xz
-sudo dd if=wyltek-opi3b-ckbnode-*.img of=/dev/rdisk2 bs=4m</code></pre>
-        <p style="margin-top:.5rem">Replace <code>/dev/sdX</code> / <code>/dev/rdisk2</code> with your actual device. <strong>Wrong device = data loss.</strong></p>
+        <h4>Verify the download</h4>
+        <p>Open <strong>Terminal</strong> and run:</p>
+        <pre><code>cd ~/Downloads
+shasum -a 256 wyltek-opi3b-ckbnode-*.img.xz</code></pre>
+        <p>Compare the output against the <code>.sha256</code> file linked on the download card.</p>
       </div>
     </div>
     <div class="step">
       <div class="step-num">3</div>
       <div class="step-body">
+        <h4>Extract the image</h4>
+        <pre><code>cd ~/Downloads
+xz -d wyltek-opi3b-ckbnode-*.img.xz</code></pre>
+        <p>This creates a <code>.img</code> file. Takes 1–3 minutes depending on your machine. The compressed file is deleted automatically.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Insert your SD card and find its device path</h4>
+        <p>Insert the card, then in Terminal:</p>
+        <pre><code>diskutil list</code></pre>
+        <p>Look for your SD card — it'll show as something like <code>/dev/disk2</code> with the right size. <strong>Note the number carefully</strong> — writing to the wrong disk will destroy data.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
+        <h4>Unmount the card (don't eject)</h4>
+        <pre><code>diskutil unmountDisk /dev/disk2</code></pre>
+        <p>Replace <code>disk2</code> with your actual disk number.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h4>Write the image</h4>
+        <pre><code>sudo dd if=wyltek-opi3b-ckbnode-*.img of=/dev/rdisk2 bs=4m status=progress</code></pre>
+        <p>Note <code>rdisk2</code> (raw disk, not <code>disk2</code>) — it's significantly faster on macOS. Takes 3–8 minutes. You'll see a summary line when it's done.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">7</div>
+      <div class="step-body">
+        <h4>Eject and boot</h4>
+        <pre><code>diskutil eject /dev/disk2</code></pre>
+        <p>Remove the card, insert into your board, power on. SSH in once it appears on your network:</p>
+        <pre><code>ssh root@&lt;board-ip&gt;</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Linux tab -->
+  <div class="flash-panel" id="tab-linux">
+    <div class="tip-box"><strong>Linux users:</strong> <code>dd</code> is the native tool. The commands below include <code>pv</code> for a progress bar — worth installing if you don't have it.</div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Download the image</h4>
+        <p>Click the Download button above, or use the terminal:</p>
+        <pre><code>wget https://r2.wyltekindustries.com/sbc-images/wyltek-opi3b-ckbnode-latest.img.xz
+wget https://r2.wyltekindustries.com/sbc-images/wyltek-opi3b-ckbnode-latest.img.xz.sha256</code></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Verify the download</h4>
+        <pre><code>sha256sum -c wyltek-opi3b-ckbnode-*.img.xz.sha256</code></pre>
+        <p>Should print <code>wyltek-opi3b-ckbnode-*.img.xz: OK</code>. If it fails, the file is corrupted — re-download.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Insert your SD card and find its device path</h4>
+        <pre><code>lsblk</code></pre>
+        <p>Your card will show up as something like <code>/dev/sdb</code>, <code>/dev/sdc</code>, or <code>/dev/mmcblk0</code>. Check the size column to confirm. <strong>Do not guess</strong> — wrong device = data loss.</p>
+        <div class="tip-box" style="margin-top:.6rem">💡 If you're unsure, run <code>lsblk</code> once before inserting the card and once after — the new entry is your card.</div>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>Flash — with progress bar</h4>
+        <pre><code># Install pv if needed
+sudo apt install pv   # Debian/Ubuntu
+sudo dnf install pv   # Fedora
+
+# Flash (replace /dev/sdX with your card)
+xz -dc wyltek-opi3b-ckbnode-*.img.xz | \
+  pv | \
+  sudo dd of=/dev/sdX bs=4M conv=fsync</code></pre>
+        <p style="margin-top:.4rem">Takes 3–8 minutes. <code>pv</code> shows throughput and a progress bar.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4b</div>
+      <div class="step-body">
+        <h4>Flash — without pv (simpler)</h4>
+        <pre><code>xz -dc wyltek-opi3b-ckbnode-*.img.xz | \
+  sudo dd of=/dev/sdX bs=4M conv=fsync status=progress</code></pre>
+        <p><code>status=progress</code> gives basic byte count output without needing pv.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">5</div>
+      <div class="step-body">
         <h4>Sync and eject</h4>
         <pre><code>sync && sudo eject /dev/sdX</code></pre>
+        <p>Wait for the command to return before removing the card. The <code>sync</code> flushes any pending writes.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">6</div>
+      <div class="step-body">
+        <h4>First boot</h4>
+        <p>Insert the card into your board and power on. First boot takes 60–90 seconds. SSH is enabled by default:</p>
+        <pre><code>ssh root@&lt;board-ip&gt;</code></pre>
+        <p style="margin-top:.4rem">To find the IP: check your router's DHCP list, or use <code>nmap -sn 192.168.1.0/24</code> (adjust for your subnet) to scan for new devices.</p>
       </div>
     </div>
   </div>
 
   <!-- Verify tab -->
   <div class="flash-panel" id="tab-verify">
-    <div class="tip-box"><strong>All images are SHA256 checksummed and GPG-signed.</strong> Verifying takes 30 seconds and confirms the image wasn't corrupted in transit.</div>
+    <div class="tip-box"><strong>All images are SHA256 checksummed and GPG-signed.</strong> The checksum confirms the file arrived intact. The GPG signature confirms it came from Wyltek Industries and hasn't been tampered with.</div>
 
     <div class="step">
       <div class="step-num">1</div>
       <div class="step-body">
-        <h4>Verify SHA256</h4>
+        <h4>Verify SHA256 checksum</h4>
         <pre><code># Linux / macOS
 sha256sum -c wyltek-opi3b-ckbnode-*.img.xz.sha256
 
-# Windows (PowerShell)
-Get-FileHash wyltek-opi3b-ckbnode-*.img.xz -Algorithm SHA256</code></pre>
-        <p>Should print <code>OK</code>. If it fails, the download is corrupted — try again.</p>
+# macOS alternative
+shasum -a 256 -c wyltek-opi3b-ckbnode-*.img.xz.sha256
+
+# Windows PowerShell
+$hash = Get-FileHash wyltek-opi3b-ckbnode-*.img.xz -Algorithm SHA256
+$hash.Hash   # compare this against the .sha256 file</code></pre>
+        <p>Linux/macOS should print <code>OK</code>. If anything else prints, the download is corrupted — delete and re-download.</p>
       </div>
     </div>
     <div class="step">
       <div class="step-num">2</div>
       <div class="step-body">
-        <h4>Verify GPG signature (optional, paranoid mode)</h4>
-        <pre><code># Import Wyltek signing key
+        <h4>Verify GPG signature</h4>
+        <pre><code># Import the Wyltek Industries signing key (one-time)
 gpg --keyserver keys.openpgp.org --recv-keys CFF9573B87BB90B7
 
-# Verify
-gpg --verify wyltek-opi3b-ckbnode-*.img.xz.asc</code></pre>
-        <p>Should show <code>Good signature from "Wyltek Industries"</code>.</p>
+# Verify the image signature
+gpg --verify wyltek-opi3b-ckbnode-*.img.xz.asc wyltek-opi3b-ckbnode-*.img.xz</code></pre>
+        <p>A valid image shows:</p>
+        <pre><code>gpg: Good signature from "Wyltek Industries &lt;build@wyltekindustries.com&gt;"</code></pre>
+        <p>The warning about key not being certified is normal unless you've explicitly trusted the key — the <code>Good signature</code> line is what matters.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Why bother?</h4>
+        <p style="color:var(--muted);font-size:.85rem">You're putting this image on a device that will run on your network, possibly as a CKB node handling real funds. A tampered image could steal keys, phone home, or worse. 30 seconds to verify is worth it.</p>
       </div>
     </div>
   </div>
@@ -344,12 +480,14 @@ gpg --verify wyltek-opi3b-ckbnode-*.img.xz.asc</code></pre>
 </footer>
 
 <script>
-function switchTab(id) {
-  document.querySelectorAll('.flash-tab').forEach(t => t.classList.remove('active'));
-  document.querySelectorAll('.flash-panel').forEach(p => p.classList.remove('active'));
-  document.getElementById('tab-' + id).classList.add('active');
-  event.target.classList.add('active');
-}
+document.querySelectorAll('.flash-tab').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.flash-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.flash-panel').forEach(p => p.classList.remove('active'));
+    this.classList.add('active');
+    document.getElementById('tab-' + this.dataset.tab).classList.add('active');
+  });
+});
 (function(){
   var btn=document.getElementById('navToggle');
   var nav=document.getElementById('mainNav');
