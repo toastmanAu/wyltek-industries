@@ -18,6 +18,59 @@ const POSTS = [
 
   // ────────────────────────────────────────────────────────────────
   {
+    id: "2026-02-28-infrastructure-sprint",
+    date: "2026-02-28",
+    title: "CKB snapshot service, Fiber hardware signer, wyltekindustries.com live",
+    tags: ["CKB", "Fiber", "ESP32-S3", "Infrastructure", "Armbian", "wyltek-embedded-builder"],
+    project: "Wyltek Industries",
+    body: [
+      "Long day. A lot shipped — snapshot infrastructure, a hardware signing module for the Fiber network, a multi-OS sync page, the wyltek-embedded-builder growth policy formalised, and wyltekindustries.com finally going live. Notes in rough chronological order.",
+
+      {type:"h3", content:"wyltekindustries.com — live (mostly)"},
+      "The site was pointing at GitHub Pages but had a Cloudflare proxy (orange cloud) turned on for all DNS records. GitHub Pages needs DNS-only (grey cloud) to issue its Let's Encrypt cert — the proxy was intercepting the ACME challenge and blocking cert issuance. Fixed by switching all A records and the www CNAME to unproxied. SSL cert is provisioning now.",
+
+      {type:"h3", content:"CKB snapshot service"},
+      "One of the genuine pain points for running a CKB full node on an SBC is sync time — 3 to 7 days from genesis on something like an Orange Pi. Nobody has maintained a proper community snapshot service. We built one.",
+      "The setup: ckbnode runs a weekly snapshot job that stops the CKB node, streams the chain DB directly to Cloudflare R2 via a tar | zstd | rclone pipeline — no local disk required (the DB is ~135GB, ~47GB compressed). The upload takes under 2 hours on our 58 Mbps connection. Each snapshot gets a SHA256 checksum and a GPG signature. A metadata JSON with block height, date, and instructions goes up alongside it.",
+      "Cost: ~$2/month on R2 for 3 snapshots in rotation (141GB × $0.015/GB). Cloudflare R2 egress is free regardless of how many people download, which is the whole point.",
+      {type:"code", content:"# The pipeline — zero local disk\ntar -C ~/.ckb/data db/ | zstd -T0 -3 | tee [sha256 fifo] | rclone rcat r2:ckb-snapshots/filename.tar.zst"},
+      "The verify script checks both SHA256 and the GPG signature before trusting anything. Key ID CFF9573B87BB90B7, published to keys.openpgp.org.",
+      {type:"link", text:"ckb-snapshot on GitHub", href:"https://github.com/toastmanAu/ckb-snapshot"},
+
+      {type:"h3", content:"ckb-sync page — Neuron + multi-OS"},
+      "Built a proper sync landing page at /ckb-sync.html. It fetches latest.json from R2 on load and auto-populates block height, date, age, and the download link. No static content to maintain.",
+      "The page supports both CKB bare node and Neuron wallet, and auto-detects the OS (Windows/macOS/Linux/SBC). Each combination gets the right data path pre-filled and the right commands — aria2c on Windows for resumable downloads, wget on Linux/Mac, the correct zstd extraction target, the right stop/start commands. Neuron gets a tray-quit warning. The path is editable if your install is non-standard.",
+      "Also includes a trustless sync tab for assume_valid_target — same speed as a snapshot, no download, PoW still fully verified. Same model as Bitcoin's assumevalid.",
+      {type:"link", text:"CKB Sync page", href:"https://wyltekindustries.com/ckb-sync"},
+
+      {type:"h3", content:"ESP32-S3 Fiber Channel Signer"},
+      "The Fiber kiosk stack (LVGL C UI → Node.js bridge → Fiber RPC) needed a hardware signing module — somewhere private keys live that isn't the OPi 3B running Node.js and talking to the internet. The design is simple: an ESP32-S3 plugs into the OPi's USB port and acts as a UART JSON-RPC signer. The kiosk can read balances and channel state without the signer connected, but can't sign anything.",
+      "The firmware: secp256k1 signing (trezor-crypto via CKB-ESP32), Blake2b, HKDF-SHA256 key derivation, AES-256-GCM key storage on LittleFS, PIN lock with NVS-persistent attempt counter (5 failures → full wipe), 5-minute auto-lock, MuSig2 two-round partial signing for Fiber channels.",
+      "The ESP32-S3 was chosen as the budget variant (~$5–8 devkit vs ~$15–20 for P4). Same secp256k1 security, hardware SHA and AES accelerators, native USB. Identical JSON-RPC protocol to the P4 signer — swap one for the other without changing any kiosk code.",
+      {type:"link", text:"fiber-kiosk on GitHub", href:"https://github.com/toastmanAu/fiber-kiosk"},
+
+      {type:"h3", content:"wyltek-embedded-builder — growth policy"},
+      "Formalised the rule that should have been written down earlier: every reusable firmware component goes into wyltek-embedded-builder first, not into the project repo. When wrapping a third-party library, fork it to toastmanAu/, check the license (GPL does not go into a MIT library), attribute clearly in the header, add as lib_deps.",
+      "The S3 signer was the first project to be updated to use CKB-ESP32 and wyltek-embedded-builder as declared lib_deps instead of carrying local copies of trezor_crypto. That's the pattern going forward.",
+      "Also added a LICENSES/ directory to the repo for third-party license files, and explicit rules: MIT/BSD/Apache fork freely, LGPL treat as GPL for static embedded builds, GPL don't incorporate, no-license hard no.",
+
+      {type:"h3", content:"WyKeyboard — adaptive touch keyboard"},
+      "Added WyKeyboard to wyltek-embedded-builder. Auto-scales key height from display dimensions (tested 240×240 through 800×480), QWERTY/Numeric/Symbol layouts with on-screen switching, shift/caps/backspace/enter/cancel, password mode with masked input, horizontal scroll in the input field, dark and light themes, zero heap allocation.",
+      {type:"code", content:"kb.begin(gfx, width, height);\nkb.show(\"Enter SSID:\", 32);\n// in loop:\nif (kb.press(tx, ty) == WY_KB_DONE) use(kb.value());"},
+
+      {type:"h3", content:"Armbian OPi 3B image — still baking"},
+      "Started an Armbian build for the OPi 3B (Bookworm minimal, kernel 6.18.15 rockchip64-current) on the EliteDesk build node. Three separate failures: GitPython resolving relative .git paths incorrectly (patched patching.py), kernel patch failing on an RK3308-specific audio patch (moved it out), customize-image.sh hitting missing packages in the build chroot (made installs non-fatal). Build is running again. Kernel is compiled and cached — it's just the image packaging stage left.",
+    ],
+    links: [
+      {text:"ckb-snapshot", href:"https://github.com/toastmanAu/ckb-snapshot"},
+      {text:"CKB Sync Page", href:"https://wyltekindustries.com/ckb-sync"},
+      {text:"fiber-kiosk", href:"https://github.com/toastmanAu/fiber-kiosk"},
+      {text:"wyltek-embedded-builder", href:"https://github.com/toastmanAu/wyltek-embedded-builder"},
+    ]
+  },
+
+  // ────────────────────────────────────────────────────────────────
+  {
     id: "2026-02-27-wyltek-sensor-sprint",
     date: "2026-02-27",
     title: "wyltek-embedded-builder: 38 sensor drivers, 19 board targets",
