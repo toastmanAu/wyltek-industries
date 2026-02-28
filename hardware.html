@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hardware Reference — Wyltek Industries</title>
+<meta name="description" content="Every board, sensor, display and component supported by wyltek-embedded-builder. Buy links, specs, PlatformIO defines.">
+<style>
+  :root {
+    --bg:#07090f;--surface:#0f1117;--surface2:#141820;
+    --border:#1e2430;--text:#e2e8f0;--muted:#64748b;
+    --accent:#00c8ff;--accent2:#7c3aed;--green:#10b981;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  header{border-bottom:1px solid var(--border);background:rgba(7,9,15,.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100}
+  .header-inner{max-width:1200px;margin:0 auto;padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1rem;color:var(--text);text-decoration:none}
+  .logo-icon{width:28px;height:28px;background:linear-gradient(135deg,#00c8ff,#7c3aed);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+  nav#mainNav{display:flex;gap:1.5rem}
+  nav#mainNav a{color:var(--muted);font-size:.9rem;transition:color .2s}
+  nav#mainNav a:hover,nav#mainNav a.active{color:var(--text)}
+  .nav-toggle{display:none;background:none;border:none;cursor:pointer;font-size:1.4rem;color:var(--text);padding:.2rem .4rem}
+  @media(max-width:700px){
+    nav#mainNav{display:none;flex-direction:column;gap:0;position:absolute;top:100%;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:.5rem 0;z-index:999}
+    nav#mainNav.open{display:flex}
+    nav#mainNav a{padding:.7rem 1.5rem;font-size:1rem;border-bottom:1px solid var(--border)}
+    nav#mainNav a:last-child{border-bottom:none}
+    .nav-toggle{display:block}
+    .header-inner{position:relative}
+  }
+  .page-hero{max-width:1200px;margin:0 auto;padding:3rem 1.5rem 2rem}
+  .eyebrow{font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem}
+  .page-hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.15;margin-bottom:.8rem}
+  .page-hero p{color:var(--muted);font-size:1.05rem;max-width:640px}
+  .hero-stats{display:flex;gap:2rem;margin-top:1.5rem;flex-wrap:wrap}
+  .hstat-num{font-size:1.8rem;font-weight:800;color:var(--accent)}
+  .hstat-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em}
+  .controls{max-width:1200px;margin:0 auto;padding:0 1.5rem 1.5rem;display:flex;gap:1rem;flex-wrap:wrap;align-items:center}
+  .filter-group{display:flex;gap:.4rem;flex-wrap:wrap}
+  .filter-btn{padding:.35rem .9rem;border-radius:99px;border:1px solid var(--border);background:transparent;color:var(--muted);font-size:.85rem;cursor:pointer;transition:all .15s}
+  .filter-btn:hover{border-color:var(--accent);color:var(--text)}
+  .filter-btn.active{background:var(--accent);border-color:var(--accent);color:#000;font-weight:600}
+  .search-box{flex:1;min-width:200px;max-width:320px;padding:.4rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.9rem;outline:none}
+  .search-box:focus{border-color:var(--accent)}
+  .result-count{font-size:.82rem;color:var(--muted);margin-left:auto}
+  .hw-grid{max-width:1200px;margin:0 auto;padding:0 1.5rem 4rem;display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem}
+  .hw-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem;display:flex;flex-direction:column;gap:.6rem;transition:border-color .2s,transform .15s}
+  .hw-card:hover{border-color:rgba(0,200,255,.4);transform:translateY(-2px)}
+  .hw-card.hidden{display:none}
+  .hw-card.ckb-card{border-color:rgba(0,200,255,.2)}
+  .card-top{display:flex;align-items:flex-start;gap:.8rem}
+  .card-icon{font-size:1.8rem;line-height:1;flex-shrink:0}
+  .card-name{font-weight:700;font-size:.95rem;line-height:1.3}
+  .card-desc{font-size:.82rem;color:var(--muted);line-height:1.5}
+  .card-tags{display:flex;flex-wrap:wrap;gap:.3rem}
+  .tag{padding:.15rem .5rem;border-radius:4px;font-size:.7rem;font-weight:600}
+  .tag-chip{background:rgba(124,58,237,.15);color:#a78bfa;border:1px solid rgba(124,58,237,.3)}
+  .tag-bus{background:rgba(16,185,129,.12);color:#34d399;border:1px solid rgba(16,185,129,.25)}
+  .tag-res{background:rgba(0,200,255,.1);color:var(--accent);border:1px solid rgba(0,200,255,.25)}
+  .tag-feat{background:rgba(245,158,11,.1);color:#fcd34d;border:1px solid rgba(245,158,11,.25)}
+  .tag-ckb{background:rgba(0,200,255,.12);color:var(--accent);border:1px solid rgba(0,200,255,.3);font-weight:700}
+  .card-define{font-family:'Consolas','Monaco',monospace;font-size:.72rem;color:var(--muted);background:var(--surface2);padding:.2rem .5rem;border-radius:4px;border:1px solid var(--border);align-self:flex-start}
+  .card-footer{display:flex;gap:.5rem;margin-top:auto;padding-top:.3rem;flex-wrap:wrap;align-items:center}
+  .buy-btn{display:inline-flex;align-items:center;gap:.3rem;padding:.35rem .8rem;border-radius:6px;background:rgba(0,200,255,.1);border:1px solid rgba(0,200,255,.25);color:var(--accent);font-size:.78rem;font-weight:600;transition:all .15s;text-decoration:none}
+  .buy-btn:hover{background:rgba(0,200,255,.2);text-decoration:none}
+  .buy-btn.alt{background:rgba(124,58,237,.1);border-color:rgba(124,58,237,.25);color:#a78bfa}
+  .no-hw{font-size:.75rem;color:var(--muted);font-style:italic}
+  footer{border-top:1px solid var(--border);padding:2.5rem 1.5rem;text-align:center;color:var(--muted);font-size:.85rem}
+  .footer-inner{max-width:600px;margin:0 auto}
+  footer p{margin-bottom:.4rem}
+  footer a{color:var(--muted)}
+  footer a:hover{color:var(--accent)}
+  .footer-nervos{margin-top:.8rem;font-size:.78rem;opacity:.7}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html"><div class="logo-icon">⚙️</div>Wyltek Industries</a>
+    <nav id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="blog.html">Devlog</a>
+      <a href="blackbox.html">BlackBox</a>
+      <a href="ckb-sync.html">CKB Sync</a>
+      <a href="flasher.html">Flasher</a>
+      <a href="hardware.html" class="active">Hardware</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="eyebrow">wyltek-embedded-builder</div>
+  <h1>Hardware Reference</h1>
+  <p>Every board, sensor, display and component supported by the wyltek-embedded-builder library. Real hardware, real tests, honest notes. Buy links go direct to AliExpress or official stores.</p>
+  <div class="hero-stats">
+    <div class="hstat"><div class="hstat-num">32</div><div class="hstat-label">Board targets</div></div>
+    <div class="hstat"><div class="hstat-num">38+</div><div class="hstat-label">Sensor drivers</div></div>
+    <div class="hstat"><div class="hstat-num">MIT</div><div class="hstat-label">License</div></div>
+  </div>
+</div>
+
+<div class="controls">
+  <div class="filter-group">
+    <button class="filter-btn active" data-filter="all">All</button>
+    <button class="filter-btn" data-filter="board">Boards</button>
+    <button class="filter-btn" data-filter="sensor">Sensors</button>
+    <button class="filter-btn" data-filter="component">Components</button>
+  </div>
+  <input class="search-box" id="search" type="text" placeholder="Search hardware...">
+  <span class="result-count" id="resultCount"></span>
+</div>
+
+<div class="hw-grid" id="grid"></div>
+
+<footer>
+  <div class="footer-inner">
+    <p><a href="index.html">← Projects</a> &nbsp;·&nbsp; <a href="https://github.com/toastmanAu/wyltek-embedded-builder" target="_blank">wyltek-embedded-builder</a> &nbsp;·&nbsp; <a href="blog.html">Devlog</a></p>
+    <div class="footer-nervos">Built in the Nervos CKB ecosystem · <a href="https://nervos.org" target="_blank">nervos.org</a></div>
+  </div>
+</footer>
+
+<script>
+const ITEMS = [
+  // ── BOARDS ──────────────────────────────────────────────────────
+  {cat:'board',icon:'🖥',name:'ESP32-2432S028R (CYD)',desc:'The Cheap Yellow Display. ESP32, 2.8" ILI9341 320×240, resistive touch, SD card, speaker. Community workhorse — most CKB firmware targets this board.',tags:[{t:'ESP32',c:'chip'},{t:'320×240',c:'res'},{t:'ILI9341',c:'bus'},{t:'Touch',c:'feat'}],define:'WY_BOARD_CYD',ckb:true,buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005004502250619.html'}]},
+  {cat:'board',icon:'🖥',name:'ESP32-2432S028R CYD2USB',desc:'CYD with USB-C connector. Same 2.8" ILI9341 display, same pinout. Drop-in for most CYD projects.',tags:[{t:'ESP32',c:'chip'},{t:'320×240',c:'res'},{t:'USB-C',c:'feat'}],define:'WY_BOARD_CYD2USB',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005004502250619.html'}]},
+  {cat:'board',icon:'🖥',name:'Guition ESP32-S3-4848S040',desc:'4" square 480×480 RGB panel with GT911 capacitive touch. Used as CKB light client node and Fiber kiosk display. Real mainnet TX confirmed.',tags:[{t:'ESP32-S3',c:'chip'},{t:'480×480',c:'res'},{t:'Capacitive',c:'feat'},{t:'RGB',c:'bus'}],define:'WY_BOARD_GUITION4848S040',ckb:true,buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005006112192430.html'}]},
+  {cat:'board',icon:'🖥',name:'Sunton ESP32-S3-8048S043',desc:'4.3" wide 800×480 RGB panel, GT911 touch. Largest display in the supported range. Good for data-dense dashboards.',tags:[{t:'ESP32-S3',c:'chip'},{t:'800×480',c:'res'},{t:'RGB',c:'bus'}],define:'WY_BOARD_SUNTON_8048S043',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005004788147691.html'}]},
+  {cat:'board',icon:'🖥',name:'WT32-SC01 Plus',desc:'3.5" 480×320 with physical home button, FT5x06 capacitive touch, ESP32-S3. Solid mid-range HMI with good enclosure ecosystem.',tags:[{t:'ESP32-S3',c:'chip'},{t:'480×320',c:'res'},{t:'Capacitive',c:'feat'}],define:'WY_BOARD_WT32_SC01_PLUS',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005003985293665.html'}]},
+  {cat:'board',icon:'🖥',name:'ESP32-3248S035',desc:'3.5" 480×320 resistive touch HMI board. Slightly larger than CYD, same ESP32 chip family.',tags:[{t:'ESP32',c:'chip'},{t:'480×320',c:'res'},{t:'Touch',c:'feat'}],define:'WY_BOARD_ESP32_3248S035',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005004632953455.html'}]},
+  {cat:'board',icon:'🖥',name:'M5Stack Core',desc:'2" 320×240 ILI9342C, 3 physical buttons, battery, Grove connectors. Stackable modular system with huge accessory ecosystem.',tags:[{t:'ESP32',c:'chip'},{t:'320×240',c:'res'},{t:'Grove',c:'bus'}],define:'WY_BOARD_M5STACK_CORE',buy:[{l:'M5Stack',u:'https://shop.m5stack.com/products/esp32-basic-core-iot-development-kit'}]},
+  {cat:'board',icon:'🖥',name:'LilyGo T-Display S3',desc:'1.9" 320×170 ST7789, ESP32-S3 with native USB, two programmable buttons. Great compact dashboard board.',tags:[{t:'ESP32-S3',c:'chip'},{t:'320×170',c:'res'},{t:'Native USB',c:'feat'}],define:'WY_BOARD_LILYGO_TDISPLAY_S3',buy:[{l:'LilyGo',u:'https://www.lilygo.cc/products/t-display-s3'}]},
+  {cat:'board',icon:'🖥',name:'LilyGo T-Display S3 AMOLED',desc:'1.91" 170×320 RM67162 AMOLED QSPI, FT3267 touch, ESP32-S3. Vivid display, tiny footprint.',tags:[{t:'ESP32-S3',c:'chip'},{t:'AMOLED',c:'feat'},{t:'Touch',c:'feat'}],define:'WY_BOARD_LILYGO_TDISPLAY_S3_AMOLED',buy:[{l:'LilyGo',u:'https://www.lilygo.cc/products/t-display-s3-amoled'}]},
+  {cat:'board',icon:'🖥',name:'LilyGo T-Display S3 Long',desc:'2.04" 170×320 bar display ST7796, ESP32-S3. Good for narrow status bar enclosures.',tags:[{t:'ESP32-S3',c:'chip'},{t:'170×320',c:'res'},{t:'Bar',c:'feat'}],define:'WY_BOARD_LILYGO_TDISPLAY_S3_LONG',buy:[{l:'LilyGo',u:'https://www.lilygo.cc/products/t-display-s3-long'}]},
+  {cat:'board',icon:'📡',name:'LilyGo T-Deck',desc:'2.8" 320×240, full QWERTY keyboard, SX1262 LoRa, trackball. The Meshtastic flagship. Built-in keyboard makes it unique for portable node work.',tags:[{t:'ESP32-S3',c:'chip'},{t:'LoRa',c:'feat'},{t:'Keyboard',c:'feat'},{t:'320×240',c:'res'}],define:'WY_BOARD_LILYGO_TDECK',buy:[{l:'LilyGo',u:'https://www.lilygo.cc/products/t-deck'}]},
+  {cat:'board',icon:'⌚',name:'T-Watch 2020 V3',desc:'Smartwatch: 1.54" 240×240 ST7789, FT6336U touch, BMA423 IMU, AXP2101 PMU, PCF8563 RTC, vibro motor, I2S speaker.',tags:[{t:'ESP32-S3',c:'chip'},{t:'240×240',c:'res'},{t:'IMU',c:'feat'},{t:'PMU',c:'feat'}],define:'WY_BOARD_TWATCH_2020_V3',buy:[{l:'LilyGo',u:'https://www.lilygo.cc/products/t-watch-2020-v3'}]},
+  {cat:'board',icon:'⌚',name:'LilyGo T-Impulse',desc:'1.69" 240×280 LoRa wristband form factor. SX1262 LoRa in a wearable package.',tags:[{t:'ESP32-S3',c:'chip'},{t:'LoRa',c:'feat'},{t:'240×280',c:'res'}],define:'WY_BOARD_LILYGO_TIMPULSE',buy:[{l:'LilyGo',u:'https://www.lilygo.cc/products/t-impulse'}]},
+  {cat:'board',icon:'📡',name:'LilyGo T-Beam',desc:'ESP32 + SX1276/SX1262 LoRa + GPS + 18650 holder + PMU. The canonical Meshtastic / LoRa node board.',tags:[{t:'ESP32',c:'chip'},{t:'LoRa',c:'feat'},{t:'GPS',c:'feat'},{t:'Battery',c:'feat'}],define:'WY_BOARD_LILYGO_TBEAM',buy:[{l:'LilyGo',u:'https://www.lilygo.cc/products/t-beam-v1-1'}]},
+  {cat:'board',icon:'📡',name:'T-Beam Meshtastic',desc:'T-Beam with SSD1306 OLED header defines tuned for Meshtastic firmware. Same hardware, adjusted pin aliases.',tags:[{t:'ESP32',c:'chip'},{t:'LoRa',c:'feat'},{t:'Meshtastic',c:'feat'}],define:'WY_BOARD_TTGO_TBEAM_MESHTASTIC',buy:[{l:'LilyGo',u:'https://www.lilygo.cc/products/t-beam-v1-1'}]},
+  {cat:'board',icon:'📡',name:'LilyGo T-A7670SA',desc:'ESP32-S3 + A7670SA LTE Cat-1 modem + GPS + AXP2101. Physical nano SIM. Hologram recommended carrier. Used in CKB-SMS-Bridge research.',tags:[{t:'ESP32-S3',c:'chip'},{t:'LTE Cat-1',c:'feat'},{t:'GPS',c:'feat'},{t:'SIM',c:'feat'}],define:'WY_BOARD_LILYGO_A7670SA',ckb:true,buy:[{l:'LilyGo',u:'https://www.lilygo.cc/products/t-sim-a7670sa'}]},
+  {cat:'board',icon:'📡',name:'LilyGo T-SIM7080G-S3',desc:'ESP32-S3 + SIM7080G NB-IoT/LTE-M + GNSS. Ultra-low-power cellular. Good for remote sensor deployments.',tags:[{t:'ESP32-S3',c:'chip'},{t:'NB-IoT',c:'feat'},{t:'GNSS',c:'feat'},{t:'SIM',c:'feat'}],define:'WY_BOARD_LILYGO_TSIM7080G_S3',buy:[{l:'LilyGo',u:'https://www.lilygo.cc/products/t-sim7080g-s3'}]},
+  {cat:'board',icon:'🖥',name:'LilyGo T-QT C6',desc:'Tiny ESP32-C6 RISC-V with 0.85" GC9107 128×128 display. WiFi 6 + BLE 5. Good for ultra-compact builds.',tags:[{t:'ESP32-C6',c:'chip'},{t:'RISC-V',c:'feat'},{t:'128×128',c:'res'},{t:'WiFi 6',c:'feat'}],define:'WY_BOARD_LILYGO_TQTC6',buy:[{l:'LilyGo',u:'https://www.lilygo.cc/products/t-qt-c6'}]},
+  {cat:'board',icon:'⌨️',name:'LilyGo T-Keyboard S3',desc:'QWERTY keyboard + 1.14" ST7789 135×240, ESP32-S3. Unusual form factor for text-input projects.',tags:[{t:'ESP32-S3',c:'chip'},{t:'Keyboard',c:'feat'},{t:'135×240',c:'res'}],define:'WY_BOARD_LILYGO_TKEYBOARD_S3',buy:[{l:'LilyGo',u:'https://www.lilygo.cc/products/t-keyboard-s3'}]},
+  {cat:'board',icon:'📡',name:'TTGO T-Go',desc:'Basic ESP32 WiFi dev board. No display. Headless projects or custom display wiring.',tags:[{t:'ESP32',c:'chip'},{t:'Dev board',c:'feat'}],define:'WY_BOARD_TTGO_TGO',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/w/wholesale-ttgo-t-go.html'}]},
+  {cat:'board',icon:'⭕',name:'Generic GC9A01 Round 1.28"',desc:'1.28" round 240×240 SPI display breakout. Popular for watch faces and gauges.',tags:[{t:'ESP32',c:'chip'},{t:'240×240',c:'res'},{t:'Round',c:'feat'},{t:'SPI',c:'bus'}],define:'WY_BOARD_GC9A01_GENERIC',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005002545641904.html'}]},
+  {cat:'board',icon:'👀',name:'Double EYE Dual GC9A01',desc:'Two 0.71" 128×128 round GC9A01 displays side by side. Built for WyEyes animated robot eyes driver.',tags:[{t:'ESP32',c:'chip'},{t:'Dual round',c:'feat'},{t:'128×128',c:'res'}],define:'WY_BOARD_DOUBLE_EYE',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005006100406860.html'}]},
+  {cat:'board',icon:'⭕',name:'XIAO ESP32-S3 Round Display',desc:'Seeed XIAO ESP32-S3 with 1.28" 240×240 round capacitive touch display add-on. Tiny all-in-one.',tags:[{t:'ESP32-S3',c:'chip'},{t:'240×240',c:'res'},{t:'Round',c:'feat'}],define:'WY_BOARD_XIAO_S3_ROUND',buy:[{l:'Seeed',u:'https://www.seeedstudio.com/Seeed-Studio-Round-Display-for-XIAO-p-5638.html'}]},
+  {cat:'board',icon:'📷',name:'AI-Thinker ESP32-CAM',desc:'ESP32 with OV2640 camera, SD card, onboard antenna. MJPEG stream server, snapshot, motion detection via WyCamera.',tags:[{t:'ESP32',c:'chip'},{t:'Camera',c:'feat'},{t:'OV2640',c:'bus'}],define:'WY_BOARD_ESP32CAM',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001900699891.html'}]},
+  {cat:'board',icon:'📷',name:'ESP32-S3-EYE',desc:'Espressif dev board with OV2640 camera, LCD display, microphone, and S3 chip. Official Espressif AI camera kit.',tags:[{t:'ESP32-S3',c:'chip'},{t:'Camera',c:'feat'},{t:'Mic',c:'feat'}],define:'WY_BOARD_ESP32S3_EYE',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/w/wholesale-esp32-s3-eye.html'}]},
+  {cat:'board',icon:'🖥',name:'Generic ILI9341 SPI',desc:'Generic ILI9341 2.4"/2.8" SPI display breakout. No-name boards, custom wiring via PlatformIO flags.',tags:[{t:'ESP32',c:'chip'},{t:'240×320',c:'res'},{t:'SPI',c:'bus'}],define:'WY_BOARD_ILI9341_GENERIC',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/w/wholesale-ili9341-240x320.html'}]},
+  {cat:'board',icon:'🖥',name:'Adafruit ILI9341 2.8"',desc:'Adafruit 2.8" SPI TFT with touchscreen. Well documented, quality hardware. Good for prototyping.',tags:[{t:'ESP32',c:'chip'},{t:'240×320',c:'res'},{t:'SPI',c:'bus'}],define:'WY_BOARD_ILI9341_ADAFRUIT',buy:[{l:'Adafruit',u:'https://www.adafruit.com/product/1651'}]},
+  {cat:'board',icon:'🖥',name:'Generic ST7789 SPI',desc:'Generic ST7789 SPI display breakout. Common in 1.14", 1.3", 1.54", 2.0" variants.',tags:[{t:'ESP32',c:'chip'},{t:'SPI',c:'bus'},{t:'Various sizes',c:'feat'}],define:'WY_BOARD_ST7789_GENERIC',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/w/wholesale-st7789-display.html'}]},
+
+  // ── SENSORS — Environmental ──────────────────────────────────────
+  {cat:'sensor',icon:'🌡',name:'BME280',desc:'Temp, humidity, and barometric pressure. The best all-in-one environmental sensor. I2C or SPI.',tags:[{t:'I2C',c:'bus'},{t:'SPI',c:'bus'},{t:'Temp/Hum/Press',c:'feat'}],define:'WyBME280',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001621905415.html'}]},
+  {cat:'sensor',icon:'🌡',name:'AHT20',desc:'Accurate temp and humidity, I2C. Drop-in replacement for DHT22 without the timing headaches.',tags:[{t:'I2C',c:'bus'},{t:'Temp/Humidity',c:'feat'}],define:'WyAHT20',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001994356696.html'}]},
+  {cat:'sensor',icon:'🌡',name:'DHT22',desc:'Single-wire temp and humidity. Ubiquitous but timing-sensitive. WyDHT22 uses non-blocking reads.',tags:[{t:'1-Wire',c:'bus'},{t:'Temp/Humidity',c:'feat'}],define:'WyDHT22',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001601471588.html'}]},
+  {cat:'sensor',icon:'🌡',name:'SHT31',desc:'Precision temp and humidity I2C. Better accuracy than DHT22/AHT20. Good for weather stations.',tags:[{t:'I2C',c:'bus'},{t:'Temp/Humidity',c:'feat'},{t:'±0.3°C',c:'feat'}],define:'WySHT31',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001572732265.html'}]},
+  {cat:'sensor',icon:'🌡',name:'DS18B20',desc:'1-Wire waterproof temperature probe. Multi-sensor bus support — address multiple probes on one pin. Non-blocking conversion.',tags:[{t:'1-Wire',c:'bus'},{t:'Temperature',c:'feat'},{t:'Waterproof',c:'feat'}],define:'WyDS18B20',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005002934168547.html'}]},
+  {cat:'sensor',icon:'🌡',name:'MAX6675',desc:'Thermocouple interface for K-type probes. SPI. Measures 0–1023°C. Good for high-temp industrial use.',tags:[{t:'SPI',c:'bus'},{t:'Thermocouple',c:'feat'},{t:'0-1023°C',c:'feat'}],define:'WyMAX6675',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001636349953.html'}]},
+  {cat:'sensor',icon:'🌡',name:'MLX90640',desc:'32×24 thermal camera array, I2C. Outputs a full heat map. 55° or 110° FOV. Slow (4Hz) but impressive data.',tags:[{t:'I2C',c:'bus'},{t:'Thermal camera',c:'feat'},{t:'32×24',c:'res'}],define:'WyMLX90640',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001713579444.html'}]},
+
+  // ── SENSORS — Light ──────────────────────────────────────────────
+  {cat:'sensor',icon:'💡',name:'BH1750',desc:'Ambient light sensor, I2C. 1–65535 lux range. Simple, reliable, no calibration needed.',tags:[{t:'I2C',c:'bus'},{t:'Light/lux',c:'feat'}],define:'WyBH1750',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001636357167.html'}]},
+  {cat:'sensor',icon:'💡',name:'VEML7700',desc:'High-resolution ambient light sensor, I2C. Better low-light performance than BH1750.',tags:[{t:'I2C',c:'bus'},{t:'Ambient light',c:'feat'}],define:'WyVEML7700',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001713523847.html'}]},
+  {cat:'sensor',icon:'☀️',name:'GUVA-S12SD',desc:'UV index sensor, analog output. Maps raw ADC to UV index bands (Low/Moderate/High/Very High/Extreme).',tags:[{t:'ADC',c:'bus'},{t:'UV index',c:'feat'}],define:'WyGUVAS12SD',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/4000016995006.html'}]},
+
+  // ── SENSORS — Air quality / Gas ──────────────────────────────────
+  {cat:'sensor',icon:'💨',name:'ENS160',desc:'Digital multi-gas sensor — eCO2, TVOC, AQI. I2C. More accurate than SGP30, has onboard AI.',tags:[{t:'I2C',c:'bus'},{t:'CO2/TVOC',c:'feat'},{t:'AQI',c:'feat'}],define:'WyENS160',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005004782585074.html'}]},
+  {cat:'sensor',icon:'💨',name:'SGP30',desc:'TVOC and eCO2 gas sensor, I2C. Requires 12h burn-in for accurate baseline. Good for indoor air quality.',tags:[{t:'I2C',c:'bus'},{t:'TVOC/eCO2',c:'feat'}],define:'WySGP30',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001713529448.html'}]},
+  {cat:'sensor',icon:'💨',name:'MICS-5524',desc:'MEMS reducing gas sensor (CO, ethanol, H2, NH3). Faster response and lower power than MQ series. Requires R0 calibration.',tags:[{t:'ADC',c:'bus'},{t:'Multi-gas',c:'feat'},{t:'MEMS',c:'feat'}],define:'WyMICS5524',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/32821098681.html'}]},
+  {cat:'sensor',icon:'💨',name:'MQ Gas Sensors',desc:'MQ-2/3/4/5/6/7/8/9/135/136/137/138 series. Analog gas sensors for various gases. Require 24h+ warm-up for stable readings.',tags:[{t:'ADC',c:'bus'},{t:'Various gases',c:'feat'}],define:'WyMQ',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005002308786537.html'}]},
+
+  // ── SENSORS — Motion / Presence ──────────────────────────────────
+  {cat:'sensor',icon:'🏃',name:'MPU6050',desc:'6-axis IMU — 3-axis accel + 3-axis gyro, I2C. The most popular motion sensor for ESP32 projects.',tags:[{t:'I2C',c:'bus'},{t:'Accel/Gyro',c:'feat'},{t:'6-axis',c:'feat'}],define:'WyMPU6050',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001636234572.html'}]},
+  {cat:'sensor',icon:'🏃',name:'L3G4200D',desc:'3-axis gyroscope, I2C or SPI. High-speed angular rate sensing for orientation tracking.',tags:[{t:'I2C',c:'bus'},{t:'SPI',c:'bus'},{t:'Gyro 3-axis',c:'feat'}],define:'WyL3G4200D',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001636255234.html'}]},
+  {cat:'sensor',icon:'👋',name:'PAJ7620',desc:'Gesture sensor, I2C. Recognises 9 gestures (up/down/left/right/forward/backward/clockwise/anti-clockwise/wave).',tags:[{t:'I2C',c:'bus'},{t:'Gesture',c:'feat'}],define:'WyPAJ7620',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/32875763966.html'}]},
+  {cat:'sensor',icon:'🚶',name:'HC-SR501 PIR',desc:'Passive infrared motion sensor. GPIO trigger. Adjustable sensitivity and hold time via onboard trim pots.',tags:[{t:'GPIO',c:'bus'},{t:'Motion',c:'feat'},{t:'PIR',c:'feat'}],define:'WyPIR',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001636428163.html'}]},
+  {cat:'sensor',icon:'📡',name:'HLK-LD2410',desc:'24GHz mmWave presence sensor, UART. Detects stationary presence (not just motion). Smart home staple.',tags:[{t:'UART',c:'bus'},{t:'mmWave',c:'feat'},{t:'Presence',c:'feat'}],define:'WyLD2410',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005004351580343.html'}]},
+
+  // ── SENSORS — Distance ───────────────────────────────────────────
+  {cat:'sensor',icon:'📏',name:'HC-SR04',desc:'Ultrasonic distance sensor. GPIO trigger/echo. WyHCSR04 uses median filter over 5 readings for stability.',tags:[{t:'GPIO',c:'bus'},{t:'Distance',c:'feat'},{t:'2cm-4m',c:'feat'}],define:'WyHCSR04',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001636915762.html'}]},
+  {cat:'sensor',icon:'📏',name:'VL53L0X',desc:'Time-of-Flight laser distance sensor, I2C. Up to 2m, works in low light. Much better than ultrasonic for short range.',tags:[{t:'I2C',c:'bus'},{t:'ToF laser',c:'feat'},{t:'0-2m',c:'feat'}],define:'WyVL53L0X',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005002898078488.html'}]},
+  {cat:'sensor',icon:'📏',name:'GP2Y0A02',desc:'Sharp IR analog distance sensor. 20–150cm range. Good for obstacle detection where ToF is overkill.',tags:[{t:'ADC',c:'bus'},{t:'IR distance',c:'feat'},{t:'20-150cm',c:'feat'}],define:'WyGP2Y0A02',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/32318916445.html'}]},
+  {cat:'sensor',icon:'💧',name:'XKC-Y25',desc:'Non-contact liquid level sensor. Capacitive through plastic walls — no hole in your tank required.',tags:[{t:'GPIO',c:'bus'},{t:'Liquid level',c:'feat'},{t:'Non-contact',c:'feat'}],define:'WyXKCY25',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005002088574410.html'}]},
+
+  // ── SENSORS — Electrical / Weight ────────────────────────────────
+  {cat:'sensor',icon:'⚡',name:'INA219',desc:'I2C voltage/current/power monitor. 26V, 3.2A max. Energy accumulation over time. Perfect for battery monitoring.',tags:[{t:'I2C',c:'bus'},{t:'Voltage/Current',c:'feat'},{t:'Power',c:'feat'}],define:'WyINA219',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001636482456.html'}]},
+  {cat:'sensor',icon:'⚖️',name:'HX711',desc:'24-bit ADC for load cells and weight scales. GPIO clock/data. WyHX711 handles tare, calibration, and averaging.',tags:[{t:'GPIO',c:'bus'},{t:'Weight/Load',c:'feat'},{t:'24-bit',c:'feat'}],define:'WyHX711',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001636363699.html'}]},
+  {cat:'sensor',icon:'🔊',name:'X9C104 Digital Pot',desc:'100-step digital potentiometer, SPI-like GPIO control. NV memory retains position across power cycles.',tags:[{t:'GPIO',c:'bus'},{t:'Potentiometer',c:'feat'},{t:'NV memory',c:'feat'}],define:'WyX9C',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/32852220987.html'}]},
+
+  // ── SENSORS — Water / Weather ────────────────────────────────────
+  {cat:'sensor',icon:'🌱',name:'Soil Moisture (YL-69)',desc:'Resistive soil moisture sensor. ADC reading maps to dry/wet percentage. WySoilMoisture includes calibration.',tags:[{t:'ADC',c:'bus'},{t:'Soil moisture',c:'feat'}],define:'WySoilMoisture',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001636406773.html'}]},
+  {cat:'sensor',icon:'💧',name:'Turbidity Sensor',desc:'Optical turbidity sensor for water clarity measurement. ADC → NTU output. For water quality monitoring.',tags:[{t:'ADC',c:'bus'},{t:'Turbidity NTU',c:'feat'}],define:'WyTurbidity',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/32953276083.html'}]},
+  {cat:'sensor',icon:'🧪',name:'pH Sensor',desc:'Analog pH probe interface. WyPH includes Nernst equation temp compensation and 2-point calibration.',tags:[{t:'ADC',c:'bus'},{t:'pH 0-14',c:'feat'},{t:'Temp comp',c:'feat'}],define:'WyPH',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/32957428437.html'}]},
+  {cat:'sensor',icon:'💨',name:'Wind Speed/Direction',desc:'Anemometer + wind vane. GPIO pulse counting for speed, ADC for direction. WyWind outputs km/h and compass bearing.',tags:[{t:'GPIO',c:'bus'},{t:'ADC',c:'bus'},{t:'Weather',c:'feat'}],define:'WyWind',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005003563090218.html'}]},
+  {cat:'sensor',icon:'🌧',name:'Rain Gauge',desc:'Tipping bucket rain gauge. GPIO interrupt on each tip. WyRainGauge accumulates and converts to mm/hour.',tags:[{t:'GPIO',c:'bus'},{t:'Rainfall mm',c:'feat'}],define:'WyRainGauge',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005003563090218.html'}]},
+
+  // ── SENSORS — Audio / Scanner ────────────────────────────────────
+  {cat:'sensor',icon:'🔊',name:'DFPlayer Mini',desc:'Standalone MP3 player over UART. Full 10-byte protocol, /ADVERT/ interrupt-playback, BUSY pin fast path, clone chip support.',tags:[{t:'UART',c:'bus'},{t:'MP3 audio',c:'feat'},{t:'MicroSD',c:'feat'}],define:'WyDFPlayer',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001636320439.html'}]},
+  {cat:'sensor',icon:'🎙',name:'SFM Microphone',desc:'Analog/I2S microphone module. WySFM handles both ADC and I2S modes for sound level and audio capture.',tags:[{t:'ADC',c:'bus'},{t:'I2S',c:'bus'},{t:'Microphone',c:'feat'}],define:'WySFM',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001636279219.html'}]},
+  {cat:'sensor',icon:'📻',name:'Si4703 FM Radio',desc:'FM radio receiver, I2C. Full RDS support. WySi4703 handles tuning, seek, and RDS station name parsing.',tags:[{t:'I2C',c:'bus'},{t:'FM radio',c:'feat'},{t:'RDS',c:'feat'}],define:'WySi4703',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001636248568.html'}]},
+  {cat:'sensor',icon:'📦',name:'GM861S Barcode Scanner',desc:'UART barcode/QR scanner module. Auto-trigger or command mode. Used in BlackBox POS for QR code reading.',tags:[{t:'UART',c:'bus'},{t:'Barcode/QR',c:'feat'}],define:'WyGM861S',ckb:true,buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005003506398439.html'}]},
+  {cat:'sensor',icon:'🧾',name:'QR204 Thermal Printer',desc:'Thermal receipt printer, UART. WyHSQR204 handles full 10-byte protocol. Used in BlackBox POS for QR invoice printing.',tags:[{t:'UART',c:'bus'},{t:'Thermal print',c:'feat'}],define:'WyHSQR204',ckb:true,buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005004071875771.html'}]},
+  {cat:'sensor',icon:'📷',name:'OV2640 Camera (ESP32-CAM)',desc:'Camera module via WyCamera. MJPEG stream server, /capture snapshot, motion detection, flash LED. Works with AI-Thinker ESP32-CAM board.',tags:[{t:'Parallel',c:'bus'},{t:'MJPEG',c:'feat'},{t:'Motion detect',c:'feat'}],define:'WyCamera',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001900699891.html'}]},
+
+  // ── SENSORS — CAN bus ────────────────────────────────────────────
+  {cat:'sensor',icon:'🚗',name:'SN65HVD230 CAN Bus',desc:'CAN bus transceiver. WySN65HVD230 wraps the Arduino CAN library for vehicle/industrial bus projects.',tags:[{t:'CAN bus',c:'bus'},{t:'Industrial',c:'feat'}],define:'WySN65HVD230',buy:[{l:'AliExpress',u:'https://www.aliexpress.com/item/1005001636261218.html'}]},
+
+  // ── COMPONENTS ───────────────────────────────────────────────────
+  {cat:'component',icon:'⌨️',name:'WyKeyboard',desc:'Adaptive on-screen touch keyboard. Auto-scales key height from display size (240×240 → 800×480). QWERTY/Numeric/Symbol layouts, password mode, dark/light themes. Zero heap allocation.',tags:[{t:'Software only',c:'feat'},{t:'Touch UI',c:'feat'}],define:'WyKeyboard',buy:[]},
+  {cat:'component',icon:'👁',name:'WyEyes',desc:'Animated dual-display robot eyes for two GC9A01 round screens. 12 expressions, idle drift, auto-blink, per-expression iris colour.',tags:[{t:'Software only',c:'feat'},{t:'Animation',c:'feat'},{t:'GC9A01',c:'bus'}],define:'WyEyes',buy:[]},
+];
+
+function tagClass(c){return 'tag tag-'+c;}
+function renderCard(item){
+  const ckbBadge = item.ckb ? '<span style="display:inline-flex;align-items:center;gap:.25rem;padding:.12rem .45rem;border-radius:4px;font-size:.68rem;font-weight:700;background:rgba(0,200,255,.08);color:#00c8ff;border:1px solid rgba(0,200,255,.2)">⛓ CKB</span>' : '';
+  const buyBtns = item.buy.length
+    ? item.buy.map((b,i)=>`<a class="buy-btn${i>0?' alt':''}" href="${b.u}" target="_blank" rel="noopener">🛒 ${b.l}</a>`).join('')
+    : '<span style="font-size:.75rem;color:var(--muted);font-style:italic">Software only</span>';
+  return `<div class="hw-card${item.ckb?' ckb-card':''}" data-cat="${item.cat}" data-name="${item.name.toLowerCase()} ${item.define.toLowerCase()} ${item.desc.toLowerCase()}">
+  <div class="card-top"><span class="card-icon">${item.icon}</span><span class="card-name">${item.name}</span></div>
+  <div class="card-desc">${item.desc}</div>
+  <div class="card-tags">${item.tags.map(t=>`<span class="${tagClass(t.c)}">${t.t}</span>`).join('')}</div>
+  <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap">
+    <span class="card-define">${item.define}</span>${ckbBadge}
+  </div>
+  <div class="card-footer">${buyBtns}</div>
+</div>`;
+}
+
+function render(filter,query){
+  const grid = document.getElementById('grid');
+  const q = query.toLowerCase().trim();
+  let count = 0;
+  grid.innerHTML = ITEMS.map(item=>{
+    const catMatch = filter==='all' || item.cat===filter;
+    const textMatch = !q || item['data-name'] || item.name.toLowerCase().includes(q) || item.define.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q);
+    if(catMatch && textMatch) count++;
+    return renderCard(item);
+  }).join('');
+  // Apply hidden class
+  Array.from(grid.children).forEach((card,i)=>{
+    const item = ITEMS[i];
+    const catMatch = filter==='all' || item.cat===filter;
+    const textMatch = !q || item.name.toLowerCase().includes(q) || item.define.toLowerCase().includes(q) || item.desc.toLowerCase().includes(q);
+    if(!catMatch || !textMatch) card.classList.add('hidden');
+  });
+  document.getElementById('resultCount').textContent = count+' items';
+}
+
+let currentFilter='all', currentQuery='';
+document.querySelectorAll('.filter-btn').forEach(btn=>{
+  btn.addEventListener('click',()=>{
+    document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    currentFilter=btn.dataset.filter;
+    render(currentFilter,currentQuery);
+  });
+});
+document.getElementById('search').addEventListener('input',e=>{
+  currentQuery=e.target.value;
+  render(currentFilter,currentQuery);
+});
+render('all','');
+</script>
+<script>
+(function(){
+  var btn=document.getElementById('navToggle');
+  var nav=document.getElementById('mainNav');
+  if(btn&&nav)btn.addEventListener('click',function(){nav.classList.toggle('open');});
+  document.addEventListener('click',function(e){if(nav&&btn&&!nav.contains(e.target)&&e.target!==btn)nav.classList.remove('open');});
+})();
+</script>
+</body>
+</html>
