@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SBC Images — Wyltek Industries</title>
+<meta name="description" content="Custom Armbian and Linux images for Orange Pi, Raspberry Pi, and other SBCs. Pre-configured for CKB node operation, mining, and embedded blockchain use.">
+<meta property="og:title" content="SBC Images — Wyltek Industries">
+<meta property="og:description" content="Ready-to-flash images for single-board computers. Pre-configured for CKB nodes, Nervos tools, and embedded blockchain infrastructure.">
+<style>
+  :root {
+    --bg:#07090f;--surface:#0f1117;--surface2:#141820;
+    --border:#1e2430;--text:#e2e8f0;--muted:#64748b;
+    --accent:#00c8ff;--accent2:#7c3aed;--green:#10b981;
+    --yellow:#f59e0b;--red:#ef4444;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:'Consolas','Monaco',monospace;font-size:.88em;background:var(--surface2);padding:.1rem .4rem;border-radius:4px;border:1px solid var(--border)}
+  pre{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;overflow-x:auto;font-family:'Consolas','Monaco',monospace;font-size:.85rem;line-height:1.6}
+  pre code{background:none;border:none;padding:0}
+
+  header{border-bottom:1px solid var(--border);background:rgba(7,9,15,.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100}
+  .header-inner{max-width:1200px;margin:0 auto;padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1rem;color:var(--text);text-decoration:none}
+  .logo-icon{width:28px;height:28px;background:linear-gradient(135deg,#00c8ff,#7c3aed);border-radius:7px;display:flex;align-items:center;justify-content:center;font-size:14px}
+  nav#mainNav{display:flex;gap:1.5rem}
+  nav#mainNav a{color:var(--muted);font-size:.9rem;transition:color .2s}
+  nav#mainNav a:hover,nav#mainNav a.active{color:var(--text)}
+  .nav-toggle{display:none;background:none;border:none;cursor:pointer;font-size:1.4rem;color:var(--text);padding:.2rem .4rem}
+  @media(max-width:700px){
+    nav#mainNav{display:none;flex-direction:column;gap:0;position:absolute;top:100%;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:.5rem 0;z-index:999}
+    nav#mainNav.open{display:flex}
+    nav#mainNav a{padding:.7rem 1.5rem;font-size:1rem;border-bottom:1px solid var(--border)}
+    nav#mainNav a:last-child{border-bottom:none}
+    .nav-toggle{display:block}
+    .header-inner{position:relative}
+  }
+
+  .page-hero{max-width:900px;margin:0 auto;padding:3rem 1.5rem 2rem}
+  .eyebrow{font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem}
+  .page-hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.15;margin-bottom:.8rem}
+  .page-hero p{color:var(--muted);font-size:1.05rem;max-width:640px}
+
+  .main{max-width:900px;margin:0 auto;padding:0 1.5rem 5rem}
+
+  /* ── Coming soon banner ── */
+  .soon-banner{background:linear-gradient(135deg,rgba(0,200,255,.06),rgba(124,58,237,.06));border:1px solid rgba(0,200,255,.2);border-radius:12px;padding:2rem;margin-bottom:2.5rem;text-align:center}
+  .soon-banner h2{font-size:1.4rem;margin-bottom:.5rem}
+  .soon-banner p{color:var(--muted);font-size:.95rem;max-width:520px;margin:0 auto .8rem}
+  .notify-form{display:flex;gap:.6rem;max-width:400px;margin:.5rem auto 0;flex-wrap:wrap;justify-content:center}
+  .notify-input{flex:1;min-width:200px;padding:.45rem .9rem;border-radius:8px;border:1px solid var(--border);background:var(--surface);color:var(--text);font-size:.9rem;outline:none}
+  .notify-input:focus{border-color:var(--accent)}
+  .notify-btn{padding:.45rem 1.2rem;border-radius:8px;background:var(--accent);color:#000;font-weight:700;font-size:.9rem;border:none;cursor:pointer}
+
+  /* ── Planned images grid ── */
+  .section-title{font-size:1.15rem;font-weight:700;margin:2.5rem 0 1rem;padding-bottom:.5rem;border-bottom:1px solid var(--border)}
+  .image-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin-bottom:2.5rem}
+  .image-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.3rem;display:flex;flex-direction:column;gap:.6rem;opacity:.6}
+  .image-card.available{opacity:1;border-color:rgba(16,185,129,.3);background:linear-gradient(135deg,rgba(16,185,129,.04),transparent)}
+  .image-card.building{opacity:.85;border-color:rgba(245,158,11,.25)}
+  .img-header{display:flex;align-items:center;gap:.7rem}
+  .img-icon{font-size:1.6rem}
+  .img-name{font-weight:700;font-size:.95rem}
+  .img-status{margin-left:auto;font-size:.72rem;font-weight:700;padding:.2rem .55rem;border-radius:99px}
+  .status-available{background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+  .status-building{background:rgba(245,158,11,.12);color:var(--yellow);border:1px solid rgba(245,158,11,.3)}
+  .status-planned{background:rgba(100,116,139,.12);color:var(--muted);border:1px solid rgba(100,116,139,.2)}
+  .img-desc{font-size:.83rem;color:var(--muted);line-height:1.5}
+  .img-tags{display:flex;flex-wrap:wrap;gap:.3rem}
+  .img-tag{padding:.15rem .5rem;border-radius:4px;font-size:.7rem;font-weight:600;background:rgba(0,200,255,.08);color:var(--accent);border:1px solid rgba(0,200,255,.2)}
+  .img-actions{display:flex;gap:.5rem;margin-top:auto;padding-top:.3rem;flex-wrap:wrap}
+  .dl-btn{display:inline-flex;align-items:center;gap:.35rem;padding:.4rem .9rem;border-radius:6px;background:var(--green);color:#000;font-size:.82rem;font-weight:700;border:none;cursor:pointer;text-decoration:none}
+  .dl-btn:hover{background:#059669;text-decoration:none}
+  .dl-btn.disabled{background:var(--surface2);color:var(--muted);cursor:not-allowed;pointer-events:none;border:1px solid var(--border)}
+  .checksum-line{font-family:'Consolas','Monaco',monospace;font-size:.72rem;color:var(--muted);background:var(--surface2);padding:.2rem .5rem;border-radius:4px;word-break:break-all}
+
+  /* ── Flashing guide ── */
+  .flash-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1.5rem}
+  .flash-tab{padding:.55rem 1.2rem;font-size:.9rem;font-weight:600;color:var(--muted);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s;background:none;border-top:none;border-left:none;border-right:none}
+  .flash-tab.active{color:var(--accent);border-bottom-color:var(--accent)}
+  .flash-panel{display:none}
+  .flash-panel.active{display:block}
+  .step{display:flex;gap:1rem;margin-bottom:1.2rem;align-items:flex-start}
+  .step-num{width:28px;height:28px;border-radius:50%;background:rgba(0,200,255,.15);border:1px solid rgba(0,200,255,.3);color:var(--accent);font-weight:700;font-size:.85rem;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:.1rem}
+  .step-body{flex:1}
+  .step-body h4{font-size:.9rem;font-weight:700;margin-bottom:.3rem}
+  .step-body p{font-size:.85rem;color:var(--muted);line-height:1.5}
+  .step-body a{color:var(--accent)}
+  .tip-box{background:rgba(0,200,255,.05);border:1px solid rgba(0,200,255,.15);border-radius:8px;padding:.9rem 1.1rem;margin:1rem 0;font-size:.85rem;color:var(--muted)}
+  .tip-box strong{color:var(--text)}
+
+  footer{border-top:1px solid var(--border);padding:2.5rem 1.5rem;text-align:center;color:var(--muted);font-size:.85rem}
+  .footer-inner{max-width:600px;margin:0 auto}
+  footer p{margin-bottom:.4rem}
+  footer a{color:var(--muted)}
+  footer a:hover{color:var(--accent)}
+  .footer-nervos{margin-top:.8rem;font-size:.78rem;opacity:.7}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html"><div class="logo-icon">⚙️</div>Wyltek Industries</a>
+    <nav id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="blog.html">Devlog</a>
+      <a href="blackbox.html">BlackBox</a>
+      <a href="ckb-sync.html">CKB Sync</a>
+      <a href="flasher.html">Flasher</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="images.html" class="active">Images</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="eyebrow">Custom SBC Images</div>
+  <h1>Ready-to-flash<br>board images</h1>
+  <p>Pre-configured Armbian and Linux images for Orange Pi, Raspberry Pi, and compatible boards. CKB node tooling, Nervos infrastructure, and embedded builder stack included out of the box.</p>
+</div>
+
+<div class="main">
+
+  <!-- Coming soon notice -->
+  <div class="soon-banner">
+    <div style="font-size:2.5rem;margin-bottom:.7rem">🔧</div>
+    <h2>First images coming soon</h2>
+    <p>Getting the build formula right before publishing. First target: Orange Pi 3B with Waveshare 5" DSI display support — the board running our CKB node.</p>
+    <p style="margin-top:.5rem;font-size:.82rem">Images are GPG-signed and SHA256 verified. Same pipeline as the CKB chain snapshots.</p>
+  </div>
+
+  <!-- Planned images -->
+  <div class="section-title">📋 Image roadmap</div>
+  <div class="image-grid">
+
+    <div class="image-card building">
+      <div class="img-header">
+        <span class="img-icon">🍊</span>
+        <span class="img-name">Orange Pi 3B — CKB Node</span>
+        <span class="img-status status-building">Building</span>
+      </div>
+      <div class="img-desc">Armbian Bookworm (kernel 6.1x) for OPi 3B. Pre-installed: CKB node v0.204+, dashboard, stratum proxy, auto-start services. Optional: Waveshare 5" DSI display.</div>
+      <div class="img-tags">
+        <span class="img-tag">RK3566</span>
+        <span class="img-tag">aarch64</span>
+        <span class="img-tag">CKB node</span>
+        <span class="img-tag">Armbian</span>
+      </div>
+      <div class="img-actions">
+        <span class="dl-btn disabled">⬇ Download — coming soon</span>
+      </div>
+    </div>
+
+    <div class="image-card">
+      <div class="img-header">
+        <span class="img-icon">🍊</span>
+        <span class="img-name">Orange Pi 5 / 5+ — CKB Node</span>
+        <span class="img-status status-planned">Planned</span>
+      </div>
+      <div class="img-desc">Same CKB node stack on RK3588S. Faster sync, more RAM headroom. Target: full node + Fiber network node pre-configured.</div>
+      <div class="img-tags">
+        <span class="img-tag">RK3588S</span>
+        <span class="img-tag">aarch64</span>
+        <span class="img-tag">CKB node</span>
+        <span class="img-tag">Fiber</span>
+      </div>
+      <div class="img-actions">
+        <span class="dl-btn disabled">⬇ Download — planned</span>
+      </div>
+    </div>
+
+    <div class="image-card">
+      <div class="img-header">
+        <span class="img-icon">🥧</span>
+        <span class="img-name">Raspberry Pi 4/5 — CKB Node</span>
+        <span class="img-status status-planned">Planned</span>
+      </div>
+      <div class="img-desc">Raspberry Pi OS Lite (64-bit) base with CKB node, dashboard, and stratum proxy. The most accessible entry point for new node operators.</div>
+      <div class="img-tags">
+        <span class="img-tag">BCM2711/BCM2712</span>
+        <span class="img-tag">aarch64</span>
+        <span class="img-tag">CKB node</span>
+        <span class="img-tag">RPi OS</span>
+      </div>
+      <div class="img-actions">
+        <span class="dl-btn disabled">⬇ Download — planned</span>
+      </div>
+    </div>
+
+    <div class="image-card">
+      <div class="img-header">
+        <span class="img-icon">🔶</span>
+        <span class="img-name">Orange Pi 3B — Kiosk Display</span>
+        <span class="img-status status-planned">Planned</span>
+      </div>
+      <div class="img-desc">Armbian with Waveshare 5" DSI display driver baked in. Boots straight to a CKB stats kiosk or can be used as a general-purpose touchscreen terminal.</div>
+      <div class="img-tags">
+        <span class="img-tag">RK3566</span>
+        <span class="img-tag">DSI display</span>
+        <span class="img-tag">Kiosk</span>
+      </div>
+      <div class="img-actions">
+        <span class="dl-btn disabled">⬇ Download — planned</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Flashing guide -->
+  <div class="section-title">⚡ How to flash</div>
+
+  <div class="flash-tabs">
+    <button class="flash-tab active" onclick="switchTab('etcher')">Balena Etcher</button>
+    <button class="flash-tab" onclick="switchTab('linux')">Linux / macOS</button>
+    <button class="flash-tab" onclick="switchTab('verify')">Verify image</button>
+  </div>
+
+  <!-- Etcher tab -->
+  <div class="flash-panel active" id="tab-etcher">
+    <div class="tip-box"><strong>Recommended for most users.</strong> Balena Etcher handles everything — decompression, writing, verification. Works on Windows, macOS, and Linux.</div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Download Etcher</h4>
+        <p>Get it free from <a href="https://etcher.balena.io" target="_blank">etcher.balena.io</a>. Available for Windows (.exe), macOS (.dmg), and Linux (.AppImage).</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Download the image</h4>
+        <p>Grab the <code>.img.xz</code> file from above. You don't need to extract it — Etcher handles compressed images directly.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Flash</h4>
+        <p>Open Etcher → <strong>Flash from file</strong> → select your image → select your SD card → <strong>Flash!</strong>. Takes 3–8 minutes depending on card speed. Etcher verifies after writing automatically.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">4</div>
+      <div class="step-body">
+        <h4>First boot</h4>
+        <p>Insert card, power on. First boot takes 60–90 seconds while it expands the filesystem. SSH is enabled by default — <code>ssh root@&lt;ip&gt;</code> or check your router for the IP. Default password is in the release notes.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Linux/macOS tab -->
+  <div class="flash-panel" id="tab-linux">
+    <div class="tip-box"><strong>For Linux and macOS users.</strong> Faster than Etcher once you know your disk device. Be careful with the device path — double-check before running.</div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Find your SD card device</h4>
+        <pre><code># Linux
+lsblk
+# Look for your card — e.g. /dev/sdb or /dev/mmcblk0
+
+# macOS
+diskutil list
+# Look for your card — e.g. /dev/disk2</code></pre>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Flash with progress bar</h4>
+        <pre><code># Linux — install pv first: sudo apt install pv
+xz -dc wyltek-opi3b-ckbnode-*.img.xz | \
+  pv -s $(xz -l wyltek-opi3b-ckbnode-*.img.xz | tail -1 | awk '{print $5}') | \
+  sudo dd of=/dev/sdX bs=4M conv=fsync
+
+# macOS (no pv needed, use disk not rdisk for safety check)
+xz -d wyltek-opi3b-ckbnode-*.img.xz
+sudo dd if=wyltek-opi3b-ckbnode-*.img of=/dev/rdisk2 bs=4m</code></pre>
+        <p style="margin-top:.5rem">Replace <code>/dev/sdX</code> / <code>/dev/rdisk2</code> with your actual device. <strong>Wrong device = data loss.</strong></p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">3</div>
+      <div class="step-body">
+        <h4>Sync and eject</h4>
+        <pre><code>sync && sudo eject /dev/sdX</code></pre>
+      </div>
+    </div>
+  </div>
+
+  <!-- Verify tab -->
+  <div class="flash-panel" id="tab-verify">
+    <div class="tip-box"><strong>All images are SHA256 checksummed and GPG-signed.</strong> Verifying takes 30 seconds and confirms the image wasn't corrupted in transit.</div>
+
+    <div class="step">
+      <div class="step-num">1</div>
+      <div class="step-body">
+        <h4>Verify SHA256</h4>
+        <pre><code># Linux / macOS
+sha256sum -c wyltek-opi3b-ckbnode-*.img.xz.sha256
+
+# Windows (PowerShell)
+Get-FileHash wyltek-opi3b-ckbnode-*.img.xz -Algorithm SHA256</code></pre>
+        <p>Should print <code>OK</code>. If it fails, the download is corrupted — try again.</p>
+      </div>
+    </div>
+    <div class="step">
+      <div class="step-num">2</div>
+      <div class="step-body">
+        <h4>Verify GPG signature (optional, paranoid mode)</h4>
+        <pre><code># Import Wyltek signing key
+gpg --keyserver keys.openpgp.org --recv-keys CFF9573B87BB90B7
+
+# Verify
+gpg --verify wyltek-opi3b-ckbnode-*.img.xz.asc</code></pre>
+        <p>Should show <code>Good signature from "Wyltek Industries"</code>.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Storage note -->
+  <div class="section-title">☁️ Hosting</div>
+  <div class="tip-box">
+    <strong>Images hosted on Cloudflare R2.</strong> Same infrastructure as the CKB chain snapshots — free egress, global CDN, no bandwidth bill. Images are compressed with xz (~60% smaller than raw) and verified before publishing.
+    <br><br>
+    <strong>Need a board image not listed here?</strong> Open an issue on <a href="https://github.com/toastmanAu" target="_blank">GitHub</a> or reach out via the Nervos Nation community.
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <p><a href="index.html">← Projects</a> &nbsp;·&nbsp; <a href="hardware.html">Hardware Reference</a> &nbsp;·&nbsp; <a href="ckb-sync.html">CKB Sync</a></p>
+    <div class="footer-nervos">Built in the Nervos CKB ecosystem · <a href="https://nervos.org" target="_blank">nervos.org</a></div>
+  </div>
+</footer>
+
+<script>
+function switchTab(id) {
+  document.querySelectorAll('.flash-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.flash-panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('tab-' + id).classList.add('active');
+  event.target.classList.add('active');
+}
+(function(){
+  var btn=document.getElementById('navToggle');
+  var nav=document.getElementById('mainNav');
+  if(btn&&nav)btn.addEventListener('click',function(){nav.classList.toggle('open');});
+  document.addEventListener('click',function(e){if(nav&&btn&&!nav.contains(e.target)&&e.target!==btn)nav.classList.remove('open');});
+})();
+</script>
+</body>
+</html>
