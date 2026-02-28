@@ -258,7 +258,25 @@
     footer a { color: var(--muted); }
     footer a:hover { color: var(--accent); }
 
-    @media (max-width: 600px) { nav { display: none; } }
+    @media (max-width: 600px) { }
+  
+    /* ── Nav toggle (mobile) ── */
+    .nav-toggle {
+      display: none;
+      background: none; border: none; cursor: pointer;
+      font-size: 1.4rem; color: var(--text, #e2e8f0);
+      padding: 0.2rem 0.4rem; line-height: 1;
+    }
+    @media (max-width: 700px) {
+      nav#mainNav { display: none; flex-direction: column; gap: 0; position: absolute;
+        top: 100%; left: 0; right: 0; background: var(--surface, #0f1117);
+        border-bottom: 1px solid var(--border, #1e2430); padding: 0.5rem 0; z-index: 999; }
+      nav#mainNav.open { display: flex; }
+      nav#mainNav a { padding: 0.7rem 1.5rem; font-size: 1rem; border-bottom: 1px solid var(--border, #1e2430); }
+      nav#mainNav a:last-child { border-bottom: none; }
+      .nav-toggle { display: block; }
+      .header-inner { position: relative; }
+    }
   </style>
 </head>
 <body>
@@ -270,13 +288,15 @@
       <div class="logo-icon">⚙️</div>
       Wyltek Industries
     </a>
-    <nav>
-      <a href="index.html">Projects</a>
+        <nav id="mainNav">
+      <a href="index.html">Home</a>
       <a href="blog.html">Devlog</a>
+      <a href="blackbox.html" class="active">BlackBox</a>
+      <a href="ckb-sync.html">CKB Sync</a>
       <a href="flasher.html">Flasher</a>
       <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
     </nav>
-  </div>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button></div>
 </header>
 
 <!-- HERO -->
@@ -505,5 +525,18 @@
   <p style="font-size:0.78rem; margin-top:0.4rem; opacity:0.5">Wyltek Industries &mdash; wouldn't you like to know</p>
 </footer>
 
+  <script>
+    (function(){
+      var btn = document.getElementById('navToggle');
+      var nav = document.getElementById('mainNav');
+      if(btn && nav) btn.addEventListener('click', function(){
+        nav.classList.toggle('open');
+      });
+      // close on outside click
+      document.addEventListener('click', function(e){
+        if(nav && btn && !nav.contains(e.target) && e.target !== btn) nav.classList.remove('open');
+      });
+    })();
+  </script>
 </body>
 </html>
