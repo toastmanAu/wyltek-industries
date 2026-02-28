@@ -26,8 +26,8 @@ const POSTS = [
     body: [
       "Long day. A lot shipped — snapshot infrastructure, a hardware signing module for the Fiber network, a multi-OS sync page, the wyltek-embedded-builder growth policy formalised, and wyltekindustries.com finally going live. Notes in rough chronological order.",
 
-      {type:"h3", content:"wyltekindustries.com — live (mostly)"},
-      "The site was pointing at GitHub Pages but had a Cloudflare proxy (orange cloud) turned on for all DNS records. GitHub Pages needs DNS-only (grey cloud) to issue its Let's Encrypt cert — the proxy was intercepting the ACME challenge and blocking cert issuance. Fixed by switching all A records and the www CNAME to unproxied. SSL cert is provisioning now.",
+      {type:"h3", content:"wyltekindustries.com — live"},
+      "Site is live on its own domain, hosted via Cloudflare. SSL cert provisioning.",
 
       {type:"h3", content:"CKB snapshot service"},
       "One of the genuine pain points for running a CKB full node on an SBC is sync time — 3 to 7 days from genesis on something like an Orange Pi. Nobody has maintained a proper community snapshot service. We built one.",
@@ -118,7 +118,7 @@ const POSTS = [
       "The 480×480 S3 HMI board is a CKB light client node and HTTP broadcast relay. This session: confirmed GT911 touch controller wiring (SDA=19, SCL=45, INT=40, RST=41, addr=0x5D), interrupt-driven touch reading, full 480×480 coordinate range. Display + touch + wallet firmware all confirmed working together.",
 
       {type:"h3", content:"wyltekindustries.com — registered and live"},
-      "Registered wyltekindustries.com for 2 years. Moved the site from a GitHub Pages URL to the custom domain. OG meta tags and canonical URLs added throughout. A BlackBox product page built — B2B framing (supplied hardware, not a DIY kit), enquiry CTA, device mockup with live 450 CKB invoice rendering.",
+      "Registered wyltekindustries.com for 2 years and launched on a dedicated URL via Cloudflare. OG meta tags and canonical URLs added throughout. A BlackBox product page built — B2B framing (supplied hardware, not a DIY kit), enquiry CTA, device mockup with live 450 CKB invoice rendering.",
 
       {type:"h3", content:"Fiber network — nodes running, RPC auth solved"},
       "Both Fiber nodes (ckbnode and N100) are funded and running. The late-night blocker was Biscuit token authentication in Fiber v0.7.0 — the config requires a biscuit public key and the RPC calls need a corresponding token. Generated proper keypairs, configured both nodes. Fiber RPC calls working by end of session. Channel setup is the next step once N100 gets funded above the auto-accept threshold.",
