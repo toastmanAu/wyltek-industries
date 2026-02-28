@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ckb-light-esp — CKB Light Client for ESP32 | Wyltek Industries</title>
+  <meta name="description" content="First C/Arduino implementation of the CKB light client protocol. Watch any CKB address from ESP32 hardware. Modular transports: WiFi, LoRa, LoRaWAN, cellular." />
+  <meta property="og:title" content="ckb-light-esp — CKB Light Client for ESP32" />
+  <meta property="og:description" content="Watch any CKB address from ESP32 hardware. No cloud. No custodian. Modular: WiFi, LoRa, LoRaWAN. Eaglesong PoW, CBMT proofs, optional CKB-VM." />
+  <meta property="og:url" content="https://wyltekindustries.com/ckb-light-esp.html" />
+  <meta property="og:type" content="website" />
+  <link rel="canonical" href="https://wyltekindustries.com/ckb-light-esp.html" />
+  <style>
+    :root {
+      --bg:      #0a0c0f;
+      --surface: #111318;
+      --surf2:   #181c23;
+      --border:  #1e2430;
+      --accent:  #00c8ff;
+      --accent2: #7b5cfa;
+      --green:   #00e5a0;
+      --orange:  #ff8c42;
+      --text:    #e2e8f0;
+      --muted:   #64748b;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.65; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header { border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; background: rgba(10,12,15,0.93); backdrop-filter: blur(12px); z-index: 100; }
+    .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; color: var(--text); }
+    .logo:hover { text-decoration: none; }
+    nav { display: flex; gap: 1.5rem; }
+    nav a { color: var(--muted); font-size: 0.9rem; font-weight: 500; }
+    nav a:hover, nav a.active { color: var(--text); text-decoration: none; }
+    .nav-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
+
+    .hero { max-width: 1100px; margin: 0 auto; padding: 4rem 2rem 2.5rem; border-bottom: 1px solid var(--border); }
+    .hero-label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
+    .hero h1 { font-size: clamp(1.8rem, 4vw, 2.8rem); font-weight: 800; line-height: 1.15; color: var(--text); margin-bottom: 1.2rem; }
+    .hero h1 span { color: var(--accent); }
+    .hero-sub { font-size: 1.05rem; color: var(--muted); max-width: 680px; margin-bottom: 2rem; line-height: 1.7; }
+    .hero-badges { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 2rem; }
+    .badge { padding: 0.3rem 0.75rem; border-radius: 999px; font-size: 0.78rem; font-weight: 600; border: 1px solid; }
+    .badge-esp  { color: #60d0ff; border-color: #1a4a5e; background: #0a1e28; }
+    .badge-ckb  { color: #a78bfa; border-color: #3b2f6e; background: #1a1228; }
+    .badge-lora { color: #34d399; border-color: #1a4a38; background: #0a2018; }
+    .badge-mit  { color: var(--muted); border-color: var(--border); background: var(--surface); }
+    .hero-cta { display: flex; gap: 1rem; flex-wrap: wrap; }
+    .btn { padding: 0.65rem 1.4rem; border-radius: 8px; font-weight: 600; font-size: 0.9rem; text-decoration: none; transition: opacity 0.15s; }
+    .btn:hover { opacity: 0.85; text-decoration: none; }
+    .btn-primary { background: var(--accent); color: #000; }
+    .btn-outline { border: 1px solid var(--border); color: var(--text); background: var(--surface); }
+
+    .content { max-width: 1100px; margin: 0 auto; padding: 3rem 2rem; }
+    section { margin-bottom: 4rem; }
+    h2 { font-size: 1.35rem; font-weight: 700; color: var(--text); margin-bottom: 1.2rem; padding-bottom: 0.6rem; border-bottom: 1px solid var(--border); }
+    p { color: var(--muted); margin-bottom: 0.8rem; }
+    pre { background: var(--surf2); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.4rem; font-size: 0.82rem; overflow-x: auto; line-height: 1.6; font-family: 'Cascadia Code', 'Fira Code', monospace; color: #a0b4c8; margin-bottom: 1rem; }
+    code { color: var(--accent); font-family: 'Cascadia Code', 'Fira Code', monospace; font-size: 0.85em; }
+
+    .stack { background: var(--surf2); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; }
+    .stack-row { display: flex; align-items: center; gap: 1rem; padding: 0.65rem 0.8rem; border-radius: 8px; margin-bottom: 0.4rem; border: 1px solid var(--border); background: var(--surface); }
+    .stack-row.current { border-color: var(--accent); background: rgba(0,200,255,0.05); }
+    .stack-icon { font-size: 1.1rem; width: 24px; text-align: center; }
+    .stack-name { font-weight: 600; font-size: 0.9rem; color: var(--text); min-width: 220px; }
+    .stack-desc { font-size: 0.82rem; color: var(--muted); }
+    .stack-arrow { color: var(--muted); font-size: 0.8rem; padding: 0.1rem 0 0.1rem 1.5rem; }
+
+    .profiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+    .profile-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem; }
+    .profile-name { font-weight: 700; font-size: 0.95rem; color: var(--accent); margin-bottom: 0.3rem; }
+    .profile-target { font-size: 0.8rem; color: var(--muted); margin-bottom: 0.6rem; }
+    .profile-feat { font-size: 0.82rem; color: #94a3b8; }
+    .profile-feat li { list-style: none; padding: 0.15rem 0; }
+    .profile-feat li::before { content: "✓ "; color: var(--green); font-size: 0.75rem; }
+    .profile-feat li.no::before { content: "— "; color: var(--border); }
+
+    .phase { margin-bottom: 2rem; }
+    .phase-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.8rem; }
+    .phase-badge { padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
+    .phase-done    { background: rgba(0,229,160,0.12); color: var(--green); border: 1px solid rgba(0,229,160,0.25); }
+    .phase-active  { background: rgba(0,200,255,0.12); color: var(--accent); border: 1px solid rgba(0,200,255,0.25); }
+    .phase-planned { background: rgba(100,116,139,0.1); color: var(--muted); border: 1px solid var(--border); }
+    .phase-title { font-weight: 600; font-size: 1rem; color: var(--text); }
+    .task-list { list-style: none; }
+    .task-list li { padding: 0.35rem 0; font-size: 0.88rem; color: var(--muted); display: flex; align-items: baseline; gap: 0.6rem; }
+    .task-list li.done { color: #94a3b8; }
+    .task-list li.done .chk { color: var(--green); }
+    .task-list li.pending .chk { color: var(--border); }
+
+    .facts-table { width: 100%; border-collapse: collapse; font-size: 0.85rem; }
+    .facts-table th { text-align: left; padding: 0.6rem 1rem; border-bottom: 1px solid var(--border); color: var(--muted); font-weight: 600; font-size: 0.78rem; text-transform: uppercase; letter-spacing: 0.05em; }
+    .facts-table td { padding: 0.65rem 1rem; border-bottom: 1px solid rgba(30,36,48,0.5); color: var(--muted); vertical-align: top; }
+    .facts-table tr:last-child td { border-bottom: none; }
+    .facts-table td:first-child { color: var(--text); font-weight: 500; font-family: monospace; }
+
+    .transport-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 1rem; }
+    .transport-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 1.1rem; }
+    .transport-name { font-weight: 700; color: var(--text); margin-bottom: 0.3rem; }
+    .transport-badge { display: inline-block; font-size: 0.72rem; padding: 0.15rem 0.5rem; border-radius: 999px; margin-bottom: 0.6rem; font-weight: 600; }
+    .t-wifi    { background: rgba(0,200,255,0.1); color: var(--accent); border: 1px solid rgba(0,200,255,0.2); }
+    .t-lora    { background: rgba(0,229,160,0.1); color: var(--green); border: 1px solid rgba(0,229,160,0.2); }
+    .t-lorawan { background: rgba(123,92,250,0.1); color: var(--accent2); border: 1px solid rgba(123,92,250,0.2); }
+    .t-cell    { background: rgba(255,140,66,0.1); color: var(--orange); border: 1px solid rgba(255,140,66,0.2); }
+    .transport-detail { font-size: 0.82rem; color: var(--muted); }
+    .transport-detail p { margin-bottom: 0.25rem; }
+
+    footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.82rem; }
+
+    @media (max-width: 640px) {
+      nav { display: none; }
+      nav.open { display: flex; flex-direction: column; position: absolute; top: 60px; left: 0; right: 0; background: var(--bg); padding: 1rem 2rem; border-bottom: 1px solid var(--border); }
+      .nav-toggle { display: block; }
+      .stack-name { min-width: unset; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <img src="wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">
+      Wyltek Industries
+    </a>
+    <nav id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="blog.html">Devlog</a>
+      <a href="blackbox.html">BlackBox</a>
+      <a href="ckb-sync.html">CKB Sync</a>
+      <a href="flasher.html">Flasher</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="images.html">Images</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle">&#9776;</button>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-label">Open Source · ESP32 · Nervos CKB</div>
+  <h1>ckb-light-esp<br><span>#include &lt;LightClient.h&gt;</span></h1>
+  <p class="hero-sub">
+    First C/Arduino implementation of the CKB light client protocol.
+    Watch any CKB address from ESP32 hardware — no cloud, no custodian, no trust required.
+    Modular transports. From a $3 C6 to a full P4 node with RISC-V script execution.
+  </p>
+  <div class="hero-badges">
+    <span class="badge badge-esp">ESP32 / S3 / C6 / P4</span>
+    <span class="badge badge-ckb">Nervos CKB</span>
+    <span class="badge badge-lora">WiFi · LoRa · LoRaWAN</span>
+    <span class="badge badge-mit">MIT License</span>
+  </div>
+  <div class="hero-cta">
+    <a class="btn btn-primary" href="https://github.com/toastmanAu/ckb-light-esp" target="_blank">View on GitHub</a>
+    <a class="btn btn-outline" href="#quickstart">Quick Start</a>
+    <a class="btn btn-outline" href="#roadmap">Roadmap</a>
+  </div>
+</div>
+
+<div class="content">
+
+  <section>
+    <h2>The Wyltek Embedded Stack</h2>
+    <p>Three repos. One coherent platform for CKB on embedded hardware.</p>
+    <div class="stack">
+      <div class="stack-row">
+        <span class="stack-icon">🔧</span>
+        <span class="stack-name">wyltek-embedded-builder</span>
+        <span class="stack-desc">Board targets, peripheral defines, 32+ boards</span>
+      </div>
+      <div class="stack-arrow">↑ depends on</div>
+      <div class="stack-row">
+        <span class="stack-icon">🔐</span>
+        <span class="stack-name">CKB-ESP32</span>
+        <span class="stack-desc">Blake2b, Eaglesong, secp256k1, Molecule, RPC client</span>
+      </div>
+      <div class="stack-arrow">↑ depends on</div>
+      <div class="stack-row current">
+        <span class="stack-icon">📡</span>
+        <span class="stack-name">ckb-light-esp <span style="color:var(--accent);font-size:0.75rem;margin-left:0.4rem">← this repo</span></span>
+        <span class="stack-desc">Light client node — header sync, filter, Merkle proofs, UTXO tracking</span>
+      </div>
+    </div>
+  </section>
+
+  <section id="quickstart">
+    <h2>Quick Start</h2>
+    <p>Add to your <code>platformio.ini</code>:</p>
+    <pre>lib_deps =
+    toastmanAu/CKB-ESP32
+    toastmanAu/ckb-light-esp
+    bblanchon/ArduinoJson @ ^7.0.0</pre>
+    <p>Then in your sketch:</p>
+    <pre>#define LIGHT_PROFILE_STANDARD   // ESP32-S3 with PSRAM
+#include &lt;LightClient.h&gt;
+
+LightClient client;
+
+void setup() {
+  WiFi.begin("ssid", "pass");
+  client.begin("192.168.1.100", 9000);  // CKB light client node RPC
+
+  client.watchScript(
+    "0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8",
+    "0xYOUR_LOCK_ARGS"
+  );
+}
+
+void loop() {
+  client.sync();   // non-blocking state machine
+
+  if (client.hasPendingEvents()) {
+    char txHash[67]; uint64_t block;
+    while (client.nextEvent(txHash, &block))
+      Serial.printf("💰 CKB received at block #%llu\n  TX: %s\n", block, txHash);
+  }
+}</pre>
+    <p>The backend is the <a href="https://github.com/nervosnetwork/ckb-light-client" target="_blank">Nervos CKB light client node</a> (Rust, runs on a Pi or server). Your ESP talks to its JSON-RPC interface — no P2P from the device.</p>
+  </section>
+
+  <section>
+    <h2>Build Profiles</h2>
+    <p>One <code>#define</code> before <code>#include</code> selects your profile. Everything else is handled.</p>
+    <div class="profiles">
+      <div class="profile-card">
+        <div class="profile-name">LIGHT_MINIMAL</div>
+        <div class="profile-target">ESP32-C6 / ESP32 classic</div>
+        <ul class="profile-feat">
+          <li>Header sync + PoW verify</li>
+          <li>Address watch (2 scripts)</li>
+          <li>GPIO trigger on receive</li>
+          <li class="no">Merkle proofs</li>
+          <li class="no">UTXO storage</li>
+        </ul>
+      </div>
+      <div class="profile-card">
+        <div class="profile-name">LIGHT_STANDARD</div>
+        <div class="profile-target">ESP32-S3 + PSRAM</div>
+        <ul class="profile-feat">
+          <li>Header sync + PoW verify</li>
+          <li>16 watched scripts</li>
+          <li>Merkle proof verification</li>
+          <li>Persistent UTXO store</li>
+          <li class="no">CKB-VM</li>
+        </ul>
+      </div>
+      <div class="profile-card">
+        <div class="profile-name">LIGHT_FULL</div>
+        <div class="profile-target">ESP32-P4 (32MB PSRAM)</div>
+        <ul class="profile-feat">
+          <li>Everything in STANDARD</li>
+          <li>CKB-VM RISC-V interpreter</li>
+          <li>Custom lock scripts</li>
+          <li>Native secp256k1/multisig</li>
+        </ul>
+      </div>
+      <div class="profile-card">
+        <div class="profile-name">LIGHT_LORA</div>
+        <div class="profile-target">Any ESP32 + SX1276</div>
+        <ul class="profile-feat">
+          <li>Header sync over LoRa</li>
+          <li>Private point-to-point</li>
+          <li>5–40km range</li>
+          <li>No WiFi needed</li>
+        </ul>
+      </div>
+      <div class="profile-card">
+        <div class="profile-name">LIGHT_LORAWAN</div>
+        <div class="profile-target">TTGO T-Beam</div>
+        <ul class="profile-feat">
+          <li>LoRaWAN OTAA join</li>
+          <li>TTN / Chirpstack</li>
+          <li>GPS + 18650 battery</li>
+          <li>No private gateway needed</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Transports</h2>
+    <p>Same <code>LightClient</code> API regardless of transport. Swap at compile time.</p>
+    <div class="transport-grid">
+      <div class="transport-card">
+        <div class="transport-name">WiFi</div>
+        <span class="transport-badge t-wifi">TCP JSON-RPC</span>
+        <div class="transport-detail">
+          <p>Direct to CKB light client node RPC (port 9000).</p>
+          <p>Home, office, LAN-connected devices.</p>
+        </div>
+      </div>
+      <div class="transport-card">
+        <div class="transport-name">Raw LoRa</div>
+        <span class="transport-badge t-lora">Point-to-point</span>
+        <div class="transport-detail">
+          <p>Pi/server gateway ↔ device. Your infrastructure.</p>
+          <p>Off-grid setups — shed, remote sensor, no internet.</p>
+        </div>
+      </div>
+      <div class="transport-card">
+        <div class="transport-name">LoRaWAN</div>
+        <span class="transport-badge t-lorawan">TTN / Chirpstack</span>
+        <div class="transport-detail">
+          <p>OTAA join, public network.</p>
+          <p>Ship a product — user points at TTN, no gateway setup.</p>
+        </div>
+      </div>
+      <div class="transport-card">
+        <div class="transport-name">Cellular</div>
+        <span class="transport-badge t-cell">SIM7080G / A7670</span>
+        <div class="transport-detail">
+          <p>NB-IoT / LTE-M. Global. Planned.</p>
+          <p>Matches boards in wyltek-embedded-builder.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>Implementation Notes</h2>
+    <p>Things that will trip up anyone implementing CKB from spec alone — documented here so you don't have to rediscover them.</p>
+    <table class="facts-table">
+      <thead>
+        <tr><th>Component</th><th>What you need to know</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>RawHeader</td><td>Molecule <code>struct</code>, not <code>table</code> — 192 bytes flat, no length prefix or offset table</td></tr>
+        <tr><td>Nonce</td><td>RPC returns <code>"0x" + hex(u128_big_endian)</code> — reverse the 16 bytes for Eaglesong input</td></tr>
+        <tr><td>Eaglesong output</td><td>Big-endian bytes — compare <code>result[0]</code> first (not LE as mining pools use)</td></tr>
+        <tr><td>transactions_root</td><td><code>merge(txs_CBMT_root, witnesses_root)</code> — NOT just CBMT of tx hashes</td></tr>
+        <tr><td>Proof field name</td><td>Called <code>lemmas</code> in CKB RPC, not <code>siblings</code> as in RFC 0006</td></tr>
+        <tr><td>GCS hash function</td><td>SipHash-2-4 (not Blake2b) — constants M, P from the <code>golomb_coded_set</code> spec</td></tr>
+        <tr><td>Filter sync</td><td>Checkpoint-based initial sync — download checkpoints first, then filters from script's <code>block_number</code></td></tr>
+        <tr><td>Backend node</td><td>Requires CKB <em>light client</em> node (port 9000) — full nodes don't serve block filters</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  <section id="roadmap">
+    <h2>Roadmap</h2>
+
+    <div class="phase">
+      <div class="phase-header">
+        <span class="phase-badge phase-done">✓ Complete</span>
+        <span class="phase-title">Phase 1 — Core verification</span>
+      </div>
+      <ul class="task-list">
+        <li class="done"><span class="chk">✓</span> <code>header_chain.cpp</code> — Eaglesong PoW, Molecule serialisation, block hash</li>
+        <li class="done"><span class="chk">✓</span> <code>merkle.cpp</code> — CBMT proof verification, transactions_root, witnesses_root</li>
+        <li class="done"><span class="chk">✓</span> Build profiles: MINIMAL / STANDARD / FULL / LORA / LORAWAN</li>
+        <li class="done"><span class="chk">✓</span> Transport stubs: WiFi, raw LoRa, LoRaWAN, cellular</li>
+        <li class="done"><span class="chk">✓</span> Host test suite — all verified against live mainnet</li>
+      </ul>
+    </div>
+
+    <div class="phase">
+      <div class="phase-header">
+        <span class="phase-badge phase-active">In Progress</span>
+        <span class="phase-title">Phase 2 — Transport + sync loop</span>
+      </div>
+      <ul class="task-list">
+        <li class="pending"><span class="chk">○</span> <code>wifi_transport.cpp</code> — TCP JSON-RPC to CKB light client node</li>
+        <li class="pending"><span class="chk">○</span> <code>LightClient.cpp</code> — sync state machine</li>
+        <li class="pending"><span class="chk">○</span> <code>block_filter.cpp</code> — GCS filter sync (SipHash-2-4, checkpoint-based)</li>
+        <li class="pending"><span class="chk">○</span> <code>utxo_store.cpp</code> — persistent UTXO set (NVS/LittleFS)</li>
+      </ul>
+    </div>
+
+    <div class="phase">
+      <div class="phase-header">
+        <span class="phase-badge phase-planned">Planned</span>
+        <span class="phase-title">Phase 3 — Script execution</span>
+      </div>
+      <ul class="task-list">
+        <li class="pending"><span class="chk">○</span> <code>native_locks.cpp</code> — secp256k1 / multisig / ACP without VM</li>
+        <li class="pending"><span class="chk">○</span> <code>ckbvm_interp.cpp</code> — minimal RISC-V interpreter (ESP32-P4 / S3 + PSRAM)</li>
+      </ul>
+    </div>
+
+    <div class="phase">
+      <div class="phase-header">
+        <span class="phase-badge phase-planned">Planned</span>
+        <span class="phase-title">Phase 4 — Off-grid transports</span>
+      </div>
+      <ul class="task-list">
+        <li class="pending"><span class="chk">○</span> <code>lora_transport.cpp</code> — raw LoRa bridge implementation</li>
+        <li class="pending"><span class="chk">○</span> <code>lorawan_transport.cpp</code> — OTAA + LMIC (TTGO T-Beam)</li>
+        <li class="pending"><span class="chk">○</span> <code>ckb-lora-bridge</code> — companion Pi/server gateway repo</li>
+        <li class="pending"><span class="chk">○</span> <code>cellular_transport.cpp</code> — SIM7080G / A7670</li>
+      </ul>
+    </div>
+
+    <div class="phase">
+      <div class="phase-header">
+        <span class="phase-badge phase-planned">Planned</span>
+        <span class="phase-title">Phase 5 — Example products</span>
+      </div>
+      <ul class="task-list">
+        <li class="pending"><span class="chk">○</span> CKB Payment Terminal — ESP32 + display, QR invoices, on-chain confirmation</li>
+        <li class="pending"><span class="chk">○</span> Off-grid Balance Checker — T-Beam, LoRaWAN, e-paper, battery powered</li>
+        <li class="pending"><span class="chk">○</span> LoRa ASIC Relay — Stratum bridge for miners with no direct internet</li>
+        <li class="pending"><span class="chk">○</span> IoT Payment Trigger — C6, one address, GPIO on receive (door, vending, etc.)</li>
+      </ul>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>
+    <a href="https://github.com/toastmanAu/ckb-light-esp" target="_blank">ckb-light-esp on GitHub</a> ·
+    <a href="index.html">Wyltek Industries</a> ·
+    MIT License
+  </p>
+</footer>
+
+<script>
+  document.getElementById('navToggle').addEventListener('click', () => {
+    document.getElementById('mainNav').classList.toggle('open');
+  });
+</script>
+</body>
+</html>
