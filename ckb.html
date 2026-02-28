@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CKB on Embedded Hardware — Wyltek Industries</title>
+  <meta name="description" content="The complete Wyltek CKB embedded stack. Mine it. Sign it. Watch it. Run it. Everything Nervos CKB, purpose-built for ESP32 hardware." />
+  <meta property="og:title" content="CKB on Embedded Hardware — Wyltek Industries" />
+  <meta property="og:description" content="Mine, sign, watch, and run Nervos CKB from ESP32 hardware. The complete open-source embedded stack for the CKB ecosystem." />
+  <meta property="og:url" content="https://wyltekindustries.com/ckb.html" />
+  <meta property="og:type" content="website" />
+  <link rel="canonical" href="https://wyltekindustries.com/ckb.html" />
+  <style>
+    :root {
+      --bg:      #0a0c0f;
+      --surface: #111318;
+      --surf2:   #181c23;
+      --border:  #1e2430;
+      --accent:  #00c8ff;
+      --accent2: #7b5cfa;
+      --green:   #00e5a0;
+      --orange:  #ff8c42;
+      --text:    #e2e8f0;
+      --muted:   #64748b;
+      --ckb:     #00e5a0;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.65; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header { border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; background: rgba(10,12,15,0.93); backdrop-filter: blur(12px); z-index: 100; }
+    .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; color: var(--text); }
+    .logo:hover { text-decoration: none; }
+    nav { display: flex; gap: 1.4rem; }
+    nav a { color: var(--muted); font-size: 0.88rem; font-weight: 500; }
+    nav a:hover, nav a.active { color: var(--text); text-decoration: none; }
+    .nav-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
+
+    .hero { max-width: 1100px; margin: 0 auto; padding: 4.5rem 2rem 3rem; border-bottom: 1px solid var(--border); }
+    .hero-label { font-size: 0.75rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ckb); margin-bottom: 1rem; }
+    .hero h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900; line-height: 1.1; color: var(--text); margin-bottom: 1.3rem; }
+    .hero h1 em { font-style: normal; color: var(--ckb); }
+    .hero-sub { font-size: 1.05rem; color: var(--muted); max-width: 700px; line-height: 1.75; margin-bottom: 2rem; }
+    .hero-sub strong { color: var(--text); }
+    .hero-cta { display: flex; gap: 0.8rem; flex-wrap: wrap; }
+    .btn { padding: 0.6rem 1.3rem; border-radius: 8px; font-weight: 600; font-size: 0.88rem; text-decoration: none; transition: opacity 0.15s; }
+    .btn:hover { opacity: 0.82; text-decoration: none; }
+    .btn-ckb { background: var(--ckb); color: #000; }
+    .btn-outline { border: 1px solid var(--border); color: var(--text); background: var(--surface); }
+
+    .content { max-width: 1100px; margin: 0 auto; padding: 0 2rem 4rem; }
+    section { padding: 3.5rem 0; border-bottom: 1px solid var(--border); }
+    section:last-child { border-bottom: none; }
+    .section-label { font-size: 0.73rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--ckb); margin-bottom: 0.7rem; }
+    h2 { font-size: 1.65rem; font-weight: 800; color: var(--text); margin-bottom: 1rem; line-height: 1.2; }
+    h2 em { font-style: normal; color: var(--ckb); }
+    p { color: var(--muted); margin-bottom: 0.9rem; line-height: 1.7; }
+    p strong { color: var(--text); }
+    code { color: var(--accent); font-family: 'Cascadia Code','Fira Code',monospace; font-size: 0.85em; }
+
+    /* why grid */
+    .why-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(240px,1fr)); gap: 1.1rem; margin-top: 2rem; }
+    .why-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.4rem; }
+    .why-icon { font-size: 1.4rem; margin-bottom: 0.7rem; }
+    .why-title { font-weight: 700; color: var(--text); font-size: 0.95rem; margin-bottom: 0.35rem; }
+    .why-body { font-size: 0.85rem; color: var(--muted); line-height: 1.65; }
+
+    /* stack diagram */
+    .stack-wrap { background: var(--surf2); border: 1px solid var(--border); border-radius: 14px; padding: 1.8rem; margin-top: 2rem; }
+    .stack-row { display: flex; align-items: flex-start; gap: 1rem; padding: 0.9rem 1.1rem; border-radius: 10px; border: 1px solid var(--border); background: var(--surface); margin-bottom: 0.45rem; }
+    .stack-row.hl { border-color: var(--ckb); background: rgba(0,229,160,0.04); }
+    .stack-icon { font-size: 1.2rem; width: 26px; text-align: center; flex-shrink: 0; padding-top: 2px; }
+    .stack-info { flex: 1; min-width: 0; }
+    .stack-name { font-weight: 700; font-size: 0.92rem; color: var(--text); margin-bottom: 0.2rem; }
+    .stack-name a { color: var(--text); }
+    .stack-name a:hover { color: var(--ckb); text-decoration: none; }
+    .stack-desc { font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+    .stack-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; margin-top: 0.45rem; }
+    .stag { font-size: 0.7rem; padding: 0.12rem 0.5rem; border-radius: 999px; font-weight: 600; border: 1px solid; }
+    .stag-ckb { color: var(--ckb);    border-color: rgba(0,229,160,0.3);   background: rgba(0,229,160,0.07); }
+    .stag-esp { color: var(--accent); border-color: rgba(0,200,255,0.25);  background: rgba(0,200,255,0.07); }
+    .stag-ard { color: #fb923c;       border-color: rgba(251,146,60,0.25); background: rgba(251,146,60,0.07); }
+    .stag-wip { color: var(--accent); border-color: rgba(0,200,255,0.3);   background: rgba(0,200,255,0.07); }
+    .stag-inf { color: #a78bfa;       border-color: rgba(167,139,250,0.3); background: rgba(167,139,250,0.07); }
+    .stack-gh { font-size: 0.76rem; white-space: nowrap; padding-top: 2px; flex-shrink: 0; }
+    .stack-gh a { color: var(--muted); }
+    .stack-gh a:hover { color: var(--ckb); text-decoration: none; }
+    .stack-arrow { text-align: center; color: var(--muted); font-size: 0.78rem; padding: 0.1rem 0; margin-left: 2rem; }
+    .stack-sep { font-size: 0.7rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; color: var(--muted); margin: 1.2rem 0 0.5rem; }
+
+    /* repo cards */
+    .repo-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(280px,1fr)); gap: 1.1rem; margin-top: 2rem; }
+    .repo-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.3rem; display: flex; flex-direction: column; gap: 0.55rem; transition: border-color 0.15s; }
+    .repo-card:hover { border-color: rgba(0,229,160,0.3); }
+    .repo-header { display: flex; justify-content: space-between; align-items: flex-start; }
+    .repo-icon { font-size: 1.15rem; }
+    .repo-gh { font-size: 0.76rem; }
+    .repo-gh a { color: var(--muted); }
+    .repo-gh a:hover { color: var(--ckb); text-decoration: none; }
+    .repo-name { font-weight: 700; font-size: 0.93rem; }
+    .repo-name a { color: var(--text); }
+    .repo-name a:hover { color: var(--ckb); text-decoration: none; }
+    .repo-desc { font-size: 0.84rem; color: var(--muted); line-height: 1.6; flex: 1; }
+    .repo-tags { display: flex; gap: 0.4rem; flex-wrap: wrap; }
+
+    /* principles */
+    .principles { display: grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap: 1rem; margin-top: 2rem; }
+    .principle { border-left: 2px solid var(--ckb); padding: 0.75rem 1rem; background: var(--surface); border-radius: 0 8px 8px 0; }
+    .principle-title { font-weight: 700; font-size: 0.88rem; color: var(--text); margin-bottom: 0.3rem; }
+    .principle-body { font-size: 0.81rem; color: var(--muted); line-height: 1.6; }
+
+    footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.82rem; }
+
+    @media (max-width: 700px) {
+      nav { display: none; }
+      nav.open { display: flex; flex-direction: column; position: absolute; top: 60px; left: 0; right: 0; background: var(--bg); padding: 1rem 2rem; border-bottom: 1px solid var(--border); }
+      .nav-toggle { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="index.html" class="logo">
+      <img src="wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">
+      Wyltek Industries
+    </a>
+    <nav id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="blog.html">Devlog</a>
+      <a href="blackbox.html">BlackBox</a>
+      <a href="ckb-sync.html">CKB Sync</a>
+      <a href="flasher.html">Flasher</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="ckb-light-esp.html">Light Client</a>
+      <a href="ckb.html" class="active">CKB Stack</a>
+      <a href="images.html">Images</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle">&#9776;</button>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-label">Nervos CKB · Embedded Hardware · Open Source</div>
+  <h1>CKB on<br><em>embedded hardware.</em></h1>
+  <p class="hero-sub">
+    <strong>Mine it. Sign it. Watch it. Run it.</strong><br>
+    The complete open-source stack for Nervos CKB on ESP32 hardware —
+    from a $3 microcontroller watching an address over LoRa,
+    to a full light client node with RISC-V script execution on the ESP32-P4.
+    Every repo here is real, tested against mainnet, and built because something needed to exist.
+  </p>
+  <div class="hero-cta">
+    <a class="btn btn-ckb" href="#stack">The Stack</a>
+    <a class="btn btn-outline" href="#embedded">Embedded Repos</a>
+    <a class="btn btn-outline" href="#infra">Infrastructure</a>
+    <a class="btn btn-outline" href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- Why -->
+  <section>
+    <div class="section-label">Purpose</div>
+    <h2>Why build CKB tooling<br><em>from scratch?</em></h2>
+    <p>
+      CKB has a solid ecosystem for web and server environments — JS SDKs, Rust crates, Python tools.
+      What it doesn't have is <strong>embedded hardware support</strong>.
+      No Arduino library. No ESP32 light client. No way to sign a transaction from a $10 board
+      without routing through a custodial server.
+    </p>
+    <p>
+      That gap is what this work is closing. Not as a thought experiment —
+      each repo here is tested against live mainnet, solves a real problem,
+      and is built to be useful to other people in the CKB ecosystem.
+    </p>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">🔐</div>
+        <div class="why-title">Self-custody at the edge</div>
+        <div class="why-body">Sign transactions on-device with on-chip secp256k1. No keys leave the hardware. No server in the middle. CKB-ESP32 makes this possible on any ESP32 board today.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">📡</div>
+        <div class="why-title">Off-grid CKB access</div>
+        <div class="why-body">LoRa transport means CKB monitoring in places WiFi doesn't reach. The light client protocol is designed for exactly this kind of constrained, intermittent access.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">⛏️</div>
+        <div class="why-title">Real mining, real hardware</div>
+        <div class="why-body">NerdMiner CKB puts Eaglesong mining on a $10 CYD board. The stratum proxy lets you route any ASIC or hobby miner through your own LAN infrastructure.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🔭</div>
+        <div class="why-title">Building toward something</div>
+        <div class="why-body">Each repo feeds the next. CKB-ESP32 provides the crypto. ckb-light-esp adds sync. Together they're the foundation for a hardware CKB wallet — the kind that doesn't exist yet.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Stack -->
+  <section id="stack">
+    <div class="section-label">Architecture</div>
+    <h2>The embedded <em>CKB stack.</em></h2>
+    <p>Three repos form the core library stack — each layer builds on the one below it. Everything else is an application built on top.</p>
+
+    <div class="stack-wrap">
+      <div class="stack-sep">Core library stack</div>
+
+      <div class="stack-row">
+        <span class="stack-icon">🔧</span>
+        <div class="stack-info">
+          <div class="stack-name"><a href="https://github.com/toastmanAu/wyltek-embedded-builder" target="_blank">wyltek-embedded-builder</a></div>
+          <div class="stack-desc">Board targets, peripheral defines, 32+ board configurations. Every project starts here — one <code>lib_deps</code> line gives you pins, defines, and build flags for any target board.</div>
+          <div class="stack-tags">
+            <span class="stag stag-esp">ESP32 · S3 · C6 · P4</span>
+            <span class="stag stag-ard">PlatformIO</span>
+            <span class="stag stag-esp">32 boards</span>
+          </div>
+        </div>
+        <div class="stack-gh"><a href="https://github.com/toastmanAu/wyltek-embedded-builder" target="_blank">GitHub ↗</a></div>
+      </div>
+
+      <div class="stack-arrow">↑ all CKB repos depend on this</div>
+
+      <div class="stack-row">
+        <span class="stack-icon">🔐</span>
+        <div class="stack-info">
+          <div class="stack-name"><a href="https://github.com/toastmanAu/CKB-ESP32" target="_blank">CKB-ESP32</a></div>
+          <div class="stack-desc">Arduino library for CKB protocol primitives: Blake2b-256, Eaglesong PoW, secp256k1 signing, Molecule serialisation, RPC client. End-to-end mainnet transaction signing confirmed. No crypto duplication in downstream projects.</div>
+          <div class="stack-tags">
+            <span class="stag stag-ckb">Blake2b</span>
+            <span class="stag stag-ckb">Eaglesong</span>
+            <span class="stag stag-ckb">secp256k1</span>
+            <span class="stag stag-ckb">Molecule</span>
+            <span class="stag stag-ard">Arduino Library</span>
+          </div>
+        </div>
+        <div class="stack-gh"><a href="https://github.com/toastmanAu/CKB-ESP32" target="_blank">GitHub ↗</a></div>
+      </div>
+
+      <div class="stack-arrow">↑ ckb-light-esp builds on this</div>
+
+      <div class="stack-row hl">
+        <span class="stack-icon">📡</span>
+        <div class="stack-info">
+          <div class="stack-name">
+            <a href="ckb-light-esp.html">ckb-light-esp</a>
+            <span class="stag stag-wip" style="margin-left:0.4rem">In Progress</span>
+          </div>
+          <div class="stack-desc">First C/Arduino implementation of the CKB light client protocol. Watch any address from any ESP32 board — no cloud, no custodian. WiFi, LoRa, LoRaWAN, cellular transports. Eaglesong PoW and CBMT Merkle proofs verified against mainnet. Builds to MINIMAL (C6, address watch) through FULL (P4, CKB-VM).</div>
+          <div class="stack-tags">
+            <span class="stag stag-ckb">Light Client</span>
+            <span class="stag stag-ckb">GCS Filters</span>
+            <span class="stag stag-esp">WiFi · LoRa · LoRaWAN</span>
+            <span class="stag stag-esp">ESP32 → P4</span>
+          </div>
+        </div>
+        <div class="stack-gh"><a href="ckb-light-esp.html">Roadmap ↗</a></div>
+      </div>
+
+      <div class="stack-sep" style="margin-top:1.5rem">Applications using the stack</div>
+
+      <div class="stack-row">
+        <span class="stack-icon">⛏️</span>
+        <div class="stack-info">
+          <div class="stack-name"><a href="https://github.com/toastmanAu/NerdMiner_CKB" target="_blank">NerdMiner CKB</a></div>
+          <div class="stack-desc">Eaglesong miner on ESP32 CYD. Uses Eaglesong from CKB-ESP32. Real Stratum, live display, ViaBTC compatible.</div>
+          <div class="stack-tags"><span class="stag stag-ckb">Mining</span><span class="stag stag-esp">CYD</span></div>
+        </div>
+        <div class="stack-gh"><a href="https://github.com/toastmanAu/NerdMiner_CKB" target="_blank">GitHub ↗</a></div>
+      </div>
+      <div class="stack-row">
+        <span class="stack-icon">🖥️</span>
+        <div class="stack-info">
+          <div class="stack-name"><a href="https://github.com/toastmanAu/ckb-firmware" target="_blank">CKB Firmware Monorepo</a></div>
+          <div class="stack-desc">ESP32-S3 node dashboard + wallet. Live chain stats, HTTP relay. Targets Guition 4848S040 HMI boards.</div>
+          <div class="stack-tags"><span class="stag stag-ckb">Node Display</span><span class="stag stag-esp">S3 HMI</span></div>
+        </div>
+        <div class="stack-gh"><a href="https://github.com/toastmanAu/ckb-firmware" target="_blank">GitHub ↗</a></div>
+      </div>
+      <div class="stack-row">
+        <span class="stack-icon">🟧</span>
+        <div class="stack-info">
+          <div class="stack-name"><a href="blackbox.html">BlackBox — CKB POS Terminal</a></div>
+          <div class="stack-desc">CKB payment terminal. ESP32 HMI + thermal printer + barcode scanner. Generates QR invoices, confirms on-chain via CKB-ESP32 signing.</div>
+          <div class="stack-tags"><span class="stag stag-ckb">Payments</span><span class="stag stag-esp">ESP32 HMI</span></div>
+        </div>
+        <div class="stack-gh"><a href="blackbox.html">Details ↗</a></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Embedded repos -->
+  <section id="embedded">
+    <div class="section-label">Hardware</div>
+    <h2><em>Embedded</em> repos.</h2>
+    <p>CKB running on real hardware. Every project here talks to a real node, a real pool, or the real blockchain.</p>
+    <div class="repo-grid">
+
+      <div class="repo-card">
+        <div class="repo-header">
+          <span class="repo-icon">📡</span>
+          <span class="repo-gh"><a href="ckb-light-esp.html">Details</a> · <a href="https://github.com/toastmanAu/ckb-light-esp" target="_blank">GitHub ↗</a></span>
+        </div>
+        <div class="repo-name"><a href="ckb-light-esp.html">ckb-light-esp</a></div>
+        <div class="repo-desc">First Arduino implementation of the CKB light client protocol. Watch any address, any board. Eaglesong PoW + CBMT Merkle proofs verified against mainnet. WiFi, LoRa, LoRaWAN transports. In active development.</div>
+        <div class="repo-tags">
+          <span class="stag stag-ckb">Light Client</span>
+          <span class="stag stag-esp">ESP32 → P4</span>
+          <span class="stag stag-wip">Active</span>
+        </div>
+      </div>
+
+      <div class="repo-card">
+        <div class="repo-header">
+          <span class="repo-icon">🔐</span>
+          <span class="repo-gh"><a href="https://github.com/toastmanAu/CKB-ESP32" target="_blank">GitHub ↗</a></span>
+        </div>
+        <div class="repo-name"><a href="https://github.com/toastmanAu/CKB-ESP32" target="_blank">CKB-ESP32</a></div>
+        <div class="repo-desc">Arduino library for CKB protocol: Blake2b, Eaglesong, secp256k1, Molecule, RPC. On-device transaction signing — mainnet transfer confirmed. The crypto foundation every CKB ESP32 project needs.</div>
+        <div class="repo-tags">
+          <span class="stag stag-ckb">Protocol</span>
+          <span class="stag stag-ard">Arduino Library</span>
+        </div>
+      </div>
+
+      <div class="repo-card">
+        <div class="repo-header">
+          <span class="repo-icon">⛏️</span>
+          <span class="repo-gh"><a href="https://github.com/toastmanAu/NerdMiner_CKB" target="_blank">GitHub ↗</a></span>
+        </div>
+        <div class="repo-name"><a href="https://github.com/toastmanAu/NerdMiner_CKB" target="_blank">NerdMiner CKB</a></div>
+        <div class="repo-desc">Eaglesong solo miner for the ESP32 CYD ($10 board with built-in display). Adapted from NerdMiner V2. Real Stratum, live stats, ViaBTC compatible. Because you can mine CKB from a $10 board.</div>
+        <div class="repo-tags">
+          <span class="stag stag-ckb">Eaglesong</span>
+          <span class="stag stag-esp">CYD</span>
+          <span class="stag stag-ckb">Stratum</span>
+        </div>
+      </div>
+
+      <div class="repo-card">
+        <div class="repo-header">
+          <span class="repo-icon">🖥️</span>
+          <span class="repo-gh"><a href="https://github.com/toastmanAu/ckb-firmware" target="_blank">GitHub ↗</a></span>
+        </div>
+        <div class="repo-name"><a href="https://github.com/toastmanAu/ckb-firmware" target="_blank">CKB Firmware Monorepo</a></div>
+        <div class="repo-desc">ESP32-S3 firmware for node operators. Live chain stats, HTTP broadcast relay, S3 wallet. Targets Guition 4848S040 and compatible HMI boards. Real node operator tooling.</div>
+        <div class="repo-tags">
+          <span class="stag stag-esp">ESP32-S3</span>
+          <span class="stag stag-ckb">Node Display</span>
+        </div>
+      </div>
+
+      <div class="repo-card">
+        <div class="repo-header">
+          <span class="repo-icon">🟧</span>
+          <span class="repo-gh"><a href="blackbox.html">Details ↗</a></span>
+        </div>
+        <div class="repo-name"><a href="blackbox.html">BlackBox — CKB POS</a></div>
+        <div class="repo-desc">CKB payment terminal for merchants. Elecrow ESP32 HMI 3.5" + thermal printer + barcode scanner. Scan your address on first boot, print QR invoices, confirm on-chain. No setup, no server.</div>
+        <div class="repo-tags">
+          <span class="stag stag-ckb">Payments</span>
+          <span class="stag stag-esp">ESP32 HMI</span>
+        </div>
+      </div>
+
+      <div class="repo-card">
+        <div class="repo-header">
+          <span class="repo-icon">🔲</span>
+          <span class="repo-gh"><a href="https://github.com/toastmanAu/CKB-Block-Clock" target="_blank">GitHub ↗</a></span>
+        </div>
+        <div class="repo-name"><a href="https://github.com/toastmanAu/CKB-Block-Clock" target="_blank">CKB Block Clock</a></div>
+        <div class="repo-desc">ESP32 HUB75E LED matrix clock showing live CKB block height from a local node. Large LED panel, desk or wall-mounted. The kind of thing that makes people ask what CKB is.</div>
+        <div class="repo-tags">
+          <span class="stag stag-esp">ESP32</span>
+          <span class="stag stag-ckb">HUB75E</span>
+        </div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Infrastructure repos -->
+  <section id="infra">
+    <div class="section-label">Infrastructure</div>
+    <h2><em>Infrastructure</em> repos.</h2>
+    <p>The server-side and community tooling that keeps the CKB ecosystem running. Node monitoring, whale alerts, anti-scam bots, fast sync — built and run by node operators, for node operators.</p>
+    <div class="repo-grid">
+
+      <div class="repo-card">
+        <div class="repo-header">
+          <span class="repo-icon">⚡</span>
+          <span class="repo-gh"><a href="ckb-sync.html">Sync Now ↗</a></span>
+        </div>
+        <div class="repo-name"><a href="ckb-sync.html">CKB Node Fast Sync</a></div>
+        <div class="repo-desc">Weekly GPG-signed CKB chain snapshots via Cloudflare R2. SHA256 verified, streamed directly. Skip days of syncing — up in hours. Includes <code>assume_valid_target</code> trustless option.</div>
+        <div class="repo-tags"><span class="stag stag-inf">Snapshots</span><span class="stag stag-ckb">Full Node</span></div>
+      </div>
+
+      <div class="repo-card">
+        <div class="repo-header">
+          <span class="repo-icon">📊</span>
+          <span class="repo-gh"><a href="https://github.com/toastmanAu/ckb-node-dashboard" target="_blank">GitHub ↗</a></span>
+        </div>
+        <div class="repo-name"><a href="https://github.com/toastmanAu/ckb-node-dashboard" target="_blank">CKB Node Dashboard</a></div>
+        <div class="repo-desc">Real-time CKB node monitoring for arm64 SBCs. Node.js proxy + HTML polling UI. Block height, sync status, peer count, epoch progress — at a glance from any browser on the LAN.</div>
+        <div class="repo-tags"><span class="stag stag-inf">Monitoring</span><span class="stag stag-inf">Node.js</span></div>
+      </div>
+
+      <div class="repo-card">
+        <div class="repo-header">
+          <span class="repo-icon">⛏️</span>
+          <span class="repo-gh"><a href="https://github.com/toastmanAu/ckb-stratum-proxy" target="_blank">GitHub ↗</a></span>
+        </div>
+        <div class="repo-name"><a href="https://github.com/toastmanAu/ckb-stratum-proxy" target="_blank">CKB Stratum Proxy</a></div>
+        <div class="repo-desc">Local Stratum proxy for CKB Eaglesong mining. Per-miner extranonce allocation, ViaBTC quirk handling, HTTP stats. Point any ASIC or NerdMiner at your LAN — proxy handles the upstream pool.</div>
+        <div class="repo-tags"><span class="stag stag-ckb">Mining</span><span class="stag stag-inf">Stratum</span></div>
+      </div>
+
+      <div class="repo-card">
+        <div class="repo-header">
+          <span class="repo-icon">🐳</span>
+          <span class="repo-gh"><a href="https://github.com/toastmanAu/ckb-whale-bot" target="_blank">GitHub ↗</a></span>
+        </div>
+        <div class="repo-name"><a href="https://github.com/toastmanAu/ckb-whale-bot" target="_blank">CKB Whale Alert Bot</a></div>
+        <div class="repo-desc">Monitors a local CKB node for large transactions, fires Telegram alerts. Live USD threshold via CoinGecko, skips cellbase and self-transfers. Running live in the Nervos Nation community group.</div>
+        <div class="repo-tags"><span class="stag stag-ckb">Alerts</span><span class="stag stag-inf">Telegram Bot</span></div>
+      </div>
+
+      <div class="repo-card">
+        <div class="repo-header">
+          <span class="repo-icon">🛡️</span>
+          <span class="repo-gh"><a href="https://github.com/toastmanAu/ckb-antiscam" target="_blank">GitHub ↗</a></span>
+        </div>
+        <div class="repo-name"><a href="https://github.com/toastmanAu/ckb-antiscam" target="_blank">CKB Anti-Scam Bot</a></div>
+        <div class="repo-desc">Telegram bot detecting and banning fake moderator impersonators in CKB community groups. Behavioural scoring: lurk rate, fresh accounts, trading spam patterns. Protecting the community, automated.</div>
+        <div class="repo-tags"><span class="stag stag-ckb">Community</span><span class="stag stag-inf">Telegram Bot</span></div>
+      </div>
+
+      <div class="repo-card">
+        <div class="repo-header">
+          <span class="repo-icon">🟡</span>
+          <span class="repo-gh"><a href="https://github.com/toastmanAu/CKB-Node" target="_blank">GitHub ↗</a></span>
+        </div>
+        <div class="repo-name"><a href="https://github.com/toastmanAu/CKB-Node" target="_blank">CKB Node on Orange Pi 3B</a></div>
+        <div class="repo-desc">Complete guide to running a Nervos CKB full node on an Orange Pi 3B. Step-by-step from fresh board to synced node. Community resource for the hardware-minded node operator.</div>
+        <div class="repo-tags"><span class="stag stag-ckb">Full Node</span><span class="stag stag-esp">Orange Pi</span><span class="stag stag-inf">Guide</span></div>
+      </div>
+
+    </div>
+  </section>
+
+  <!-- Principles -->
+  <section>
+    <div class="section-label">How we build</div>
+    <h2>Design principles.</h2>
+    <p>Things that have stayed consistent across every repo in the stack.</p>
+    <div class="principles">
+      <div class="principle">
+        <div class="principle-title">Mainnet-first</div>
+        <div class="principle-body">Every implementation is verified against live CKB mainnet before it ships. No simulated test data for protocol-critical code.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-title">RFC before code</div>
+        <div class="principle-body">Before implementing any CKB data structure or protocol, read the RFC. It's already caught field naming bugs and incorrect serialisation assumptions.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-title">No duplication</div>
+        <div class="principle-body">Crypto primitives live in CKB-ESP32. Board targets in wyltek-embedded-builder. No copy-pasting between projects — changes propagate through <code>lib_deps</code>.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-title">Host-testable</div>
+        <div class="principle-body">Core logic compiles and runs on a Linux host with g++. Catch bugs fast without flashing hardware. All critical code has a test suite.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-title">Minimal footprint</div>
+        <div class="principle-body">Conditional compilation throughout. Unused features cost zero flash. MINIMAL profile fits on a $3 C6 with room to spare.</div>
+      </div>
+      <div class="principle">
+        <div class="principle-title">Real use cases only</div>
+        <div class="principle-body">Nothing gets built without a concrete use case. Payment terminal. Mining device. Address watcher. If it can't be used by a real person, it doesn't exist.</div>
+      </div>
+    </div>
+  </section>
+
+</div>
+
+<footer>
+  <p>
+    <a href="index.html">Wyltek Industries</a> ·
+    <a href="https://github.com/toastmanAu" target="_blank">GitHub</a> ·
+    <a href="https://nervos.org" target="_blank">Nervos CKB</a> ·
+    All repos MIT licensed
+  </p>
+</footer>
+
+<script>
+  document.getElementById('navToggle').addEventListener('click', () => {
+    document.getElementById('mainNav').classList.toggle('open');
+  });
+</script>
+</body>
+</html>
