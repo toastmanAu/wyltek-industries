@@ -59,7 +59,7 @@ const POSTS = [
       {type:"code", content:"kb.begin(gfx, width, height);\nkb.show(\"Enter SSID:\", 32);\n// in loop:\nif (kb.press(tx, ty) == WY_KB_DONE) use(kb.value());"},
 
       {type:"h3", content:"Armbian OPi 3B image — still baking"},
-      "Started an Armbian build for the OPi 3B (Bookworm minimal, kernel 6.18.15 rockchip64-current) on the EliteDesk build node. Three separate failures: GitPython resolving relative .git paths incorrectly (patched patching.py), kernel patch failing on an RK3308-specific audio patch (moved it out), customize-image.sh hitting missing packages in the build chroot (made installs non-fatal). Build is running again. Kernel is compiled and cached — it's just the image packaging stage left.",
+      "Started an Armbian build for the OPi 3B (Bookworm minimal, kernel 6.18.15 rockchip64-current) on the EliteDesk build node. Hit three separate blockers across the build pipeline — enough to write a separate post about. Kernel is compiled and cached. Still waiting on image packaging to confirm it boots.",
     ],
     links: [
       {text:"ckb-snapshot", href:"https://github.com/toastmanAu/ckb-snapshot"},
@@ -83,7 +83,7 @@ const POSTS = [
       "The CKB-ESP32 library crossed a significant line: full secp256k1 transaction signing running on an ESP32, sending real mainnet transactions. The proof is on-chain.",
       {type:"code", content:"TX: 0xd9440f650d2c185b1232d31695a096c95866fe32baf7e44cfe0c1d37e96b62cf\nBlock: 18,720,296\nRelay: Guition ESP32-S3 4848S040 → CKB light client → mainnet"},
       "The library handles the full signing pipeline on-device: derive compressed pubkey from privkey, compute blake160 lock args, build the WitnessArgs molecule (85 bytes, exact CKB layout), compute the personalised blake2b signing hash, run RFC6979 deterministic ECDSA. All vendored — trezor-crypto for secp256k1, the reference BLAKE2 impl. No external install required.",
-      "Along the way: fixed a bech32m checksum bug (spurious zero byte in hrp expansion was invalidating every generated address), fixed signature byte order (was recid|r|s, should be r|s|recid), fixed a broadcast false-negative caused by an ArduinoJson parse edge case on the relay response. All on-device verified on an ESP32-D0WD-V3 at 240MHz.",
+      "Several bugs surfaced during on-device testing — notably the generated addresses were all invalid (bech32m encoding bug), and the broadcast relay was silently dropping confirmed transactions. Both verified fixed on-device.",
 
       {type:"h3", content:"CKB-ESP32 — modular build system v3.0.0"},
       "Restructured the library around CKBConfig.h capability profiles. Instead of one monolithic include, you define what your board can do and the compiler only pulls in the code that matches. <code>CKB_NODE_FULL</code> for a node running the full RPC stack, <code>CKB_NODE_LIGHT</code> for light client mode, <code>CKB_INDEXER</code> for rich indexer queries, <code>CKB_SIGNING</code> for on-device secp256k1.",
@@ -121,7 +121,7 @@ const POSTS = [
       "Registered wyltekindustries.com for 2 years and launched on a dedicated URL via Cloudflare. OG meta tags and canonical URLs added throughout. A BlackBox product page built — B2B framing (supplied hardware, not a DIY kit), enquiry CTA, device mockup with live 450 CKB invoice rendering.",
 
       {type:"h3", content:"Fiber network — nodes running, RPC auth solved"},
-      "Both Fiber nodes (ckbnode and N100) are funded and running. The late-night blocker was Biscuit token authentication in Fiber v0.7.0 — the config requires a biscuit public key and the RPC calls need a corresponding token. Generated proper keypairs, configured both nodes. Fiber RPC calls working by end of session. Channel setup is the next step once N100 gets funded above the auto-accept threshold.",
+      "Both Fiber nodes (ckbnode and N100) are funded and running. The late-night blocker was undocumented Biscuit token auth introduced in v0.7.0 — not obvious from the changelog. Worked it out, both nodes configured and RPC calls working. Channel setup is the next step once N100 gets funded above the auto-accept threshold.",
 
       {type:"h3", content:"CKB-SMS-Bridge — research"},
       "Early research session on using LilyGo SIM boards as CKB transaction relay nodes over SMS. Both A7670SA and SIM7080G use physical nano SIM — Hologram is the right carrier (inbound SMS free, $1/month SIM fee, 190+ countries). Economics at 30 CKB fee per transaction: 100 TX/month = ~$53 profit. Research and sim selection committed to <code>toastmanAu/ckb-sms-bridge</code>.",
