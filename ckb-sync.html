@@ -172,7 +172,8 @@
     <div class="stat-grid">
       <div class="stat"><div class="stat-value" id="blockHeight">—</div><div class="stat-label">Block Height</div></div>
       <div class="stat"><div class="stat-value" id="snapSize">~47 GB</div><div class="stat-label">Compressed</div></div>
-      <div class="stat"><div class="stat-value" id="snapAge">—</div><div class="stat-label">Age</div></div>
+      <div class="stat"><div class="stat-value" id="snapAge">—</div><div class="stat-label">Snapshot Age</div></div>
+      <div class="stat"><div class="stat-value" id="nextSnap">—</div><div class="stat-label">Next Snapshot</div></div>
     </div>
 
     <div class="badges">
@@ -432,6 +433,29 @@ async function loadSnapshot() {
     )) / 86400000);
     document.getElementById('snapAge').textContent = days === 0 ? 'Today' : days + 'd ago';
 
+    // Next snapshot: weekly Sunday 2am ACST (UTC+10:30 = UTC+630min)
+    function nextSnapshotLabel(fromDateStr) {
+      // Parse snapshot date as YYYYMMDD
+      const m = fromDateStr.match(/(\d{4})(\d{2})(\d{2})/);
+      const base = m ? new Date(Date.UTC(+m[1], +m[2]-1, +m[3], 0, 0, 0)) : new Date();
+      // Find next Sunday at 2am ACST = 15:30 UTC (Sun + 15h30m UTC)
+      const next = new Date(base);
+      next.setUTCHours(15, 30, 0, 0);
+      // Advance to next Sunday (day 0)
+      const dow = next.getUTCDay(); // 0=Sun
+      const daysUntilSun = dow === 0 ? 7 : (7 - dow);
+      next.setUTCDate(next.getUTCDate() + daysUntilSun);
+      // How far away is that from now?
+      const diffMs = next - Date.now();
+      if (diffMs < 0) return 'Soon';
+      const diffDays = Math.floor(diffMs / 86400000);
+      const diffHrs  = Math.floor((diffMs % 86400000) / 3600000);
+      if (diffDays === 0) return diffHrs + 'h';
+      if (diffDays === 1) return '1d ' + diffHrs + 'h';
+      return diffDays + 'd';
+    }
+    document.getElementById('nextSnap').textContent = nextSnapshotLabel(data.date);
+
     document.getElementById('filenameBox').innerHTML =
       '<span style="color:var(--muted)">File: </span><span>' + data.latest + '</span>';
 
@@ -449,6 +473,7 @@ async function loadSnapshot() {
   } catch(e) {
     document.getElementById('statusDot').style.cssText = 'background:var(--red);box-shadow:0 0 8px var(--red)';
     document.getElementById('snapshotTitle').textContent = 'Snapshot service unavailable';
+    document.getElementById('nextSnap').textContent = 'Sun 2am';
     document.getElementById('errorMsg').classList.add('show');
     document.getElementById('filenameBox').innerHTML =
       '<span>Check: <a style="color:var(--accent)" href="' + R2_BASE + '/latest.json">' + R2_BASE + '/latest.json</a></span>';
