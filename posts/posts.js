@@ -71,75 +71,69 @@ const POSTS = [
 
   // ────────────────────────────────────────────────────────────────
   {
-    id: "2026-02-27-wyltek-sensor-sprint",
+    id: "2026-02-27-day-one",
     date: "2026-02-27",
-    title: "wyltek-embedded-builder: 38 sensor drivers, 19 board targets",
-    tags: ["ESP32", "wyltek-embedded-builder", "sensors", "C++"],
-    project: "wyltek-embedded-builder",
+    title: "Day one: CKB-ESP32 library, TelegramSerial in Arduino Library Manager, 38 sensor drivers, wyltekindustries.com",
+    tags: ["CKB", "ESP32", "wyltek-embedded-builder", "TelegramSerial", "Fiber", "release"],
+    project: "Wyltek Industries",
     body: [
-      "Big sprint on the embedded SDK today. The wyltek-embedded-builder library hit a milestone worth writing up — 38 sensor drivers and 19 display board targets, all zero external dependencies.",
-      "The core idea is a uniform interface: every driver implements <code>begin()</code>, <code>read()</code>, and <code>driverName()</code>. Every read returns a <code>WySensorData</code> struct with typed fields and a consistent <code>d.ok</code> / <code>d.error</code> pattern. One display or logging routine handles all sensors — no per-sensor boilerplate.",
-      {type:"h3", content:"What landed today"},
+      "First real day of output from Wyltek Industries. Writing this up as a single post because everything that shipped today is connected — the library work, the tooling, the site, and the start of the Fiber infrastructure all feed into the same goal. Notes in order.",
+
+      {type:"h3", content:"CKB-ESP32 — secp256k1 signing confirmed on mainnet"},
+      "The CKB-ESP32 library crossed a significant line: full secp256k1 transaction signing running on an ESP32, sending real mainnet transactions. The proof is on-chain.",
+      {type:"code", content:"TX: 0xd9440f650d2c185b1232d31695a096c95866fe32baf7e44cfe0c1d37e96b62cf\nBlock: 18,720,296\nRelay: Guition ESP32-S3 4848S040 → CKB light client → mainnet"},
+      "The library handles the full signing pipeline on-device: derive compressed pubkey from privkey, compute blake160 lock args, build the WitnessArgs molecule (85 bytes, exact CKB layout), compute the personalised blake2b signing hash, run RFC6979 deterministic ECDSA. All vendored — trezor-crypto for secp256k1, the reference BLAKE2 impl. No external install required.",
+      "Along the way: fixed a bech32m checksum bug (spurious zero byte in hrp expansion was invalidating every generated address), fixed signature byte order (was recid|r|s, should be r|s|recid), fixed a broadcast false-negative caused by an ArduinoJson parse edge case on the relay response. All on-device verified on an ESP32-D0WD-V3 at 240MHz.",
+
+      {type:"h3", content:"CKB-ESP32 — modular build system v3.0.0"},
+      "Restructured the library around CKBConfig.h capability profiles. Instead of one monolithic include, you define what your board can do and the compiler only pulls in the code that matches. <code>CKB_NODE_FULL</code> for a node running the full RPC stack, <code>CKB_NODE_LIGHT</code> for light client mode, <code>CKB_INDEXER</code> for rich indexer queries, <code>CKB_SIGNING</code> for on-device secp256k1.",
+      "Also shipped: light client API with <code>setScripts()</code>, <code>watchAddress()</code>, <code>getTipHeader()</code>, <code>fetchTransaction()</code>, <code>getSyncState()</code>. Live-tested against ckb-light-client v0.5.4. The CKBTestBench automated test harness runs 104 tests with known Python-verified vectors — pass rate gates any commit.",
+
+      {type:"h3", content:"TelegramSerial — Arduino Library Manager"},
+      "PR #7823 into the Arduino Library Registry merged. TelegramSerial is now searchable and installable from the IDE Library Manager directly — no GitHub URL, no manual path setup.",
+      "TelegramSerial is a drop-in Serial replacement for ESP32. Swap <code>Serial.println()</code> for <code>TelegramSerial.println()</code> and debug output goes to a Telegram bot. Useful for deployed hardware you can't physically reach. Getting into the official registry lowers the barrier from 'clone a repo and figure out the include path' to 'search and click install'.",
+      {type:"code", content:"// PlatformIO:\nlib_deps = toastmanAu/TelegramSerial\n\n// Arduino IDE: search \"TelegramSerial\" in Library Manager"},
+
+      {type:"h3", content:"wyltek-embedded-builder — 38 sensor drivers, 32 board targets"},
+      "The embedded SDK grew substantially. The design principle is a uniform interface: every driver implements <code>begin()</code>, <code>read()</code>, <code>driverName()</code>, and returns a <code>WySensorData</code> struct with typed fields and a consistent <code>d.ok</code> / <code>d.error</code> pattern. One logging or display routine handles all sensors.",
+      "What shipped today:",
       {type:"ul", content:[
-        "WyMICS5524 — MEMS reducing gas sensor (CO, ethanol, H2, NH3). Faster and lower power than MQ series, proper Rs/R0 calibration workflow",
-        "WyDFPlayer — DFPlayer Mini MP3 module. Full 10-byte UART protocol, /ADVERT/ folder interrupt-playback, BUSY pin fast path, clone chip support",
-        "WyCamera — ESP32-CAM OV2640 module. MJPEG stream server at /stream, snapshot at /capture, motion detection, flash LED control",
-        "WyEyes — animated dual GC9A01 round display robot eyes. 12 expressions, idle drift, auto-blink, per-expression iris colour",
-        "WyDS18B20 rewrite — bug fix in multi-sensor search algorithm, non-blocking API, simultaneous conversion for multiple probes",
-        "Board targets: TTGO T-Display, Waveshare 1.47\"/2.0\", Double EYE dual-round, ILI9341 Adafruit/generic/M5Stack, ST7789 generic, ESP32-CAM, ESP32-S3-EYE"
+        "38 sensor drivers total — environmental, motion, gas, distance, weight, barcode, UV, current/voltage, turbidity, camera",
+        "WyMICS5524 — MEMS gas sensor (CO, ethanol, H2, NH3), faster and lower power than MQ series",
+        "WyDFPlayer — DFPlayer Mini MP3, full 10-byte UART protocol, /ADVERT/ interrupt-playback, clone chip support",
+        "WyCamera — ESP32-CAM OV2640, MJPEG stream + snapshot server, motion detection, flash LED",
+        "WyEyes — animated dual GC9A01 round display robot eyes, 12 expressions, idle drift, auto-blink",
+        "WyDS18B20 rewrite — multi-sensor bus search bug fixed, non-blocking API, simultaneous conversion",
+        "WyLD2410 — HLK-LD2410 mmWave presence sensor",
+        "WyGUVAS12SD — UV index sensor with index bands",
+        "WyTurbidity — optical turbidity, NTU output",
+        "WyINA219 — voltage/current/power with energy accumulation",
+        "WySoilMoisture, WyHCSR04 (median filter rewrite), WyWind (speed + direction)",
+        "32 board targets — added 12 new LilyGo/TTGO targets including T-Deck (LoRa+keyboard), T-Watch 2020 V3 (full smartwatch), T-Beam Meshtastic, T-Display S3 AMOLED",
+        "Sensor docs: pH calibration guide (Nernst equation, temp compensation), MQ series warm-up and R0 calibration, WyCamera setup"
       ]},
-      {type:"h3", content:"Why a unified SDK instead of per-sensor libraries"},
-      "The traditional approach — find a library per sensor, wire them together — works fine for one or two sensors. At six it gets painful: conflicting APIs, different error conventions, version pinning, SPI/I2C bus conflicts, heap pressure from six separate library globals. Every new session an AI has to re-research each library from scratch.",
-      "With a unified SDK, a 6-sensor weather station goes from ~95 minutes of back-and-forth to ~14 minutes. The library is persistent knowledge that survives context resets. The numbers back it up — at 10 sensors the unified approach uses 3.8× fewer tokens per build.",
-      {type:"link", text:"View on GitHub →", href:"https://github.com/toastmanAu/wyltek-embedded-builder"}
-    ],
-    links: [
-      {text:"wyltek-embedded-builder", href:"https://github.com/toastmanAu/wyltek-embedded-builder"}
-    ]
-  },
+      "The practical case for a unified SDK: at 10 sensors, building with per-sensor libraries takes roughly 3.8× more tokens and time per session than with a unified interface. The library is persistent knowledge that doesn't reset between sessions.",
 
-  // ────────────────────────────────────────────────────────────────
-  {
-    id: "2026-02-27-telegramserial-library-manager",
-    date: "2026-02-27",
-    title: "TelegramSerial is live in the Arduino Library Manager",
-    tags: ["ESP32", "TelegramSerial", "Arduino", "release"],
-    project: "TelegramSerial",
-    body: [
-      "PR #7823 into the Arduino Library Registry merged today. TelegramSerial is now searchable and installable directly from the Arduino IDE Library Manager — no GitHub URL needed.",
-      "TelegramSerial is a drop-in replacement for <code>Serial</code> on ESP32. Swap <code>Serial.println()</code> for <code>TelegramSerial.println()</code> and your debug output goes straight to a Telegram bot. Useful for remote hardware that you can't be physically next to — remote sensors, deployed nodes, anything running headless.",
-      {type:"h3", content:"Install"},
-      {type:"code", content:'// Arduino IDE: search "TelegramSerial" in Library Manager\n// PlatformIO:\nlib_deps = toastmanAu/TelegramSerial'},
-      "Getting into the official registry was the right call — it lowers the barrier from 'clone a GitHub repo and figure out the path' to 'search and click install'. The library has been stable for a while; the registry listing just makes it accessible.",
-      {type:"link", text:"TelegramSerial on GitHub →", href:"https://github.com/toastmanAu/TelegramSerial"}
-    ],
-    links: [
-      {text:"TelegramSerial", href:"https://github.com/toastmanAu/TelegramSerial"}
-    ]
-  },
+      {type:"h3", content:"Guition 4848S040 — GT911 touch confirmed"},
+      "The 480×480 S3 HMI board is a CKB light client node and HTTP broadcast relay. This session: confirmed GT911 touch controller wiring (SDA=19, SCL=45, INT=40, RST=41, addr=0x5D), interrupt-driven touch reading, full 480×480 coordinate range. Display + touch + wallet firmware all confirmed working together.",
 
-  // ────────────────────────────────────────────────────────────────
-  {
-    id: "2026-02-27-ckb-s3-broadcast-mainnet",
-    date: "2026-02-27",
-    title: "ESP32-S3 confirmed broadcasting CKB transactions on mainnet",
-    tags: ["ESP32-S3", "CKB", "ckb-firmware", "milestone"],
-    project: "ckb-firmware",
-    body: [
-      "End-to-end confirmed: the Guition 4848S040 ESP32-S3 board is now a functioning CKB transaction relay node on mainnet.",
-      "The board runs a local HTTP server. POST a raw CKB transaction to <code>/broadcast</code> and it forwards it to the light client, which submits it to the network. The board also displays live chain stats — block height, sync status, peer count — on its 480×480 touchscreen.",
-      {type:"h3", content:"Confirmed on-chain"},
-      {type:"code", content:"TX: 0xd9440f650d2c185b1232d31695a096c95866fe32baf7e44cfe0c1d37e96b62cf\nBlock: 18,720,296\nRelay: ESP32-S3 Guition 4848S040 → light client → mainnet"},
-      "The architecture: CKB-ESP32 library handles RPC communication and transaction signing (secp256k1 on-device, RFC6979 deterministic). The S3 node firmware adds the HTTP relay layer. A standalone device, no laptop required, submitting real mainnet transactions.",
-      {type:"h3", content:"What's next"},
-      "Porting the S3 dashboard to the CYD (Cheap Yellow Display) board via wyltek-embedded-builder. The CYD is a $12 board with a 320×240 touchscreen — a much lower barrier to entry for CKB node operators who want a physical display.",
-      {type:"link", text:"ckb-firmware on GitHub →", href:"https://github.com/toastmanAu/ckb-firmware"}
+      {type:"h3", content:"wyltekindustries.com — registered and live"},
+      "Registered wyltekindustries.com for 2 years. Moved the site from a GitHub Pages URL to the custom domain. OG meta tags and canonical URLs added throughout. A BlackBox product page built — B2B framing (supplied hardware, not a DIY kit), enquiry CTA, device mockup with live 450 CKB invoice rendering.",
+
+      {type:"h3", content:"Fiber network — nodes running, RPC auth solved"},
+      "Both Fiber nodes (ckbnode and N100) are funded and running. The late-night blocker was Biscuit token authentication in Fiber v0.7.0 — the config requires a biscuit public key and the RPC calls need a corresponding token. Generated proper keypairs, configured both nodes. Fiber RPC calls working by end of session. Channel setup is the next step once N100 gets funded above the auto-accept threshold.",
+
+      {type:"h3", content:"CKB-SMS-Bridge — research"},
+      "Early research session on using LilyGo SIM boards as CKB transaction relay nodes over SMS. Both A7670SA and SIM7080G use physical nano SIM — Hologram is the right carrier (inbound SMS free, $1/month SIM fee, 190+ countries). Economics at 30 CKB fee per transaction: 100 TX/month = ~$53 profit. Research and sim selection committed to <code>toastmanAu/ckb-sms-bridge</code>.",
     ],
     links: [
+      {text:"CKB-ESP32", href:"https://github.com/toastmanAu/CKB-ESP32"},
+      {text:"TelegramSerial", href:"https://github.com/toastmanAu/TelegramSerial"},
+      {text:"wyltek-embedded-builder", href:"https://github.com/toastmanAu/wyltek-embedded-builder"},
       {text:"ckb-firmware", href:"https://github.com/toastmanAu/ckb-firmware"},
-      {text:"CKB-ESP32 Library", href:"https://github.com/toastmanAu/CKB-ESP32"}
     ]
   },
+
 
   // ────────────────────────────────────────────────────────────────
   {
