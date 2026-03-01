@@ -18,6 +18,60 @@ const POSTS = [
 
   // ────────────────────────────────────────────────────────────────
   {
+    id: "2026-03-01-web-test-suite",
+    date: "2026-03-01",
+    title: "wyltek-embedded-builder: 696 host-compiled tests across 43 boards and 4 sensor drivers",
+    tags: ["wyltek-embedded-builder", "testing", "C++", "ESP32", "sensors"],
+    project: "wyltek-embedded-builder",
+    body: [
+      "wyltek-embedded-builder now has a full host-compiled test suite — 696 tests across all 43 board targets and the sensor math layer, all passing on bare Linux with no Arduino SDK. It found 14 real bugs in boards.h that were silently wrong.",
+
+      {type:"h3", content:"The problem with #define-only board definitions"},
+      "boards.h is 2000+ lines of preprocessor defines — one big <code>#if defined(WY_BOARD_FOO) / #elif</code> chain. Every board target defines its MCU type, frequency, display driver, touch controller, LED pins, and so on. There's no runtime to test. No linker error if you forget a define. If <code>WY_MCU_FREQ</code> is missing for a board, nothing breaks — it just silently returns 0 wherever the library checks clock speed.",
+      "The fix: compile the header once per board with <code>g++ -DWY_BOARD_FOO -Isrc test/test_boards.cpp</code> and assert the expected defines are present and sane. No Arduino, no hardware — just the preprocessor and a binary that exits 0 or 1.",
+
+      {type:"h3", content:"What the board suite checks (per board)"},
+      {type:"ul", content:[
+        "<strong>Identity</strong> — <code>WY_BOARD_NAME</code> defined and contains a recognisable brand/type string",
+        "<strong>MCU</strong> — exactly one <code>WY_MCU_*</code> type flag (ESP32/S2/S3/C3/C6/P4), <code>WY_MCU_CORES</code> in [1,2], <code>WY_MCU_FREQ</code> in {80,160,240,400}, <code>WY_HAS_PSRAM</code> is 0 or 1",
+        "<strong>Display</strong> — <code>WY_DISPLAY_W/H</code> sane (>0, <4000), <code>WY_DISPLAY_ROT</code> in [0,3], <code>WY_SCREEN_W/H</code> non-zero, at least one <code>WY_DISPLAY_*</code> driver define present",
+        "<strong>Touch</strong> — at least one <code>WY_TOUCH_*</code> driver define present when <code>WY_HAS_TOUCH=1</code>",
+        "<strong>RGB LED</strong> — all three pins in valid GPIO range (-1 or 0–48), all three distinct (with special handling for WS2812-only boards where all pins are -1)",
+        "<strong>Boot button</strong> — pin in valid range when defined",
+      ]},
+
+      {type:"h3", content:"14 bugs found in boards.h"},
+      "None of these would cause a compile error on Arduino — the missing defines just silently evaluate to 0 or undefined. But anything that reads boards.h on a non-Arduino host (config generator, CI, documentation tooling) would get wrong results.",
+      {type:"ul", content:[
+        "<strong>2 structural bugs</strong> — the extended board block (boards added later) started with <code>#elif</code> instead of <code>#if</code>, and was missing its closing <code>#endif</code>. The preprocessor wouldn't error on Arduino because the first block's <code>#endif</code> covered it — accidentally.",
+        "<strong>6 main-block boards</strong> missing <code>WY_MCU_CORES</code> or <code>WY_MCU_FREQ</code>: ESP32_3248S035, SUNTON_8048S043, WT32_SC01_PLUS, LILYGO_TDISPLAY_S3, XIAO_S3_ROUND",
+        "<strong>9 extended-block boards</strong> (LOLIN_S3_PRO, ESP32C3_GC9A01_128, FREENOVE_ESP32S3_CAM, and 6 more) used a different define style — <code>WY_MCU \"ESP32-S3\"</code> string + <code>WY_CPU_MHZ</code> — instead of the canonical <code>WY_MCU_ESP32S3</code> flag + <code>WY_MCU_FREQ</code>. Now both styles coexist.",
+        "<strong>Multiple extended-block boards</strong> missing <code>WY_DISPLAY_*</code> driver flags and <code>WY_TOUCH_*</code> driver flags (using string-style defines instead of canonical flags)",
+      ]},
+
+      {type:"h3", content:"Sensor math suite"},
+      "The sensor drivers (WyBME280, WyMQ, WyHCSR04, etc.) are inherently Arduino-coupled — they call <code>Wire.begin()</code>, <code>analogRead()</code>, <code>pulseIn()</code>. But the conversion math inside them is pure arithmetic and is entirely host-testable.",
+      "Four drivers with non-trivial formulas got dedicated test coverage:",
+      {type:"ul", content:[
+        "<strong>WyMQ</strong> (13 tests) — ADC→voltage→Rs pipeline using the voltage-divider circuit equation (<code>Rs = (Vref − Vadc) / Vadc × Rload</code>), power-law ppm curve (<code>ppm = a × (Rs/R0)^b</code>) for MQ-135 and MQ-2, R0 calibration from N averaged ADC readings",
+        "<strong>WyGP2Y0A02</strong> (8 tests) — voltage→distance power curve for all three sensor models (short/medium/long range), out-of-range clamping to -1, full ADC→voltage→cm pipeline",
+        "<strong>WyHCSR04</strong> (6 tests) — temperature-compensated speed of sound (<code>(331.4 + 0.606×T) / 10000</code> cm/µs), echo duration→cm, monotonicity check",
+        "<strong>WyGUVAS12SD</strong> (10 tests) — ADC→UVI pipeline, dark voltage offset subtraction, voltage divider correction (divRatio=2 halves sensorV — a common wiring gotcha), UVI category thresholds",
+      ]},
+      "The HC-SR04 formula is worth calling out: <code>(331.4 + 0.606 × T°C) / 10000</code> gives cm/µs. Speed of sound at 20°C is 0.034352 cm/µs. The /10000 catches people out.",
+
+      {type:"h3", content:"Running the suite"},
+      {type:"code", content:"# All 43 boards + sensor math (696 tests)\nbash test/run_tests.sh\n\n# Markdown report\nbash test/run_tests.sh --md\n\n# Single board\nbash test/run_tests.sh --board CYD\n\n# Verbose (show all test lines)\nbash test/run_tests.sh --verbose"},
+      "Compiler: g++ 11.4.0, aarch64 Linux. ~4 seconds for the full run.",
+      {type:"link", text:"wyltek-embedded-builder on GitHub →", href:"https://github.com/toastmanAu/wyltek-embedded-builder"},
+    ],
+    links: [
+      {text:"wyltek-embedded-builder", href:"https://github.com/toastmanAu/wyltek-embedded-builder"},
+    ]
+  },
+
+  // ────────────────────────────────────────────────────────────────
+  {
     id: "2026-03-01-ckbesp32-platform-agnostic",
     date: "2026-03-01",
     title: "CKB-ESP32: platform-agnostic transport layer, 144-test host suite, all address formats fixed, unknown lock passthrough",
