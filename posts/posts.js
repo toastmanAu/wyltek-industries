@@ -18,6 +18,72 @@ const POSTS = [
 
   // ────────────────────────────────────────────────────────────────
   {
+    id: "2026-03-01-ckbesp32-platform-agnostic",
+    date: "2026-03-01",
+    title: "CKB-ESP32: platform-agnostic transport layer, 144-test host suite, all address formats fixed, unknown lock passthrough",
+    tags: ["CKB", "ESP32", "CKB-ESP32", "C++", "testing", "bech32"],
+    project: "CKB-ESP32",
+    body: [
+      "A focused session on library correctness and portability. CKB-ESP32 now compiles clean on Linux/macOS/host with zero Arduino SDK, has a 144-test host suite that catches real bugs before they reach hardware, all three CKB address formats decode correctly (two bech32 bugs fixed), and unknown lock scripts — JoyID, Spore, anything with a custom code_hash — are handled gracefully instead of silently producing malformed transactions.",
+
+      {type:"h3", content:"Platform-agnostic transport layer"},
+      "The library previously only compiled in Arduino/PlatformIO environments — pulling in the WiFi transport meant pulling in HTTPClient, which pulled in the Arduino SDK. This made host-side unit testing require a maze of shims, and made the library unusable in ESP-IDF projects.",
+      "The fix: a <code>CKBTransport</code> pure virtual interface with four implementations that auto-select at compile time:",
+      {type:"ul", content:[
+        "<code>CKBArduinoTransport</code> — HTTPClient, selected when <code>ARDUINO</code> is defined",
+        "<code>CKBIDFTransport</code> — esp_http_client, selected when <code>ESP_PLATFORM</code> is defined without Arduino",
+        "<code>CKBPosixTransport</code> — BSD sockets, selected on Linux/macOS/host",
+        "<code>CKBMockTransport</code> — inject canned responses for unit tests",
+      ]},
+      "All RPC calls in <code>CKB.cpp</code> route through whichever transport is active. Override at runtime via <code>setTransport()</code> — handy for injecting a mock in tests without recompiling. ArduinoJson added as a git submodule so non-Arduino builds have it available. A full <code>PORTING.md</code> documents the build commands for each platform.",
+      "Every new source file must now compile clean with the host build command before committing — enforced in AGENTS.md. This is what made the 144-test suite possible.",
+
+      {type:"h3", content:"144-test host suite (0 failed)"},
+      "Five test suites, all running in under 10 seconds on aarch64:",
+      {type:"ul", content:[
+        "<strong>test_blake2b</strong> (12) — known vectors, CKB personalisation string, incremental hashing, empty input",
+        "<strong>test_molecule</strong> (36) — CKBBuf ops, all mol_write_* functions, overflow protection, length correctness",
+        "<strong>test_bip39</strong> (20) — mnemonic→privkey, BIP32 derivation, CKB address generation, NULL guards",
+        "<strong>test_signer</strong> (24) — CKBKey load/pubkey/lockargs/address, secp256k1 sign, RFC6979 determinism",
+        "<strong>test_client_static</strong> (52) — shannon math, hex utils, formatCKB, isValid*, all three address formats, lockClass()",
+      ]},
+      "The test runner (<code>bash test/run_tests.sh</code>) produces a colour terminal report and an optional <code>test/REPORT.md</code> with per-test detail. The suite caught five real bugs in <code>ckb_bip39.h</code> that would have been silent failures on-device.",
+
+      {type:"h3", content:"Five bugs found and fixed in ckb_bip39.h"},
+      "The BIP39 test suite ran against the actual blake2b and trezor_crypto implementations — not mocks. That's what surfaced these:",
+      {type:"ul", content:[
+        "<strong>Wrong blake2b API</strong> — <code>blake2b_state</code> / <code>blake2b_init</code> used directly; should be <code>CKB_Blake2b</code> / <code>ckb_blake2b_init</code> (the CKB personalised wrapper). Was producing a different hash than every other CKB address derivation in the library.",
+        "<strong>Buffer overflow</strong> — address output buffer hardcoded at 97 bytes, but bech32m CKB addresses need 104. Added <code>CKB_ADDRESS_BUFSIZE 104</code> define. Would have been a silent heap corruption on embedded.",
+        "<strong>NULL pointer dereference</strong> — <code>ckb_mnemonic_to_privkey()</code> and <code>ckb_privkey_to_address()</code> both accepted a NULL output pointer and wrote into it.",
+        "<strong>Wrong bignum API</strong> — <code>bn_read_be(secp256k1.order, &n)</code> called with a <code>bignum256*</code> where a byte array is expected.",
+        "<strong>Zero key accepted</strong> — <code>ckb_privkey_to_address()</code> would generate an address from an all-zero private key (invalid on secp256k1). Now returns -1.",
+      ]},
+      "All five were silent on Arduino — wrong output, no crash, no warning.",
+
+      {type:"h3", content:"All three CKB address formats fixed"},
+      "Testing revealed two bech32 bugs that had blocked the short and old-full address formats:",
+      {type:"ul", content:[
+        "<strong><code>strrchr</code> → <code>strchr</code></strong> in <code>_bech32Decode()</code>. The HRP separator in <code>ckb1...</code> is always the first <code>'1'</code>. Using <code>strrchr</code> (last occurrence) was finding a <code>'1'</code> inside the data portion of short addresses, splitting the string incorrectly and causing decode failure. Classic bech32 gotcha.",
+        "<strong>Minimum length guard <code>46 → 33</code></strong> — short addresses are exactly 46 chars; the original guard <code>< 46</code> was rejecting them at the boundary.",
+        "<strong>Wrong test vectors</strong> — the 64-char address used as a test vector was malformed (decodes to only 33 bytes — no hash_type or args). The real old-full bech32 address is 97 chars. All test vectors now derived from a known private key.",
+      ]},
+      "All three RFC 0021 formats now decode correctly: short deprecated (bech32, <code>fmt=0x01</code>), old full deprecated (bech32, <code>fmt=0x00</code>), and CKB2021 full (bech32m, <code>fmt=0x00</code>).",
+
+      {type:"h3", content:"Unknown lock script passthrough (JoyID, Spore, Omnilock)"},
+      "Previously, <code>buildTransfer()</code> always injected the secp256k1 dep group regardless of the from-lock type, and <code>signTx()</code> would silently apply a secp256k1 witness to any input. For a JoyID input this produces a transaction the node rejects.",
+      "The fix introduces <code>CKBLockClass</code>: <code>CKB_LOCK_SECP256K1</code>, <code>CKB_LOCK_MULTISIG</code>, <code>CKB_LOCK_ACP</code>, or <code>CKB_LOCK_UNKNOWN</code>. <code>CKBScript::lockClass()</code> classifies by code_hash against a known-locks table. <code>buildTransfer()</code> only injects the secp256k1 dep when a secp-family input is actually present. <code>signTx()</code> returns <code>CKB_ERR_UNSUPPORTED</code> rather than producing a corrupt witness.",
+      "The <code>CKBBuiltTx</code> struct gains two fields: <code>requiresExternalWitness</code> and <code>unknownLockCount</code>. When set, the transaction is correctly built and serialised — the caller adds the lock-specific cell dep manually and supplies the witness via <code>broadcastWithWitness()</code>.",
+      "What this means in practice: sending CKB <em>to</em> a JoyID address works unchanged. Querying a JoyID balance works unchanged. Building a transaction <em>from</em> a JoyID address works — it just can't be signed on-device, because a JoyID passkey is hardware-bound to the device that created it and cannot be exported.",
+    ],
+    links: [
+      {text:"CKB-ESP32 on GitHub", href:"https://github.com/toastmanAu/CKB-ESP32"},
+      {text:"Platform-agnostic transport (commit 24a957c)", href:"https://github.com/toastmanAu/CKB-ESP32/commit/24a957c"},
+      {text:"Address formats + unknown lock fix (commit 5504432)", href:"https://github.com/toastmanAu/CKB-ESP32/commit/5504432"},
+    ]
+  },
+
+  // ────────────────────────────────────────────────────────────────
+  {
     id: "2026-03-01-ckb-light-esp-transport",
     date: "2026-03-01",
     title: "ckb-light-esp: Merkle proofs done, WiFi transport live, two new site pages",
