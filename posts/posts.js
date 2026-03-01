@@ -54,6 +54,41 @@ const POSTS = [
       {text: "BitChat protocol", href: "https://github.com/permissionlesstech/bitchat"}
     ]
   },
+  // ────────────────────────────────────────────────────────────────
+  {
+    id: "2026-03-01-bitchat-lora-bridge",
+    date: "2026-03-01",
+    title: "BitChat BLE↔LoRa bridge: the piece nobody has shipped yet",
+    tags: ["BitChat", "LoRa", "BLE", "ESP32", "T-Deck", "mesh"],
+    project: "ckb-light-esp",
+    body: [
+      "The BitChat community has been asking for LoRa support since the app launched (GitHub issue #508). BitChat is designed to work over BLE mesh — but BLE has a range of maybe 50-100m. LoRa pushes that to kilometres. The blocker is a nasty MTU mismatch: BitChat pads packets to 256/512/1024/2048 bytes for traffic analysis resistance, but LoRa's physical layer maxes out at 255 bytes. You can't just forward BitChat packets over LoRa — they're too big.",
+
+      {type:"h3", content:"The solution: fragment relay"},
+      "The bridge runs on a T-Deck or T-Beam — boards that have both BLE and a LoRa SX1262 radio. It acts as a transparent relay: phones connect over BLE as normal BitChat peers, and their packets get forwarded over LoRa to distant nodes.",
+
+      "BLE→LoRa path: receive a BitChat packet from a BLE peer, strip the padding (<code>bc_unpad()</code>), compute a 2-byte fragment ID from the packet timestamp and sender ID, then split the raw packet into ≤251-byte LoRa chunks with a 4-byte fragment header: <code>[msg_id:2][idx:1][total:1][data]</code>.",
+
+      "LoRa→BLE path: receive LoRa fragments, reassemble (up to 4 parallel in-flight reassemblies, 5s timeout), then feed the complete packet into <code>bc_mesh_receive()</code> — which relays it to all connected BLE peers. The LoRa source flag (<code>src_peer==-1</code>) prevents the bridge from echoing it back to LoRa.",
+
+      {type:"h3", content:"The fragment ID trick"},
+      "BitChat messages have a 36-byte UUID for deduplication. Using that full UUID in LoRa fragments would eat 36 of our 255 bytes — a huge overhead. Instead, the bridge computes a 2-byte hash from the packet's timestamp bytes XOR'd with sender ID bytes. It's not cryptographically strong, but it's more than enough to match fragments from the same packet in a 5-second reassembly window.",
+
+      {type:"h3", content:"Multi-transport relay"},
+      "The mesh engine fires a single <code>on_relay</code> callback. The bridge wires it to both transports: when a packet arrives from BLE (<code>src_peer>=0</code>), it goes to both other BLE peers and to LoRa. When it arrives from LoRa (<code>src_peer==-1</code>), it goes to BLE peers only — no LoRa echo.",
+
+      {type:"h3", content:"Hardware"},
+      "T-Deck (LilyGo) is the ideal board: SX1262 LoRa + BLE + keyboard + 320×240 display + ESP32-S3. All of that in a handheld device running off a single LiPo. T-Beam also works — same LoRa module + GPS, no keyboard.",
+
+      "Both boards are in the wyltek-embedded-builder target list, so their LoRa pin definitions (<code>WY_LORA_CS</code>, <code>WY_LORA_DIO1</code>, etc.) are already defined. The bridge just picks them up."
+    ],
+    links: [
+      {text: "GitHub — ckb-light-esp", href: "https://github.com/toastmanAu/ckb-light-esp"},
+      {text: "BitChat issue #508", href: "https://github.com/permissionlesstech/bitchat/issues/508"}
+    ]
+  },
+
+
 
   // ────────────────────────────────────────────────────────────────
   {
