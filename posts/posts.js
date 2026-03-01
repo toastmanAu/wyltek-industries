@@ -18,6 +18,45 @@ const POSTS = [
 
   // ────────────────────────────────────────────────────────────────
   {
+    id: "2026-03-01-bitchat-esp32",
+    date: "2026-03-01",
+    title: "BitChat on ESP32: wire codec + mesh relay engine",
+    tags: ["BitChat", "ESP32", "BLE", "LoRa", "mesh", "C++"],
+    project: "ckb-light-esp",
+    body: [
+      "BitChat is Jack Dorsey's decentralised BLE mesh chat — no servers, no accounts, messages hop peer-to-peer over Bluetooth. It launched in July 2025, the protocol spec is clean and well-documented, and the whole thing is Unlicense. Today I built the first two layers of a native ESP32 implementation into ckb-light-esp.",
+
+      {type:"h3", content:"The protocol"},
+      "BitChat is a four-layer stack: transport (BLE GATT, abstracted), session/packet framing (TTL, routing, fragmentation), Noise encryption (XX pattern — Curve25519 + ChaCha20-Poly1305 + SHA-256), and application (nicknames, messages, receipts). The wire format is a compact binary protocol — 14-byte fixed header, variable payload, optional 64-byte Ed25519 signature, and PKCS#7-style padding to block sizes (256/512/1024/2048 bytes) to resist traffic analysis.",
+
+      {type:"h3", content:"What I built"},
+      "Two new files in <code>src/bitchat/</code>:",
+
+      {type:"ul", content:[
+        "<strong>bitchat_packet.h / .cpp</strong> — the wire codec. Full V1 encode/decode, all 8 message types, BitchatMessage and BitchatAnnounce serialisation, zero-copy decode (payload pointer into caller's buffer), and a <code>padding=false</code> mode for LoRa's 255-byte MTU constraint.",
+        "<strong>bitchat_mesh.h / .cpp</strong> — the relay engine. 512-bit Bloom filter (3 hash functions, 5-minute rotation window) for packet deduplication. Peer table with 16 slots and LRU eviction. Core relay logic: decode → dedup → echo-suppress → dispatch → decrement TTL → relay. Callback interface plugs into any transport."
+      ]},
+
+      "108 host tests, all passing. Grand total across the project: 336/336.",
+
+      {type:"h3", content:"Key design decisions"},
+      "<strong>Relay is packet-transparent.</strong> A relay node doesn't need a Noise session with anyone. Private messages are Noise-encrypted end-to-end — relay nodes forward the opaque ciphertext and can't read it. That means a fixed ESP32 node (bolted to the wall at a café) can relay messages between phones without knowing anything about their content. This is the key to making a BLE mesh extender viable.",
+
+      "<strong>LoRa MTU mismatch.</strong> BitChat's BLE transport fragments at ~469 bytes. LoRa's physical layer maxes out at 255 bytes. A BLE↔LoRa bridge can't just forward raw packets — it needs to fully reassemble fragments from the BLE side, then re-fragment for LoRa. That's the bridge layer, which comes next.",
+
+      "<strong>Nobody has shipped this yet.</strong> BitChat issue #508 has people asking for exactly a LoRa bridge. The T-Deck board (LilyGo) in our board targets has BLE + SX1262 LoRa + keyboard + display — it's the natural hardware for this.",
+
+      {type:"h3", content:"What's next"},
+      "BLE transport layer (NimBLE-Arduino — advertise + scan + connect + relay on ESP32), then the LoRa bridge (reassemble/re-fragment at the MTU boundary). After that: Noise session layer so the ESP32 can send and receive private messages, not just relay them. Long-term: map BitChat's identity fingerprint (SHA-256 of the Noise static key) to a CKB lock script, so you can pay a BitChat peer without exchanging addresses."
+    ],
+    links: [
+      {text: "GitHub — ckb-light-esp", href: "https://github.com/toastmanAu/ckb-light-esp"},
+      {text: "BitChat protocol", href: "https://github.com/permissionlesstech/bitchat"}
+    ]
+  },
+
+  // ────────────────────────────────────────────────────────────────
+  {
     id: "2026-03-01-device-build-dryrun",
     date: "2026-03-01",
     title: "ckb-light-esp: first PlatformIO device build dry-run — what we found",
