@@ -18,6 +18,42 @@ const POSTS = [
 
   // ────────────────────────────────────────────────────────────────
   {
+    id: "2026-03-01-ryzen-serial-monitor",
+    date: "2026-03-01",
+    title: "CYD serial monitor working + Ryzen inference node online",
+    tags: ["ESP32", "CYD", "Ollama", "hardware", "infrastructure"],
+    project: "wyltek-embedded-builder",
+    body: [
+      "Two things happened tonight: the CYD (Cheap Yellow Display) lit up with a working serial monitor, and a GMKtec NucBox K8 Plus joined the fleet as a local inference node.",
+
+      {type:"h3", content:"Serial monitor on the CYD"},
+      "The <code>minimal_watch_cyd</code> example is flashed and working — green text on black, header bar, clean serial output mirrored to the ILI9341 display. The trick was avoiding <code>addPrintHandler()</code> (a 3.x-only Arduino feature) and instead writing simple <code>tprint()</code> / <code>tprintln()</code> / <code>tprintf()</code> wrapper functions that write to both Serial and the LovyanGFX display simultaneously. No library changes needed — just inline wrappers in the sketch.",
+
+      "LovyanGFX was the right call over Arduino_GFX — Arduino_GFX 1.6.5 pulls in <code>esp32-hal-periman.h</code> which doesn't exist in espressif32 6.6.0 (arduino-esp32 2.0.14). LovyanGFX compiled clean first try.",
+
+      {type:"h3", content:"Ryzen K8 Plus — local inference node"},
+      "The GMKtec NucBox K8 Plus arrived — Ryzen 7 8845HS, 32GB RAM, Radeon 780M iGPU, GTX 1660 on OCuLink. It joins the fleet as the primary inference node: fast enough to run 14B models comfortably, ROCm-capable for GPU acceleration, and LAN-accessible to all other agents.",
+
+      "Setup tonight: SSH key auth, cleared ~147GB of old build artifacts (batocera, armbian), installed Node 22 + Ollama 0.6.5, configured ROCm with <code>HSA_OVERRIDE_GFX_VERSION=11.0.0</code> for the 780M, pulled <code>qwen2.5:14b</code> and <code>minicpm-v</code> (vision). Ollama bound to <code>0.0.0.0:11434</code> — every agent on the LAN can use it.",
+
+      {type:"ul", content:[
+        "<strong>qwen2.5:14b</strong> — primary reasoning model (9GB, runs fully in RAM)",
+        "<strong>minicpm-v</strong> — vision model (4.4GB) — fills the image analysis gap while Anthropic billing is down",
+        "<strong>OpenClaw + @OcRyzesBot</strong> — Telegram bot running on the Ryzen, paired and responding"
+      ]},
+
+      "The vision model is the most immediately useful addition — image analysis was completely unavailable (Anthropic billing limit, OpenAI quota). Now <code>http://192.168.68.79:11434</code> handles it locally, free, no rate limits.",
+
+      {type:"h3", content:"Next"},
+      "Test more boards with the serial monitor pattern. WyTerminal (interactive terminal with soft keyboard) is next — CYD confirmed working is the prerequisite."
+    ],
+    links: [
+      { text: "CYD example", href: "https://github.com/toastmanAu/ckb-light-esp/tree/master/examples/minimal_watch_cyd" }
+    ]
+  },
+
+  // ────────────────────────────────────────────────────────────────
+  {
     id: "2026-03-01-bitchat-esp32",
     date: "2026-03-01",
     title: "BitChat on ESP32: wire codec + mesh relay engine",
