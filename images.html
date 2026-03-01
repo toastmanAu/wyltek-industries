@@ -134,43 +134,36 @@
 
 <div class="main">
 
-  <!-- Coming soon notice -->
-  <div class="soon-banner">
-    <div style="font-size:2.5rem;margin-bottom:.7rem">🔧</div>
-    <h2>First images coming soon</h2>
-    <p>Getting the build formula right before publishing. First target: Orange Pi 3B with Waveshare 5" DSI display support — the board running our CKB node.</p>
-    <p style="margin-top:.5rem;font-size:.82rem">Images are GPG-signed and SHA256 verified. Same pipeline as the CKB chain snapshots.</p>
-  </div>
-
-  <!-- Planned images -->
-  <div class="section-title">📋 Image roadmap</div>
+  <!-- CKB Full Node images -->
+  <div class="section-title">&#x26D3;&#xFE0F; CKB Full Node</div>
+  <p style="color:var(--muted);font-size:.88rem;margin:-0.5rem 0 1.2rem">Boots straight into a running CKB full node. Includes the node binary, live dashboard, stratum proxy, and auto-start systemd services. Plug in, power on, syncing in minutes.</p>
   <div class="image-grid">
 
-    <div class="image-card building">
+    <div class="image-card available">
       <div class="img-header">
-        <span class="img-icon">🍊</span>
-        <span class="img-name">Orange Pi 3B — CKB Node</span>
-        <span class="img-status status-building">Building</span>
+        <span class="img-icon">&#x1F34A;</span>
+        <span class="img-name">Orange Pi 3B &mdash; CKB Node</span>
+        <span class="img-status status-available">Available</span>
       </div>
-      <div class="img-desc">Armbian Bookworm (kernel 6.1x) for OPi 3B. Pre-installed: CKB node v0.204+, dashboard, stratum proxy, auto-start services. Optional: Waveshare 5" DSI display.</div>
+      <div class="img-desc">Armbian Bookworm, kernel 6.18.15 for OPi 3B (RK3566). Pre-installed: CKB node v0.204+, dashboard proxy, stratum proxy, all auto-start services.</div>
       <div class="img-tags">
         <span class="img-tag">RK3566</span>
         <span class="img-tag">aarch64</span>
         <span class="img-tag">CKB node</span>
-        <span class="img-tag">Armbian</span>
+        <span class="img-tag">Armbian Bookworm</span>
       </div>
       <div class="img-actions">
-        <span class="dl-btn disabled">⬇ Download — coming soon</span>
+        <span class="dl-btn disabled">&#x2B07; Download &mdash; hosting soon</span>
       </div>
     </div>
 
     <div class="image-card">
       <div class="img-header">
-        <span class="img-icon">🍊</span>
-        <span class="img-name">Orange Pi 5 / 5+ — CKB Node</span>
+        <span class="img-icon">&#x1F34A;</span>
+        <span class="img-name">Orange Pi 5 / 5+ &mdash; CKB Node</span>
         <span class="img-status status-planned">Planned</span>
       </div>
-      <div class="img-desc">Same CKB node stack on RK3588S. Faster sync, more RAM headroom. Target: full node + Fiber network node pre-configured.</div>
+      <div class="img-desc">Same CKB node stack on RK3588S. Faster sync, more RAM headroom. Full node + Fiber network node pre-configured.</div>
       <div class="img-tags">
         <span class="img-tag">RK3588S</span>
         <span class="img-tag">aarch64</span>
@@ -178,14 +171,14 @@
         <span class="img-tag">Fiber</span>
       </div>
       <div class="img-actions">
-        <span class="dl-btn disabled">⬇ Download — planned</span>
+        <span class="dl-btn disabled">&#x2B07; Download &mdash; planned</span>
       </div>
     </div>
 
     <div class="image-card">
       <div class="img-header">
-        <span class="img-icon">🥧</span>
-        <span class="img-name">Raspberry Pi 4/5 — CKB Node</span>
+        <span class="img-icon">&#x1F967;</span>
+        <span class="img-name">Raspberry Pi 4/5 &mdash; CKB Node</span>
         <span class="img-status status-planned">Planned</span>
       </div>
       <div class="img-desc">Raspberry Pi OS Lite (64-bit) base with CKB node, dashboard, and stratum proxy. The most accessible entry point for new node operators.</div>
@@ -196,24 +189,93 @@
         <span class="img-tag">RPi OS</span>
       </div>
       <div class="img-actions">
-        <span class="dl-btn disabled">⬇ Download — planned</span>
+        <span class="dl-btn disabled">&#x2B07; Download &mdash; planned</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Solo Miner images -->
+  <div class="section-title">&#x26CF;&#xFE0F; Solo Miner</div>
+  <p style="color:var(--muted);font-size:.88rem;margin:-0.5rem 0 1.2rem">Full node + stratum proxy configured for solo mining. Point your NerdMiner or other Eaglesong miner at the board&rsquo;s IP and start hashing. Rewards go direct to your address &mdash; no pool cut.</p>
+  <div class="image-grid">
+
+    <div class="image-card">
+      <div class="img-header">
+        <span class="img-icon">&#x1F34A;</span>
+        <span class="img-name">Orange Pi 3B &mdash; Solo Mining Stack</span>
+        <span class="img-status status-planned">Planned</span>
+      </div>
+      <div class="img-desc">OPi 3B running CKB node + stratum proxy in solo mode. Pre-configured reward address prompt on first boot. Just point your miner at port 3333.</div>
+      <div class="img-tags">
+        <span class="img-tag">RK3566</span>
+        <span class="img-tag">Stratum</span>
+        <span class="img-tag">Solo mining</span>
+        <span class="img-tag">Eaglesong</span>
+      </div>
+      <div class="img-actions">
+        <span class="dl-btn disabled">&#x2B07; Download &mdash; planned</span>
       </div>
     </div>
 
     <div class="image-card">
       <div class="img-header">
-        <span class="img-icon">🔶</span>
-        <span class="img-name">Orange Pi 3B — Kiosk Display</span>
+        <span class="img-icon">&#x1F967;</span>
+        <span class="img-name">Raspberry Pi 4/5 &mdash; Solo Mining Stack</span>
         <span class="img-status status-planned">Planned</span>
       </div>
-      <div class="img-desc">Armbian with Waveshare 5" DSI display driver baked in. Boots straight to a CKB stats kiosk or can be used as a general-purpose touchscreen terminal.</div>
+      <div class="img-desc">Same solo mining stack on the most widely available SBC. Easy entry point if you already have a Pi sitting around.</div>
+      <div class="img-tags">
+        <span class="img-tag">BCM2711/BCM2712</span>
+        <span class="img-tag">Stratum</span>
+        <span class="img-tag">Solo mining</span>
+        <span class="img-tag">Eaglesong</span>
+      </div>
+      <div class="img-actions">
+        <span class="dl-btn disabled">&#x2B07; Download &mdash; planned</span>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Fiber Kiosk images -->
+  <div class="section-title">&#x1F517; Fiber Network Kiosk</div>
+  <p style="color:var(--muted);font-size:.88rem;margin:-0.5rem 0 1.2rem">Boots into a touchscreen Fiber network node UI. Designed for boards with a DSI or HDMI display &mdash; ideal as a dedicated payment terminal or Lightning-style channel node for the CKB ecosystem.</p>
+  <div class="image-grid">
+
+    <div class="image-card">
+      <div class="img-header">
+        <span class="img-icon">&#x1F536;</span>
+        <span class="img-name">Orange Pi 3B &mdash; Fiber Kiosk</span>
+        <span class="img-status status-planned">Planned</span>
+      </div>
+      <div class="img-desc">Armbian with Waveshare 5&quot; DSI display driver, Fiber network node, and kiosk UI. First-boot wizard generates fresh keys and funds the node wallet. Touch-capable.</div>
       <div class="img-tags">
         <span class="img-tag">RK3566</span>
         <span class="img-tag">DSI display</span>
+        <span class="img-tag">Fiber</span>
         <span class="img-tag">Kiosk</span>
       </div>
       <div class="img-actions">
-        <span class="dl-btn disabled">⬇ Download — planned</span>
+        <span class="dl-btn disabled">&#x2B07; Download &mdash; planned</span>
+      </div>
+    </div>
+
+    <div class="image-card">
+      <div class="img-header">
+        <span class="img-icon">&#x1F34A;</span>
+        <span class="img-name">Orange Pi 5+ &mdash; Fiber Kiosk</span>
+        <span class="img-status status-planned">Planned</span>
+      </div>
+      <div class="img-desc">More headroom for the Fiber node DB and UI. RK3588S handles heavier channel traffic. HDMI output for larger displays.</div>
+      <div class="img-tags">
+        <span class="img-tag">RK3588S</span>
+        <span class="img-tag">HDMI</span>
+        <span class="img-tag">Fiber</span>
+        <span class="img-tag">Kiosk</span>
+      </div>
+      <div class="img-actions">
+        <span class="dl-btn disabled">&#x2B07; Download &mdash; planned</span>
       </div>
     </div>
 
