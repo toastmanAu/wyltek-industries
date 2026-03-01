@@ -18,6 +18,54 @@ const POSTS = [
 
   // ────────────────────────────────────────────────────────────────
   {
+    id: "2026-03-01-device-build-dryrun",
+    date: "2026-03-01",
+    title: "ckb-light-esp: first PlatformIO device build dry-run — what we found",
+    tags: ["ckb-light-esp", "ESP32", "PlatformIO", "C++", "CKB"],
+    project: "ckb-light-esp",
+    body: [
+      "With 206 host tests passing, it was time to point the compiler at an actual ESP32 target. No hardware yet — just <code>pio run -e esp32dev</code> and see what breaks. This is the first device-side compilation of the library, and it surfaced six real issues that host compilation can't catch.",
+
+      {type:"h3", content:"The setup"},
+      "ckb-light-esp is a library — it has no <code>setup()</code> or <code>loop()</code> at the root. PlatformIO tried to link it as a sketch and gave <code>undefined reference to setup()</code>. Fixed by building through an example (<code>examples/minimal_watch</code>), with the <code>.ino</code> moved into <code>src/</code> per PlatformIO's layout requirement. All six example dirs now have this structure and a <code>.gitignore</code> for <code>.pio/</code>.",
+
+      {type:"h3", content:"Issue 1 — Arduino shim guard (wifi_transport.cpp)"},
+      "The host-build shims for <code>millis()</code>, <code>delay()</code>, and <code>IRAM_ATTR</code> were wrapped in <code>#ifndef IRAM_ATTR</code>. On device, <code>IRAM_ATTR</code> isn't defined until <em>after</em> Arduino.h is pulled in — so the shims got declared before Arduino.h, then Arduino.h declared <code>millis()</code> again, causing an ambiguating redeclaration error.",
+      "Fix: shims are now <code>#ifdef HOST_TEST</code> only. Device builds use Arduino.h's native declarations.",
+
+      {type:"h3", content:"Issue 2 — LoRa transport on WiFi-only profiles"},
+      "<code>lora_transport.cpp</code> uses RadioLib types (<code>SX1276</code>, <code>Module</code>, <code>RADIOLIB_ERR_NONE</code>) unconditionally in its device code paths. WiFi-only profiles don't have RadioLib in their <code>lib_deps</code>.",
+      "Fix: device-side blocks in <code>begin()</code>, <code>_sendPacket()</code>, and <code>_recvPacket()</code> are now guarded with <code>#elif defined(LIGHT_PROFILE_LORA) || defined(LIGHT_PROFILE_LORAWAN)</code>, with a <code>return false</code> stub for other profiles. The library compiles for any profile without RadioLib.",
+
+      {type:"h3", content:"Issue 3 — __int128 not available on Xtensa GCC 8.4"},
+      "The RISC-V interpreter (<code>ckbvm_interp.cpp</code>) uses <code>__int128</code> for the MULH/MULHSU/MULHU opcodes — 64×64→128-bit multiply returning the high 64 bits. Xtensa GCC 8.4.0 doesn't support <code>__int128</code>.",
+      "Fix: replaced with a portable 32×32→64 decomposition using four partial products, correct for all three signed/unsigned combinations. All 24 ckbvm_interp host tests still pass after the change.",
+
+      {type:"h3", content:"Issue 4 — ckb_blake2b_256 missing from CKB-ESP32"},
+      "<code>block_filter.cpp</code> calls <code>ckb_blake2b_256(data, len, out)</code>. The CKB-ESP32 library only had <code>ckb_blake2b_hash()</code> with the same signature. On host builds this was covered by the test harness's <code>blake2b_real.h</code> shim — the device compiler found the gap.",
+      "Fixed upstream in CKB-ESP32: added a <code>static inline</code> alias in <code>ckb_blake2b.h</code>.",
+
+      {type:"h3", content:"Issue 5 — ckb_blake2b.h include scope"},
+      "In <code>header_chain.cpp</code>, the <code>#include &lt;ckb_blake2b.h&gt;</code> was inside the <code>#else // HOST_TEST</code> block, meaning it was included for host builds but skipped for device builds. Moved above the <code>#ifdef HOST_TEST</code> guard so it's included unconditionally.",
+
+      {type:"h3", content:"Issue 6 — String → const char* in CKB-ESP32"},
+      "<code>ckbfs.cpp</code> called <code>strlcpy(buf, resp, size)</code> where <code>resp</code> is a <code>String</code>. Arduino's <code>strlcpy</code> doesn't accept <code>String</code> directly. Fixed upstream: <code>resp.c_str()</code>.",
+
+      {type:"h3", content:"What's documented"},
+      "All of this is now in <code>PORTING.md</code> in the ckb-light-esp repo — build layout, ArduinoJson include path, LoRa profile guards, the Xtensa <code>__int128</code> workaround, the PlatformIO symlink/submodule path quirk, and the ESP32-C6 platform version requirement. The kind of notes you want when you come back to this six months later or someone else tries to build.",
+
+      {type:"h3", content:"Status"},
+      "Host tests: 206/206 passing. Device compilation: all errors resolved, linker succeeds on esp32dev. Actual flash numbers pending first hardware run (CYD board). One remaining known issue: the blake2b git submodule causes PlatformIO to generate extremely long repeated paths during build — cosmetic only, the object compiles correctly.",
+    ],
+    links: [
+      {text:"ckb-light-esp repo", href:"https://github.com/toastmanAu/ckb-light-esp"},
+      {text:"PORTING.md", href:"https://github.com/toastmanAu/ckb-light-esp/blob/master/PORTING.md"},
+      {text:"CKB-ESP32 upstream fixes", href:"https://github.com/toastmanAu/CKB-ESP32/commit/d80d68c"},
+    ],
+  },
+
+  // ────────────────────────────────────────────────────────────────
+  {
     id: "2026-03-01-web-test-suite",
     date: "2026-03-01",
     title: "wyltek-embedded-builder: 696 host-compiled tests across 43 boards and 4 sensor drivers",
