@@ -16,6 +16,45 @@
 
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
+  // ────────────────────────────────────────────────────────────────
+  {
+    id: "2026-03-02-fiber-channel-ckb-chess-relayer",
+    date: "2026-03-02",
+    title: "Fiber channel live + ckb-chess relayer — the on-chain game stack is coming together",
+    tags: ["nervos", "Fiber", "ckb-chess", "infrastructure", "CKB"],
+    project: "ckb-chess",
+    body: [
+      "Two big things happened tonight: the first real Fiber payment channel between our two nodes opened successfully, and the ckb-chess game relayer hit v0.1.",
+
+      {type:"h3", content:"Fiber channel: ckbnode ↔ N100"},
+      "After funding the N100 Fiber wallet with 2000 CKB, we connected the two local nodes (ckbnode on OrangePi 3B and the N100 mini PC) and opened a 1000 CKB channel. It went through the full handshake — AWAITING_TX_SIGNATURES → funding tx confirmed → CHANNEL_READY. We now have a live, public Fiber channel on mainnet that can route payments.",
+      "Getting there required fixing the known Fiber DB lock bug: if the process crashes mid-handshake, the RocksDB LOCK file needs clearing before fnn will restart. Fixed with pkill -9 then systemctl restart. Channel came up clean on the second attempt.",
+
+      {type:"h3", content:"ckb-chess relayer v0.1"},
+      "The relayer is the trusted intermediary in Matt's Universal Turn-Based Competition Framework. It does four things: forward signed moves between players, manage challenge windows when a player goes silent, hold payment preimages, and trigger Fiber settlement when a game resolves.",
+      "v0.1 is a WebSocket server (Node.js, single dependency) with the full game session state machine. Players join with their pubkey and invoice hash, exchange UCI-notation moves, and can initiate a 5-minute challenge timer if the opponent stalls. Move history is logged with state hashes for on-chain dispute submission.",
+      "The Fiber RPC client (fiber.js) is wired — new_invoice, settle_invoice, and send_payment calls are ready. Now that the channel is live, the invoice flow can be tested end-to-end.",
+
+      {type:"h3", content:"Where the game stack sits now"},
+      {type:"ul", content:[
+        "CKB contract (chess.c + chess_moves.c) — 15/15 tests, full move validation, castling, promotion ✅",
+        "WyAuth secp256k1 signing for move authentication ✅",
+        "Game relayer v0.1 — WebSocket server, move forwarding, challenge timer ✅",
+        "Fiber channel ckbnode ↔ N100 — CHANNEL_READY on mainnet ✅",
+        "Invoice flow (new_invoice / settle_invoice) — wired in fiber.js, untested ⏳",
+        "Challenge contract extension — accept full move set, replay, output winner ❌",
+        "Game client CLI — not started ❌",
+      ]},
+      "The remaining pieces are pure software. The infrastructure is there — two live Fiber nodes, a funded channel, a working game contract, and a relayer ready to route.",
+
+      {type:"link", text:"ckb-chess on GitHub", href:"https://github.com/toastmanAu/ckb-chess"},
+    ],
+    links: [
+      {text:"ckb-chess", href:"https://github.com/toastmanAu/ckb-chess"},
+      {text:"Fiber Framework Doc", href:"https://ckb-devrel.notion.site/A-Universal-Turn-Based-Competition-Framework-Based-on-Fiber-6309f5bf38208288ae938158afe27343"},
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
   {
     id: "2026-03-02-wyauth-wymolecule-snapshot",
     date: "2026-03-02",
