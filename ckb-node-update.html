@@ -168,20 +168,36 @@
 
 <!-- One-liner -->
 <div class="oneliner-wrap">
-  <div class="ol-label">SSH into your node, then run:</div>
+  <div class="ol-label">Run this on your node — paste it into a terminal:</div>
   <div class="ol-box">
     <code id="cmd">curl -fsSL https://raw.githubusercontent.com/toastmanAu/armbian-ckb-userpatches/master/scripts/fix-ckb-stability.sh | sudo bash</code>
     <button class="copy-btn" id="copyBtn" onclick="copyCmd()">Copy</button>
   </div>
-  <div class="ol-note">Takes 2–5 minutes · Safe to run multiple times · Nothing removed, only added<br>
-    <span style="color:var(--muted);font-size:.75rem">Your node: Orange Pi 3B · CKB v0.202.0 or earlier · <a href="https://talk.nervos.org/t/dis-build-and-distribute-efficient-network-nodes/7594" target="_blank" style="color:var(--accent)">Original project thread ↗</a></span>
+  <div class="ol-note">
+    Takes 2–5 minutes · Safe to run multiple times · Nothing removed, only added
+  </div>
+  <div style="display:flex;gap:.75rem;justify-content:center;flex-wrap:wrap;margin-top:1rem">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.2rem;font-size:.85rem;max-width:280px;text-align:left">
+      <div style="color:var(--accent);font-weight:700;margin-bottom:.4rem">💻 Directly on the node</div>
+      <div style="color:var(--muted);line-height:1.6">Plug in a monitor and keyboard, log in, open a terminal, and paste the command above.</div>
+    </div>
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.9rem 1.2rem;font-size:.85rem;max-width:280px;text-align:left">
+      <div style="color:var(--accent2);font-weight:700;margin-bottom:.4rem">🖥 Via SSH from another computer</div>
+      <div style="color:var(--muted);line-height:1.6">On your laptop or desktop, open a terminal and connect:<br>
+        <code style="color:var(--text);font-size:.82rem">ssh orangepi@&lt;your-node-ip&gt;</code><br>
+        Then paste the command above.
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center;margin-top:.85rem;font-size:.78rem;color:var(--muted)">
+    Your node: Orange Pi 3B · CKB v0.202.0 or earlier · <a href="https://talk.nervos.org/t/dis-build-and-distribute-efficient-network-nodes/7594" target="_blank" style="color:var(--accent)">Original project thread ↗</a>
   </div>
 </div>
 
 <!-- Terminal preview -->
 <div class="section">
   <h2>What you'll see</h2>
-  <p class="sub">Every step checks if it's already done and skips cleanly. Green ✔ = applied. Dash – = already there.</p>
+  <p class="sub">This is what you'll see in your terminal — on the node directly or over SSH. Every step checks if it's already done and skips with a dash. Green ✔ means it was just applied.</p>
   <div class="terminal">
     <div class="term-bar">
       <div class="dot" style="background:#ff5f57"></div>
