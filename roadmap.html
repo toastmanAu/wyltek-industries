@@ -202,11 +202,11 @@
         <span class="card-icon">🔒</span>
         <div>
           <div class="card-title">WyAuth — Multi-Chain Authentication</div>
-          <div class="card-subtitle">C++ port of ckb-auth</div>
+          <div class="card-subtitle">C++ port of ckb-auth → targets Omnilock</div>
         </div>
         <span class="status-pill pill-next">Next</span>
       </div>
-      <div class="card-desc">C++ wrapper around Nervos' ckb-auth C library. Verify Bitcoin, Ethereum, Cardano, Solana, and 8 other blockchain signatures natively on ESP32. Pay CKB invoices with any wallet — no CKB wallet needed by the payer.</div>
+      <div class="card-desc">C++ wrapper around Nervos' ckb-auth C library. Verify Bitcoin, Ethereum, Cardano, Solana, and 8 other blockchain signatures natively on ESP32. The on-chain counterpart — <a href="https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0042-omnilock/0042-omnilock.md" target="_blank">Omnilock</a> — is already audited and deployed on mainnet. No new lock script needed.</div>
       <div class="card-tags"><span class="tag c">C/C++</span><span class="tag embedded">ESP32</span><span class="tag">Multi-chain</span><span class="tag">Auth</span></div>
     </div>
 
@@ -215,11 +215,11 @@
         <span class="card-icon">🧬</span>
         <div>
           <div class="card-title">WyMolecule — CKB Wire Format</div>
-          <div class="card-subtitle">C++ port of molecule</div>
+          <div class="card-subtitle">C++ port of molecule + TCoB signing</div>
         </div>
         <span class="status-pill pill-next">Next</span>
       </div>
-      <div class="card-desc">CKB's canonical serialization format for transactions, cells, and headers. Enables constructing and signing real CKB transactions entirely on-device — the foundation for embedded hardware wallets.</div>
+      <div class="card-desc">CKB's canonical serialization format for transactions, cells, and headers. Includes Transaction Co-Build Protocol (TCoB) support — structured EIP-712-style signing so an embedded device can display "Pay 100 CKB to alice.ckb" instead of raw hex. Foundation for embedded hardware wallets.</div>
       <div class="card-tags"><span class="tag rust">Rust → C++</span><span class="tag embedded">ESP32</span><span class="tag">Transactions</span></div>
     </div>
 
@@ -344,6 +344,46 @@
 
     <div class="card">
       <div class="card-top">
+        <span class="card-icon">🔑</span>
+        <div>
+          <div class="card-title">SPHINCS+ Hardware Wallet</div>
+          <div class="card-subtitle">Post-quantum signing on ESP32-P4</div>
+        </div>
+        <span class="status-pill pill-later">Later</span>
+      </div>
+      <div class="card-desc">SPHINCS+ post-quantum signatures on ESP32-P4, hardware SHA-accelerated. The on-chain quantum-resistant lock script is already <a href="https://github.com/cryptape/quantum-resistant-lock-script" target="_blank">audited and deployed on mainnet</a> by Cryptape — we only need the embedded signing side. The P4's hardware SHA accelerators could make it practical.</div>
+      <div class="card-tags"><span class="tag embedded">ESP32-P4</span><span class="tag c">Crypto</span><span class="tag">Post-Quantum</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🪪</span>
+        <div>
+          <div class="card-title">Nostr Identity → CKB Assets</div>
+          <div class="card-subtitle">Mesh identity as on-chain owner</div>
+        </div>
+        <span class="status-pill pill-later">Later</span>
+      </div>
+      <div class="card-desc">Cryptape's <a href="https://github.com/cryptape/nostr-binding" target="_blank">nostr-binding</a> protocol lets any Nostr identity own CKB cells. Nostr uses secp256k1 — same curve as CKB. BitChat-compatible: an ESP32 mesh node could receive CKB payments to its identity with no separate wallet. Bridge between off-grid mesh chat and on-chain assets.</div>
+      <div class="card-tags"><span class="tag embedded">ESP32</span><span class="tag">Nostr</span><span class="tag">BitChat</span><span class="tag">CKB</span></div>
+      <a class="card-link" href="https://github.com/cryptape/nostr-binding" target="_blank">cryptape/nostr-binding ↗</a>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🎲</span>
+        <div>
+          <div class="card-title">ZK Game Proofs</div>
+          <div class="card-subtitle">Provably fair gaming on CKB</div>
+        </div>
+        <span class="status-pill pill-later">Later</span>
+      </div>
+      <div class="card-desc">Cryptape proved ZK proof verification is viable on CKB-VM (~130M cycles). Applied to gaming: provably fair randomness, private move proofs, and verifiable game outcomes — all settled on-chain. Extends the Fiber Game Protocol with trustless referees. Extension of <a href="https://github.com/cryptape/kabletop-contracts" target="_blank">Kabletop</a> for modern Fiber.</div>
+      <div class="card-tags"><span class="tag">ZK</span><span class="tag">Fiber</span><span class="tag">Gaming</span><span class="tag">CKB</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
         <span class="card-icon">🏪</span>
         <div>
           <div class="card-title">CKB POS System</div>
@@ -378,18 +418,7 @@
       <div class="card-tags"><span class="tag rust">Rust → C++</span><span class="tag embedded">ESP32-P4</span><span class="tag">CKB-VM</span></div>
     </div>
 
-    <div class="card">
-      <div class="card-top">
-        <span class="card-icon">🔑</span>
-        <div>
-          <div class="card-title">SPHINCS+ Hardware Wallet</div>
-          <div class="card-subtitle">Post-quantum signing on ESP32-P4</div>
-        </div>
-        <span class="status-pill pill-moon">Moonshot</span>
-      </div>
-      <div class="card-desc">SPHINCS+ post-quantum signatures on ESP32-P4, hardware SHA-accelerated. The P4's hardware accelerators could make SPHINCS+ fast enough to be practical — making it the first quantum-resistant embedded CKB signing device.</div>
-      <div class="card-tags"><span class="tag embedded">ESP32-P4</span><span class="tag c">Crypto</span><span class="tag">Post-Quantum</span></div>
-    </div>
+
 
     <div class="card">
       <div class="card-top">
