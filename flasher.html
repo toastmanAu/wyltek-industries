@@ -581,5 +581,7 @@
       });
     })();
   </script>
+<script src="js/browser-compat.js"></script>
+<script>new BrowserCompat(document.querySelector(".compat-wrap") || (() => { const d=document.createElement("div"); document.querySelector("main,footer").before(d); return d; })(), "web-serial");</script>
 </body>
 </html>
