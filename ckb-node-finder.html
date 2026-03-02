@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CKB Node Finder — Wyltek Industries</title>
+  <meta name="description" content="Auto-detect your local Nervos CKB node. Works with full nodes, light clients, and custom RPC URLs. Free, open source, no data leaves your browser." />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <meta name="theme-color" content="#07090f">
+  <style>
+    :root{--bg:#0a0c0f;--surface:#111318;--surface2:#181c23;--border:#1e2430;--accent:#00c8ff;--green:#00e5a0;--orange:#ff8c42;--red:#ff4560;--text:#e2e8f0;--muted:#64748b}
+    *{box-sizing:border-box;margin:0;padding:0}
+    body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;font-size:15px;line-height:1.65}
+    a{color:var(--accent);text-decoration:none}a:hover{text-decoration:underline}
+    header{border-bottom:1px solid var(--border);padding:0 2rem;position:sticky;top:0;background:rgba(10,12,15,.93);backdrop-filter:blur(12px);z-index:100}
+    .header-inner{max-width:860px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;color:var(--text)}
+    nav#mainNav{display:flex;gap:1.2rem;align-items:center}
+    nav#mainNav a{color:var(--muted);font-size:.88rem;transition:color .2s}
+    nav#mainNav a:hover,nav#mainNav a.active{color:var(--accent)}
+    .nav-toggle{display:none;background:none;border:none;cursor:pointer;font-size:1.4rem;color:var(--text);padding:.2rem .4rem}
+    @media(max-width:700px){
+      nav#mainNav{display:none;flex-direction:column;position:absolute;top:100%;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:.5rem 0;z-index:999}
+      nav#mainNav.open{display:flex}
+      nav#mainNav a{padding:.7rem 1.5rem;font-size:1rem;border-bottom:1px solid var(--border)}
+      .nav-toggle{display:block}.header-inner{position:relative}
+    }
+    .hero{text-align:center;padding:4rem 2rem 2rem;max-width:680px;margin:0 auto}
+    .hero-badge{display:inline-block;background:rgba(0,200,255,.1);border:1px solid rgba(0,200,255,.3);color:var(--accent);padding:.3rem .9rem;border-radius:999px;font-size:.8rem;margin-bottom:1rem}
+    .hero h1{font-size:2.4rem;font-weight:800;line-height:1.15;margin-bottom:1rem}
+    .hero h1 span{color:var(--accent)}
+    .hero p{color:var(--muted);font-size:1.05rem;max-width:540px;margin:0 auto 2rem}
+    .main{max-width:760px;margin:0 auto;padding:1rem 2rem 4rem}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.5rem}
+    .card h2{font-size:1rem;font-weight:600;margin-bottom:1rem;color:var(--text)}
+    #node-data{display:none}
+    .data-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem}
+    .data-cell{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem}
+    .data-label{font-size:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-bottom:.3rem}
+    .data-value{font-size:1.4rem;font-weight:700;color:var(--accent)}
+    .data-sub{font-size:.75rem;color:var(--muted);margin-top:.2rem}
+    pre{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:1rem 1.2rem;font-size:.82rem;overflow-x:auto;color:#94a3b8;line-height:1.6}
+    code{font-family:'JetBrains Mono','Fira Code',monospace}
+    .tag{display:inline-block;background:rgba(0,200,255,.12);color:var(--accent);border-radius:4px;padding:.1rem .5rem;font-size:.78rem;font-weight:600;margin-right:.3rem}
+    footer{border-top:1px solid var(--border);text-align:center;padding:2rem;color:var(--muted);font-size:.85rem}
+    footer a{color:var(--muted)}footer a:hover{color:var(--accent)}
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">
+      <img src="wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">
+      Wyltek Industries
+    </a>
+    <nav id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="blog.html">Devlog</a>
+      <a href="blackbox.html">BlackBox</a>
+      <a href="ckb-sync.html">CKB Sync</a>
+      <a href="flasher.html">Flasher</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="ckb-light-esp.html">Light Client</a>
+      <a href="ckb.html">CKB Stack</a>
+      <a href="images.html">Images</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="ckb-node-update.html">Node Updater</a>
+      <a href="ckb-node-finder.html" class="active">Node Finder</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="hero-badge">🔍 Browser Tool</div>
+  <h1>CKB <span>Node Finder</span></h1>
+  <p>Auto-detects your local Nervos CKB node — full node, light client, or custom RPC URL. Zero config. Nothing leaves your browser.</p>
+</div>
+
+<div class="main">
+  <div id="node-status"></div>
+
+  <div class="card" id="node-data">
+    <h2>Live Node Data</h2>
+    <div class="data-grid">
+      <div class="data-cell">
+        <div class="data-label">Tip Block</div>
+        <div class="data-value" id="d-tip">—</div>
+        <div class="data-sub" id="d-url">—</div>
+      </div>
+      <div class="data-cell">
+        <div class="data-label">Node Type</div>
+        <div class="data-value" id="d-type">—</div>
+        <div class="data-sub" id="d-version">—</div>
+      </div>
+      <div class="data-cell">
+        <div class="data-label">Peers</div>
+        <div class="data-value" id="d-peers">—</div>
+        <div class="data-sub">connected</div>
+      </div>
+      <div class="data-cell">
+        <div class="data-label">Sync</div>
+        <div class="data-value" id="d-sync">—</div>
+        <div class="data-sub" id="d-sync-sub">—</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Embed in your own page</h2>
+    <p style="color:var(--muted);font-size:.9rem;margin-bottom:1rem;">One script tag, one div, one callback. Works anywhere — DOB minter, node dashboard, wallet tool.</p>
+    <pre><code>&lt;div id="my-node-status"&gt;&lt;/div&gt;
+&lt;script src="https://wyltekindustries.com/js/ckb-node-finder.js"&gt;&lt;/script&gt;
+&lt;script&gt;
+  new CKBNodeWidget('#my-node-status')
+    .start()
+    .on('connected', ({ url, tipBlock }) =&gt; {
+      // url is ready — make RPC calls from here
+      myApp.init(url);
+    });
+&lt;/script&gt;</code></pre>
+    <p style="color:var(--muted);font-size:.85rem;margin-top:1rem;">
+      <span class="tag">Note</span> Chrome may show a permission prompt for localhost access (Local Network Access policy). The widget handles this — if blocked, it falls back to a manual URL input.
+    </p>
+  </div>
+
+  <div class="card">
+    <h2>How it works</h2>
+    <ol style="color:var(--muted);font-size:.9rem;padding-left:1.2rem;line-height:2.2">
+      <li>Checks <code>localStorage</code> for a previously saved URL</li>
+      <li>Tries <code>localhost:8114</code> → <code>:8117</code> → <code>:9000</code> (3s timeout each)</li>
+      <li>If nothing responds, shows a URL input prompt</li>
+      <li>Validates by calling <code>get_tip_block_number</code> on your node</li>
+      <li>Saves the working URL for next time</li>
+    </ol>
+    <p style="color:var(--muted);font-size:.85rem;margin-top:1rem;">
+      <span class="tag">Privacy</span> All traffic goes directly browser → your node. Nothing touches our servers.
+      &nbsp;<a href="https://github.com/toastmanAu/wyltek-industries" target="_blank">View source ↗</a>
+    </p>
+  </div>
+</div>
+
+<footer>
+  <p><a href="index.html">← Back to projects</a> &nbsp;·&nbsp; <a href="https://github.com/toastmanAu" target="_blank">GitHub</a></p>
+  <p style="margin-top:.4rem;font-size:.78rem;opacity:.5">Wyltek Industries — wouldn't you like to know</p>
+  <p style="margin-top:.8rem;font-size:.78rem;opacity:.7">Built in the Nervos CKB ecosystem · <a href="https://nervos.org" target="_blank">nervos.org</a></p>
+</footer>
+
+<script src="js/ckb-node-finder.js"></script>
+<script>
+  new CKBNodeWidget('#node-status')
+    .start()
+    .on('connected', async ({ url, tipBlock, nodeType, version }) => {
+      document.getElementById('node-data').style.display = 'block';
+      document.getElementById('d-tip').textContent     = '#' + tipBlock.toLocaleString();
+      document.getElementById('d-url').textContent     = url;
+      document.getElementById('d-type').textContent    = nodeType;
+      document.getElementById('d-version').textContent = version;
+
+      const rpc = async (method, params=[]) => {
+        const r = await fetch(url, {method:'POST',headers:{'Content-Type':'application/json'},
+          body: JSON.stringify({jsonrpc:'2.0',id:1,method,params})});
+        return (await r.json()).result;
+      };
+
+      try {
+        const peers = await rpc('get_peers');
+        document.getElementById('d-peers').textContent = (peers||[]).length;
+      } catch {}
+
+      try {
+        const sync = await rpc('sync_state');
+        if (sync) {
+          const best   = parseInt(sync.best_known_block_number, 16);
+          const tip    = parseInt(sync.tip_block_number, 16);
+          const behind = best - tip;
+          document.getElementById('d-sync').textContent    = behind <= 2 ? '✓' : behind.toLocaleString();
+          document.getElementById('d-sync-sub').textContent = behind <= 2 ? 'synced' : 'blocks behind';
+        }
+      } catch {}
+    });
+
+  const btn = document.getElementById('navToggle');
+  const nav = document.getElementById('mainNav');
+  if (btn && nav) btn.addEventListener('click', () => nav.classList.toggle('open'));
+</script>
+</body>
+</html>
