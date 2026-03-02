@@ -19,6 +19,48 @@ const POSTS = [
   // ────────────────────────────────────────────────────────────────
   // ────────────────────────────────────────────────────────────────
   {
+    id: "2026-03-02-ckb-dob-minter-origin",
+    date: "2026-03-02",
+    title: "From 'please hold' to first mint in one evening",
+    tags: ["nervos", "CKB", "DOB", "Spore", "community", "story"],
+    project: "ckb-dob-minter",
+    body: [
+      "The origin of ckb-dob-minter is a three-message Telegram thread.",
+
+      {type:"code", content:"8pm  Josh:  Other than ImagiNation, what other platforms create DOBs?\n9pm  Telmo: None. The protocols exist, but there\'s not many people\n             putting the effort in it. I have a good prototype in\n             pause but it requires more resources than the ones I\n             can dedicate rn. Maybe there\'s something else I\'ve missed.\n10pm Phill: please hold"},
+
+      "That 'please hold' was the start. The question was genuine — DOBs (Digital Objects on CKB, via the Spore Protocol) are fully on-chain NFTs with real intrinsic value, permanent storage, and no external dependencies. The protocol exists. The tooling doesn't.",
+
+      "The experiment: how fast can you go from a minimal idea to a working implementation when you have the right tools and someone to build with? One evening. Chrome on a phone. JoyID passkey. A file. A real on-chain transaction.",
+
+      "By midnight:",
+      {type:"ul", content:[
+        "ckb-dob-minter scaffolded, React + CKB-CCC wired",
+        "Node auto-discovery — finds your local CKB node on the LAN",
+        "Brave browser detection — handles the one browser that blocks LAN scanning",
+        "Browser compat table — shows support status for the top 10 browsers, auto-detects yours",
+        "CCC 1.x upgrade — fixed the wallet connect loop that plagued 0.0.x",
+        "Dropped Lumos entirely — @ckb-ccc/spore handles JoyID and every other lock natively",
+        "First DOB minted on CKB testnet"
+      ]},
+
+      {type:"code", content:"TX:       0x74bf8469fd4e2533df6432eb70cc8616e5facffffc63a0c62cc8a9d33b48b62b\nSpore ID: 0xc7a3c0aa498bed3417580201bdc2508a7e48d13fe79e1c2bcf1e40a357f781a6\nElapsed:  ~2 hours from first commit to on-chain mint"},
+
+      "The gap Telmo identified is real. The Spore Protocol is solid — fully specified, contracts audited and deployed on mainnet, SDK available. What's missing is accessible tooling. A browser-based minter with no backend, no account, no platform in the middle — just a wallet and a file.",
+
+      "That's what ckb-dob-minter is. It's also an experiment in a different kind of development: from a community conversation to a working product in the time between dinner and midnight.",
+
+      "Next: mainnet, npm package so anyone can embed a DOB minter on their own site, and the hardware provenance angle — minting an on-chain certificate from an ESP32 with a device serial number and firmware hash. That one hasn't been done yet either."
+    ],
+    links: [
+      {text:"ckb-dob-minter on GitHub", href:"https://github.com/toastmanAu/ckb-dob-minter"},
+      {text:"Testnet TX", href:"https://testnet.explorer.nervos.org/transaction/0x74bf8469fd4e2533df6432eb70cc8616e5facffffc63a0c62cc8a9d33b48b62b"},
+      {text:"Spore Protocol", href:"https://spore.pro"},
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
+  // ────────────────────────────────────────────────────────────────
+  {
     id: "2026-03-02-ckb-dob-minter",
     date: "2026-03-02",
     title: "ckb-dob-minter: first DOB minted on CKB testnet — browser-based, JoyID, zero backend",
