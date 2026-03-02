@@ -15,6 +15,56 @@
 //   links:   array of {text, href} — footer buttons on the post card
 
 const POSTS = [
+  // ────────────────────────────────────────────────────────────────
+  {
+    id: "2026-03-02-wyauth-wymolecule-snapshot",
+    date: "2026-03-02",
+    title: "WyAuth + WyMolecule land — ESP32 can now sign and submit CKB transactions",
+    tags: ["nervos", "ESP32", "infrastructure", "community", "CKB"],
+    project: "wyltek-embedded-builder",
+    body: [
+      "Big day. The embedded CKB signing stack got its two most important pieces, the fleet got a proper monitoring agent, and the snapshot pipeline is finally wired end-to-end.",
+
+      {type:"h3", content:"WyAuth — CKB signing on ESP32"},
+      "The first embedded CKB signing library for Arduino is done. <code>WyAuth</code> wraps secp256k1/blake2b signing using micro-ecc (~3KB flash, no heap, constant-time) and targets Omnilock — the audited, mainnet-deployed universal lock. No new lock script needed.",
+
+      "The API is intentionally minimal: <code>auth.begin(privkey, WYAUTH_ALG_CKB)</code> → <code>auth.sign(tx_hash, sig)</code> → embed 65-byte signature in witness. <code>auth.lockArg()</code> gives you the 20-byte Blake2b(pubkey) lock arg, and <code>auth.ckbAddress()</code> encodes a full bech32m mainnet address directly from the key. Three algorithms supported out of the box: CKB native, Ethereum personal_sign, Bitcoin message signing — matching ckb-auth's algorithm IDs for Omnilock multi-chain mode.",
+
+      {type:"h3", content:"WyMolecule — full CKB transaction builder"},
+      "Signing is useless without something to sign. <code>WyMolecule</code> implements the complete Molecule serialisation layer for on-device transaction construction — vendoring the molecule_reader.h, molecule_builder.h and blockchain.h headers from ckb-c-stdlib directly, so there's no external toolchain dependency.",
+
+      "The <code>WyTransaction</code> class handles everything: cell deps, inputs, outputs, the RFC-0032 signing hash (Blake2b of raw tx hash + witness placeholder), and WitnessArgs wrapping. <code>WyCkbTransfer.ino</code> shows the full end-to-end flow — build lock scripts, assemble transaction, sign, submit to <code>ckb_sendRawTransaction</code> RPC — in a single Arduino sketch.",
+
+      {type:"ul", content:[
+        "<strong>WyScript</strong> — lock/type scripts (code_hash + hash_type + args)",
+        "<strong>WyOutPoint</strong> — 36-byte fixed cell reference",
+        "<strong>WyCellInput</strong> — 44-byte fixed input (since + outpoint)",
+        "<strong>WyCellOutput</strong> — capacity + lock + optional type",
+        "<strong>WyTransaction</strong> — assembles, signs, serialises, submits"
+      ]},
+
+      {type:"h3", content:"CKB snapshot pipeline — finally wired"},
+      "The R2 credentials arrived. Ryzen is now the snapshot host: rclone configured and write-access confirmed against the <code>ckb-snapshots</code> bucket. The pipeline rsync's the chain data from ckbnode over LAN (112GB), streams it through zstd -3 on all Ryzen cores, and uploads directly to Cloudflare R2 — no intermediate storage needed.",
+
+      "First snapshot kicks off at midnight tonight (off-peak). Weekly 3am Sunday cron is set for ongoing runs. When it completes, <code>latest.json</code> goes up and <code>wyltekindustries.com/ckb-sync</code> goes live with real data.",
+
+      {type:"h3", content:"Ryzen agent — fleet monitoring"},
+      "The Ryzen OpenClaw instance got a proper identity (Ryzen 🔥), a secured gateway, and a HEARTBEAT.md that monitors Ollama health, disk space, and the snapshot pipeline. It runs entirely on local qwen2.5:14b inference — zero API cost. Sends <code>[Ryzen🔥]</code> Telegram notifications for anything worth knowing.",
+
+      {type:"h3", content:"Node update page + community context"},
+      "Built <code>wyltekindustries.com/ckb-node-update.html</code> — a dedicated page for the 30 Orange Pi 3B nodes shipped to Nervos DAO voters in early 2024. One-liner to bring them fully up to date: watchdog bug fix, log rotation, auto-update checker, live dashboard, and <code>ckbnode.local</code> mDNS. Instructions for both direct terminal and SSH so even non-technical recipients can follow along.",
+
+      {type:"h3", content:"Neuron arm64 — released"},
+      "Neuron v0.204.0 arm64 AppImage is live at toastmanAu/neuron. Built on Ryzen, both arm64 and x86_64 AppImages in the same release. First arm64 Neuron build available outside of Phill's PR #3441 on the upstream repo."
+    ],
+    links: [
+      { text: "wyltek-embedded-builder", href: "https://github.com/toastmanAu/wyltek-embedded-builder" },
+      { text: "Node update page", href: "https://wyltekindustries.com/ckb-node-update.html" },
+      { text: "CKB Sync", href: "https://wyltekindustries.com/ckb-sync.html" },
+      { text: "Neuron arm64 release", href: "https://github.com/toastmanAu/neuron/releases/tag/v0.204.0-arm64" }
+    ]
+  },
+
 
   // ────────────────────────────────────────────────────────────────
   {
