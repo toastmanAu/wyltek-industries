@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Roadmap — Wyltek Industries</title>
+<meta name="description" content="Wyltek Industries project roadmap — embedded blockchain libraries, SBC images, CKB tooling, and hardware projects in progress.">
+<meta property="og:title" content="Roadmap — Wyltek Industries">
+<meta property="og:description" content="What we're building next: embedded C++ ports of CKB protocols, SBC images, TelegramOTA, Neuron arm64, and more.">
+<style>
+  :root {
+    --bg:#07090f;--surface:#0f1117;--surface2:#141820;
+    --border:#1e2430;--text:#e2e8f0;--muted:#64748b;
+    --accent:#00c8ff;--accent2:#7c3aed;--green:#10b981;
+    --yellow:#f59e0b;--red:#ef4444;--orange:#f97316;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:'Consolas','Monaco',monospace;font-size:.88em;background:var(--surface2);padding:.1rem .4rem;border-radius:4px;border:1px solid var(--border)}
+
+  header{border-bottom:1px solid var(--border);background:rgba(7,9,15,.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100}
+  .header-inner{max-width:1200px;margin:0 auto;padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1rem;color:var(--text);text-decoration:none}
+  nav#mainNav{display:flex;gap:1.5rem}
+  nav#mainNav a{color:var(--muted);font-size:.9rem;transition:color .2s}
+  nav#mainNav a:hover,nav#mainNav a.active{color:var(--text)}
+  .nav-toggle{display:none;background:none;border:none;cursor:pointer;font-size:1.4rem;color:var(--text);padding:.2rem .4rem}
+  @media(max-width:700px){
+    nav#mainNav{display:none;flex-direction:column;gap:0;position:absolute;top:100%;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:.5rem 0;z-index:999}
+    nav#mainNav.open{display:flex}
+    nav#mainNav a{padding:.7rem 1.5rem;font-size:1rem;border-bottom:1px solid var(--border)}
+    nav#mainNav a:last-child{border-bottom:none}
+    .nav-toggle{display:block}
+    .header-inner{position:relative}
+  }
+
+  .page-hero{max-width:900px;margin:0 auto;padding:3rem 1.5rem 2rem}
+  .eyebrow{font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem}
+  .page-hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.15;margin-bottom:.8rem}
+  .page-hero p{color:var(--muted);font-size:1.05rem;max-width:640px}
+
+  .main{max-width:900px;margin:0 auto;padding:0 1.5rem 5rem}
+
+  /* ── Phase headers ── */
+  .phase{margin:3rem 0 1.2rem}
+  .phase-label{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.3rem .8rem;border-radius:99px;margin-bottom:.8rem}
+  .phase-now   {background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+  .phase-next  {background:rgba(0,200,255,.1);color:var(--accent);border:1px solid rgba(0,200,255,.25)}
+  .phase-later {background:rgba(124,58,237,.1);color:#a78bfa;border:1px solid rgba(124,58,237,.25)}
+  .phase-moon  {background:rgba(249,115,22,.08);color:var(--orange);border:1px solid rgba(249,115,22,.2)}
+  .phase h2{font-size:1.25rem;font-weight:700;margin-bottom:.3rem}
+  .phase p{color:var(--muted);font-size:.9rem;max-width:680px}
+
+  /* ── Cards ── */
+  .card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:.9rem;margin-top:1.2rem}
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.2rem;display:flex;flex-direction:column;gap:.5rem;transition:border-color .2s}
+  .card:hover{border-color:rgba(0,200,255,.25)}
+  .card.done{border-color:rgba(16,185,129,.25);background:linear-gradient(135deg,rgba(16,185,129,.04),transparent)}
+  .card.active{border-color:rgba(245,158,11,.25);background:linear-gradient(135deg,rgba(245,158,11,.04),transparent)}
+  .card-top{display:flex;align-items:flex-start;gap:.6rem}
+  .card-icon{font-size:1.4rem;flex-shrink:0;margin-top:.05rem}
+  .card-title{font-weight:700;font-size:.95rem;line-height:1.3}
+  .card-subtitle{font-size:.75rem;color:var(--muted);margin-top:.1rem}
+  .card-desc{font-size:.82rem;color:var(--muted);line-height:1.55;flex:1}
+  .card-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.2rem}
+  .tag{padding:.15rem .5rem;border-radius:4px;font-size:.68rem;font-weight:600;background:rgba(0,200,255,.08);color:var(--accent);border:1px solid rgba(0,200,255,.18)}
+  .tag.rust{background:rgba(249,115,22,.08);color:var(--orange);border-color:rgba(249,115,22,.2)}
+  .tag.c{background:rgba(124,58,237,.08);color:#a78bfa;border-color:rgba(124,58,237,.2)}
+  .tag.embedded{background:rgba(16,185,129,.08);color:var(--green);border-color:rgba(16,185,129,.2)}
+  .tag.sbc{background:rgba(100,116,139,.1);color:var(--muted);border-color:rgba(100,116,139,.2)}
+  .status-pill{margin-left:auto;font-size:.68rem;font-weight:700;padding:.18rem .5rem;border-radius:99px;white-space:nowrap;flex-shrink:0}
+  .pill-done   {background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3)}
+  .pill-active {background:rgba(245,158,11,.12);color:var(--yellow);border:1px solid rgba(245,158,11,.3)}
+  .pill-next   {background:rgba(0,200,255,.08);color:var(--accent);border:1px solid rgba(0,200,255,.2)}
+  .pill-later  {background:rgba(124,58,237,.08);color:#a78bfa;border:1px solid rgba(124,58,237,.2)}
+  .pill-moon   {background:rgba(249,115,22,.08);color:var(--orange);border:1px solid rgba(249,115,22,.2)}
+  .card-link{font-size:.78rem;color:var(--accent);margin-top:.2rem}
+
+  /* ── Divider ── */
+  .section-note{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;margin:2rem 0;font-size:.85rem;color:var(--muted)}
+  .section-note strong{color:var(--text)}
+
+  footer{border-top:1px solid var(--border);padding:2.5rem 1.5rem;text-align:center;color:var(--muted);font-size:.85rem}
+  .footer-inner{max-width:600px;margin:0 auto}
+  footer a{color:var(--muted)}
+  footer a:hover{color:var(--accent)}
+</style>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#07090f">
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html"><img src="wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">Wyltek Industries</a>
+    <nav id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="blog.html">Devlog</a>
+      <a href="blackbox.html">BlackBox</a>
+      <a href="ckb-sync.html">CKB Sync</a>
+      <a href="flasher.html">Flasher</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="ckb-light-esp.html">Light Client</a>
+      <a href="ckb.html">CKB Stack</a>
+      <a href="images.html">Images</a>
+      <a href="roadmap.html" class="active">Roadmap</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="eyebrow">What's being built</div>
+  <h1>Roadmap</h1>
+  <p>Open-source embedded blockchain tooling — C++ libraries, SBC images, Arduino libraries, and CKB protocol ports. Everything ships to GitHub when it's ready.</p>
+</div>
+
+<div class="main">
+
+  <!-- ── NOW ── -->
+  <div class="phase">
+    <div class="phase-label phase-now">🔨 In Progress</div>
+    <h2>Shipping now</h2>
+    <p>Active work — code exists, PRs open, or pending final testing.</p>
+  </div>
+  <div class="card-grid">
+
+    <div class="card active">
+      <div class="card-top">
+        <span class="card-icon">⚡</span>
+        <div>
+          <div class="card-title">TelegramOTA</div>
+          <div class="card-subtitle">Arduino Library</div>
+        </div>
+        <span class="status-pill pill-active">In Progress</span>
+      </div>
+      <div class="card-desc">Remote OTA firmware updates for ESP32 via Telegram. Send a .bin, device flashes and reboots. Rollback, /status, /log, /reboot — full remote dev loop when paired with TelegramSerial.</div>
+      <div class="card-tags"><span class="tag embedded">ESP32</span><span class="tag">OTA</span><span class="tag">Telegram</span></div>
+      <a class="card-link" href="https://github.com/toastmanAu/TelegramOTA" target="_blank">github.com/toastmanAu/TelegramOTA ↗</a>
+    </div>
+
+    <div class="card active">
+      <div class="card-top">
+        <span class="card-icon">🍊</span>
+        <div>
+          <div class="card-title">Armbian CKB Userpatches</div>
+          <div class="card-subtitle">SBC Build System</div>
+        </div>
+        <span class="status-pill pill-active">In Progress</span>
+      </div>
+      <div class="card-desc">Drop-in Armbian userpatches that turn any supported SBC into a CKB node, solo miner, Fiber kiosk, or Neuron desktop. 356 boards supported via one build system.</div>
+      <div class="card-tags"><span class="tag sbc">SBC</span><span class="tag">CKB</span><span class="tag">Armbian</span><span class="tag">Fiber</span></div>
+      <a class="card-link" href="https://github.com/toastmanAu/armbian-ckb-userpatches" target="_blank">github.com/toastmanAu/armbian-ckb-userpatches ↗</a>
+    </div>
+
+    <div class="card active">
+      <div class="card-top">
+        <span class="card-icon">🧠</span>
+        <div>
+          <div class="card-title">Neuron arm64 AppImage</div>
+          <div class="card-subtitle">PR #3441 — nervosnetwork/neuron</div>
+        </div>
+        <span class="status-pill pill-active">PR Open</span>
+      </div>
+      <div class="card-desc">Adds Linux arm64 AppImage support to Neuron wallet — enabling it on Raspberry Pi, Orange Pi, ROCK series, and any aarch64 SBC. Tested and working on Orange Pi 5.</div>
+      <div class="card-tags"><span class="tag sbc">arm64</span><span class="tag">Neuron</span><span class="tag">CKB</span></div>
+      <a class="card-link" href="https://github.com/nervosnetwork/neuron/pull/3441" target="_blank">PR #3441 ↗</a>
+    </div>
+
+    <div class="card active">
+      <div class="card-top">
+        <span class="card-icon">🖼️</span>
+        <div>
+          <div class="card-title">SBC Images</div>
+          <div class="card-subtitle">Pre-built board images</div>
+        </div>
+        <span class="status-pill pill-active">Building</span>
+      </div>
+      <div class="card-desc">Ready-to-flash Armbian images for Orange Pi 3B and others. CKB node, solo miner, Fiber kiosk, and Neuron desktop profiles. First image (OPi3B, kernel 6.18.15) built and verified.</div>
+      <div class="card-tags"><span class="tag sbc">SBC</span><span class="tag">CKB</span><span class="tag">Armbian</span></div>
+      <a class="card-link" href="images.html">Images page ↗</a>
+    </div>
+
+  </div>
+
+  <!-- ── NEXT ── -->
+  <div class="phase">
+    <div class="phase-label phase-next">📋 Next</div>
+    <h2>High priority — starting soon</h2>
+    <p>Research complete. Implementation scope defined. These are the next things through the door.</p>
+  </div>
+  <div class="card-grid">
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🔒</span>
+        <div>
+          <div class="card-title">WyAuth — Multi-Chain Authentication</div>
+          <div class="card-subtitle">C++ port of ckb-auth</div>
+        </div>
+        <span class="status-pill pill-next">Next</span>
+      </div>
+      <div class="card-desc">C++ wrapper around Nervos' ckb-auth C library. Verify Bitcoin, Ethereum, Cardano, Solana, and 8 other blockchain signatures natively on ESP32. Pay CKB invoices with any wallet — no CKB wallet needed by the payer.</div>
+      <div class="card-tags"><span class="tag c">C/C++</span><span class="tag embedded">ESP32</span><span class="tag">Multi-chain</span><span class="tag">Auth</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🧬</span>
+        <div>
+          <div class="card-title">WyMolecule — CKB Wire Format</div>
+          <div class="card-subtitle">C++ port of molecule</div>
+        </div>
+        <span class="status-pill pill-next">Next</span>
+      </div>
+      <div class="card-desc">CKB's canonical serialization format for transactions, cells, and headers. Enables constructing and signing real CKB transactions entirely on-device — the foundation for embedded hardware wallets.</div>
+      <div class="card-tags"><span class="tag rust">Rust → C++</span><span class="tag embedded">ESP32</span><span class="tag">Transactions</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🔍</span>
+        <div>
+          <div class="card-title">WyGCS — Compact Block Filters</div>
+          <div class="card-subtitle">BIP158 Golomb-Coded Set</div>
+        </div>
+        <span class="status-pill pill-next">Next</span>
+      </div>
+      <div class="card-desc">Port of BIP158 compact block filters — lets the CKB light client check if a block contains relevant transactions by downloading a ~1KB filter instead of the full block. Completes the trustless light client.</div>
+      <div class="card-tags"><span class="tag rust">Rust → C++</span><span class="tag embedded">ESP32</span><span class="tag">Light Client</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🌲</span>
+        <div>
+          <div class="card-title">WySMT — Sparse Merkle Tree</div>
+          <div class="card-subtitle">State proof verification</div>
+        </div>
+        <span class="status-pill pill-next">Next</span>
+      </div>
+      <div class="card-desc">Port of Nervos' sparse merkle tree (no_std Rust). Verify CKB state proofs, Fiber channel state, and XUDT balances entirely on-device. No trust in any node required.</div>
+      <div class="card-tags"><span class="tag rust">Rust → C++</span><span class="tag embedded">ESP32</span><span class="tag">Fiber</span><span class="tag">XUDT</span></div>
+    </div>
+
+  </div>
+
+  <div class="section-note">
+    <strong>Note on the C++ ports:</strong> These are translations of Rust/C implementations from the <a href="https://github.com/nervosnetwork" target="_blank">nervosnetwork</a> GitHub org into embedded-friendly C++ headers. Each becomes a <code>Wy*</code> component in <a href="https://github.com/toastmanAu/wyltek-embedded-builder" target="_blank">wyltek-embedded-builder</a> — usable as <code>lib_deps</code> in any PlatformIO project.
+  </div>
+
+  <!-- ── LATER ── -->
+  <div class="phase">
+    <div class="phase-label phase-later">🔭 Later</div>
+    <h2>On the radar</h2>
+    <p>Scoped and planned — waiting for earlier work to land first.</p>
+  </div>
+  <div class="card-grid">
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">⛰️</span>
+        <div>
+          <div class="card-title">WyMMR — Merkle Mountain Range</div>
+          <div class="card-subtitle">Trustless header chain proofs</div>
+        </div>
+        <span class="status-pill pill-later">Later</span>
+      </div>
+      <div class="card-desc">Port of Nervos' MMR implementation. Verify any CKB block header is part of the canonical chain without downloading all headers. Enables fully trustless checkpoint-based sync on embedded devices.</div>
+      <div class="card-tags"><span class="tag rust">Rust → C++</span><span class="tag embedded">ESP32</span><span class="tag">Light Client</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🌐</span>
+        <div>
+          <div class="card-title">TelegramOTA Relay</div>
+          <div class="card-subtitle">Fleet management server</div>
+        </div>
+        <span class="status-pill pill-later">Later</span>
+      </div>
+      <div class="card-desc">Optional cloud relay for TelegramOTA — manage a fleet of devices from one bot. One /flash command reaches a named device anywhere. Self-hostable on Fly.io free tier. Extends TelegramOTA without breaking solo mode.</div>
+      <div class="card-tags"><span class="tag">Node.js</span><span class="tag">Fly.io</span><span class="tag">Fleet</span><span class="tag embedded">ESP32</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🔐</span>
+        <div>
+          <div class="card-title">Fiber Sphinx — Onion Routing</div>
+          <div class="card-subtitle">Privacy for payment nodes</div>
+        </div>
+        <span class="status-pill pill-later">Later</span>
+      </div>
+      <div class="card-desc">Port of Nervos' Sphinx onion packet implementation to C++ for SBC Fiber nodes. No single hop knows both sender and recipient — full payment privacy. SBC territory (N100, OPi5+), not ESP32.</div>
+      <div class="card-tags"><span class="tag rust">Rust → C++</span><span class="tag sbc">SBC</span><span class="tag">Fiber</span><span class="tag">Privacy</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🪙</span>
+        <div>
+          <div class="card-title">PTLC Adaptor Signatures</div>
+          <div class="card-subtitle">Point Time Lock Contracts</div>
+        </div>
+        <span class="status-pill pill-later">Later</span>
+      </div>
+      <div class="card-desc">Fiber uses PTLC (Schnorr + adaptor signatures) instead of HTLC — more private than Lightning Network. Porting the adaptor signature primitives to CKB-ESP32 enables offline payment channel settlement proofs on-device.</div>
+      <div class="card-tags"><span class="tag c">Crypto</span><span class="tag embedded">ESP32</span><span class="tag">Fiber</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🧩</span>
+        <div>
+          <div class="card-title">BitChat LoRa Bridge</div>
+          <div class="card-subtitle">BLE mesh → LoRa gateway</div>
+        </div>
+        <span class="status-pill pill-later">Later</span>
+      </div>
+      <div class="card-desc">Bridge between BitChat's BLE mesh and LoRa radio on T-Deck/T-Beam. Extends the BitChat mesh over kilometres via LoRa. Nobody has shipped this yet. Wire codec and relay engine already implemented in ckb-light-esp.</div>
+      <div class="card-tags"><span class="tag embedded">ESP32</span><span class="tag">LoRa</span><span class="tag">BLE</span><span class="tag">BitChat</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🏪</span>
+        <div>
+          <div class="card-title">CKB POS System</div>
+          <div class="card-subtitle">Embedded payment terminal</div>
+        </div>
+        <span class="status-pill pill-later">Later</span>
+      </div>
+      <div class="card-desc">ESP32 HMI touchscreen POS terminal for CKB payments. QR invoice generation, thermal printer receipt, barcode scanner, Cloudflare Worker payment confirmation. Cross-chain when WyAuth lands.</div>
+      <div class="card-tags"><span class="tag embedded">ESP32</span><span class="tag">CKB</span><span class="tag">Payments</span><span class="tag">Hardware</span></div>
+    </div>
+
+  </div>
+
+  <!-- ── MOONSHOT ── -->
+  <div class="phase">
+    <div class="phase-label phase-moon">🌕 Moonshots</div>
+    <h2>Wild but not impossible</h2>
+    <p>Long-term research targets. The kind of things that sound crazy until someone builds them.</p>
+  </div>
+  <div class="card-grid">
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🤖</span>
+        <div>
+          <div class="card-title">CKB-VM on ESP32-P4</div>
+          <div class="card-subtitle">RISC-V interpreter on RISC-V hardware</div>
+        </div>
+        <span class="status-pill pill-moon">Moonshot</span>
+      </div>
+      <div class="card-desc">Run CKB's RISC-V virtual machine on ESP32-P4 — executing CKB lock/type scripts locally. True trustless transaction verification without any node. ESP32-P4 has hardware SHA accelerators and 32MB PSRAM that make this less crazy than it sounds.</div>
+      <div class="card-tags"><span class="tag rust">Rust → C++</span><span class="tag embedded">ESP32-P4</span><span class="tag">CKB-VM</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">🔑</span>
+        <div>
+          <div class="card-title">SPHINCS+ Hardware Wallet</div>
+          <div class="card-subtitle">Post-quantum signing on ESP32-P4</div>
+        </div>
+        <span class="status-pill pill-moon">Moonshot</span>
+      </div>
+      <div class="card-desc">SPHINCS+ post-quantum signatures on ESP32-P4, hardware SHA-accelerated. The P4's hardware accelerators could make SPHINCS+ fast enough to be practical — making it the first quantum-resistant embedded CKB signing device.</div>
+      <div class="card-tags"><span class="tag embedded">ESP32-P4</span><span class="tag c">Crypto</span><span class="tag">Post-Quantum</span></div>
+    </div>
+
+    <div class="card">
+      <div class="card-top">
+        <span class="card-icon">📡</span>
+        <div>
+          <div class="card-title">NerdMiner CKB Network</div>
+          <div class="card-subtitle">Distributed solo mining mesh</div>
+        </div>
+        <span class="status-pill pill-moon">Moonshot</span>
+      </div>
+      <div class="card-desc">A mesh of NerdMiner CKB devices coordinating via the BitChat LoRa bridge — distributed Eaglesong mining without any central server. Nonces partitioned across devices, solution broadcast over mesh.</div>
+      <div class="card-tags"><span class="tag embedded">ESP32</span><span class="tag">LoRa</span><span class="tag">Mining</span><span class="tag">Mesh</span></div>
+    </div>
+
+  </div>
+
+  <!-- ── Done ── -->
+  <div class="phase" style="margin-top:3.5rem">
+    <div class="phase-label phase-now">✅ Shipped</div>
+    <h2>Already out there</h2>
+    <p>Published, working, and available on GitHub.</p>
+  </div>
+  <div class="card-grid">
+
+    <div class="card done">
+      <div class="card-top">
+        <span class="card-icon">📡</span>
+        <div>
+          <div class="card-title">TelegramSerial</div>
+          <div class="card-subtitle">Arduino Library · Arduino Library Manager</div>
+        </div>
+        <span class="status-pill pill-done">Shipped</span>
+      </div>
+      <div class="card-desc">Stream ESP32 Serial output to Telegram in real time. Debug embedded devices remotely without USB. Live in the Arduino Library Manager.</div>
+      <div class="card-tags"><span class="tag embedded">ESP32</span><span class="tag">Telegram</span><span class="tag">Debug</span></div>
+      <a class="card-link" href="https://github.com/toastmanAu/TelegramSerial" target="_blank">github.com/toastmanAu/TelegramSerial ↗</a>
+    </div>
+
+    <div class="card done">
+      <div class="card-top">
+        <span class="card-icon">⛏️</span>
+        <div>
+          <div class="card-title">NerdMiner CKB</div>
+          <div class="card-subtitle">ESP32 Eaglesong Miner</div>
+        </div>
+        <span class="status-pill pill-done
+">Shipped</span>
+      </div>
+      <div class="card-desc">ESP32 Eaglesong miner for CKB. Targets the ESP32-2432S028R (CYD). Pool and solo mining support via stratum proxy. First open-source ESP32 CKB miner.</div>
+      <div class="card-tags"><span class="tag embedded">ESP32</span><span class="tag">Mining</span><span class="tag">CKB</span></div>
+      <a class="card-link" href="https://github.com/toastmanAu/NerdMiner_CKB" target="_blank">github.com/toastmanAu/NerdMiner_CKB ↗</a>
+    </div>
+
+    <div class="card done">
+      <div class="card-top">
+        <span class="card-icon">🌐</span>
+        <div>
+          <div class="card-title">CKB Light Client (ESP32)</div>
+          <div class="card-subtitle">First C implementation</div>
+        </div>
+        <span class="status-pill pill-done">Shipped</span>
+      </div>
+      <div class="card-desc">First C implementation of the CKB light client protocol on ESP32. Modular transport profiles (WiFi/LoRa/LoRaWAN/cellular). 336 host tests passing. BitChat mesh relay engine included.</div>
+      <div class="card-tags"><span class="tag embedded">ESP32</span><span class="tag">CKB</span><span class="tag">Light Client</span></div>
+      <a class="card-link" href="ckb-light-esp.html">Project page ↗</a>
+    </div>
+
+    <div class="card done">
+      <div class="card-top">
+        <span class="card-icon">📊</span>
+        <div>
+          <div class="card-title">CKB Node Dashboard</div>
+          <div class="card-subtitle">Node.js live dashboard proxy</div>
+        </div>
+        <span class="status-pill pill-done">Shipped</span>
+      </div>
+      <div class="card-desc">Lightweight Node.js proxy + HTML dashboard for live CKB node monitoring. Block height, peer count, sync status. Runs on the same SBC as the node.</div>
+      <div class="card-tags"><span class="tag sbc">SBC</span><span class="tag">CKB</span><span class="tag">Dashboard</span></div>
+      <a class="card-link" href="https://github.com/toastmanAu/ckb-node-dashboard" target="_blank">GitHub ↗</a>
+    </div>
+
+    <div class="card done">
+      <div class="card-top">
+        <span class="card-icon">🐋</span>
+        <div>
+          <div class="card-title">CKB Whale Alert Bot</div>
+          <div class="card-subtitle">Telegram bot · @NervosUnofficial</div>
+        </div>
+        <span class="status-pill pill-done">Shipped</span>
+      </div>
+      <div class="card-desc">Monitors the CKB chain for large transfers (>$200k USD). Live CKB price from CoinGecko. Skips coinbase and self-transfers. Posts to Telegram.</div>
+      <div class="card-tags"><span class="tag sbc">SBC</span><span class="tag">CKB</span><span class="tag">Telegram</span></div>
+      <a class="card-link" href="https://github.com/toastmanAu/ckb-whale-bot" target="_blank">GitHub ↗</a>
+    </div>
+
+    <div class="card done">
+      <div class="card-top">
+        <span class="card-icon">🔩</span>
+        <div>
+          <div class="card-title">wyltek-embedded-builder</div>
+          <div class="card-subtitle">PlatformIO board + component library</div>
+        </div>
+        <span class="status-pill pill-done">Shipped</span>
+      </div>
+      <div class="card-desc">32 board targets, reusable Wy* component library for ESP32 projects. All new Wyltek embedded projects use this as a base. Covers LilyGo, TTGO, CYD, and more.</div>
+      <div class="card-tags"><span class="tag embedded">ESP32</span><span class="tag">PlatformIO</span><span class="tag">Library</span></div>
+      <a class="card-link" href="https://github.com/toastmanAu/wyltek-embedded-builder" target="_blank">GitHub ↗</a>
+    </div>
+
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <p><a href="index.html">← Projects</a> &nbsp;·&nbsp; <a href="https://github.com/toastmanAu" target="_blank">GitHub</a> &nbsp;·&nbsp; <a href="blog.html">Devlog</a></p>
+    <div style="margin-top:.8rem;font-size:.78rem;opacity:.7">Built in the Nervos CKB ecosystem · <a href="https://nervos.org" target="_blank">nervos.org</a></div>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var btn=document.getElementById('navToggle');
+  var nav=document.getElementById('mainNav');
+  if(btn&&nav)btn.addEventListener('click',function(){nav.classList.toggle('open');});
+  document.addEventListener('click',function(e){if(nav&&btn&&!nav.contains(e.target)&&e.target!==btn)nav.classList.remove('open');});
+})();
+</script>
+</body>
+</html>
