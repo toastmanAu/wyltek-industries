@@ -14,12 +14,27 @@
     }
     *{box-sizing:border-box;margin:0;padding:0}
     body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh}
-    nav{display:flex;align-items:center;justify-content:space-between;padding:1rem 2rem;
-        border-bottom:1px solid var(--border);position:sticky;top:0;background:var(--bg);z-index:100}
-    .nav-logo{font-weight:700;font-size:1.1rem;color:var(--accent);text-decoration:none}
-    .nav-links{display:flex;gap:1.5rem}
-    .nav-links a{color:var(--muted);text-decoration:none;font-size:.9rem;transition:color .2s}
-    .nav-links a:hover{color:var(--text)}
+    header {
+      border-bottom: 1px solid var(--border);
+      padding: 0 2rem;
+      position: sticky; top: 0;
+      background: rgba(10,12,15,0.93);
+      backdrop-filter: blur(12px);
+      z-index: 100;
+    }
+    .header-inner {
+      max-width: 960px; margin: 0 auto;
+      display: flex; align-items: center; justify-content: space-between;
+      height: 60px;
+    }
+    .logo {
+      display: flex; align-items: center; gap: 10px;
+      font-weight: 700; font-size: 1.1rem; color: var(--text);
+      text-decoration: none;
+    }
+    nav#mainNav { display: flex; gap: 1.2rem; align-items: center; }
+    nav#mainNav a { color: var(--muted); text-decoration: none; font-size: 0.88rem; transition: color .2s; }
+    nav#mainNav a:hover, nav#mainNav a.active { color: var(--accent); }
     .hero{text-align:center;padding:4rem 2rem 2rem;max-width:800px;margin:0 auto}
     .hero-badge{display:inline-block;background:rgba(0,200,255,.1);border:1px solid rgba(0,200,255,.3);
         color:var(--accent);padding:.3rem .9rem;border-radius:999px;font-size:.8rem;
@@ -141,6 +156,12 @@
 </head>
 <body>
 
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">
+      <img src="wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">
+      Wyltek Industries
+    </a>
     <nav id="mainNav">
       <a href="index.html">Home</a>
       <a href="blog.html">Devlog</a>
@@ -152,10 +173,14 @@
       <a href="ckb.html">CKB Stack</a>
       <a href="images.html">Images</a>
       <a href="roadmap.html">Roadmap</a>
-    <a href="ckb-node-update.html">Node Updater</a>
+      <a href="ckb-node-update.html">Node Updater</a>
       <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
     </nav>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button><div class="hero">
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+  </div>
+</header>
+
+<div class="hero">
   <div class="hero-badge">⚡ Fast Node Sync</div>
   <h1>CKB Full Node <span>Sync Tool</span></h1>
   <p>Skip days of syncing. Download a verified, GPG-signed Nervos CKB chain snapshot and be up in hours. Works with Neuron wallet, bare CKB nodes, and SBCs on Windows, macOS, and Linux.</p>
