@@ -155,13 +155,14 @@
 
 <!-- Hero -->
 <div class="hero">
-  <div class="badge">For Wyltek Node Owners</div>
-  <h1>Got a Wyltek CKB node?<br><span>One command brings it up to date.</span></h1>
+  <div class="badge">CKB Community Fund DAO · 2024</div>
+  <h1>Got one of my CKB nodes?<br><span>Here's what's new for it.</span></h1>
   <p class="hero-sub">
-    If I built your Nervos CKB full node a couple of years ago, this script modernises it —
-    fixing stability bugs that shipped with the original install, and adding auto-updates,
-    a live dashboard, and <code style="color:var(--accent)">ckbnode.local</code> access
-    from every device on your network.
+    In early 2024 I built and shipped 30 <strong style="color:var(--text)">Orange Pi 3B</strong> CKB full nodes
+    to Nervos DAO voters around the world — 4W, WiFi + LAN, with a live display.
+    This script brings them fully up to date: fixing stability bugs that shipped with the original
+    install, adding auto-updates, a live dashboard, and
+    <code style="color:var(--accent)">ckbnode.local</code> access from any device on your network.
   </p>
 </div>
 
@@ -172,7 +173,9 @@
     <code id="cmd">curl -fsSL https://raw.githubusercontent.com/toastmanAu/armbian-ckb-userpatches/master/scripts/fix-ckb-stability.sh | sudo bash</code>
     <button class="copy-btn" id="copyBtn" onclick="copyCmd()">Copy</button>
   </div>
-  <div class="ol-note">Takes 2–5 minutes · Safe to run multiple times · Nothing is removed, only added</div>
+  <div class="ol-note">Takes 2–5 minutes · Safe to run multiple times · Nothing removed, only added<br>
+    <span style="color:var(--muted);font-size:.75rem">Your node: Orange Pi 3B · CKB v0.202.0 or earlier · <a href="https://talk.nervos.org/t/dis-build-and-distribute-efficient-network-nodes/7594" target="_blank" style="color:var(--accent)">Original project thread ↗</a></span>
+  </div>
 </div>
 
 <!-- Terminal preview -->
@@ -221,6 +224,27 @@
       <div>&nbsp;&nbsp;<span class="t-g">✔</span>&nbsp; mDNS ckbnode.local <span class="t-d">(active/enabled)</span></div>
       <div>&nbsp;</div>
       <div>&nbsp;&nbsp;<span class="t-d">Dashboard: http://ckbnode.local  ·  Update check: sudo ckb-update-check</span></div>
+    </div>
+  </div>
+</div>
+
+<!-- Context callout -->
+<div class="section" style="margin-bottom:2.5rem">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:1.5rem 1.8rem;display:flex;gap:1.5rem;align-items:flex-start;flex-wrap:wrap">
+    <div style="font-size:2rem;flex-shrink:0">🟡</div>
+    <div>
+      <div style="font-weight:700;font-size:1rem;margin-bottom:.4rem">About these nodes</div>
+      <div style="font-size:.88rem;color:var(--muted);line-height:1.7">
+        These nodes were built and distributed in early 2024 as part of a
+        <a href="https://talk.nervos.org/t/dis-build-and-distribute-efficient-network-nodes/7594" target="_blank">CKB Community Fund DAO proposal</a>
+        to improve Nervos network decentralisation. Each one is an
+        <strong style="color:var(--text)">Orange Pi 3B</strong> running CKB v0.202.0, with a small OLED display,
+        WiFi + Ethernet, and drawing ~4W at the wall. They were shipped to Nervos DAO voters in
+        30 countries in January–February 2024.
+        <br><br>
+        The original setup was functional but bare — no auto-updates, no dashboard, and a couple of
+        systemd bugs that cause the node to silently restart every 5 minutes. This script fixes all of that.
+      </div>
     </div>
   </div>
 </div>
