@@ -17,6 +17,58 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   // ────────────────────────────────────────────────────────────────
+  // ────────────────────────────────────────────────────────────────
+  {
+    id: "2026-03-02-ckb-dob-minter",
+    date: "2026-03-02",
+    title: "ckb-dob-minter: first DOB minted on CKB testnet — browser-based, JoyID, zero backend",
+    tags: ["nervos", "CKB", "DOB", "Spore", "React", "JoyID", "web"],
+    project: "ckb-dob-minter",
+    body: [
+      "Tonight we minted the first on-chain DOB using a browser tool we built from scratch. Fully on-chain, JoyID passkey signing, no backend, no IPFS, no server-side keys.",
+
+      {type:"code", content:"TX:      0x74bf8469fd4e2533df6432eb70cc8616e5facffffc63a0c62cc8a9d33b48b62b\nSpore ID: 0xc7a3c0aa498bed3417580201bdc2508a7e48d13fe79e1c2bcf1e40a357f781a6\nNetwork: CKB Testnet | Wallet: JoyID"},
+
+      {type:"h3", content:"What the minter does"},
+      "Drag any file — image, text, JSON, binary, anything up to 500KB. Content gets stored directly inside a CKB cell using the Spore Protocol. No IPFS, no external storage, no URL that can break. The content is part of the blockchain state, backed by CKB capacity deposit, and recoverable by burning the DOB to reclaim the CKB.",
+      "Connects to your local CKB node automatically — scans localhost:8114, :8117, and common LAN IPs in parallel. If you're on Brave, it skips the LAN scan and prompts for the IP directly (Brave blocks local network requests by default). Falls back to the public RPC if no local node is found. Node URL is cached in localStorage.",
+
+      {type:"h3", content:"Tech stack"},
+      {type:"ul", content:[
+        "<strong>@ckb-ccc/spore</strong> — Spore Protocol SDK, CCC-native. Handles all lock types including JoyID.",
+        "<strong>@ckb-ccc/connector-react</strong> 1.x — wallet connector UI (JoyID, MetaMask, OKX, UniSat, etc.)",
+        "<strong>@ckb-ccc/core</strong> — CKB types, client, transaction builder",
+        "Vite + React — bundled production build, no dev server required for mobile",
+        "Served via systemd user services — persistent across reboots, auto-restart on crash"
+      ]},
+
+      {type:"h3", content:"What we learned the hard way"},
+      "This took an entire evening of debugging. The full lesson is written into the codebase comments — here's the short version:",
+      {type:"ul", content:[
+        "<strong>Start with @ckb-ccc/spore, not spore-sdk + Lumos.</strong> spore-sdk 0.2.x uses Lumos common-scripts for input collection. Lumos only understands secp256k1 locks. JoyID uses a custom lock. Result: 'not enough capacity in the info's' error regardless of balance. @ckb-ccc/spore takes a CCC Signer directly and handles all lock types.",
+        "<strong>createSpore → completeFeeBy → sendTransaction.</strong> createSpore builds the output and prepares signatures, but doesn't balance inputs. Call tx.completeFeeBy(signer, 1000n) before broadcasting or you get an Overflow tx rejection.",
+        "<strong>useCcc() must be inside the Provider, not the same component.</strong> Provider renders context; hook reads it. Same component = hook executes before context exists = black screen. Fix: Provider shell owns network state, inner component calls useCcc().",
+        "<strong>CCC 0.0.x wallet connect loop.</strong> Upgraded to 1.x. New API: { signerInfo, open, setClient, disconnect } — signer is signerInfo?.signer. Switch networks via setClient(new ccc.ClientPublicTestnet()).",
+        "<strong>Shadow DOM modal sizing.</strong> The JoyID connector modal has no max-width guard. Inject a style tag into shadowRoot post-mount to constrain it to min(22rem, 94vw).",
+        "<strong>iOS Safari needs HTTPS.</strong> WebAuthn passkeys require HTTPS on iOS — even on a LAN IP. Self-signed cert + Node.js HTTPS server on :5175 for mobile testing."
+      ]},
+
+      {type:"h3", content:"Browser compatibility"},
+      "Chrome, Firefox, Edge, Arc: full support. Brave: full support, LAN scan skipped (enter IP manually). iOS Safari: HTTPS required for JoyID passkeys. Telegram WebView: not supported.",
+
+      {type:"h3", content:"Hardware provenance angle"},
+      "The interesting Wyltek-specific use case: mint a DOB with a JSON payload containing device serial number, firmware hash, test results, and board version. On-chain hardware certificate — permanent, tied to a specific key, redeemable. No CA required. Works with any device that can sign a CKB transaction — including ckb-esp32-signer once that's ready.",
+
+      {type:"h3", content:"Next"},
+      "Mainnet test, then npm package (@wyltek/ckb-dob-minter) with UMD bundle so anyone can drop it into any site with a single script tag. Hardware provenance JSON schema as a built-in preset."
+    ],
+    links: [
+      {text:"ckb-dob-minter on GitHub", href:"https://github.com/toastmanAu/ckb-dob-minter"},
+      {text:"Testnet TX", href:"https://testnet.explorer.nervos.org/transaction/0x74bf8469fd4e2533df6432eb70cc8616e5facffffc63a0c62cc8a9d33b48b62b"},
+      {text:"Spore ID", href:"https://testnet.explorer.nervos.org/nft-info/0xc7a3c0aa498bed3417580201bdc2508a7e48d13fe79e1c2bcf1e40a357f781a6"},
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
   {
     id: "2026-03-02-fiber-channel-ckb-chess-relayer",
     date: "2026-03-02",
