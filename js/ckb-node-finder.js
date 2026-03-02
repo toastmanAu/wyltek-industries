@@ -79,37 +79,41 @@ class CKBNodeFinder {
       if (info) { this._save(url); this._emit(info); return; }
     }
 
-    // 3. LAN scan
-    this.onProgress('Scanning local network…');
-    const lanCandidates = [];
-    for (const prefix of LAN_PREFIXES) {
-      for (const suffix of LAN_SUFFIXES) {
-        for (const port of LAN_PORTS) {
-          lanCandidates.push(`http://${prefix}.${suffix}:${port}`);
+    // 3. LAN scan (Chrome/Edge only — Brave blocks cross-origin LAN requests)
+    // Detect Brave: it exposes navigator.brave
+    const isBrave = !!(navigator.brave && await navigator.brave.isBrave().catch(() => false));
+
+    if (!isBrave) {
+      this.onProgress('Scanning local network…');
+      const lanCandidates = [];
+      for (const prefix of LAN_PREFIXES) {
+        for (const suffix of LAN_SUFFIXES) {
+          for (const port of LAN_PORTS) {
+            lanCandidates.push(`http://${prefix}.${suffix}:${port}`);
+          }
+        }
+      }
+
+      for (let i = 0; i < lanCandidates.length; i += BATCH_SIZE) {
+        if (this._cancelled) return;
+        const batch   = lanCandidates.slice(i, i + BATCH_SIZE);
+        const results = await Promise.allSettled(
+          batch.map(url => this._probe(url, TIMEOUT_LAN_MS))
+        );
+        for (let j = 0; j < results.length; j++) {
+          const info = results[j].value;
+          if (info) {
+            this._save(batch[j]);
+            this._emit(info);
+            return;
+          }
         }
       }
     }
 
-    // Run in parallel batches
-    for (let i = 0; i < lanCandidates.length; i += BATCH_SIZE) {
-      if (this._cancelled) return;
-      const batch   = lanCandidates.slice(i, i + BATCH_SIZE);
-      const results = await Promise.allSettled(
-        batch.map(url => this._probe(url, TIMEOUT_LAN_MS))
-      );
-      for (let j = 0; j < results.length; j++) {
-        const info = results[j].value;
-        if (info) {
-          this._save(batch[j]);
-          this._emit(info);
-          return;
-        }
-      }
-    }
-
-    // 4. Nothing found
+    // 4. Nothing found (or Brave — skip straight to prompt)
     this._resolving = false;
-    if (this.onPrompt) this.onPrompt();
+    if (this.onPrompt) this.onPrompt(isBrave);
   }
 
   async tryUrl(url) {
@@ -216,11 +220,14 @@ class CKBNodeWidget {
               border-radius:7px;padding:8px 14px;font-weight:700;cursor:pointer;font-size:13px;
               white-space:nowrap;">Connect</button>
           </div>
+          <div class="cnf-brave-note" style="display:none;background:rgba(255,140,66,.08);
+            border:1px solid rgba(255,140,66,.3);border-radius:6px;padding:8px 10px;
+            font-size:12px;color:#ff8c42;margin-bottom:6px;line-height:1.5;">
+            🦁 <strong>Brave blocks LAN scanning</strong> — enter your node's IP directly below.
+          </div>
           <div style="color:#64748b;font-size:12px;line-height:1.6;">
-            Tried: <code style="color:#94a3b8">localhost:8114</code>,
-            <code style="color:#94a3b8">:8117</code>,
-            and common LAN IPs on your subnet.<br>
-            If your node is on another machine, enter its IP:
+            Tried: <code style="color:#94a3b8">localhost:8114</code>, <code style="color:#94a3b8">:8117</code>.<br>
+            Node on another machine? Enter its IP:
             e.g. <code style="color:#00c8ff">http://192.168.68.87:8114</code>
           </div>
         </div>
@@ -267,13 +274,15 @@ class CKBNodeWidget {
     this.emit('connected', info);
   }
 
-  _showPrompt() {
+  _showPrompt(isBrave = false) {
     const prm = this.container?.querySelector('.cnf-prompt');
     const dot = this.container?.querySelector('.cnf-dot');
     const msg = this.container?.querySelector('.cnf-msg');
+    const note = this.container?.querySelector('.cnf-brave-note');
     if (prm) prm.style.display = 'block';
     if (dot) { dot.style.background = '#ff8c42'; dot.style.animation = 'none'; }
-    if (msg) msg.textContent = 'Node not found on localhost or LAN';
+    if (msg) msg.textContent = 'No node found on localhost — enter your node URL';
+    if (note) note.style.display = isBrave ? 'block' : 'none';
   }
 
   _showError(msg) {
