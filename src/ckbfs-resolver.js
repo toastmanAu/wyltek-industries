@@ -1,11 +1,8 @@
 /**
- * ckbfs-resolver.js
+ * lib/ckbfs-resolver.js
+ * Core CKBFS resolution logic — no framework deps, works in browser + Node.
  *
- * Core CKBFS resolution logic — framework-agnostic, no build step required.
- * Import this from a bundler, or load as a module in the browser.
- *
- * Protocol: CKBFS V2 (code_hash 0x31e637... deployed 20241025)
- * SDK: wraps @ckbfs/api for publish; resolution is hand-rolled for browser compat.
+ * Protocol: CKBFS V2, code_hash 0x31e637...
  */
 
 export const CKBFS_CODE_HASH = '0x31e6376287d223b8c0410d562fb422f04d1d617b2947596a14c3d2efb7218d3a';
@@ -15,9 +12,14 @@ export const RPC_ENDPOINTS = {
   mainnet: 'https://mainnet.ckbapp.dev',
 };
 
-// ── CKB RPC ───────────────────────────────────────────────────────────────────
+export const EXPLORER = {
+  testnet: 'https://pudge.explorer.nervos.org/transaction',
+  mainnet: 'https://explorer.nervos.org/transaction',
+};
 
-export async function ckbRpc(network, method, params) {
+// ── RPC ───────────────────────────────────────────────────────────────────────
+
+async function ckbRpc(network, method, params) {
   const res = await fetch(RPC_ENDPOINTS[network], {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
@@ -28,7 +30,7 @@ export async function ckbRpc(network, method, params) {
   return data.result;
 }
 
-// ── TypeID parser ─────────────────────────────────────────────────────────────
+// ── Identifier parser ─────────────────────────────────────────────────────────
 
 export function parseIdentifier(input) {
   let typeId = input.trim();
@@ -39,16 +41,12 @@ export function parseIdentifier(input) {
 }
 
 // ── Molecule decoder ──────────────────────────────────────────────────────────
-// Handles both 4-field (V2/V3 contract schema) and 5-field (old V2 schema) tables.
+// Handles 4-field (index: Uint32) and 5-field (indexes: Vec<Uint32>) schemas.
 
-export function decodeCKBFSData(hex) {
+function decodeCKBFSData(hex) {
   const data = hexToBytes(hex);
   const dv = new DataView(data.buffer);
-
   const totalSize = dv.getUint32(0, true);
-  if (data.length < totalSize) throw new Error('Truncated cell data');
-
-  // Number of fields = (firstOffset / 4) - 1
   const firstOffset = dv.getUint32(4, true);
   const fieldCount = (firstOffset / 4) - 1;
 
@@ -56,94 +54,98 @@ export function decodeCKBFSData(hex) {
   for (let i = 0; i < fieldCount; i++) offsets.push(dv.getUint32(4 + i * 4, true));
   offsets.push(totalSize);
 
+  const readBytes = (off) => {
+    const len = dv.getUint32(off, true) - 4;
+    return new TextDecoder().decode(data.slice(off + 4, off + 4 + len));
+  };
+
   if (fieldCount === 4) {
-    // 4-field: index(Uint32), checksum(Uint32), content_type(Bytes), filename(Bytes)
+    // 4-field schema: index(Uint32), checksum, content_type, filename
     return {
-      index:       dv.getUint32(offsets[0], true),
+      indexes:     [dv.getUint32(offsets[0], true)],
       checksum:    dv.getUint32(offsets[1], true),
-      contentType: decodeBytes(data, dv, offsets[2]),
-      filename:    decodeBytes(data, dv, offsets[3]),
+      contentType: readBytes(offsets[2]),
+      filename:    readBytes(offsets[3]),
     };
   } else {
-    // 5-field: indexes(Vec<Uint32>), checksum, content_type, filename, backlinks
-    const idxTotal = dv.getUint32(offsets[0], true);
+    // 5-field schema: indexes(Vec<Uint32>), checksum, content_type, filename, backlinks
+    const idxFieldBytes = data.slice(offsets[0], offsets[1]);
+    const idxDv = new DataView(idxFieldBytes.buffer, idxFieldBytes.byteOffset);
+    const idxTotal = idxDv.getUint32(0, true);
     const indexCount = (idxTotal - 4) / 4;
+    const indexes = [];
+    for (let i = 0; i < indexCount; i++) indexes.push(idxDv.getUint32(4 + i * 4, true));
     return {
-      index:       indexCount > 0 ? dv.getUint32(offsets[0] + 4, true) : 0,
+      indexes,
       checksum:    dv.getUint32(offsets[1], true),
-      contentType: decodeBytes(data, dv, offsets[2]),
-      filename:    decodeBytes(data, dv, offsets[3]),
+      contentType: readBytes(offsets[2]),
+      filename:    readBytes(offsets[3]),
     };
   }
 }
 
-function decodeBytes(data, dv, offset) {
-  const len = dv.getUint32(offset, true) - 4;
-  return new TextDecoder().decode(data.slice(offset + 4, offset + 4 + len));
-}
-
 // ── Witness content extractor ─────────────────────────────────────────────────
 
-export function extractFileFromWitness(witnessHex) {
+function extractChunkFromWitness(witnessHex) {
   const bytes = hexToBytes(witnessHex);
   const magic = new TextDecoder().decode(bytes.slice(0, 5));
   if (magic !== 'CKBFS') throw new Error('Witness missing CKBFS magic header');
   const version = bytes[5];
-  // v2: content at byte 6; v3: content at byte 50 (6 + 32 + 4 + 4 + 4)
-  const contentOffset = version === 0x03 ? 50 : 6;
-  return bytes.slice(contentOffset);
+  // v2 (0x00): content at byte 6
+  // v3 (0x03): content at byte 50 (6 + 32 prev_tx_hash + 4 prev_idx + 4 prev_checksum + 4 next_idx)
+  return bytes.slice(version === 0x03 ? 50 : 6);
 }
 
-// ── Main resolve function ─────────────────────────────────────────────────────
+// ── Main resolve ──────────────────────────────────────────────────────────────
 
 /**
  * Resolve a CKBFS TypeID to its file content and metadata.
- *
- * @param {string} typeId   - 0x-prefixed 32-byte hex TypeID
- * @param {string} network  - 'testnet' | 'mainnet'
- * @param {function} [onProgress] - optional (message: string) => void
- * @returns {{ fileBytes: Uint8Array, contentType: string, filename: string, checksum: number, txHash: string }}
+ * Handles multi-chunk files (content split across multiple witnesses).
  */
 export async function resolveCKBFS(typeId, network, onProgress = () => {}) {
   onProgress('Searching for CKBFS cell…');
 
-  const cellsResult = await ckbRpc(network, 'get_cells', [{
+  const result = await ckbRpc(network, 'get_cells', [{
     script: { code_hash: CKBFS_CODE_HASH, hash_type: 'data1', args: typeId },
     script_type: 'type',
     filter: null,
   }, 'asc', '0x1']);
 
-  const cells = cellsResult?.objects || [];
-  if (cells.length === 0) {
-    throw new Error(`No CKBFS cell found for TypeID ${typeId.slice(0, 18)}… on ${network}`);
-  }
+  const cells = result?.objects || [];
+  if (!cells.length) throw new Error(`No CKBFS cell found for ${typeId.slice(0,18)}… on ${network}`);
 
   const cell = cells[0];
-  const { tx_hash, index } = cell.out_point;
-
-  onProgress('Decoding cell metadata…');
   const meta = decodeCKBFSData(cell.output_data || '0x');
 
-  onProgress(`Fetching transaction…`);
-  const txResult = await ckbRpc(network, 'get_transaction', [tx_hash]);
+  onProgress('Fetching publish transaction…');
+  const txResult = await ckbRpc(network, 'get_transaction', [cell.out_point.tx_hash]);
   const tx = txResult?.transaction;
   if (!tx) throw new Error('Transaction not found');
 
   const witnesses = tx.witnesses || [];
-  if (meta.index >= witnesses.length) {
-    throw new Error(`Witness index ${meta.index} out of range (tx has ${witnesses.length} witnesses)`);
+
+  // Reassemble all chunks in order
+  onProgress(`Extracting ${meta.filename || 'file'} (${meta.indexes.length} chunk${meta.indexes.length > 1 ? 's' : ''})…`);
+  const chunks = [];
+  for (const idx of meta.indexes) {
+    if (idx >= witnesses.length) throw new Error(`Witness index ${idx} out of range`);
+    chunks.push(extractChunkFromWitness(witnesses[idx]));
   }
 
-  onProgress(`Extracting ${meta.filename || 'file content'}…`);
-  const fileBytes = extractFileFromWitness(witnesses[meta.index]);
+  // Concatenate chunks
+  const totalLen = chunks.reduce((s, c) => s + c.length, 0);
+  const fileBytes = new Uint8Array(totalLen);
+  let offset = 0;
+  for (const chunk of chunks) { fileBytes.set(chunk, offset); offset += chunk.length; }
 
   return {
     fileBytes,
     contentType: meta.contentType,
     filename:    meta.filename,
     checksum:    meta.checksum,
-    witnessIdx:  meta.index,
-    txHash:      tx_hash,
+    witnessIdx:  meta.indexes[0],
+    chunkCount:  meta.indexes.length,
+    txHash:      cell.out_point.tx_hash,
   };
 }
 
@@ -151,13 +153,13 @@ export async function resolveCKBFS(typeId, network, onProgress = () => {}) {
 
 export function hexToBytes(hex) {
   const h = hex.startsWith('0x') ? hex.slice(2) : hex;
-  const arr = new Uint8Array(h.length / 2);
-  for (let i = 0; i < arr.length; i++) arr[i] = parseInt(h.slice(i * 2, i * 2 + 2), 16);
-  return arr;
+  const b = new Uint8Array(h.length / 2);
+  for (let i = 0; i < b.length; i++) b[i] = parseInt(h.slice(i * 2, i * 2 + 2), 16);
+  return b;
 }
 
 export function formatSize(bytes) {
   if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-  return (bytes / 1024 / 1024).toFixed(2) + ' MB';
+  if (bytes < 1048576) return (bytes / 1024).toFixed(1) + ' KB';
+  return (bytes / 1048576).toFixed(2) + ' MB';
 }
