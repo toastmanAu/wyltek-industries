@@ -178,14 +178,15 @@ async function connectJoyID() {
   
   try {
     showMsg('connectMsg', 'Opening JoyID…', 'info');
-    const result = await joyidConnect();
+    const callbackUrl = window.location.origin + '/joyid-callback.html';
+    const result = await joyidConnect({ redirectURL: callbackUrl });
     const address = result.address;
 
     // Sign a challenge to prove ownership
     const challenge = `Wyltek Industries Login\n${new Date().toISOString()}`;
     let signature = '';
     try {
-      const sigResult = await joyidSignMessage(challenge, address);
+      const sigResult = await joyidSignMessage(challenge, address, { redirectURL: callbackUrl });
       signature = sigResult?.signature || sigResult || '';
     } catch(e) {
       // signature optional for initial test
