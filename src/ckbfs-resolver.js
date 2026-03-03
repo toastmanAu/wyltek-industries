@@ -55,7 +55,7 @@ function decodeCKBFSData(hex) {
   offsets.push(totalSize);
 
   const readBytes = (off) => {
-    const len = dv.getUint32(off, true) - 4;
+    const len = dv.getUint32(off, true);
     return new TextDecoder().decode(data.slice(off + 4, off + 4 + len));
   };
 
@@ -69,10 +69,10 @@ function decodeCKBFSData(hex) {
     };
   } else {
     // 5-field schema: indexes(Vec<Uint32>), checksum, content_type, filename, backlinks
+    // Vec<Uint32> format: 4-byte item count + N×4-byte items
     const idxFieldBytes = data.slice(offsets[0], offsets[1]);
     const idxDv = new DataView(idxFieldBytes.buffer, idxFieldBytes.byteOffset);
-    const idxTotal = idxDv.getUint32(0, true);
-    const indexCount = (idxTotal - 4) / 4;
+    const indexCount = idxDv.getUint32(0, true); // first 4 bytes = item count
     const indexes = [];
     for (let i = 0; i < indexCount; i++) indexes.push(idxDv.getUint32(4 + i * 4, true));
     return {
