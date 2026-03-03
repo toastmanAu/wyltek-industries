@@ -1,10 +1,205 @@
 {
-  "date": "2026-03-03 16:20",
+  "date": "2026-03-03 16:21",
   "commit": "bb9de32",
-  "platform": "aarch64 Linux",
+  "platform": "aarch64 Linux (Pi 5)",
   "compiler": "g++ 11.4.0",
-  "total_pass": 0,
+  "total_pass": 394,
   "total_fail": 0,
-  "total_time": "\u2014",
-  "suites": []
+  "total_time": "10144ms",
+  "suites": [
+    {
+      "name": "header_chain",
+      "pass": 6,
+      "fail": 0,
+      "time": "589ms",
+      "tests": [
+        "PASS: block_hash = Blake2b(struct || nonce_le)",
+        "PASS: Eaglesong result <= compact_target",
+        "PASS: Eaglesong self-test",
+        "PASS: Molecule struct = 192 bytes",
+        "PASS: nonce RPC \u2192 LE bytes",
+        "PASS: pow_hash = Blake2b(Molecule struct)"
+      ]
+    },
+    {
+      "name": "merkle",
+      "pass": 11,
+      "fail": 0,
+      "time": "287ms",
+      "tests": [
+        "PASS: CBMT root correct",
+        "PASS: CBMT verify succeeds",
+        "PASS: parseProof depth = 2",
+        "PASS: parseProof indices[0] = 5",
+        "PASS: parseProof lemma[0] = T3",
+        "PASS: parseProof lemma[1] = B1",
+        "PASS: parseProof succeeds",
+        "PASS: single-tx block inclusion",
+        "PASS: transactions_root = merge(txsCBMTRoot, witnessesRoot)",
+        "PASS: verifyInclusion"
+      ]
+    },
+    {
+      "name": "block_filter",
+      "pass": 27,
+      "fail": 0,
+      "time": "317ms",
+      "tests": [
+        "PASS: addScriptHash returns true",
+        "PASS: dequeue first = 42",
+        "PASS: dequeue second = 100",
+        "PASS: dequeue third = 999",
+        "PASS: empty filter returns false for any query",
+        "PASS: event 0 block = 500",
+        "PASS: event 0 txHash prefix correct",
+        "PASS: event 1 block = 501",
+        "PASS: events empty after drain",
+        "PASS: events empty on init"
+      ]
+    },
+    {
+      "name": "wifi_transport",
+      "pass": 41,
+      "fail": 0,
+      "time": "468ms",
+      "tests": [
+        "PASS: added \u2192 FETCH_PENDING",
+        "PASS: _buildRequest",
+        "PASS: Chunked",
+        "PASS: Content-Length",
+        "PASS: fetched \u2192 FETCH_DONE",
+        "PASS: fetching \u2192 FETCH_PENDING",
+        "PASS: getCells",
+        "PASS: getCellsCapacity",
+        "PASS: getPeerCount",
+        "PASS: getScripts"
+      ]
+    },
+    {
+      "name": "light_client",
+      "pass": 36,
+      "fail": 0,
+      "time": "574ms",
+      "tests": [
+        "PASS: after begin() state is CONNECTING",
+        "PASS: CONNECTING string",
+        "PASS: empty filter",
+        "PASS: filter match",
+        "PASS: filterSyncBlock starts at 0",
+        "PASS: filterSyncBlock starts at 0 before connect",
+        "PASS: formatCKB",
+        "PASS: getBalance(addr)",
+        "PASS: getBalance(codeHash,args)",
+        "PASS: getBalance(null addr)"
+      ]
+    },
+    {
+      "name": "helpers",
+      "pass": 29,
+      "fail": 0,
+      "time": "477ms",
+      "tests": [
+        "PASS: ckb_merge matches manual blake2b(a||b)",
+        "PASS: empty input hash matches known vector",
+        "PASS: error",
+        "PASS: fetchDone",
+        "PASS: fetchNotFound",
+        "PASS: fetchPending",
+        "PASS: hash hex has 0x prefix",
+        "PASS: hash hex is 66 chars",
+        "PASS: \"hello\" hash matches known vector",
+        "PASS: incremental matches one-shot for 'hello'"
+      ]
+    },
+    {
+      "name": "native_locks",
+      "pass": 37,
+      "fail": 0,
+      "time": "349ms",
+      "tests": [
+        "PASS: 2-of-3 parses ok",
+        "PASS: 2-of-3 verifies with sigs 0+1",
+        "PASS: ACP",
+        "PASS: ACP identified",
+        "PASS: blake160(empty) matches known value",
+        "PASS: blake160('hello') matches known value",
+        "PASS: corrupt sig rejected",
+        "PASS: corrupt total_size rejected",
+        "PASS: dispatch",
+        "PASS: keyCount=3"
+      ]
+    },
+    {
+      "name": "ckbvm_interp",
+      "pass": 24,
+      "fail": 0,
+      "time": "5475ms",
+      "tests": [
+        "PASS: ADD/SUB",
+        "PASS: cycle count at limit",
+        "PASS: cycles consumed > 0",
+        "PASS: Debug syscall",
+        "PASS: error message set",
+        "PASS: exit(0) returns SUCCESS",
+        "PASS: exit(-1) returns -1",
+        "PASS: exit(1) returns FAILURE",
+        "PASS: first execute",
+        "PASS: garbage rejected"
+      ]
+    },
+    {
+      "name": "lora_transport",
+      "pass": 17,
+      "fail": 0,
+      "time": "283ms",
+      "tests": [
+        "PASS: begin() returns true",
+        "PASS: connected after begin",
+        "PASS: error message set on timeout",
+        "PASS: error set when not connected",
+        "PASS: injected PONG \u2192 ping() succeeds",
+        "PASS: large request",
+        "PASS: multi-frag response",
+        "PASS: not connected before begin",
+        "PASS: ping() returns non-negative RTT",
+        "PASS: request() returns positive byte count"
+      ]
+    },
+    {
+      "name": "bitchat",
+      "pass": 108,
+      "fail": 0,
+      "time": "323ms",
+      "tests": [
+        "PASS: added packet in bloom",
+        "PASS: all-FF is broadcast",
+        "PASS: announce decodes",
+        "PASS: announce encodes",
+        "PASS: announce nickname",
+        "PASS: announce not padded",
+        "PASS: bloom cleared after interval",
+        "PASS: bloom survives early tick",
+        "PASS: broadcast flag set",
+        "PASS: build_announce_packet succeeds"
+      ]
+    },
+    {
+      "name": "noise",
+      "pass": 58,
+      "fail": 0,
+      "time": "825ms",
+      "tests": [
+        "PASS: 100-byte round-trip",
+        "PASS: ciphertext len = pt + 16 tag",
+        "PASS: ciphertext != plaintext",
+        "PASS: corrupt tag",
+        "PASS: decrypted len correct",
+        "PASS: decrypted == plaintext",
+        "PASS: decrypt fails before handshake",
+        "PASS: encrypted len = pt + 16 tag",
+        "PASS: encrypt fails before handshake",
+        "PASS: fingerprint hex = 64 chars"
+      ]
+    }
+  ]
 }

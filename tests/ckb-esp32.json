@@ -1,10 +1,46 @@
 {
-  "date": "2026-03-03 16:19",
+  "date": "2026-03-03 16:21",
   "commit": "335b4e1",
-  "platform": "aarch64 Linux",
+  "platform": "aarch64 Linux (Pi 5)",
   "compiler": "g++ 11.4.0",
-  "total_pass": 0,
+  "total_pass": 144,
   "total_fail": 0,
-  "total_time": "\u2014",
-  "suites": []
+  "total_time": "7",
+  "suites": [
+    {
+      "name": "blake2b",
+      "pass": 12,
+      "fail": 0,
+      "time": "1s",
+      "tests": []
+    },
+    {
+      "name": "molecule",
+      "pass": 36,
+      "fail": 0,
+      "time": "0s",
+      "tests": []
+    },
+    {
+      "name": "bip39",
+      "pass": 20,
+      "fail": 0,
+      "time": "2s",
+      "tests": []
+    },
+    {
+      "name": "signer",
+      "pass": 24,
+      "fail": 0,
+      "time": "1s",
+      "tests": []
+    },
+    {
+      "name": "client_static",
+      "pass": 52,
+      "fail": 0,
+      "time": "3s",
+      "tests": []
+    }
+  ]
 }
