@@ -200,28 +200,30 @@ async function connectJoyID() {
 }
 
 async function signInToSupabase(address, signature) {
-  // Derive deterministic email + password from CKB address
-  const msgBuffer = new TextEncoder().encode(address + 'wyltek-salt');
-  const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
-  const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2,'0')).join('');
-
-  // Use first 16 chars of hash as email username — short, valid, deterministic
-  const email = `ckb-${hashHex.slice(0, 16)}@wyltek.ckb`;
-  const password = hashHex.slice(0, 32);
-  
-  // Try sign in first, then sign up
-  let { data, error } = await sb.auth.signInWithPassword({ email, password });
-  if (error && error.message.includes('Invalid login credentials')) {
-    const res = await sb.auth.signUp({ email, password });
-    data = res.data; error = res.error;
+  // Check localStorage for existing session for this address
+  const stored = localStorage.getItem('wyltek_session_' + address);
+  if (stored) {
+    try {
+      const parsed = JSON.parse(stored);
+      const { error } = await sb.auth.setSession(parsed);
+      if (!error) { currentSession = parsed; onConnected(address); return; }
+    } catch(e) { /* stale session, re-auth below */ }
   }
-  
+
+  // Sign in anonymously — no email, no rate limit, no confirmation needed
+  // Store CKB address in user metadata
+  let { data, error } = await sb.auth.signInAnonymously({
+    options: { data: { ckb_address: address } }
+  });
+
   if (error) {
     showMsg('connectMsg', 'Supabase auth error: ' + error.message, 'err');
     return;
   }
 
   currentSession = data.session;
+  // Persist session keyed by address
+  if (data.session) localStorage.setItem('wyltek_session_' + address, JSON.stringify(data.session));
   onConnected(address);
 }
 
