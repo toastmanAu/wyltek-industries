@@ -1,0 +1,375 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Members — Wyltek Industries</title>
+  <meta name="description" content="Join Wyltek Industries. Connect with JoyID to become a Founding Member and receive your on-chain DOB." />
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+  <style>
+    :root {
+      --bg:#0a0c0f; --surface:#111318; --surface2:#181c23; --border:#1e2430;
+      --accent:#00c8ff; --accent2:#7b5cfa; --green:#00e5a0; --orange:#ff8c42;
+      --red:#ff4560; --text:#e2e8f0; --muted:#64748b; --tag-bg:#1a2035;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6; }
+    a { color: var(--accent); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    header { border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; background: rgba(10,12,15,.93); backdrop-filter: blur(12px); z-index: 100; }
+    .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
+    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; color: var(--text); text-decoration: none; }
+    nav { display: flex; gap: 1.5rem; }
+    nav a { color: var(--muted); font-size: .9rem; transition: color .2s; }
+    nav a:hover, nav a.active { color: var(--text); text-decoration: none; }
+    .nav-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
+    @media (max-width: 768px) {
+      .nav-toggle { display: block; }
+      nav#mainNav { display: none; flex-direction: column; gap: 0; position: absolute; top: 60px; left: 0; right: 0; background: var(--surface); border-bottom: 1px solid var(--border); z-index: 99; }
+      nav#mainNav.open { display: flex; }
+      nav#mainNav a { padding: .7rem 1.5rem; border-bottom: 1px solid var(--border); font-size: 1rem; }
+    }
+
+    main { max-width: 640px; margin: 0 auto; padding: 3rem 1.5rem 5rem; }
+
+    /* ── Hero ── */
+    .hero { text-align: center; margin-bottom: 2.5rem; }
+    .hero-badge { display: inline-block; background: var(--tag-bg); border: 1px solid var(--border); border-radius: 20px; padding: .3rem 1rem; font-size: .78rem; color: var(--accent); font-weight: 600; letter-spacing: .05em; text-transform: uppercase; margin-bottom: 1rem; }
+    .hero h1 { font-size: 2rem; font-weight: 800; margin-bottom: .75rem; }
+    .hero p { color: var(--muted); font-size: 1rem; max-width: 480px; margin: 0 auto; }
+
+    /* ── Cards ── */
+    .card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 1.5rem; margin-bottom: 1rem; }
+    .card-title { font-size: 1rem; font-weight: 700; margin-bottom: .75rem; }
+
+    /* ── Connect state ── */
+    .connect-box { display: flex; flex-direction: column; align-items: center; gap: 1rem; padding: .5rem 0; text-align: center; }
+    .connect-hint { font-size: .85rem; color: var(--muted); max-width: 380px; }
+
+    .btn { background: var(--accent); color: #0a0c0f; border: none; border-radius: 8px; padding: .65rem 1.4rem; font-size: .9rem; font-weight: 700; cursor: pointer; transition: opacity .15s; white-space: nowrap; display: inline-flex; align-items: center; gap: .5rem; }
+    .btn:hover { opacity: .85; }
+    .btn:disabled { opacity: .4; cursor: not-allowed; }
+    .btn-ghost { background: var(--surface2); color: var(--muted); border: 1px solid var(--border); font-weight: 500; }
+    .btn-ghost:hover { color: var(--text); border-color: var(--accent); opacity: 1; }
+    .btn-purple { background: var(--accent2); color: #fff; }
+
+    /* ── Status badge ── */
+    .badge { display: inline-flex; align-items: center; gap: .4rem; padding: .3rem .8rem; border-radius: 20px; font-size: .82rem; font-weight: 600; }
+    .badge.connected { background: rgba(0,229,160,.1); border: 1px solid rgba(0,229,160,.3); color: var(--green); }
+    .badge.disconnected { background: var(--surface2); border: 1px solid var(--border); color: var(--muted); }
+    .badge-dot { width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+
+    /* ── Member status card ── */
+    .member-number { font-size: 3rem; font-weight: 800; color: var(--accent); line-height: 1; }
+    .member-label { font-size: .85rem; color: var(--muted); margin-top: .25rem; }
+    .member-row { display: flex; align-items: center; gap: 2rem; flex-wrap: wrap; }
+    .dob-status { display: flex; flex-direction: column; gap: .25rem; }
+    .dob-tag { display: inline-flex; align-items: center; gap: .4rem; font-size: .82rem; }
+    .dob-tag.pending { color: var(--orange); }
+    .dob-tag.minted { color: var(--green); }
+
+    /* ── Address display ── */
+    .address-box { font-family: monospace; font-size: .78rem; color: var(--muted); background: var(--surface2); padding: .5rem .8rem; border-radius: 6px; word-break: break-all; margin-top: .5rem; }
+
+    /* ── Perks list ── */
+    .perks { list-style: none; display: flex; flex-direction: column; gap: .6rem; margin-top: .25rem; }
+    .perks li { display: flex; align-items: flex-start; gap: .6rem; font-size: .9rem; }
+    .perks li::before { content: '✓'; color: var(--green); font-weight: 700; flex-shrink: 0; margin-top: .05rem; }
+
+    /* ── Counter ── */
+    .counter-row { display: flex; align-items: center; justify-content: space-between; margin-top: .5rem; }
+    .counter-bar-wrap { flex: 1; height: 6px; background: var(--surface2); border-radius: 3px; margin: 0 1rem; overflow: hidden; }
+    .counter-bar { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 3px; transition: width .5s ease; }
+    .counter-label { font-size: .8rem; color: var(--muted); white-space: nowrap; }
+
+    /* ── Msg ── */
+    .msg { font-size: .85rem; padding: .6rem .9rem; border-radius: 8px; margin-top: .75rem; }
+    .msg.ok  { background: rgba(0,229,160,.08); border: 1px solid rgba(0,229,160,.25); color: var(--green); }
+    .msg.err { background: rgba(255,69,96,.08); border: 1px solid rgba(255,69,96,.25); color: var(--red); }
+    .msg.info{ background: rgba(0,200,255,.08); border: 1px solid rgba(0,200,255,.2); color: var(--accent); }
+
+    /* ── Brave warning ── */
+    .browser-warn { font-size: .8rem; color: var(--muted); margin-top: .75rem; text-align: center; }
+
+    footer { border-top: 1px solid var(--border); padding: 1.5rem 2rem; text-align: center; color: var(--muted); font-size: .8rem; }
+    footer a { color: var(--muted); }
+    footer a:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html">
+      <img src="wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">
+      Wyltek Industries
+    </a>
+    <nav id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="blog.html">Devlog</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="ckb.html">CKB Stack</a>
+      <a href="members.html" class="active">Members</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+      <!-- Member-only links injected by JS if logged in -->
+    </nav>
+    <button class="nav-toggle" id="navToggle">&#9776;</button>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="hero-badge">Founding Member Program</div>
+    <h1>Join Wyltek Industries</h1>
+    <p>Connect with JoyID to claim your spot. The first 100 members receive a Founding Member DOB — an on-chain digital object sent to your wallet, prepaid.</p>
+  </div>
+
+  <!-- ── Perks ── -->
+  <div class="card">
+    <div class="card-title">What you get</div>
+    <ul class="perks">
+      <li>Founding Member DOB minted to your JoyID wallet — permanently on-chain, free</li>
+      <li>Access to member-only tools: Research dashboard, CKBFS Viewer, DOB Minter</li>
+      <li>Early access to new Wyltek projects and hardware drops</li>
+      <li>Your name in the Wyltek member directory (optional)</li>
+    </ul>
+  </div>
+
+  <!-- ── Spots counter ── -->
+  <div class="card" id="counterCard">
+    <div class="counter-row">
+      <span class="counter-label" id="spotsLeft">Loading…</span>
+      <div class="counter-bar-wrap"><div class="counter-bar" id="counterBar" style="width:0%"></div></div>
+      <span class="counter-label">100 spots</span>
+    </div>
+  </div>
+
+  <!-- ── Connect / Member status ── -->
+  <div class="card" id="authCard">
+    <div id="disconnectedView">
+      <div class="connect-box">
+        <div class="badge disconnected"><span class="badge-dot"></span>Not connected</div>
+        <p class="connect-hint">Sign in with your JoyID passkey. No seed phrase, no email — just your biometrics.</p>
+        <button class="btn btn-purple" id="connectBtn" onclick="connectJoyID()">
+          🔐 Connect with JoyID
+        </button>
+        <div class="browser-warn" id="browserWarn" style="display:none">
+          ⚠ Brave blocks popups by default — allow popups for this site and try again.
+        </div>
+      </div>
+      <div id="authMsg"></div>
+    </div>
+
+    <div id="connectedView" style="display:none">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;flex-wrap:wrap;gap:.5rem">
+        <div class="badge connected"><span class="badge-dot"></span>Connected</div>
+        <button class="btn btn-ghost" style="font-size:.8rem;padding:.35rem .8rem" onclick="disconnect()">Disconnect</button>
+      </div>
+      <div class="address-box" id="displayAddress"></div>
+      <div id="memberStatus" style="margin-top:1.25rem"></div>
+      <div id="authMsg2"></div>
+    </div>
+  </div>
+
+</main>
+
+<footer>
+  <p>Wyltek Industries · <a href="https://github.com/toastmanAu" target="_blank">GitHub</a> · Built on <a href="https://nervos.org" target="_blank">Nervos CKB</a></p>
+</footer>
+
+<script>
+const SUPABASE_URL = 'https://yhntwgjzrzyhyxpiqcts.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlobnR3Z2p6cnp5aHl4cGlxY3RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1Mjc2ODMsImV4cCI6MjA4ODEwMzY4M30.HhTEKmSQs-qaOhoQr4cJxRfTfpWEjGqB3TwQnRWCm4Y';
+const MEMBER_CAP = 100;
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+let joyidConnect, currentAddress;
+
+// ── Detect Brave ──
+const isBrave = navigator.brave?.isBrave || navigator.userAgent.includes('Brave');
+
+// ── Load JoyID ──
+async function loadJoyID() {
+  if (joyidConnect) return true;
+  try {
+    const mod = await import('https://esm.sh/@joyid/ckb@1.1.3');
+    joyidConnect = mod.connect;
+    return true;
+  } catch(e) {
+    console.error('JoyID load error:', e);
+    return false;
+  }
+}
+
+// ── Counter ──
+async function loadCounter() {
+  try {
+    const { count } = await sb.from('mint_queue').select('*', { count: 'exact', head: true });
+    const taken = count || 0;
+    const left = Math.max(0, MEMBER_CAP - taken);
+    const pct = Math.min(100, (taken / MEMBER_CAP) * 100);
+    document.getElementById('spotsLeft').textContent = left > 0 ? `${left} spots remaining` : 'All spots claimed!';
+    document.getElementById('counterBar').style.width = pct + '%';
+    return taken;
+  } catch(e) { document.getElementById('spotsLeft').textContent = '100 spots total'; return 0; }
+}
+
+// ── Connect ──
+async function connectJoyID() {
+  if (isBrave) document.getElementById('browserWarn').style.display = 'block';
+  const btn = document.getElementById('connectBtn');
+  btn.disabled = true; btn.textContent = 'Opening JoyID…';
+
+  const ok = await loadJoyID();
+  if (!ok) { showMsg('authMsg', 'Failed to load JoyID SDK — try Chrome or Safari', 'err'); btn.disabled = false; btn.innerHTML = '🔐 Connect with JoyID'; return; }
+
+  try {
+    const callbackUrl = window.location.origin + '/joyid-callback.html';
+    const result = await joyidConnect({ redirectURL: callbackUrl });
+    const address = result.address;
+    await signIn(address);
+  } catch(e) {
+    showMsg('authMsg', e.message?.includes('reject') ? 'Cancelled.' : 'Connection failed: ' + e.message, 'err');
+  }
+  btn.disabled = false; btn.innerHTML = '🔐 Connect with JoyID';
+}
+
+// ── Sign in to Supabase ──
+async function signIn(address) {
+  showMsg('authMsg', 'Signing in…', 'info');
+
+  // Try restore stored session
+  const stored = localStorage.getItem('wyltek_session_' + address);
+  if (stored) {
+    try {
+      const { error } = await sb.auth.setSession(JSON.parse(stored));
+      if (!error) { onConnected(address); return; }
+    } catch(e) {}
+  }
+
+  const { data, error } = await sb.auth.signInAnonymously({
+    options: { data: { ckb_address: address } }
+  });
+  if (error) { showMsg('authMsg', 'Auth error: ' + error.message, 'err'); return; }
+  if (data.session) localStorage.setItem('wyltek_session_' + address, JSON.stringify(data.session));
+  onConnected(address);
+}
+
+// ── On connected ──
+async function onConnected(address) {
+  currentAddress = address;
+  document.getElementById('disconnectedView').style.display = 'none';
+  document.getElementById('connectedView').style.display = 'block';
+  document.getElementById('displayAddress').textContent = address;
+
+  // Save to localStorage for member-only page checks
+  localStorage.setItem('wyltek_address', address);
+  localStorage.setItem('wyltek_authed', '1');
+
+  clearMsg('authMsg');
+  await loadMemberStatus(address);
+}
+
+// ── Load / create member status ──
+async function loadMemberStatus(address) {
+  const statusEl = document.getElementById('memberStatus');
+  statusEl.innerHTML = '<span style="color:var(--muted);font-size:.85rem">Checking membership…</span>';
+
+  // Check if already in queue
+  const { data: existing } = await sb.from('mint_queue').select('*').eq('ckb_address', address).single();
+
+  if (existing) {
+    renderMemberStatus(existing);
+    return;
+  }
+
+  // Check cap
+  const taken = await loadCounter();
+  if (taken >= MEMBER_CAP) {
+    statusEl.innerHTML = `<div class="msg err">All ${MEMBER_CAP} founding member spots have been claimed. Follow us for future drops.</div>`;
+    return;
+  }
+
+  // Join the queue!
+  const { data: entry, error } = await sb.from('mint_queue').insert({ ckb_address: address }).select().single();
+  if (error) {
+    statusEl.innerHTML = `<div class="msg err">Failed to join queue: ${error.message}</div>`;
+    return;
+  }
+
+  await loadCounter();
+  renderMemberStatus(entry);
+  showMsg('authMsg2', '🎉 Welcome! You\'ve been added to the mint queue.', 'ok');
+}
+
+function renderMemberStatus(entry) {
+  const statusEl = document.getElementById('memberStatus');
+  const isMinted = entry.status === 'minted';
+  const isPending = entry.status === 'pending' || entry.status === 'minting';
+
+  statusEl.innerHTML = `
+    <div class="member-row">
+      <div>
+        <div class="member-number">#${entry.member_number}</div>
+        <div class="member-label">Founding Member</div>
+      </div>
+      <div class="dob-status">
+        <div class="dob-tag ${isMinted ? 'minted' : 'pending'}">
+          ${isMinted ? '✅ DOB minted to your wallet' : '⏳ DOB mint pending — arriving soon'}
+        </div>
+        ${isMinted && entry.tx_hash ? `<a href="https://explorer.nervos.org/transaction/${entry.tx_hash}" target="_blank" style="font-size:.78rem">View on explorer ↗</a>` : ''}
+      </div>
+    </div>
+  `;
+}
+
+function disconnect() {
+  sb.auth.signOut();
+  localStorage.removeItem('wyltek_authed');
+  localStorage.removeItem('wyltek_address');
+  currentAddress = null;
+  document.getElementById('disconnectedView').style.display = 'block';
+  document.getElementById('connectedView').style.display = 'none';
+  clearMsg('authMsg2');
+}
+
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  if (el) { el.className = 'msg ' + type; el.textContent = text; }
+}
+function clearMsg(id) {
+  const el = document.getElementById(id);
+  if (el) { el.className = ''; el.textContent = ''; }
+}
+
+// ── Auto-restore session on load ──
+async function init() {
+  loadCounter();
+
+  const addr = localStorage.getItem('wyltek_address');
+  if (addr) {
+    const stored = localStorage.getItem('wyltek_session_' + addr);
+    if (stored) {
+      try {
+        const { error } = await sb.auth.setSession(JSON.parse(stored));
+        if (!error) { onConnected(addr); return; }
+      } catch(e) {}
+    }
+    localStorage.removeItem('wyltek_authed');
+    localStorage.removeItem('wyltek_address');
+  }
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  init();
+  document.getElementById('navToggle')?.addEventListener('click', () => {
+    document.getElementById('mainNav').classList.toggle('open');
+  });
+});
+</script>
+</body>
+</html>
