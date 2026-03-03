@@ -241,7 +241,7 @@
 </footer>
 
 <script type="module">
-  import { parseIdentifier, resolveCKBFS, formatSize } from './src/ckbfs-resolver.js?v=4';
+  import { parseIdentifier, resolveCKBFS, formatSize } from './src/ckbfs-resolver.js?v=5';
 
   let currentNetwork = 'testnet';
 
@@ -284,7 +284,7 @@
     hideStatus();
   };
 
-  function showResult({ fileBytes, contentType, filename, checksum, witnessIdx, txHash }, typeId) {
+  function showResult({ fileBytes, contentType, filename, checksum, witnessIdx, chunkCount, txHash }, typeId) {
     const explorerBase = currentNetwork === 'mainnet'
       ? 'https://explorer.nervos.org/transaction'
       : 'https://pudge.explorer.nervos.org/transaction';
@@ -294,17 +294,19 @@
       <span class="meta-item"><span class="meta-label">File: </span><span class="meta-value">${filename || '(unnamed)'}</span></span>
       <span class="meta-item"><span class="meta-label">Size: </span><span class="meta-value">${formatSize(fileBytes.length)}</span></span>
       <span class="meta-item"><span class="meta-label">Checksum: </span><span class="meta-value">0x${checksum.toString(16).padStart(8,'0')}</span></span>
-      <span class="meta-item"><span class="meta-label">Witness: </span><span class="meta-value">#${witnessIdx}</span></span>
+      ${chunkCount > 1 ? `<span class="meta-item"><span class="meta-label">Chunks: </span><span class="meta-value">${chunkCount}</span></span>` : ''}
       <a href="${explorerBase}/${txHash}" target="_blank" style="font-size:0.82rem;margin-left:auto">View tx ↗</a>
     `;
 
-    const blob = new Blob([fileBytes], { type: contentType });
-    const url = URL.createObjectURL(blob);
     const viewerArea = document.getElementById('viewerArea');
 
     if (contentType.startsWith('image/')) {
+      // base64 data URL — works on Safari iOS where createObjectURL can silently fail
+      let binary = '';
+      for (let i = 0; i < fileBytes.length; i++) binary += String.fromCharCode(fileBytes[i]);
+      const dataUrl = `data:${contentType};base64,${btoa(binary)}`;
       viewerArea.innerHTML = `
-        <div class="img-viewer"><img src="${url}" alt="${filename}" /></div>
+        <div class="img-viewer"><img src="${dataUrl}" alt="${filename}" /></div>
         <div class="typeid-box">TypeID: <span>${typeId}</span></div>
       `;
     } else if (contentType.startsWith('text/') || contentType === 'application/json') {
@@ -316,6 +318,8 @@
         <div class="typeid-box">TypeID: <span>${typeId}</span></div>
       `;
     } else {
+      const blob = new Blob([fileBytes], { type: contentType });
+      const url = URL.createObjectURL(blob);
       viewerArea.innerHTML = `
         <div class="download-area">
           <div class="file-icon">📄</div>

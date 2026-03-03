@@ -134,9 +134,10 @@ export async function resolveCKBFS(typeId, network, onProgress = () => {}) {
     chunks.push(extractChunkFromWitness(witnesses[idx]));
   }
 
-  // Concatenate chunks
+  // Concatenate chunks into a fresh owned ArrayBuffer (Safari Blob compat)
   const totalLen = chunks.reduce((s, c) => s + c.length, 0);
-  const fileBytes = new Uint8Array(totalLen);
+  const fileBuf = new ArrayBuffer(totalLen);
+  const fileBytes = new Uint8Array(fileBuf);
   let offset = 0;
   for (const chunk of chunks) { fileBytes.set(chunk, offset); offset += chunk.length; }
 
