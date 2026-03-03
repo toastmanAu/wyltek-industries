@@ -200,13 +200,13 @@ async function connectJoyID() {
 
 async function signInToSupabase(address, signature) {
   // Derive deterministic email + password from CKB address
-  // Password: SHA-256 of address, truncated to 32 hex chars (well under 72 char limit)
   const msgBuffer = new TextEncoder().encode(address + 'wyltek-salt');
   const hashBuffer = await crypto.subtle.digest('SHA-256', msgBuffer);
   const hashHex = Array.from(new Uint8Array(hashBuffer)).map(b => b.toString(16).padStart(2,'0')).join('');
 
-  const email = `${address.toLowerCase()}@ckb.wyltek`;
-  const password = hashHex.slice(0, 32); // 32 chars — safe for Supabase
+  // Use first 16 chars of hash as email username — short, valid, deterministic
+  const email = `ckb-${hashHex.slice(0, 16)}@wyltek.ckb`;
+  const password = hashHex.slice(0, 32);
   
   // Try sign in first, then sign up
   let { data, error } = await sb.auth.signInWithPassword({ email, password });
