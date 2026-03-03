@@ -16,6 +16,40 @@
 
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
+  {
+    id: "2026-03-03-tailscale-remote-access",
+    date: "2026-03-03",
+    title: "If you run Pi hardware: just use Tailscale",
+    tags: ["infrastructure", "networking", "tooling", "guide"],
+    project: "kernel-workspace",
+    body: [
+      "If you\'re building on Pi hardware — running nodes, dashboards, dev servers, home automation, anything — and you haven\'t set up remote access yet, stop and install Tailscale first. This is the one piece of infrastructure advice worth sharing unsolicited.",
+
+      {type:"h3", content:"The problem it solves"},
+      "Every Pi project eventually hits the same wall: the thing you built is only useful when you\'re home. You want to check your CKB node\'s block height from your phone while you\'re out. You want to pull up a dashboard at a friend\'s place. You want your partner to be able to see the thing you built without you being there to explain the local IP address.",
+      "The standard answers — port forwarding, dynamic DNS, reverse proxies — all work, but they involve exposing services to the open internet, maintaining certificates, and bolting auth onto things that weren\'t designed to be public. It\'s friction that compounds.",
+
+      {type:"h3", content:"What Tailscale does"},
+      "Tailscale builds a private WireGuard mesh between your devices. Every device on your account gets a stable 100.x.x.x address that works from anywhere — home network, mobile LTE, a café, a hotel. No port forwarding. No dynamic DNS. Nothing publicly reachable. Traffic is end-to-end encrypted and only your devices can see each other.",
+      "Install it on the Pi (one curl command), sign in, done. Every service running on that Pi is now accessible from any other device on your Tailnet. Change the port, access a different service — no reconfiguration needed.",
+
+      {type:"h3", content:"On our stack right now"},
+      {type:"ul", content:[
+        "CKB node dashboard — block height, peers, sync status from anywhere",
+        "Research dashboard — browse agent findings remotely",
+        "DOB minter dev server — test on mobile over the real network, not just LAN",
+        "Any new service added — same Tailscale IP, just a different port",
+      ]},
+
+      "Setup is a single install command and an auth link — takes about five minutes. Install it on the Pi, install the app on your phone, sign in with the same account. That\'s the whole process.",
+
+      "If you\'ve been putting off remote access because the options all felt complicated, this is the one worth trying first."
+    ],
+    links: [
+      {text:"tailscale.com", href:"https://tailscale.com"},
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
   // ────────────────────────────────────────────────────────────────
   {
     id: "2026-03-03-idle-research-crawler",
