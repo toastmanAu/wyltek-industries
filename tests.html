@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Test Results — Wyltek Industries</title>
+  <meta name="description" content="Live host test results for Wyltek embedded libraries." />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <script>(function(){const s=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',s);})();</script>
+  <link rel="stylesheet" href="js/theme.css" />
+  <style>
+    :root { --bg:#0d1018;--surface:#131720;--border:#1e2430;--text:#e2e8f0;--muted:#64748b;--accent:#00c8ff;--green:#00e5a0;--red:#f43f5e; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:15px;}
+    nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;gap:1rem;height:56px;position:sticky;top:0;z-index:50;}
+    .nav-logo{display:flex;align-items:center;gap:0.6rem;text-decoration:none;}
+    .nav-logo img{height:28px;width:auto;}
+    .nav-logo span{font-weight:700;color:var(--text);font-size:1rem;}
+    .nav-links{display:flex;gap:0.25rem;margin-left:auto;}
+    .nav-links a{color:var(--muted);text-decoration:none;padding:0.4rem 0.75rem;border-radius:6px;font-size:0.875rem;transition:color .15s,background .15s;}
+    .nav-links a:hover,.nav-links a.active{color:var(--text);background:rgba(255,255,255,.05);}
+    .page{max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
+    .page-title{font-size:1.75rem;font-weight:700;margin-bottom:0.5rem;}
+    .page-sub{color:var(--muted);font-size:0.9rem;line-height:1.6;margin-bottom:2rem;}
+    .overall{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;}
+    .overall-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.5rem;flex:1;min-width:140px;}
+    .overall-card.all-pass{border-color:var(--green);}
+    .overall-card.has-fail{border-color:var(--red);}
+    .overall-num{font-size:2rem;font-weight:800;color:var(--green);line-height:1;}
+    .overall-num.fail{color:var(--red);}
+    .overall-label{color:var(--muted);font-size:0.78rem;margin-top:0.25rem;text-transform:uppercase;letter-spacing:.05em;}
+    .repo-section{margin-bottom:2.5rem;}
+    .repo-header{display:flex;align-items:flex-start;gap:0.75rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);}
+    .repo-title{font-size:1.1rem;font-weight:700;}
+    .repo-meta{color:var(--muted);font-size:0.8rem;margin-top:0.2rem;}
+    .repo-link{margin-left:auto;color:var(--accent);font-size:0.82rem;text-decoration:none;white-space:nowrap;}
+    .repo-link:hover{text-decoration:underline;}
+    .run-bar{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.6rem 1rem;font-size:0.78rem;color:var(--muted);margin-bottom:1rem;display:flex;gap:1.5rem;flex-wrap:wrap;}
+    .run-bar strong{color:var(--text);}
+    table{width:100%;border-collapse:collapse;margin-bottom:1rem;}
+    th{text-align:left;padding:0.5rem 0.75rem;font-size:0.75rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border);}
+    td{padding:0.5rem 0.75rem;border-bottom:1px solid rgba(255,255,255,.04);font-size:0.875rem;}
+    tr:last-child td{border-bottom:none;}
+    tr.total td{border-top:1px solid var(--border);font-weight:700;background:rgba(255,255,255,.02);}
+    .pass{color:var(--green);font-weight:600;}
+    .fail{color:var(--red);font-weight:600;}
+    .suite-name{font-family:monospace;font-size:0.83rem;}
+    details{background:rgba(255,255,255,.02);border:1px solid var(--border);border-radius:8px;margin-bottom:0.4rem;}
+    summary{padding:0.6rem 1rem;cursor:pointer;font-size:0.85rem;color:var(--muted);list-style:none;display:flex;align-items:center;gap:0.5rem;}
+    summary:hover{color:var(--text);}
+    summary::marker,summary::-webkit-details-marker{display:none;}
+    .arr{margin-left:auto;font-size:0.7rem;transition:transform .2s;}
+    details[open] .arr{transform:rotate(90deg);}
+    .test-list{padding:0.5rem 1rem 0.75rem;font-family:monospace;font-size:0.78rem;line-height:1.9;color:var(--muted);}
+    .test-list .p{color:var(--green);}
+    .test-list .f{color:var(--red);}
+    @media(max-width:600px){.page{padding:1.5rem 1rem 3rem;}.repo-header{flex-wrap:wrap;}.repo-link{margin-left:0;}}
+  </style>
+</head>
+<body>
+<nav>
+  <a class="nav-logo" href="/">
+    <img src="/wyltek-mark.png" alt="Wyltek" />
+    <span>Wyltek Industries</span>
+  </a>
+  <div class="nav-links">
+    <a href="/">Home</a>
+    <a href="/blog.html">Devlog</a>
+    <a href="/hardware.html">Hardware</a>
+    <a href="/tests.html" class="active">Tests</a>
+  </div>
+</nav>
+<div class="page">
+  <h1 class="page-title">Test Results</h1>
+  <p class="page-sub">Host test suite results for our embedded libraries. Run on aarch64 Linux (Pi 5), updated automatically. Tests compile and run natively on the build host — no device required — keeping iteration fast and CI simple.</p>
+  <div id="content"><p style="color:var(--muted);text-align:center;padding:3rem 0">Loading…</p></div>
+</div>
+<script>
+const REPOS=[
+  {name:"ckb-light-esp",desc:"CKB light client protocol for ESP32 — header sync, block filters, Noise sessions, BitChat mesh relay",url:"https://github.com/toastmanAu/ckb-light-esp",report:"tests/ckb-light-esp.json"},
+  {name:"CKB-ESP32",desc:"CKB cryptographic primitives for Arduino/ESP32 — Blake2b, Molecule encoding, BIP39, secp256k1 signing",url:"https://github.com/toastmanAu/CKB-ESP32",report:"tests/ckb-esp32.json"}
+];
+async function load(){
+  const all=await Promise.all(REPOS.map(async r=>{
+    try{const res=await fetch(r.report+'?t='+Date.now());if(!res.ok)throw 0;return{r,d:await res.json()};}
+    catch{return{r,d:null};}
+  }));
+  const tp=all.reduce((s,x)=>s+(x.d?.total_pass||0),0);
+  const tf=all.reduce((s,x)=>s+(x.d?.total_fail||0),0);
+  let h=`<div class="overall">
+    <div class="overall-card ${tf===0&&tp>0?'all-pass':''}">
+      <div class="overall-num ${tf>0?'fail':''}">${tp}</div>
+      <div class="overall-label">Passing</div>
+    </div>
+    <div class="overall-card ${tf>0?'has-fail':''}">
+      <div class="overall-num ${tf>0?'fail':''}">${tf}</div>
+      <div class="overall-label">Failing</div>
+    </div>
+    <div class="overall-card">
+      <div class="overall-num" style="color:var(--accent)">${all.length}</div>
+      <div class="overall-label">Repos</div>
+    </div>
+  </div>`;
+  for(const {r,d} of all){
+    h+=`<div class="repo-section"><div class="repo-header"><div><div class="repo-title">${r.name}</div><div class="repo-meta">${r.desc}</div></div><a class="repo-link" href="${r.url}" target="_blank">GitHub ↗</a></div>`;
+    if(!d){h+=`<p style="color:var(--muted);padding:1rem 0;font-size:.875rem">Results not yet generated.</p>`;}
+    else{
+      h+=`<div class="run-bar"><span>🕐 <strong>${d.date}</strong></span><span>commit <strong>${d.commit}</strong></span><span><strong>${d.platform}</strong></span><span><strong>${d.compiler}</strong></span><span>runtime <strong>${d.total_time}</strong></span></div>`;
+      h+=`<table><thead><tr><th>Suite</th><th>Passed</th><th>Failed</th><th>Time</th><th></th></tr></thead><tbody>`;
+      for(const s of d.suites){
+        h+=`<tr><td><span class="suite-name">${s.name}</span></td><td class="pass">${s.pass}</td><td class="${s.fail>0?'fail':'pass'}">${s.fail}</td><td style="color:var(--muted)">${s.time}</td><td>${s.fail===0?'🟢':'🔴'}</td></tr>`;
+      }
+      h+=`<tr class="total"><td>Total</td><td class="pass">${d.total_pass}</td><td class="${d.total_fail>0?'fail':'pass'}">${d.total_fail}</td><td style="color:var(--muted)">${d.total_time}</td><td>${d.total_fail===0?'✅':'❌'}</td></tr></tbody></table>`;
+      for(const s of d.suites){
+        h+=`<details><summary>${s.fail===0?'✅':'❌'} <code>${s.name}</code> — ${s.pass} passed${s.fail>0?`, <span style="color:var(--red)">${s.fail} failed</span>`:''}<span class="arr">▶</span></summary><div class="test-list">`;
+        for(const t of s.tests) h+=`<div class="${t.startsWith('PASS')?'p':'f'}">${esc(t)}</div>`;
+        h+=`</div></details>`;
+      }
+    }
+    h+=`</div>`;
+  }
+  document.getElementById('content').innerHTML=h;
+}
+function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+load();
+</script>
+</body>
+</html>
