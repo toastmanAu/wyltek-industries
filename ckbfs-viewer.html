@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CKBFS Viewer — Wyltek Industries</title>
-  <meta name="description" content="View files stored on-chain via the CKBFS witnesses-based storage protocol on Nervos CKB." />
+  <meta name="description" content="View files stored on-chain via the CKBFS protocol on Nervos CKB." />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="manifest" href="/site.webmanifest">
@@ -27,24 +27,19 @@
       background: var(--bg);
       color: var(--text);
       font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      font-size: 15px;
-      line-height: 1.6;
+      font-size: 15px; line-height: 1.6;
     }
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
     header {
       border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
-      position: sticky; top: 0;
-      background: rgba(10,12,15,0.93);
-      backdrop-filter: blur(12px);
-      z-index: 100;
+      padding: 0 2rem; position: sticky; top: 0;
+      background: rgba(10,12,15,0.93); backdrop-filter: blur(12px); z-index: 100;
     }
     .header-inner {
       max-width: 1100px; margin: 0 auto;
-      display: flex; align-items: center; justify-content: space-between;
-      height: 60px;
+      display: flex; align-items: center; justify-content: space-between; height: 60px;
     }
     .logo {
       display: flex; align-items: center; gap: 10px;
@@ -58,204 +53,120 @@
 
     @media (max-width: 768px) {
       .nav-toggle { display: block; }
-      nav#mainNav { display: none; flex-direction: column; gap: 0; position: absolute;
-        top: 60px; left: 0; right: 0; background: var(--surface); border-bottom: 1px solid var(--border); z-index: 99; }
+      nav#mainNav {
+        display: none; flex-direction: column; gap: 0; position: absolute;
+        top: 60px; left: 0; right: 0; background: var(--surface);
+        border-bottom: 1px solid var(--border); z-index: 99;
+      }
       nav#mainNav.open { display: flex; }
       nav#mainNav a { padding: 0.7rem 1.5rem; font-size: 1rem; border-bottom: 1px solid var(--border); }
     }
 
     main { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; }
-
     h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.4rem; }
     .subtitle { color: var(--muted); margin-bottom: 2rem; font-size: 0.95rem; }
 
-    /* Input card */
     .input-card {
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 1.5rem;
-      margin-bottom: 1.5rem;
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
     }
-    .input-row {
-      display: flex; gap: 0.75rem; align-items: stretch;
-      flex-wrap: wrap;
-    }
+    .input-row { display: flex; gap: 0.75rem; align-items: stretch; flex-wrap: wrap; }
     .input-row input {
-      flex: 1; min-width: 0;
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      color: var(--text);
-      padding: 0.65rem 1rem;
-      font-size: 0.9rem;
-      font-family: 'Consolas', 'Monaco', monospace;
-      outline: none;
-      transition: border-color 0.2s;
+      flex: 1; min-width: 0; background: var(--surface2);
+      border: 1px solid var(--border); border-radius: 8px;
+      color: var(--text); padding: 0.65rem 1rem;
+      font-size: 0.9rem; font-family: 'Consolas', 'Monaco', monospace;
+      outline: none; transition: border-color 0.2s;
     }
     .input-row input:focus { border-color: var(--accent); }
     .input-row input::placeholder { color: var(--muted); }
+
     .btn {
-      background: var(--accent);
-      color: #000;
-      border: none;
-      border-radius: 8px;
-      padding: 0.65rem 1.4rem;
-      font-size: 0.9rem;
-      font-weight: 600;
-      cursor: pointer;
-      transition: opacity 0.2s;
-      white-space: nowrap;
+      background: var(--accent); color: #000; border: none; border-radius: 8px;
+      padding: 0.65rem 1.4rem; font-size: 0.9rem; font-weight: 600;
+      cursor: pointer; transition: opacity 0.2s; white-space: nowrap;
     }
     .btn:hover { opacity: 0.85; }
     .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-secondary {
-      background: var(--surface2);
-      color: var(--text);
+    .btn-ghost {
+      background: var(--surface2); color: var(--text);
       border: 1px solid var(--border);
     }
-    .btn-secondary:hover { border-color: var(--accent); opacity: 1; }
+    .btn-ghost:hover { border-color: var(--accent); opacity: 1; }
 
-    .network-row {
-      display: flex; gap: 0.75rem; margin-top: 0.85rem; align-items: center;
-    }
+    .network-row { display: flex; gap: 0.75rem; margin-top: 0.85rem; align-items: center; }
     .network-label { color: var(--muted); font-size: 0.85rem; }
-    .network-btn {
-      background: var(--surface2);
-      border: 1px solid var(--border);
-      border-radius: 6px;
-      color: var(--muted);
-      padding: 0.3rem 0.8rem;
-      font-size: 0.82rem;
-      cursor: pointer;
-      transition: all 0.2s;
+    .net-btn {
+      background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;
+      color: var(--muted); padding: 0.3rem 0.8rem; font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
     }
-    .network-btn.active {
-      border-color: var(--accent);
-      color: var(--accent);
-      background: rgba(0,200,255,0.08);
-    }
+    .net-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,200,255,0.08); }
+
+    .examples { margin-top: 0.85rem; font-size: 0.82rem; color: var(--muted); }
+    .examples a { color: var(--accent2); font-family: monospace; font-size: 0.78rem; }
 
     /* Status */
     .status {
-      display: none;
-      align-items: center;
-      gap: 0.75rem;
-      padding: 1rem 1.25rem;
-      border-radius: 10px;
-      margin-bottom: 1.5rem;
-      font-size: 0.9rem;
+      display: none; align-items: center; gap: 0.75rem;
+      padding: 1rem 1.25rem; border-radius: 10px; margin-bottom: 1.5rem; font-size: 0.9rem;
     }
     .status.loading { display: flex; background: var(--surface); border: 1px solid var(--border); color: var(--muted); }
     .status.error   { display: flex; background: rgba(255,60,60,0.08); border: 1px solid rgba(255,60,60,0.3); color: #ff6b6b; }
 
     .spinner {
       width: 18px; height: 18px; border-radius: 50%;
-      border: 2px solid rgba(0,200,255,0.2);
-      border-top-color: var(--accent);
-      animation: spin 0.7s linear infinite;
-      flex-shrink: 0;
+      border: 2px solid rgba(0,200,255,0.2); border-top-color: var(--accent);
+      animation: spin 0.7s linear infinite; flex-shrink: 0;
     }
     @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* Result card */
-    .result-card {
-      display: none;
-      background: var(--surface);
-      border: 1px solid var(--border);
-      border-radius: 12px;
-      overflow: hidden;
-    }
+    /* Result */
+    .result-card { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
     .result-card.visible { display: block; }
 
     .meta-bar {
-      padding: 1rem 1.5rem;
-      border-bottom: 1px solid var(--border);
+      padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
       display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; align-items: center;
     }
     .meta-item { font-size: 0.82rem; }
     .meta-label { color: var(--muted); }
     .meta-value { color: var(--text); font-family: monospace; }
     .tag {
-      background: var(--tag-bg);
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      padding: 0.15rem 0.5rem;
-      font-size: 0.78rem;
-      color: var(--accent);
-      font-family: monospace;
+      background: var(--tag-bg); border: 1px solid var(--border); border-radius: 4px;
+      padding: 0.15rem 0.5rem; font-size: 0.78rem; color: var(--accent); font-family: monospace;
     }
 
     .viewer-area { padding: 1.5rem; }
 
-    /* Image viewer */
     .img-viewer {
       display: flex; justify-content: center; align-items: center;
-      background: var(--surface2);
-      border-radius: 8px;
-      padding: 1rem;
-      min-height: 200px;
+      background: var(--surface2); border-radius: 8px; padding: 1rem; min-height: 200px;
     }
-    .img-viewer img {
-      max-width: 100%;
-      max-height: 600px;
-      border-radius: 6px;
-      object-fit: contain;
-    }
+    .img-viewer img { max-width: 100%; max-height: 600px; border-radius: 6px; object-fit: contain; }
 
-    /* Text viewer */
     .text-viewer {
-      background: var(--surface2);
-      border-radius: 8px;
-      padding: 1.25rem;
+      background: var(--surface2); border-radius: 8px; padding: 1.25rem;
       font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-      font-size: 0.85rem;
-      line-height: 1.6;
-      white-space: pre-wrap;
-      word-break: break-all;
-      max-height: 500px;
-      overflow-y: auto;
-      color: var(--text);
+      font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap; word-break: break-all;
+      max-height: 500px; overflow-y: auto; color: var(--text);
     }
 
-    /* Download */
     .download-area {
       display: flex; flex-direction: column; align-items: center;
-      gap: 1rem; padding: 2rem;
-      background: var(--surface2);
-      border-radius: 8px;
-      text-align: center;
+      gap: 1rem; padding: 2rem; background: var(--surface2); border-radius: 8px; text-align: center;
     }
     .file-icon { font-size: 3rem; }
     .download-name { font-family: monospace; font-size: 0.9rem; color: var(--muted); }
 
-    /* TypeID display */
     .typeid-box {
-      margin-top: 1rem;
-      padding: 0.75rem 1rem;
-      background: var(--surface2);
-      border-radius: 8px;
-      font-family: monospace;
-      font-size: 0.78rem;
-      color: var(--muted);
-      word-break: break-all;
+      margin-top: 1rem; padding: 0.75rem 1rem; background: var(--surface2);
+      border-radius: 8px; font-family: monospace; font-size: 0.78rem; color: var(--muted); word-break: break-all;
     }
     .typeid-box span { color: var(--accent); }
 
-    /* Example links */
-    .examples {
-      margin-top: 1rem;
-      font-size: 0.82rem;
-      color: var(--muted);
-    }
-    .examples a { color: var(--accent2); font-family: monospace; font-size: 0.78rem; }
-
     footer {
-      border-top: 1px solid var(--border);
-      padding: 1.5rem 2rem;
-      text-align: center;
-      color: var(--muted);
-      font-size: 0.82rem;
+      border-top: 1px solid var(--border); padding: 1.5rem 2rem;
+      text-align: center; color: var(--muted); font-size: 0.82rem;
     }
     footer a { color: var(--muted); }
     footer a:hover { color: var(--accent); }
@@ -281,34 +192,41 @@
       <a href="ckbfs-viewer.html" class="active">CKBFS Viewer</a>
       <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
     </nav>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+    <button class="nav-toggle" id="navToggle">&#9776;</button>
   </div>
 </header>
 
 <main>
   <h1>CKBFS Viewer</h1>
-  <p class="subtitle">View files stored on-chain via the CKBFS protocol on Nervos CKB. Data lives in transaction witnesses — permanent, censorship-resistant.</p>
+  <p class="subtitle">
+    View files stored on-chain via the <a href="https://github.com/code-monad/ckbfs" target="_blank">CKBFS protocol</a> on Nervos CKB.
+    Data lives in transaction witnesses — permanent, censorship-resistant, no IPFS.
+  </p>
 
   <div class="input-card">
     <div class="input-row">
-      <input type="text" id="identifier" placeholder="ckbfs://0x... or bare TypeID 0x..." autocomplete="off" spellcheck="false" />
+      <input type="text" id="identifier"
+        placeholder="ckbfs://0x... or bare TypeID 0x..."
+        autocomplete="off" spellcheck="false" />
       <button class="btn" id="loadBtn" onclick="loadFile()">Load</button>
-      <button class="btn btn-secondary" onclick="clearViewer()">Clear</button>
+      <button class="btn btn-ghost" onclick="clearViewer()">Clear</button>
     </div>
     <div class="network-row">
       <span class="network-label">Network:</span>
-      <button class="network-btn active" id="btnTestnet" onclick="setNetwork('testnet')">Testnet</button>
-      <button class="network-btn" id="btnMainnet" onclick="setNetwork('mainnet')">Mainnet</button>
+      <button class="net-btn active" id="btnTestnet" onclick="setNetwork('testnet')">Testnet</button>
+      <button class="net-btn" id="btnMainnet" onclick="setNetwork('mainnet')">Mainnet</button>
     </div>
     <div class="examples">
-      Example: <a href="#" onclick="useExample();return false;">0x061cc843e720a4274da71a1a2fec4802cd02f6d5ee7167e7429435878068abe0</a>
-      (Wyltek Founding Member image, testnet)
+      Try: <a href="#" onclick="useExample();return false;">
+        0x061cc843e720a4274da71a1a2fec4802cd02f6d5ee7167e7429435878068abe0
+      </a>
+      &nbsp;(Wyltek Founding Member JPEG, testnet)
     </div>
   </div>
 
   <div class="status" id="status">
     <div class="spinner"></div>
-    <span id="statusText">Resolving TypeID…</span>
+    <span id="statusText">Resolving…</span>
   </div>
 
   <div class="result-card" id="resultCard">
@@ -322,324 +240,136 @@
   <p style="margin-top:0.4rem;">CKBFS protocol by <a href="https://github.com/code-monad/ckbfs" target="_blank">code-monad</a></p>
 </footer>
 
-<script>
-// ── Config ────────────────────────────────────────────────────────────────────
+<script type="module">
+  import { parseIdentifier, resolveCKBFS, formatSize } from './src/ckbfs-resolver.js';
 
-const RPC = {
-  testnet: 'https://testnet.ckbapp.dev',
-  mainnet: 'https://mainnet.ckbapp.dev',
-};
+  let currentNetwork = 'testnet';
 
-const CKBFS_CODE_HASH = '0x31e6376287d223b8c0410d562fb422f04d1d617b2947596a14c3d2efb7218d3a';
+  window.setNetwork = (net) => {
+    currentNetwork = net;
+    document.getElementById('btnTestnet').classList.toggle('active', net === 'testnet');
+    document.getElementById('btnMainnet').classList.toggle('active', net === 'mainnet');
+  };
 
-let currentNetwork = 'testnet';
+  window.useExample = () => {
+    document.getElementById('identifier').value =
+      '0x061cc843e720a4274da71a1a2fec4802cd02f6d5ee7167e7429435878068abe0';
+    window.setNetwork('testnet');
+    window.loadFile();
+  };
 
-// ── Network toggle ────────────────────────────────────────────────────────────
+  window.loadFile = async () => {
+    const raw = document.getElementById('identifier').value.trim();
+    if (!raw) return;
 
-function setNetwork(net) {
-  currentNetwork = net;
-  document.getElementById('btnTestnet').classList.toggle('active', net === 'testnet');
-  document.getElementById('btnMainnet').classList.toggle('active', net === 'mainnet');
-}
+    let typeId;
+    try { typeId = parseIdentifier(raw); }
+    catch (e) { showError(e.message); return; }
 
-function useExample() {
-  document.getElementById('identifier').value = '0x061cc843e720a4274da71a1a2fec4802cd02f6d5ee7167e7429435878068abe0';
-  setNetwork('testnet');
-  loadFile();
-}
+    showLoading('Resolving TypeID…');
+    clearResult();
 
-// ── CKB RPC ───────────────────────────────────────────────────────────────────
+    try {
+      const result = await resolveCKBFS(typeId, currentNetwork, setStatus);
+      hideStatus();
+      showResult(result, typeId);
+    } catch (e) {
+      showError(e.message);
+    }
+  };
 
-async function rpc(method, params) {
-  const res = await fetch(RPC[currentNetwork], {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id: 1, jsonrpc: '2.0', method, params }),
-  });
-  const data = await res.json();
-  if (data.error) throw new Error(`RPC error: ${data.error.message}`);
-  return data.result;
-}
+  window.clearViewer = () => {
+    document.getElementById('identifier').value = '';
+    clearResult();
+    hideStatus();
+  };
 
-// ── Molecule decoder ──────────────────────────────────────────────────────────
-// CKBFSData table: { index: Uint32, checksum: Uint32, content_type: Bytes, filename: Bytes }
+  function showResult({ fileBytes, contentType, filename, checksum, witnessIdx, txHash }, typeId) {
+    const explorerBase = currentNetwork === 'mainnet'
+      ? 'https://explorer.nervos.org/transaction'
+      : 'https://pudge.explorer.nervos.org/transaction';
 
-function decodeCKBFSData(hex) {
-  const data = hexToBytes(hex);
-  const dv = new DataView(data.buffer);
+    document.getElementById('metaBar').innerHTML = `
+      <span class="tag">${contentType}</span>
+      <span class="meta-item"><span class="meta-label">File: </span><span class="meta-value">${filename || '(unnamed)'}</span></span>
+      <span class="meta-item"><span class="meta-label">Size: </span><span class="meta-value">${formatSize(fileBytes.length)}</span></span>
+      <span class="meta-item"><span class="meta-label">Checksum: </span><span class="meta-value">0x${checksum.toString(16).padStart(8,'0')}</span></span>
+      <span class="meta-item"><span class="meta-label">Witness: </span><span class="meta-value">#${witnessIdx}</span></span>
+      <a href="${explorerBase}/${txHash}" target="_blank" style="font-size:0.82rem;margin-left:auto">View tx ↗</a>
+    `;
 
-  const totalSize = dv.getUint32(0, true);
-  if (data.length < totalSize) throw new Error('Truncated cell data');
+    const blob = new Blob([fileBytes], { type: contentType });
+    const url = URL.createObjectURL(blob);
+    const viewerArea = document.getElementById('viewerArea');
 
-  // Read 4 field offsets (table header)
-  const offsets = [];
-  for (let i = 0; i < 4; i++) offsets.push(dv.getUint32(4 + i * 4, true));
-  offsets.push(totalSize);
-
-  // field 0: index (Uint32 — 4 bytes, no prefix)
-  const index = dv.getUint32(offsets[0], true);
-
-  // field 1: checksum (Uint32)
-  const checksum = dv.getUint32(offsets[1], true);
-
-  // field 2: content_type (Bytes — 4-byte len prefix + utf8)
-  const ctLen = dv.getUint32(offsets[2], true) - 4;
-  const contentType = new TextDecoder().decode(data.slice(offsets[2] + 4, offsets[2] + 4 + ctLen));
-
-  // field 3: filename (Bytes)
-  const fnLen = dv.getUint32(offsets[3], true) - 4;
-  const filename = new TextDecoder().decode(data.slice(offsets[3] + 4, offsets[3] + 4 + fnLen));
-
-  return { index, checksum, contentType, filename };
-}
-
-// Handle V2 schema (5 fields: indexes as Vec<Uint32>, checksum, content_type, filename, backlinks)
-function decodeCKBFSDataV2(hex) {
-  const data = hexToBytes(hex);
-  const dv = new DataView(data.buffer);
-  const totalSize = dv.getUint32(0, true);
-  const firstOffset = dv.getUint32(4, true);
-  const fieldCount = (firstOffset / 4) - 1;
-
-  const offsets = [];
-  for (let i = 0; i < fieldCount; i++) offsets.push(dv.getUint32(4 + i * 4, true));
-  offsets.push(totalSize);
-
-  if (fieldCount === 4) {
-    // V3/new schema: index(Uint32), checksum(Uint32), content_type(Bytes), filename(Bytes)
-    const index = dv.getUint32(offsets[0], true);
-    const checksum = dv.getUint32(offsets[1], true);
-    const ctLen = dv.getUint32(offsets[2], true) - 4;
-    const contentType = new TextDecoder().decode(data.slice(offsets[2] + 4, offsets[2] + 4 + ctLen));
-    const fnLen = dv.getUint32(offsets[3], true) - 4;
-    const filename = new TextDecoder().decode(data.slice(offsets[3] + 4, offsets[3] + 4 + fnLen));
-    return { index, checksum, contentType, filename };
-  } else {
-    // V2 schema: indexes(Vec<Uint32>), checksum(Uint32), content_type(Bytes), filename(Bytes), backlinks(Vec)
-    // indexes field: 4-byte total + 4-byte-per-item; read first item as the witness index
-    const idxTotal = dv.getUint32(offsets[0], true);
-    const indexCount = (idxTotal - 4) / 4;
-    const index = indexCount > 0 ? dv.getUint32(offsets[0] + 4, true) : 0;
-    const checksum = dv.getUint32(offsets[1], true);
-    const ctLen = dv.getUint32(offsets[2], true) - 4;
-    const contentType = new TextDecoder().decode(data.slice(offsets[2] + 4, offsets[2] + 4 + ctLen));
-    const fnLen = dv.getUint32(offsets[3], true) - 4;
-    const filename = new TextDecoder().decode(data.slice(offsets[3] + 4, offsets[3] + 4 + fnLen));
-    return { index, checksum, contentType, filename };
-  }
-}
-
-// ── Witness parser ────────────────────────────────────────────────────────────
-
-function extractFileFromWitness(witnessHex) {
-  const bytes = hexToBytes(witnessHex);
-  // Check magic: CKBFS = 0x434b424653
-  const magic = new TextDecoder().decode(bytes.slice(0, 5));
-  if (magic !== 'CKBFS') throw new Error('Witness missing CKBFS magic header');
-  const version = bytes[5];
-  // v2: content starts at byte 6
-  // v3: content starts at byte 50 (6 + 32 prev_tx_hash + 4 prev_idx + 4 prev_checksum + 4 next_idx)
-  const contentOffset = version === 0x03 ? 50 : 6;
-  return bytes.slice(contentOffset);
-}
-
-// ── Main load function ────────────────────────────────────────────────────────
-
-async function loadFile() {
-  const raw = document.getElementById('identifier').value.trim();
-  if (!raw) return;
-
-  // Parse identifier
-  let typeId = raw;
-  if (raw.startsWith('ckbfs://')) typeId = raw.slice('ckbfs://'.length);
-  if (!typeId.startsWith('0x')) typeId = '0x' + typeId;
-  if (typeId.length !== 66) {
-    showError('Invalid TypeID — expected 32-byte hex (0x + 64 chars)');
-    return;
-  }
-
-  showLoading('Searching for CKBFS cell…');
-  clearResult();
-
-  try {
-    // Step 1: Find live CKBFS cell by type script
-    const typeScript = {
-      code_hash: CKBFS_CODE_HASH,
-      hash_type: 'data1',
-      args: typeId,
-    };
-
-    const cellsResult = await rpc('get_cells', [{
-      script: typeScript,
-      script_type: 'type',
-      filter: null,
-    }, 'asc', '0x1']);
-
-    const cells = cellsResult?.objects || [];
-    if (cells.length === 0) throw new Error(`No CKBFS cell found for TypeID ${typeId.slice(0, 18)}… on ${currentNetwork}`);
-
-    const cell = cells[0];
-    const outPoint = cell.out_point;
-
-    // Step 2: Decode cell data
-    setStatus('Decoding cell data…');
-    const cellData = cell.output_data || '0x';
-    const meta = decodeCKBFSDataV2(cellData);
-
-    // Step 3: Fetch the create transaction to get witnesses
-    setStatus(`Loading ${meta.filename || 'file'}…`);
-    const txResult = await rpc('get_transaction', [outPoint.tx_hash]);
-    const tx = txResult?.transaction;
-    if (!tx) throw new Error('Transaction not found');
-
-    const witnesses = tx.witnesses || [];
-    const witnessIdx = meta.index;
-    if (witnessIdx >= witnesses.length) {
-      throw new Error(`Witness index ${witnessIdx} out of range (tx has ${witnesses.length} witnesses)`);
+    if (contentType.startsWith('image/')) {
+      viewerArea.innerHTML = `
+        <div class="img-viewer"><img src="${url}" alt="${filename}" /></div>
+        <div class="typeid-box">TypeID: <span>${typeId}</span></div>
+      `;
+    } else if (contentType.startsWith('text/') || contentType === 'application/json') {
+      const text = new TextDecoder().decode(fileBytes);
+      const display = contentType === 'application/json'
+        ? JSON.stringify(JSON.parse(text), null, 2) : text;
+      viewerArea.innerHTML = `
+        <div class="text-viewer">${escapeHtml(display)}</div>
+        <div class="typeid-box">TypeID: <span>${typeId}</span></div>
+      `;
+    } else {
+      viewerArea.innerHTML = `
+        <div class="download-area">
+          <div class="file-icon">📄</div>
+          <div class="download-name">${filename || 'ckbfs-file'}</div>
+          <div style="color:var(--muted);font-size:0.85rem">${contentType} · ${formatSize(fileBytes.length)}</div>
+          <a href="${url}" download="${filename || 'ckbfs-file'}" class="btn" style="text-decoration:none;display:inline-block;margin-top:0.5rem">⬇ Download</a>
+        </div>
+        <div class="typeid-box">TypeID: <span>${typeId}</span></div>
+      `;
     }
 
-    // Step 4: Extract file bytes
-    setStatus('Extracting file content…');
-    const fileBytes = extractFileFromWitness(witnesses[witnessIdx]);
-
-    // Step 5: Display
-    hideStatus();
-    showResult(meta, fileBytes, typeId, outPoint.tx_hash);
-
-  } catch (err) {
-    showError(err.message);
-  }
-}
-
-// ── Display ───────────────────────────────────────────────────────────────────
-
-function showResult(meta, fileBytes, typeId, txHash) {
-  const { contentType, filename, checksum, index } = meta;
-  const explorerBase = currentNetwork === 'mainnet'
-    ? 'https://explorer.nervos.org/transaction'
-    : 'https://pudge.explorer.nervos.org/transaction';
-
-  // Meta bar
-  const metaBar = document.getElementById('metaBar');
-  metaBar.innerHTML = `
-    <span class="tag">${contentType}</span>
-    <span class="meta-item"><span class="meta-label">File: </span><span class="meta-value">${filename || '(unnamed)'}</span></span>
-    <span class="meta-item"><span class="meta-label">Size: </span><span class="meta-value">${formatSize(fileBytes.length)}</span></span>
-    <span class="meta-item"><span class="meta-label">Checksum: </span><span class="meta-value">0x${checksum.toString(16).padStart(8,'0')}</span></span>
-    <span class="meta-item"><span class="meta-label">Witness: </span><span class="meta-value">#${index}</span></span>
-    <a href="${explorerBase}/${txHash}" target="_blank" style="font-size:0.82rem;margin-left:auto">View tx ↗</a>
-  `;
-
-  // Viewer
-  const viewerArea = document.getElementById('viewerArea');
-  const blob = new Blob([fileBytes], { type: contentType });
-  const url = URL.createObjectURL(blob);
-
-  if (contentType.startsWith('image/')) {
-    viewerArea.innerHTML = `
-      <div class="img-viewer">
-        <img src="${url}" alt="${filename}" />
-      </div>
-      <div class="typeid-box">TypeID: <span>${typeId}</span></div>
-    `;
-  } else if (contentType.startsWith('text/') || contentType === 'application/json') {
-    const text = new TextDecoder().decode(fileBytes);
-    const display = contentType === 'application/json'
-      ? JSON.stringify(JSON.parse(text), null, 2)
-      : text;
-    viewerArea.innerHTML = `
-      <div class="text-viewer">${escapeHtml(display)}</div>
-      <div class="typeid-box">TypeID: <span>${typeId}</span></div>
-    `;
-  } else {
-    viewerArea.innerHTML = `
-      <div class="download-area">
-        <div class="file-icon">📄</div>
-        <div class="download-name">${filename || 'file'}</div>
-        <div style="color:var(--muted);font-size:0.85rem">${contentType} · ${formatSize(fileBytes.length)}</div>
-        <a href="${url}" download="${filename || 'ckbfs-file'}" class="btn" style="text-decoration:none;display:inline-block;margin-top:0.5rem">
-          ⬇ Download
-        </a>
-      </div>
-      <div class="typeid-box">TypeID: <span>${typeId}</span></div>
-    `;
+    document.getElementById('resultCard').classList.add('visible');
   }
 
-  document.getElementById('resultCard').classList.add('visible');
-}
+  function showLoading(msg) {
+    const s = document.getElementById('status');
+    s.className = 'status loading';
+    s.innerHTML = `<div class="spinner"></div><span id="statusText">${msg}</span>`;
+  }
+  function setStatus(msg) {
+    const el = document.getElementById('statusText');
+    if (el) el.textContent = msg;
+  }
+  function showError(msg) {
+    const s = document.getElementById('status');
+    s.className = 'status error';
+    s.innerHTML = `<span>⚠</span><span>${msg}</span>`;
+  }
+  function hideStatus() { document.getElementById('status').className = 'status'; }
+  function clearResult() {
+    document.getElementById('resultCard').classList.remove('visible');
+    document.getElementById('viewerArea').innerHTML = '';
+    document.getElementById('metaBar').innerHTML = '';
+  }
+  function escapeHtml(s) {
+    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+  }
 
-// ── Helpers ───────────────────────────────────────────────────────────────────
-
-function hexToBytes(hex) {
-  const h = hex.startsWith('0x') ? hex.slice(2) : hex;
-  const arr = new Uint8Array(h.length / 2);
-  for (let i = 0; i < arr.length; i++) arr[i] = parseInt(h.slice(i*2, i*2+2), 16);
-  return arr;
-}
-
-function formatSize(bytes) {
-  if (bytes < 1024) return bytes + ' B';
-  if (bytes < 1024 * 1024) return (bytes / 1024).toFixed(1) + ' KB';
-  return (bytes / 1024 / 1024).toFixed(2) + ' MB';
-}
-
-function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
-
-function showLoading(msg) {
-  const s = document.getElementById('status');
-  s.className = 'status loading';
-  document.getElementById('statusText').textContent = msg;
-}
-
-function setStatus(msg) {
-  document.getElementById('statusText').textContent = msg;
-}
-
-function showError(msg) {
-  const s = document.getElementById('status');
-  s.className = 'status error';
-  s.innerHTML = `<span>⚠</span><span>${msg}</span>`;
-}
-
-function hideStatus() {
-  document.getElementById('status').className = 'status';
-}
-
-function clearResult() {
-  document.getElementById('resultCard').classList.remove('visible');
-  document.getElementById('viewerArea').innerHTML = '';
-  document.getElementById('metaBar').innerHTML = '';
-}
-
-function clearViewer() {
-  document.getElementById('identifier').value = '';
-  clearResult();
-  hideStatus();
-}
-
-// Enter key support
-document.addEventListener('DOMContentLoaded', () => {
+  // Init
   document.getElementById('identifier').addEventListener('keydown', e => {
-    if (e.key === 'Enter') loadFile();
+    if (e.key === 'Enter') window.loadFile();
   });
-
-  // Mobile nav
   document.getElementById('navToggle')?.addEventListener('click', () => {
     document.getElementById('mainNav').classList.toggle('open');
   });
 
-  // Check for ?id= param in URL
+  // URL params: ?id=0x...&net=mainnet
   const params = new URLSearchParams(window.location.search);
-  const id = params.get('id');
-  const net = params.get('net');
+  const id = params.get('id'), net = params.get('net');
   if (id) {
     document.getElementById('identifier').value = id;
-    if (net === 'mainnet') setNetwork('mainnet');
-    loadFile();
+    if (net === 'mainnet') window.setNetwork('mainnet');
+    window.loadFile();
   }
-});
 </script>
 
 </body>
