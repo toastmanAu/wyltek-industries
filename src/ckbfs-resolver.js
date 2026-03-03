@@ -44,8 +44,12 @@ export function parseIdentifier(input) {
 // Handles 4-field (index: Uint32) and 5-field (indexes: Vec<Uint32>) schemas.
 
 function decodeCKBFSData(hex) {
-  const data = hexToBytes(hex);
-  const dv = new DataView(data.buffer);
+  // Use a fresh ArrayBuffer copy — Safari is strict about DataView byteOffset
+  const raw = hexToBytes(hex);
+  const buf = raw.buffer.slice(raw.byteOffset, raw.byteOffset + raw.byteLength);
+  const data = new Uint8Array(buf);
+  const dv = new DataView(buf);
+
   const totalSize = dv.getUint32(0, true);
   const firstOffset = dv.getUint32(4, true);
   const fieldCount = (firstOffset / 4) - 1;
@@ -54,32 +58,30 @@ function decodeCKBFSData(hex) {
   for (let i = 0; i < fieldCount; i++) offsets.push(dv.getUint32(4 + i * 4, true));
   offsets.push(totalSize);
 
-  const readBytes = (off) => {
+  const readStr = (off) => {
     const len = dv.getUint32(off, true);
     return new TextDecoder().decode(data.slice(off + 4, off + 4 + len));
   };
 
   if (fieldCount === 4) {
-    // 4-field schema: index(Uint32), checksum, content_type, filename
     return {
       indexes:     [dv.getUint32(offsets[0], true)],
       checksum:    dv.getUint32(offsets[1], true),
-      contentType: readBytes(offsets[2]),
-      filename:    readBytes(offsets[3]),
+      contentType: readStr(offsets[2]),
+      filename:    readStr(offsets[3]),
     };
   } else {
-    // 5-field schema: indexes(Vec<Uint32>), checksum, content_type, filename, backlinks
-    // Vec<Uint32> format: 4-byte item count + N×4-byte items
-    const idxFieldBytes = data.slice(offsets[0], offsets[1]);
-    const idxDv = new DataView(idxFieldBytes.buffer, idxFieldBytes.byteOffset);
-    const indexCount = idxDv.getUint32(0, true); // first 4 bytes = item count
+    // Vec<Uint32>: 4-byte item count + N×4-byte items
+    const idxBuf = buf.slice(offsets[0], offsets[1]);
+    const idxDv = new DataView(idxBuf);
+    const indexCount = idxDv.getUint32(0, true);
     const indexes = [];
     for (let i = 0; i < indexCount; i++) indexes.push(idxDv.getUint32(4 + i * 4, true));
     return {
       indexes,
       checksum:    dv.getUint32(offsets[1], true),
-      contentType: readBytes(offsets[2]),
-      filename:    readBytes(offsets[3]),
+      contentType: readStr(offsets[2]),
+      filename:    readStr(offsets[3]),
     };
   }
 }
@@ -153,7 +155,8 @@ export async function resolveCKBFS(typeId, network, onProgress = () => {}) {
 
 export function hexToBytes(hex) {
   const h = hex.startsWith('0x') ? hex.slice(2) : hex;
-  const b = new Uint8Array(h.length / 2);
+  const buf = new ArrayBuffer(h.length / 2);
+  const b = new Uint8Array(buf);
   for (let i = 0; i < b.length; i++) b[i] = parseInt(h.slice(i * 2, i * 2 + 2), 16);
   return b;
 }
