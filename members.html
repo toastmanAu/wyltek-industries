@@ -156,8 +156,8 @@
 <main>
   <div class="hero">
     <div class="hero-badge">Founding Members</div>
-    <h1>Your wallet.<br>Your membership.</h1>
-    <p>Connect with JoyID and get a Founding Member DOB minted to your wallet — permanently on-chain, prepaid, yours forever.</p>
+    <h1 id="heroTitle">Your wallet.<br>Your membership.</h1>
+    <p id="heroSub">Connect with JoyID and get a Founding Member DOB minted to your wallet — permanently on-chain, prepaid, yours forever.</p>
   </div>
 
   <div class="dob-preview">
@@ -191,6 +191,9 @@
       JoyID uses a passkey stored in your phone's secure enclave — like Face ID for a crypto wallet.
       <a href="https://joy.id" target="_blank">Learn more ↗</a>
     </p>
+    <p style="text-align:center;font-size:.78rem;color:var(--muted);margin-top:.4rem;">
+      Already joined before? Reconnect with the same JoyID to see your membership status.
+    </p>
   </div>
 
   <!-- State: in queue / minted -->
@@ -198,7 +201,7 @@
     <div class="wallet-row">
       <div class="wallet-dot"></div>
       <div class="wallet-addr" id="walletAddr"></div>
-      <button class="btn-link" onclick="disconnect()">Disconnect</button>
+      <button class="btn-link" onclick="disconnect()" title="Sign out and return to login">Sign out</button>
     </div>
     <div class="card">
       <div style="text-align:center;padding:.5rem 0 1rem;">
@@ -365,6 +368,20 @@ function showState(name) {
     const el = document.getElementById('state' + s);
     el.classList.toggle('active', s === name);
   });
+  // Update hero text and nav label
+  const isLoggedIn = name === 'Queue';
+  const heroTitle = document.getElementById('heroTitle');
+  const heroSub = document.getElementById('heroSub');
+  const navJoin = document.querySelector('a.nav-join');
+  if (isLoggedIn) {
+    if (heroTitle) heroTitle.innerHTML = 'Welcome back.';
+    if (heroSub) heroSub.textContent = 'Your membership status is below. Your DOB will be minted once the wallet is funded.';
+    if (navJoin) { navJoin.textContent = '✦ Membership'; navJoin.title = 'View your membership'; }
+  } else {
+    if (heroTitle) heroTitle.innerHTML = 'Your wallet.<br>Your membership.';
+    if (heroSub) heroSub.textContent = 'Connect with JoyID and get a Founding Member DOB minted to your wallet — permanently on-chain, prepaid, yours forever.';
+    if (navJoin) { navJoin.textContent = '✦ Join'; navJoin.title = ''; }
+  }
 }
 
 function showMsg(id, html, type) {
