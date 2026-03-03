@@ -17,6 +17,47 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id: "2026-03-04-ckbfs-founding-member-dobs",
+    date: "2026-03-04",
+    title: "Founding Member DOBs — Files on a Blockchain, Not a Server",
+    tags: ["ckb", "spore", "dob", "ckbfs", "membership"],
+    project: "wyltek-membership",
+    body: [
+      "Tonight we shipped something I've been working toward for a while: a fully on-chain membership system for Wyltek Industries. The first 100 people to join get a Founding Member DOB — a Digital Object on Nervos CKB — minted to their wallet, prepaid, with the image stored permanently on-chain. No IPFS. No server. No link rot.",
+
+      {type:"h3", content:"The problem with NFT images"},
+      "Most NFTs don't actually store the image on-chain. They store a URL — usually an IPFS hash or an https:// link — that points to the image hosted somewhere else. When that somewhere else goes away, your NFT is a broken image. It happens constantly. Entire collections lose their media because a startup shut down or someone forgot to renew a domain.",
+      "CKB's Spore Protocol lets you embed content directly in a cell — but at ~78,000 CKB per DOB for a 76KB image, that's about $390 AUD each. Not viable for a giveaway.",
+
+      {type:"h3", content:"CKBFS: files in witnesses"},
+      "CKBFS stores file content in transaction witnesses — the part of a CKB transaction that validators read but don't store in the UTXO set. Witnesses are prunable from full nodes but always accessible via archive nodes and the RPC. The contract writes a small index cell (~225 CKB total, one-time) with a TypeID that permanently identifies the file. Every DOB just stores a tiny ckbfs://0x<typeId> reference — 66 bytes instead of 76KB.",
+      "The economics change completely. One CKBFS publish for 225 CKB covers all 100 DOBs. Each DOB costs ~300 CKB for the Spore cell itself. Total: ~30,225 CKB for 100 Founding Member DOBs, shared image included.",
+
+      {type:"h3", content:"What we built"},
+      {type:"ul", content:[
+        "CKBFS publisher — wraps the official @ckbfs/api SDK, handles multi-chunk witness reassembly",
+        "DOB mint script — batch mints Spore cells with contentType: application/ckbfs",
+        "CKBFS Viewer — browser-based resolver at wyltekindustries.com/ckbfs-viewer.html (Chrome, Brave, Safari iOS)",
+        "Membership auth — JoyID passkey connect → Supabase anonymous session → mint queue",
+        "Queue runner — Pi-side script watches Supabase, mints DOB to each member's address",
+      ]},
+
+      {type:"h3", content:"JoyID: your passkey is your wallet"},
+      "The membership flow doesn't require anyone to understand blockchain. You connect with JoyID — it's a passkey stored in your phone's secure enclave, like Face ID for a crypto wallet. Your CKB address is derived from that passkey. We capture the address, create your account, and the DOB gets minted to you automatically. No seed phrases. No MetaMask. No gas fees on your end.",
+      "The whole auth stack runs without a real email address. We derive a deterministic Supabase identity from your CKB address — your wallet IS your login.",
+
+      {type:"h3", content:"Tested on testnet, mainnet next"},
+      "Four testnet DOBs are live now, all resolving correctly in the viewer. The CKBFS image is at TypeID 0x061cc843... on testnet — paste it into the viewer and you'll see the Founding Member image rendered directly from on-chain witnesses. Once the mainnet minting wallet is funded (~30,225 CKB), the full 100-DOB run goes live and the membership page opens.",
+      "Founding Members get the DOB, member-only access to the Research section, and early access to everything we build next.",
+    ],
+    links: [
+      { text: "CKBFS Viewer", href: "ckbfs-viewer.html" },
+      { text: "ckbfs-viewer on GitHub", href: "https://github.com/toastmanAu/ckbfs-viewer" },
+      { text: "ckb-dob-minter on GitHub", href: "https://github.com/toastmanAu/ckb-dob-minter" },
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
+  {
     id: "2026-03-03-tailscale-remote-access",
     date: "2026-03-03",
     title: "If you run Pi hardware: just use Tailscale",
