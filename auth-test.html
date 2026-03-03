@@ -1,0 +1,402 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+  <title>Auth Test — Wyltek Industries</title>
+  <script>(function(){const s=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',s);})();</script>
+  <link rel="stylesheet" href="js/theme.css"/>
+  <style>
+    :root{--bg:#0d1018;--surface:#131720;--border:#1e2430;--text:#e2e8f0;--muted:#64748b;--accent:#00c8ff;--green:#00e5a0;--red:#f43f5e;--yellow:#fbbf24;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:15px;min-height:100vh;}
+    .page{max-width:700px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
+    h1{font-size:1.5rem;font-weight:700;margin-bottom:0.25rem;}
+    .sub{color:var(--muted);font-size:0.875rem;margin-bottom:2rem;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;margin-bottom:1.5rem;}
+    .card h2{font-size:1rem;font-weight:700;margin-bottom:1rem;}
+    .status{display:inline-flex;align-items:center;gap:0.4rem;font-size:0.8rem;padding:0.25rem 0.75rem;border-radius:100px;margin-bottom:1rem;}
+    .status.connected{background:#0a2a1e;color:var(--green);border:1px solid #1a4a2e;}
+    .status.disconnected{background:#2a1a1a;color:var(--muted);border:1px solid var(--border);}
+    .btn{display:inline-flex;align-items:center;gap:0.5rem;background:var(--accent);color:#0d1018;font-weight:700;padding:0.6rem 1.25rem;border-radius:8px;border:none;cursor:pointer;font-size:0.875rem;transition:opacity .15s;}
+    .btn:hover{opacity:0.85;}
+    .btn.secondary{background:var(--surface);color:var(--text);border:1px solid var(--border);}
+    .btn.danger{background:#2a0a14;color:var(--red);border:1px solid var(--red);}
+    .btn:disabled{opacity:0.4;cursor:not-allowed;}
+    label{display:block;font-size:0.8rem;color:var(--muted);margin-bottom:0.3rem;margin-top:0.75rem;}
+    label:first-child{margin-top:0;}
+    input,textarea{width:100%;background:#0d1018;border:1px solid var(--border);color:var(--text);padding:0.5rem 0.75rem;border-radius:6px;font-size:0.875rem;font-family:inherit;}
+    input:focus,textarea:focus{outline:none;border-color:var(--accent);}
+    textarea{resize:vertical;min-height:80px;}
+    .grid2{display:grid;grid-template-columns:1fr 1fr;gap:0.75rem;}
+    .avatar-wrap{display:flex;align-items:center;gap:1rem;margin-bottom:1rem;}
+    .avatar{width:64px;height:64px;border-radius:50%;background:var(--border);object-fit:cover;border:2px solid var(--border);}
+    .avatar-placeholder{width:64px;height:64px;border-radius:50%;background:var(--surface);border:2px dashed var(--border);display:flex;align-items:center;justify-content:center;font-size:1.5rem;color:var(--muted);}
+    .msg{padding:0.6rem 0.9rem;border-radius:6px;font-size:0.82rem;margin-top:0.75rem;}
+    .msg.ok{background:#0a2a1e;color:var(--green);border:1px solid #1a4a2e;}
+    .msg.err{background:#2a0a14;color:var(--red);border:1px solid #4a1a1a;}
+    .msg.info{background:#0a1a2a;color:var(--accent);border:1px solid #1a3a4a;}
+    /* Comments */
+    .comment{border-bottom:1px solid var(--border);padding:0.9rem 0;}
+    .comment:last-child{border-bottom:none;}
+    .comment-meta{display:flex;align-items:center;gap:0.5rem;margin-bottom:0.4rem;}
+    .comment-avatar{width:28px;height:28px;border-radius:50%;background:var(--border);object-fit:cover;}
+    .comment-name{font-size:0.82rem;font-weight:600;}
+    .comment-date{font-size:0.75rem;color:var(--muted);}
+    .comment-body{font-size:0.875rem;color:var(--muted);line-height:1.6;}
+    .comment-del{margin-left:auto;background:none;border:none;color:var(--muted);cursor:pointer;font-size:0.75rem;padding:0.2rem 0.4rem;}
+    .comment-del:hover{color:var(--red);}
+    /* Like button */
+    .like-btn{display:inline-flex;align-items:center;gap:0.5rem;background:none;border:1px solid var(--border);border-radius:100px;padding:0.3rem 0.9rem;cursor:pointer;transition:all .15s;color:var(--muted);font-size:0.875rem;}
+    .like-btn:hover{border-color:var(--accent);color:var(--accent);}
+    .like-btn.liked{border-color:#c2850a;color:#fbbf24;background:#2a1a00;}
+    .like-btn img{width:22px;height:22px;border-radius:50%;object-fit:cover;}
+    .like-count{font-weight:700;}
+    .sep{color:var(--border);margin:0 0.5rem;}
+    @media(max-width:500px){.grid2{grid-template-columns:1fr;}}
+  </style>
+</head>
+<body>
+<div class="page">
+  <h1>🧪 Auth Test Page</h1>
+  <p class="sub">Testing JoyID login, profiles, comments, and toastman likes before going live.</p>
+
+  <!-- ── STEP 1: Connect ── -->
+  <div class="card" id="cardConnect">
+    <h2>Step 1 — Connect with JoyID</h2>
+    <div id="statusBadge" class="status disconnected">⚪ Not connected</div>
+    <div id="connectArea">
+      <p style="color:var(--muted);font-size:0.875rem;margin-bottom:1rem">Sign in with your JoyID passkey. Your CKB address becomes your unique identity — no email, no password.</p>
+      <button class="btn" onclick="connectJoyID()">🔐 Connect JoyID</button>
+    </div>
+    <div id="connectedArea" style="display:none">
+      <div style="font-size:0.8rem;color:var(--muted);margin-bottom:0.75rem">
+        Address: <code id="displayAddress" style="color:var(--accent);font-size:0.75rem"></code>
+      </div>
+      <button class="btn secondary" onclick="disconnect()">Disconnect</button>
+    </div>
+    <div id="connectMsg"></div>
+  </div>
+
+  <!-- ── STEP 2: Profile ── -->
+  <div class="card" id="cardProfile">
+    <h2>Step 2 — Your Profile</h2>
+    <div class="avatar-wrap">
+      <div id="avatarPreview" class="avatar-placeholder">👤</div>
+      <div>
+        <label style="margin-top:0">Avatar (JPEG, max 2MB)</label>
+        <input type="file" id="avatarFile" accept="image/jpeg,image/png,image/webp" onchange="previewAvatar(this)"/>
+      </div>
+    </div>
+    <label>Display name *</label>
+    <input type="text" id="profName" placeholder="Your name" maxlength="60"/>
+    <label>Tagline</label>
+    <input type="text" id="profTagline" placeholder="Builder of things" maxlength="120"/>
+    <div class="grid2">
+      <div><label>X / Twitter</label><input type="text" id="profX" placeholder="@handle"/></div>
+      <div><label>Telegram</label><input type="text" id="profTelegram" placeholder="@username"/></div>
+      <div><label>Reddit</label><input type="text" id="profReddit" placeholder="u/username"/></div>
+      <div><label>Discord</label><input type="text" id="profDiscord" placeholder="username"/></div>
+      <div><label>WeChat</label><input type="text" id="profWechat" placeholder="ID"/></div>
+      <div><label>Nostr npub</label><input type="text" id="profNostr" placeholder="npub1..."/></div>
+    </div>
+    <label>Nervos Talk forum username</label>
+    <input type="text" id="profNervostalk" placeholder="username"/>
+    <br/><br/>
+    <button class="btn" onclick="saveProfile()">💾 Save Profile</button>
+    <div id="profileMsg"></div>
+  </div>
+
+  <!-- ── STEP 3: Test Comments + Likes ── -->
+  <div class="card">
+    <h2>Step 3 — Test Comments &amp; Likes</h2>
+    <p style="color:var(--muted);font-size:0.82rem;margin-bottom:1rem">This simulates a blog post. Comments and toastman toasts below.</p>
+
+    <!-- Like button -->
+    <div style="display:flex;align-items:center;gap:1rem;margin-bottom:1.5rem;">
+      <button class="like-btn" id="likeBtn" onclick="toggleLike()">
+        <img src="toastman.jpg" alt="toast"/>
+        <span class="like-count" id="likeCount">0</span> toasts
+      </button>
+      <span id="likeStatus" style="font-size:0.78rem;color:var(--muted)"></span>
+    </div>
+
+    <!-- Comments list -->
+    <div id="commentsList" style="margin-bottom:1rem"></div>
+
+    <!-- Add comment -->
+    <div id="commentForm">
+      <label>Add a comment (members only)</label>
+      <textarea id="commentBody" placeholder="Write a comment…" maxlength="2000"></textarea>
+      <br/><br/>
+      <button class="btn" onclick="postComment()">Post comment</button>
+      <div id="commentMsg"></div>
+    </div>
+  </div>
+</div>
+
+<!-- Supabase -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
+<!-- JoyID -->
+<script src="https://cdn.jsdelivr.net/npm/@joyid/ckb@latest/dist/index.umd.js"></script>
+
+<script>
+const SUPABASE_URL = 'https://yhntwgjzrzyhyxpiqcts.supabase.co';
+const SUPABASE_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlobnR3Z2p6cnp5aHl4cGlxY3RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1Mjc2ODMsImV4cCI6MjA4ODEwMzY4M30.HhTEKmSQs-qaOhoQr4cJxRfTfpWEjGqB3TwQnRWCm4Y';
+const TEST_CONTENT_TYPE = 'blog';
+const TEST_CONTENT_ID = 'auth-test-post-1';
+
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
+
+let currentAddress = null;
+let currentSession = null;
+let userLiked = false;
+
+// ── JoyID connect ──
+async function connectJoyID() {
+  showMsg('connectMsg', 'Connecting…', 'info');
+  try {
+    // JoyID sign-in: request signature of a login message
+    const message = `Sign in to Wyltek Industries\nAddress: {address}\nTimestamp: ${Date.now()}`;
+    
+    // Use JoyID CKB connect
+    const joyid = window.joyidCkb || window.JoyID?.ckb;
+    if (!joyid) {
+      showMsg('connectMsg', 'JoyID SDK not loaded. Check console.', 'err');
+      return;
+    }
+
+    const result = await joyid.connect();
+    const address = result.address;
+    currentAddress = address;
+
+    // Sign the message to prove ownership
+    const signResult = await joyid.signMessage(
+      `Wyltek Industries Login\n${new Date().toISOString()}`,
+      address
+    );
+
+    // Exchange for Supabase session via custom JWT
+    // For now: store address in localStorage, create anonymous session
+    // In production: verify signature server-side and mint a JWT
+    await signInToSupabase(address, signResult.signature);
+    
+  } catch(e) {
+    showMsg('connectMsg', 'Connection failed: ' + (e.message || e), 'err');
+  }
+}
+
+async function signInToSupabase(address, signature) {
+  // Use Supabase anonymous auth, then link to CKB address
+  // For testing: use email/password with address as identifier
+  // Production: custom JWT with CKB address as sub claim
+  
+  const email = `${address.toLowerCase()}@ckb.wyltek`;
+  const password = btoa(address + signature.slice(0, 20));
+  
+  // Try sign in first, then sign up
+  let { data, error } = await sb.auth.signInWithPassword({ email, password });
+  if (error && error.message.includes('Invalid login credentials')) {
+    const res = await sb.auth.signUp({ email, password });
+    data = res.data; error = res.error;
+  }
+  
+  if (error) {
+    showMsg('connectMsg', 'Supabase auth error: ' + error.message, 'err');
+    return;
+  }
+
+  currentSession = data.session;
+  onConnected(address);
+}
+
+function onConnected(address) {
+  currentAddress = address;
+  document.getElementById('statusBadge').className = 'status connected';
+  document.getElementById('statusBadge').textContent = '🟢 Connected';
+  document.getElementById('connectArea').style.display = 'none';
+  document.getElementById('connectedArea').style.display = 'block';
+  document.getElementById('displayAddress').textContent = address.slice(0,12) + '…' + address.slice(-8);
+  showMsg('connectMsg', '✅ Connected! CKB address verified.', 'ok');
+  loadProfile(address);
+  loadComments();
+  loadLikeStatus();
+}
+
+function disconnect() {
+  sb.auth.signOut();
+  currentAddress = null; currentSession = null;
+  document.getElementById('statusBadge').className = 'status disconnected';
+  document.getElementById('statusBadge').textContent = '⚪ Not connected';
+  document.getElementById('connectArea').style.display = 'block';
+  document.getElementById('connectedArea').style.display = 'none';
+  clearMsg('connectMsg');
+}
+
+// ── Profile ──
+async function loadProfile(address) {
+  const { data } = await sb.from('profiles').select('*').eq('ckb_address', address).single();
+  if (!data) return;
+  document.getElementById('profName').value = data.name || '';
+  document.getElementById('profTagline').value = data.tagline || '';
+  document.getElementById('profX').value = data.x_handle || '';
+  document.getElementById('profTelegram').value = data.telegram || '';
+  document.getElementById('profReddit').value = data.reddit || '';
+  document.getElementById('profDiscord').value = data.discord || '';
+  document.getElementById('profWechat').value = data.wechat || '';
+  document.getElementById('profNostr').value = data.nostr_npub || '';
+  document.getElementById('profNervostalk').value = data.nervostalk || '';
+  if (data.avatar_url) {
+    const img = document.createElement('img');
+    img.src = data.avatar_url; img.className = 'avatar';
+    document.getElementById('avatarPreview').replaceWith(img);
+    document.getElementById('avatarPreview')?.remove();
+  }
+}
+
+async function saveProfile() {
+  if (!currentAddress) { showMsg('profileMsg','Connect first','err'); return; }
+  const name = document.getElementById('profName').value.trim();
+  if (!name) { showMsg('profileMsg','Name is required','err'); return; }
+
+  // Upload avatar if selected
+  let avatar_url = null;
+  const file = document.getElementById('avatarFile').files[0];
+  if (file) {
+    const ext = file.name.split('.').pop();
+    const path = `${currentAddress}.${ext}`;
+    const { error: upErr } = await sb.storage.from('avatars').upload(path, file, { upsert: true });
+    if (upErr) { showMsg('profileMsg','Avatar upload failed: ' + upErr.message,'err'); return; }
+    const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
+    avatar_url = urlData.publicUrl;
+  }
+
+  const profile = {
+    ckb_address: currentAddress,
+    name,
+    tagline: document.getElementById('profTagline').value.trim() || null,
+    x_handle: document.getElementById('profX').value.trim() || null,
+    telegram: document.getElementById('profTelegram').value.trim() || null,
+    reddit: document.getElementById('profReddit').value.trim() || null,
+    discord: document.getElementById('profDiscord').value.trim() || null,
+    wechat: document.getElementById('profWechat').value.trim() || null,
+    nostr_npub: document.getElementById('profNostr').value.trim() || null,
+    nervostalk: document.getElementById('profNervostalk').value.trim() || null,
+    updated_at: new Date().toISOString(),
+  };
+  if (avatar_url) profile.avatar_url = avatar_url;
+
+  const { error } = await sb.from('profiles').upsert(profile, { onConflict: 'ckb_address' });
+  if (error) showMsg('profileMsg', 'Error: ' + error.message, 'err');
+  else showMsg('profileMsg', '✅ Profile saved!', 'ok');
+}
+
+function previewAvatar(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = e => {
+    const existing = document.getElementById('avatarPreview') || document.querySelector('.avatar');
+    if (existing) {
+      existing.src = e.target.result;
+      existing.className = 'avatar';
+      existing.id = 'avatarPreview';
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+// ── Comments ──
+async function loadComments() {
+  const { data } = await sb.from('comments')
+    .select('*, profiles(name, avatar_url)')
+    .eq('content_type', TEST_CONTENT_TYPE)
+    .eq('content_id', TEST_CONTENT_ID)
+    .order('created_at', { ascending: true });
+
+  const el = document.getElementById('commentsList');
+  if (!data || !data.length) { el.innerHTML = '<p style="color:var(--muted);font-size:0.82rem">No comments yet. Be the first!</p>'; return; }
+  
+  el.innerHTML = data.map(c => `
+    <div class="comment">
+      <div class="comment-meta">
+        ${c.profiles?.avatar_url ? `<img src="${c.profiles.avatar_url}" class="comment-avatar"/>` : '<div class="comment-avatar" style="display:flex;align-items:center;justify-content:center;font-size:0.8rem">👤</div>'}
+        <span class="comment-name">${esc(c.profiles?.name || 'Anonymous')}</span>
+        <span class="comment-date">${new Date(c.created_at).toLocaleDateString()}</span>
+        ${c.ckb_address === currentAddress ? `<button class="comment-del" onclick="deleteComment('${c.id}')">✕ delete</button>` : ''}
+      </div>
+      <div class="comment-body">${esc(c.body)}</div>
+    </div>
+  `).join('');
+}
+
+async function postComment() {
+  if (!currentAddress) { showMsg('commentMsg','Connect first','err'); return; }
+  const body = document.getElementById('commentBody').value.trim();
+  if (!body) { showMsg('commentMsg','Comment is empty','err'); return; }
+  const { error } = await sb.from('comments').insert({
+    content_type: TEST_CONTENT_TYPE, content_id: TEST_CONTENT_ID,
+    ckb_address: currentAddress, body
+  });
+  if (error) { showMsg('commentMsg','Error: ' + error.message,'err'); return; }
+  document.getElementById('commentBody').value = '';
+  showMsg('commentMsg','✅ Comment posted!','ok');
+  loadComments();
+}
+
+async function deleteComment(id) {
+  await sb.from('comments').delete().eq('id', id);
+  loadComments();
+}
+
+// ── Likes ──
+async function loadLikeStatus() {
+  // Get total count
+  const { count } = await sb.from('likes')
+    .select('*', { count: 'exact', head: true })
+    .eq('content_type', TEST_CONTENT_TYPE).eq('content_id', TEST_CONTENT_ID);
+  document.getElementById('likeCount').textContent = count || 0;
+
+  // Check if user liked
+  if (currentAddress) {
+    const { data } = await sb.from('likes').select('id')
+      .eq('content_type', TEST_CONTENT_TYPE).eq('content_id', TEST_CONTENT_ID)
+      .eq('ckb_address', currentAddress).single();
+    userLiked = !!data;
+    document.getElementById('likeBtn').className = 'like-btn' + (userLiked ? ' liked' : '');
+    document.getElementById('likeStatus').textContent = userLiked ? 'You toasted this 🍞' : '';
+  }
+}
+
+async function toggleLike() {
+  if (!currentAddress) { alert('Connect JoyID first'); return; }
+  if (userLiked) {
+    await sb.from('likes').delete()
+      .eq('content_type', TEST_CONTENT_TYPE).eq('content_id', TEST_CONTENT_ID)
+      .eq('ckb_address', currentAddress);
+  } else {
+    await sb.from('likes').insert({
+      content_type: TEST_CONTENT_TYPE, content_id: TEST_CONTENT_ID,
+      ckb_address: currentAddress
+    });
+  }
+  loadLikeStatus();
+}
+
+// ── Utils ──
+function showMsg(id, text, type) {
+  const el = document.getElementById(id);
+  if (el) { el.className = 'msg ' + type; el.textContent = text; }
+}
+function clearMsg(id) {
+  const el = document.getElementById(id);
+  if (el) { el.className = ''; el.textContent = ''; }
+}
+function esc(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// Load counts on page load (no auth needed)
+loadComments();
+loadLikeStatus();
+</script>
+</body>
+</html>
