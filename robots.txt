@@ -1,0 +1,15 @@
+User-agent: *
+Allow: /
+Disallow: /ckbfs-viewer.html
+Disallow: /profile.html
+Disallow: /auth-test.html
+Disallow: /joyid-callback.html
+Disallow: /images.html
+Disallow: /tests.html
+Disallow: /themer.html
+Disallow: /flasher.html
+Disallow: /ckb-sync.html
+Disallow: /ckb-node-finder.html
+Disallow: /ckb-node-update.html
+
+Sitemap: https://wyltekindustries.com/sitemap.xml
