@@ -343,7 +343,7 @@ async function joinQueue(address) {
 // ── Show queue status ─────────────────────────────────────────────
 async function showQueue(address) {
   showState('Queue');
-  document.getElementById('walletAddr').textContent = address.slice(0,14) + '…' + address.slice(-8);
+  document.getElementById('walletAddr').textContent = address.slice(0,8) + '…' + address.slice(-6);
 
   const { data } = await sb.from('mint_queue').select('*').eq('ckb_address', address).single();
   if (!data) {

@@ -133,6 +133,7 @@
       <div class="field-group">
         <label class="field-label">CKB Address <span style="font-weight:400;text-transform:none;">(your wallet)</span></label>
         <div class="field-readonly" id="ckbAddressDisplay"></div>
+        <span class="field-hint">Only you can see this page — tap ⧉ to copy your full address</span>
       </div>
     </div>
 
@@ -192,7 +193,7 @@ let currentProfile = {};
 
 // ── Init ───────────────────────────────────────────────────────────
 async function init() {
-  document.getElementById('ckbAddressDisplay').textContent = MY_ADDR;
+  document.getElementById("ckbAddressDisplay").innerHTML = (typeof addrHtml === "function") ? addrHtml(MY_ADDR) : MY_ADDR.slice(0,8) + "…" + MY_ADDR.slice(-6);
 
   // Load member number
   const { data: queueRow } = await sb.from('mint_queue')
@@ -303,6 +304,7 @@ window.saveProfile = async function() {
 
 init();
 </script>
+<script src="/js/addr-format.js"></script>
 <script src="/js/member-nav.js"></script>
 </body>
 </html>
