@@ -108,6 +108,26 @@
     .no-comments{font-size:0.82rem;color:var(--muted);font-style:italic;}
     .loading-comments{font-size:0.8rem;color:var(--muted);}
 
+    /* Findings panel */
+    .findings-panel{background:rgba(0,0,0,.2);border:1px solid var(--border);border-radius:8px;padding:1.25rem;font-size:0.875rem;line-height:1.8;color:var(--text);}
+    .findings-panel h2{font-size:1rem;font-weight:700;color:var(--accent);margin:1.1rem 0 .4rem;padding-bottom:.25rem;border-bottom:1px solid var(--border);}
+    .findings-panel h2:first-child{margin-top:0;}
+    .findings-panel h3{font-size:.88rem;font-weight:700;color:var(--text);margin:.9rem 0 .3rem;}
+    .findings-panel h4{font-size:.85rem;font-weight:600;color:var(--muted);margin:.7rem 0 .2rem;}
+    .findings-panel p{margin:.4rem 0;color:#c8d4e0;}
+    .findings-panel ul,.findings-panel ol{margin:.4rem 0 .4rem 1.3rem;color:#c8d4e0;}
+    .findings-panel li{margin:.2rem 0;}
+    .findings-panel code{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:1px 5px;font-size:.82rem;font-family:'Fira Code',monospace;}
+    .findings-panel pre{background:#0a0c0f;border:1px solid var(--border);border-radius:6px;padding:.85rem 1rem;overflow-x:auto;margin:.6rem 0;}
+    .findings-panel pre code{background:none;border:none;padding:0;font-size:.8rem;}
+    .findings-panel strong{color:var(--text);font-weight:600;}
+    .findings-panel em{color:var(--muted);font-style:italic;}
+    .findings-panel hr{border:none;border-top:1px solid var(--border);margin:1rem 0;}
+    .findings-panel blockquote{border-left:3px solid var(--accent2);margin:.5rem 0;padding:.3rem .75rem;color:var(--muted);font-style:italic;}
+    .findings-meta{font-size:.75rem;color:var(--muted);margin-bottom:.75rem;padding-bottom:.5rem;border-bottom:1px solid var(--border);}
+    .findings-loading{color:var(--muted);font-size:.85rem;padding:.5rem 0;}
+    .findings-pending{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.2);border-radius:8px;padding:.75rem 1rem;font-size:.85rem;color:var(--yellow);}
+
     @media(max-width:600px){.page{padding:1.5rem 1rem 4rem;}.grid{grid-template-columns:1fr;}}
   </style>
 </head>
@@ -214,10 +234,11 @@ function render() {
         <div class="card-goal">${t.goal}</div>
         <div class="card-footer-row">
           <div class="card-tags">${(t.tags||[]).map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
-          <span class="expand-hint">tap to discuss ↓</span>
+        <div class="expand-hint">tap for findings ↓</span>
         </div>
       </div>
       <div class="card-body" id="body-${t.id}">
+        ${t.status === 'DONE' ? `<div class="findings-panel" id="findings-${t.id}"><div class="findings-loading">Loading findings…</div></div>` : `<div class="findings-pending">⏳ Research pending — findings will appear here once this task is complete.</div>`}
         <div class="like-row">
           <button class="like-btn" id="like-btn-${t.id}" onclick="toggleLike('${t.id}')">
             <img src="/kernel-avatar.png" alt="toast" /> <span id="like-label-${t.id}">Toast</span>
@@ -265,9 +286,72 @@ window.toggleCard = async function(id) {
 
   if (!isExpanded && !loadedCards.has(id)) {
     loadedCards.add(id);
-    await Promise.all([loadLikes(id), loadComments(id)]);
+    const task = RESEARCH_TASKS.find(t => t.id === id);
+    const loads = [loadLikes(id), loadComments(id)];
+    if (task && task.status === 'DONE') loads.push(loadFindings(id));
+    await Promise.all(loads);
   }
 };
+
+// ── Findings ──────────────────────────────────────────────────────
+function mdToHtml(md) {
+  // Strip YAML-style front matter lines (Date, Status, Seeds)
+  let text = md.replace(/^\*\*(Date|Status|Seeds)\:\*\*.*$/gm, '').replace(/^---+$/gm, '<hr>');
+  // Headings
+  text = text.replace(/^#### (.+)$/gm, '<h4>$1</h4>');
+  text = text.replace(/^### (.+)$/gm, '<h3>$1</h3>');
+  text = text.replace(/^## (.+)$/gm, '<h2>$1</h2>');
+  text = text.replace(/^# (.+)$/gm, '<h2>$1</h2>');
+  // Code blocks (before inline code)
+  text = text.replace(/```[\w]*\n?([\s\S]*?)```/g, (_, c) => `<pre><code>${c.replace(/</g,'&lt;').replace(/>/g,'&gt;').trim()}</code></pre>`);
+  // Inline code
+  text = text.replace(/`([^`]+)`/g, '<code>$1</code>');
+  // Bold/italic
+  text = text.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+  text = text.replace(/\*(.+?)\*/g, '<em>$1</em>');
+  // Blockquote
+  text = text.replace(/^> (.+)$/gm, '<blockquote>$1</blockquote>');
+  // Links
+  text = text.replace(/\[([^\]]+)\]\(([^)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+  // Unordered lists — group consecutive items
+  text = text.replace(/((?:^[ \t]*[-*+] .+\n?)+)/gm, (block) => {
+    const items = block.trim().split('\n').map(l => `<li>${l.replace(/^[ \t]*[-*+] /, '')}</li>`).join('');
+    return `<ul>${items}</ul>`;
+  });
+  // Ordered lists
+  text = text.replace(/((?:^\d+\. .+\n?)+)/gm, (block) => {
+    const items = block.trim().split('\n').map(l => `<li>${l.replace(/^\d+\. /, '')}</li>`).join('');
+    return `<ol>${items}</ol>`;
+  });
+  // Paragraphs — wrap non-tag lines
+  text = text.split('\n').map(line => {
+    const t = line.trim();
+    if (!t) return '';
+    if (/^<(h[1-6]|ul|ol|li|pre|blockquote|hr)/.test(t)) return t;
+    return `<p>${t}</p>`;
+  }).join('\n');
+  return text;
+}
+
+async function loadFindings(taskId) {
+  const panel = document.getElementById('findings-' + taskId);
+  if (!panel) return;
+  try {
+    const res = await fetch(`/research/${taskId}.md`);
+    if (!res.ok) { panel.innerHTML = '<div class="findings-loading">No findings file yet.</div>'; return; }
+    const raw = await res.text();
+    // Extract date/status meta from top
+    const dateMatch = raw.match(/\*\*Date:\*\*\s*(.+)/);
+    const statusMatch = raw.match(/\*\*Status:\*\*\s*(.+)/);
+    const meta = [dateMatch?.[1], statusMatch?.[1]].filter(Boolean).join(' · ');
+    panel.innerHTML = `
+      ${meta ? `<div class="findings-meta">🔬 ${meta}</div>` : ''}
+      ${mdToHtml(raw)}
+    `;
+  } catch (e) {
+    panel.innerHTML = '<div class="findings-loading">Could not load findings.</div>';
+  }
+}
 
 // ── Likes ─────────────────────────────────────────────────────────
 const myLikes = new Set();
