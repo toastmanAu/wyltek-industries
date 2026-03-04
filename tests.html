@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Test Results — Wyltek Industries</title>
+  <script src="/js/member-guard.js"></script>
   <meta name="description" content="Live host test results for Wyltek embedded libraries." />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -57,6 +58,12 @@
     .test-list .f{color:var(--red);}
     @media(max-width:600px){.page{padding:1.5rem 1rem 3rem;}.repo-header{flex-wrap:wrap;}.repo-link{margin-left:0;}}
   </style>
+  <style>
+    /* Member-only nav links: hidden until .member-nav class is added by JS */
+    .member-only { display: none !important; }
+    #mainNav.member-nav .member-only,
+    .nav-links.member-nav .member-only { display: inline-flex !important; }
+  </style>
 </head>
 <body>
 <nav>
@@ -66,9 +73,9 @@
   </a>
   <div class="nav-links">
     <a href="/">Home</a>
-    <a href="/blog.html">Devlog</a>
+    <a href="/blog.html" class="member-only">Devlog</a>
     <a href="/hardware.html">Hardware</a>
-    <a href="/tests.html" class="active">Tests</a>
+    <a href="/tests.html" class="active member-only">Tests</a>
   </div>
 </nav>
 <div class="page">
@@ -125,5 +132,6 @@ async function load(){
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 load();
 </script>
+  <script src="/js/member-nav.js"></script>
 </body>
 </html>

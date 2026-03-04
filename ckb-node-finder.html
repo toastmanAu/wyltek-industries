@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CKB Node Finder — Wyltek Industries</title>
+  <script src="/js/member-guard.js"></script>
   <meta name="description" content="Auto-detect your local Nervos CKB node. Works with full nodes, light clients, and custom RPC URLs. Free, open source, no data leaves your browser." />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <meta name="theme-color" content="#07090f">
@@ -46,6 +47,12 @@
     footer a{color:var(--muted)}footer a:hover{color:var(--accent)}
   </style>
   <style>.nav-join{color:var(--accent,#00c8ff)!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;transition:background .2s,border-color .2s!important;}.nav-join:hover{background:rgba(0,200,255,.1);border-color:var(--accent,#00c8ff);text-decoration:none!important;}</style>
+  <style>
+    /* Member-only nav links: hidden until .member-nav class is added by JS */
+    .member-only { display: none !important; }
+    #mainNav.member-nav .member-only,
+    .nav-links.member-nav .member-only { display: inline-flex !important; }
+  </style>
 </head>
 <body>
 <header>
@@ -56,17 +63,17 @@
     </a>
     <nav id="mainNav">
       <a href="index.html">Home</a>
-      <a href="blog.html">Devlog</a>
+      <a href="blog.html" class="member-only">Devlog</a>
       <a href="blackbox.html">BlackBox</a>
-      <a href="ckb-sync.html">CKB Sync</a>
-      <a href="flasher.html">Flasher</a>
+      <a href="ckb-sync.html" class="member-only">CKB Sync</a>
+      <a href="flasher.html" class="member-only">Flasher</a>
       <a href="hardware.html">Hardware</a>
       <a href="ckb-light-esp.html">Light Client</a>
       <a href="ckb.html">CKB Stack</a>
-      <a href="images.html">Images</a>
+      <a href="images.html" class="member-only">Images</a>
       <a href="roadmap.html">Roadmap</a>
-      <a href="ckb-node-update.html">Node Updater</a>
-      <a href="ckb-node-finder.html" class="active">Node Finder</a>
+      <a href="ckb-node-update.html" class="member-only">Node Updater</a>
+      <a href="ckb-node-finder.html" class="active member-only">Node Finder</a>
       <a href="members.html" class="nav-join">✦ Join</a>
       <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
     </nav>
@@ -190,5 +197,6 @@
 <script src="js/browser-compat.js"></script>
 <script>new BrowserCompat('#compat-widget', 'node-finder');</script>
   <script>(function(){var a=localStorage.getItem("wyltek_address");if(a){var el=document.querySelector("a.nav-join");if(el){el.textContent="✦ Membership";el.title="View your membership";}}})();</script>
+  <script src="/js/member-nav.js"></script>
 </body>
 </html>

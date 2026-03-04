@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Research — Wyltek Industries</title>
+  <script src="/js/member-guard.js"></script>
   <meta name="description" content="Autonomous research tasks running continuously in the background — mapping the technical frontier for our embedded CKB stack." />
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
@@ -20,37 +21,46 @@
     .nav-links{display:flex;gap:0.25rem;margin-left:auto;}
     .nav-links a{color:var(--muted);text-decoration:none;padding:0.4rem 0.75rem;border-radius:6px;font-size:0.875rem;transition:color .15s,background .15s;}
     .nav-links a:hover,.nav-links a.active{color:var(--text);background:rgba(255,255,255,.05);}
+    .member-only{display:none!important;}
+    .nav-links.member-nav .member-only{display:inline-flex!important;}
+    .nav-join{color:var(--accent,#00c8ff)!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;transition:background .2s,border-color .2s!important;}
+    .nav-join:hover{background:rgba(0,200,255,.1);border-color:var(--accent,#00c8ff);text-decoration:none!important;}
 
     .page{max-width:960px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
     .page-header{margin-bottom:2.5rem;}
     .page-title{font-size:1.75rem;font-weight:700;margin-bottom:0.5rem;}
     .page-sub{color:var(--muted);font-size:0.9rem;line-height:1.7;max-width:640px;}
 
-    /* How it works blurb */
     .how-it-works{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--accent);border-radius:8px;padding:1rem 1.25rem;margin-bottom:2rem;font-size:0.875rem;color:var(--muted);line-height:1.7;}
     .how-it-works strong{color:var(--text);}
 
-    /* Stats bar */
     .stats-bar{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;}
     .stat{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:0.75rem 1.25rem;flex:1;min-width:120px;}
     .stat-n{font-size:1.6rem;font-weight:800;color:var(--accent);line-height:1;}
     .stat-l{font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:0.2rem;}
 
-    /* Filter bar */
     .filters{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center;}
     .filter-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:0.3rem 0.75rem;border-radius:100px;font-size:0.8rem;cursor:pointer;transition:all .15s;}
     .filter-btn:hover{color:var(--text);}
     .filter-btn.active{background:#1a2540;border-color:var(--accent);color:var(--accent);}
     .filter-label{font-size:0.8rem;color:var(--muted);margin-right:0.25rem;}
 
-    /* Grid */
+    .progress-wrap{margin-bottom:2rem;}
+    .progress-label{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--muted);margin-bottom:0.4rem;}
+    .progress-track{background:rgba(255,255,255,.06);border-radius:100px;height:6px;overflow:hidden;}
+    .progress-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .5s;}
+
+    .agent-note{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:2rem;display:flex;gap:0.75rem;align-items:flex-start;font-size:0.85rem;color:var(--muted);line-height:1.6;}
+    .agent-note .emoji{font-size:1.2rem;flex-shrink:0;}
+
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
 
     /* Card */
-    .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.25rem;display:flex;flex-direction:column;gap:0.75rem;transition:border-color .15s;}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;overflow:hidden;transition:border-color .15s;}
     .card:hover{border-color:#2a3448;}
     .card.done{border-left:3px solid var(--green);}
     .card.pending{border-left:3px solid var(--yellow);}
+    .card-header{padding:1.25rem;cursor:pointer;display:flex;flex-direction:column;gap:0.75rem;}
     .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:0.5rem;}
     .card-id{font-size:0.78rem;font-family:monospace;color:var(--muted);}
     .card-badges{display:flex;gap:0.3rem;flex-wrap:wrap;}
@@ -60,19 +70,40 @@
     .badge-high{background:#2a0a14;color:var(--red);}
     .badge-medium{background:#1a1a2a;color:var(--purple);}
     .badge-low{background:#0a1a10;color:#4ade80;}
-    .card-goal{font-size:0.86rem;color:var(--muted);line-height:1.6;flex:1;}
-    .card-tags{display:flex;gap:0.3rem;flex-wrap:wrap;margin-top:auto;}
+    .badge-synthesis{background:#1a0a2a;color:#c084fc;}
+    .card-goal{font-size:0.86rem;color:var(--muted);line-height:1.6;}
+    .card-tags{display:flex;gap:0.3rem;flex-wrap:wrap;}
     .tag{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);padding:1px 8px;border-radius:4px;font-size:0.72rem;}
+    .card-footer-row{display:flex;align-items:center;justify-content:space-between;margin-top:0.25rem;}
+    .expand-hint{font-size:0.75rem;color:var(--muted);}
 
-    /* Progress bar */
-    .progress-wrap{margin-bottom:2rem;}
-    .progress-label{display:flex;justify-content:space-between;font-size:0.8rem;color:var(--muted);margin-bottom:0.4rem;}
-    .progress-track{background:rgba(255,255,255,.06);border-radius:100px;height:6px;overflow:hidden;}
-    .progress-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .5s;}
+    /* Expanded panel */
+    .card-body{display:none;border-top:1px solid var(--border);padding:1.25rem;gap:1rem;flex-direction:column;}
+    .card.expanded .card-body{display:flex;}
 
-    /* Agent note */
-    .agent-note{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:2rem;display:flex;gap:0.75rem;align-items:flex-start;font-size:0.85rem;color:var(--muted);line-height:1.6;}
-    .agent-note .emoji{font-size:1.2rem;flex-shrink:0;}
+    /* Like button */
+    .like-row{display:flex;align-items:center;gap:0.5rem;}
+    .like-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:0.3rem 0.75rem;border-radius:99px;font-size:0.82rem;cursor:pointer;display:flex;align-items:center;gap:0.35rem;transition:all .15s;}
+    .like-btn:hover{border-color:var(--accent);color:var(--accent);}
+    .like-btn.liked{background:rgba(0,200,255,.1);border-color:var(--accent);color:var(--accent);}
+    .like-count{font-size:0.8rem;color:var(--muted);}
+
+    /* Comments */
+    .comments-section{display:flex;flex-direction:column;gap:0.75rem;}
+    .comments-title{font-size:0.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;}
+    .comment{background:rgba(255,255,255,.03);border:1px solid var(--border);border-radius:6px;padding:0.6rem 0.75rem;}
+    .comment-meta{display:flex;justify-content:space-between;align-items:center;margin-bottom:0.3rem;}
+    .comment-addr{font-size:0.72rem;font-family:monospace;color:var(--accent);}
+    .comment-time{font-size:0.7rem;color:var(--muted);}
+    .comment-body{font-size:0.84rem;color:var(--text);line-height:1.5;}
+    .comment-input-row{display:flex;gap:0.5rem;margin-top:0.25rem;}
+    .comment-input{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);padding:0.5rem 0.75rem;border-radius:6px;font-size:0.84rem;font-family:inherit;resize:none;}
+    .comment-input:focus{outline:none;border-color:var(--accent);}
+    .comment-submit{background:var(--accent);color:#000;border:none;padding:0.5rem 1rem;border-radius:6px;font-size:0.84rem;font-weight:600;cursor:pointer;white-space:nowrap;}
+    .comment-submit:hover{opacity:.85;}
+    .comment-submit:disabled{opacity:.4;cursor:not-allowed;}
+    .no-comments{font-size:0.82rem;color:var(--muted);font-style:italic;}
+    .loading-comments{font-size:0.8rem;color:var(--muted);}
 
     @media(max-width:600px){.page{padding:1.5rem 1rem 4rem;}.grid{grid-template-columns:1fr;}}
   </style>
@@ -83,24 +114,31 @@
     <img src="/wyltek-mark.png" alt="Wyltek" />
     <span>Wyltek Industries</span>
   </a>
-  <div class="nav-links">
+  <div class="nav-links" id="mainNav">
     <a href="/">Home</a>
-    <a href="/blog.html">Devlog</a>
     <a href="/hardware.html">Hardware</a>
-    <a href="/research.html" class="active">Research</a>
-    <a href="/tests.html">Tests</a>
+    <a href="/ckb.html">CKB Stack</a>
+    <a href="/ckb-light-esp.html">Light Client</a>
+    <a href="/roadmap.html">Roadmap</a>
+    <a href="/blog.html" class="member-only">Devlog</a>
+    <a href="/research.html" class="active member-only">Research</a>
+    <a href="/tests.html" class="member-only">Tests</a>
+    <a href="/flasher.html" class="member-only">Flasher</a>
+    <a href="/ckb-sync.html" class="member-only">Sync</a>
+    <a href="members.html" class="nav-join">✦ Membership</a>
+    <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
   </div>
 </nav>
 
 <div class="page">
   <div class="page-header">
     <h1 class="page-title">Research Queue</h1>
-    <p class="page-sub">Autonomous background research running continuously on our Pi 5 agent. Each task maps technical terrain we need to cover before building — BLE transports, Fiber RPCs, post-quantum crypto, OBD2 protocols, handheld hardware. Runs on Gemini 2.5 Flash while idle. Findings feed directly into the build queue.</p>
+    <p class="page-sub">Autonomous background research running continuously on our Pi 5 agent. Each task maps technical terrain we need to cover before building. Runs on Gemini 2.5 Flash while idle. Findings feed directly into the build queue.</p>
   </div>
 
   <div class="agent-note">
     <span class="emoji">🐧</span>
-    <span>These tasks are picked up automatically by <strong>Kernel</strong> — the AI agent running on our Pi 5 — whenever the system is idle. One task every ~15 minutes, priority HIGH → MEDIUM → LOW. No human needed to run them.</span>
+    <span>Tasks are picked up automatically by <strong>Kernel</strong> — the AI agent running on our Pi 5 — whenever the system is idle. One task every ~15 minutes, priority HIGH → MEDIUM → LOW → SYNTHESIS. No human needed.</span>
   </div>
 
   <div class="stats-bar" id="statsBar"></div>
@@ -117,16 +155,35 @@
   <div class="grid" id="grid"></div>
 </div>
 
-<script src="js/research-tasks.js"></script>
-<script>
-let currentFilter = 'all';
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-function setFilter(f, btn) {
+const SB_URL = 'https://yhntwgjzrzyhyxpiqcts.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlobnR3Z2p6cnp5aHl4cGlxY3RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1Mjc2ODMsImV4cCI6MjA4ODEwMzY4M30.HhTEKmSQs-qaOhoQr4cJxRfTfpWEjGqB3TwQnRWCm4Y';
+const sb = createClient(SB_URL, SB_KEY);
+const MY_ADDR = window.MEMBER_ADDRESS || localStorage.getItem('wyltek_address') || '';
+
+function shortAddr(a) {
+  if (!a) return 'unknown';
+  return a.slice(0, 8) + '…' + a.slice(-6);
+}
+
+function timeAgo(iso) {
+  const s = Math.floor((Date.now() - new Date(iso)) / 1000);
+  if (s < 60) return `${s}s ago`;
+  if (s < 3600) return `${Math.floor(s/60)}m ago`;
+  if (s < 86400) return `${Math.floor(s/3600)}h ago`;
+  return `${Math.floor(s/86400)}d ago`;
+}
+
+// ── Render ────────────────────────────────────────────────────────
+let currentFilter = 'all';
+window.setFilter = function(f, btn) {
   currentFilter = f;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
   render();
-}
+};
 
 function render() {
   const tasks = RESEARCH_TASKS.filter(t => {
@@ -138,16 +195,32 @@ function render() {
   });
 
   document.getElementById('grid').innerHTML = tasks.map(t => `
-    <div class="card ${t.status.toLowerCase()}">
-      <div class="card-top">
-        <div class="card-id">${t.id}</div>
-        <div class="card-badges">
-          <span class="badge badge-${t.status.toLowerCase()}">${t.status}</span>
-          <span class="badge badge-${t.priority.toLowerCase()}">${t.priority}</span>
+    <div class="card ${t.status.toLowerCase()}" id="card-${t.id}">
+      <div class="card-header" onclick="toggleCard('${t.id}')">
+        <div class="card-top">
+          <div class="card-id">${t.id}</div>
+          <div class="card-badges">
+            <span class="badge badge-${t.status.toLowerCase()}">${t.status}</span>
+            <span class="badge badge-${t.priority.toLowerCase()}">${t.priority}</span>
+          </div>
+        </div>
+        <div class="card-goal">${t.goal}</div>
+        <div class="card-footer-row">
+          <div class="card-tags">${(t.tags||[]).map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+          <span class="expand-hint">tap to discuss ↓</span>
         </div>
       </div>
-      <div class="card-goal">${t.goal}</div>
-      <div class="card-tags">${t.tags.map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
+      <div class="card-body" id="body-${t.id}">
+        <div class="like-row">
+          <button class="like-btn" id="like-btn-${t.id}" onclick="toggleLike('${t.id}')">
+            👍 <span id="like-label-${t.id}">Like</span>
+          </button>
+          <span class="like-count" id="like-count-${t.id}"></span>
+        </div>
+        <div class="comments-section" id="comments-${t.id}">
+          <div class="loading-comments">Loading comments…</div>
+        </div>
+      </div>
     </div>
   `).join('');
 
@@ -169,7 +242,114 @@ function render() {
   `;
 }
 
+// ── Card expand/collapse ──────────────────────────────────────────
+const loadedCards = new Set();
+window.toggleCard = async function(id) {
+  const card = document.getElementById('card-' + id);
+  const body = document.getElementById('body-' + id);
+  const isExpanded = card.classList.contains('expanded');
+
+  // Collapse all others
+  document.querySelectorAll('.card.expanded').forEach(c => {
+    if (c.id !== 'card-' + id) c.classList.remove('expanded');
+  });
+
+  card.classList.toggle('expanded', !isExpanded);
+
+  if (!isExpanded && !loadedCards.has(id)) {
+    loadedCards.add(id);
+    await Promise.all([loadLikes(id), loadComments(id)]);
+  }
+};
+
+// ── Likes ─────────────────────────────────────────────────────────
+const myLikes = new Set();
+
+async function loadLikes(taskId) {
+  const { data } = await sb.from('research_likes').select('ckb_address').eq('task_id', taskId);
+  const count = data?.length || 0;
+  const liked = data?.some(r => r.ckb_address === MY_ADDR);
+  if (liked) myLikes.add(taskId);
+  updateLikeUI(taskId, count, liked);
+}
+
+function updateLikeUI(taskId, count, liked) {
+  const btn = document.getElementById('like-btn-' + taskId);
+  const lbl = document.getElementById('like-label-' + taskId);
+  const cnt = document.getElementById('like-count-' + taskId);
+  if (!btn) return;
+  btn.classList.toggle('liked', liked);
+  if (lbl) lbl.textContent = liked ? 'Liked' : 'Like';
+  if (cnt) cnt.textContent = count > 0 ? `${count} like${count !== 1 ? 's' : ''}` : '';
+}
+
+window.toggleLike = async function(taskId) {
+  const btn = document.getElementById('like-btn-' + taskId);
+  if (!MY_ADDR) return;
+  btn.disabled = true;
+  const liked = myLikes.has(taskId);
+  if (liked) {
+    await sb.from('research_likes').delete().eq('task_id', taskId).eq('ckb_address', MY_ADDR);
+    myLikes.delete(taskId);
+  } else {
+    await sb.from('research_likes').upsert({ task_id: taskId, ckb_address: MY_ADDR }, { onConflict: 'task_id,ckb_address' });
+    myLikes.add(taskId);
+  }
+  btn.disabled = false;
+  await loadLikes(taskId);
+};
+
+// ── Comments ──────────────────────────────────────────────────────
+async function loadComments(taskId) {
+  const { data } = await sb.from('research_comments')
+    .select('*').eq('task_id', taskId)
+    .order('created_at', { ascending: false }).limit(5);
+
+  renderComments(taskId, data || []);
+}
+
+function renderComments(taskId, comments) {
+  const el = document.getElementById('comments-' + taskId);
+  if (!el) return;
+
+  const list = comments.length
+    ? comments.map(c => `
+        <div class="comment">
+          <div class="comment-meta">
+            <span class="comment-addr">${shortAddr(c.ckb_address)}</span>
+            <span class="comment-time">${timeAgo(c.created_at)}</span>
+          </div>
+          <div class="comment-body">${c.body.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
+        </div>`).join('')
+    : '<div class="no-comments">No comments yet — be the first.</div>';
+
+  el.innerHTML = `
+    <div class="comments-title">Discussion</div>
+    ${list}
+    <div class="comment-input-row">
+      <textarea class="comment-input" id="comment-input-${taskId}" rows="2" placeholder="Share a thought…"></textarea>
+      <button class="comment-submit" onclick="submitComment('${taskId}')">Post</button>
+    </div>
+  `;
+}
+
+window.submitComment = async function(taskId) {
+  const input = document.getElementById('comment-input-' + taskId);
+  const btn = input?.nextElementSibling;
+  const body = input?.value?.trim();
+  if (!body || !MY_ADDR) return;
+  btn.disabled = true;
+  btn.textContent = '…';
+  await sb.from('research_comments').insert({ task_id: taskId, ckb_address: MY_ADDR, body });
+  input.value = '';
+  btn.disabled = false;
+  btn.textContent = 'Post';
+  await loadComments(taskId);
+};
+
 render();
 </script>
+<script src="js/research-tasks.js"></script>
+<script src="/js/member-nav.js"></script>
 </body>
 </html>

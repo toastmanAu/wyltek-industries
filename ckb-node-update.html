@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>CKB Node Updater — Wyltek Industries</title>
+  <script src="/js/member-guard.js"></script>
   <meta name="description" content="One command to harden, update and modernise your Wyltek CKB node. Adds auto-updates, live dashboard, ckbnode.local and stability fixes." />
   <link rel="canonical" href="https://wyltekindustries.com/ckb-node-update" />
   <style>
@@ -132,6 +133,12 @@
       .dash-stats{grid-template-columns:repeat(2,1fr)}
     }
   </style>
+  <style>
+    /* Member-only nav links: hidden until .member-nav class is added by JS */
+    .member-only { display: none !important; }
+    #mainNav.member-nav .member-only,
+    .nav-links.member-nav .member-only { display: inline-flex !important; }
+  </style>
 </head>
 <body>
 
@@ -139,16 +146,16 @@
   <a class="nav-logo" href="index.html">⚡ Wyltek</a>
   <div class="nav-links">
     <a href="index.html">Home</a>
-    <a href="blog.html">Devlog</a>
+    <a href="blog.html" class="member-only">Devlog</a>
     <a href="blackbox.html">BlackBox</a>
-    <a href="ckb-sync.html">CKB Sync</a>
-    <a href="flasher.html">Flasher</a>
+    <a href="ckb-sync.html" class="member-only">CKB Sync</a>
+    <a href="flasher.html" class="member-only">Flasher</a>
     <a href="hardware.html">Hardware</a>
     <a href="ckb-light-esp.html">Light Client</a>
     <a href="ckb.html">CKB Stack</a>
-    <a href="images.html">Images</a>
+    <a href="images.html" class="member-only">Images</a>
     <a href="roadmap.html">Roadmap</a>
-    <a href="ckb-node-update.html" class="active">Node Updater</a>
+    <a href="ckb-node-update.html" class="active member-only">Node Updater</a>
     <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
   </div>
 </nav>
@@ -490,5 +497,6 @@ async function fetchStats() {
 fetchStats();
 </script>
 
+  <script src="/js/member-nav.js"></script>
 </body>
 </html>

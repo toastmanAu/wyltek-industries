@@ -128,6 +128,12 @@
     footer a:hover { color:var(--accent); }
   </style>
   <style>.nav-join{color:var(--accent,#00c8ff)!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;transition:background .2s,border-color .2s!important;}.nav-join:hover{background:rgba(0,200,255,.1);border-color:var(--accent,#00c8ff);text-decoration:none!important;}</style>
+  <style>
+    /* Member-only nav links: hidden until .member-nav class is added by JS */
+    .member-only { display: none !important; }
+    #mainNav.member-nav .member-only,
+    .nav-links.member-nav .member-only { display: inline-flex !important; }
+  </style>
 </head>
 <body>
 
@@ -139,10 +145,10 @@
     </a>
     <nav id="mainNav">
       <a href="index.html">Home</a>
-      <a href="blog.html">Devlog</a>
+      <a href="blog.html" class="member-only">Devlog</a>
       <a href="blackbox.html">BlackBox</a>
-      <a href="ckb-sync.html">CKB Sync</a>
-      <a href="flasher.html">Flasher</a>
+      <a href="ckb-sync.html" class="member-only">CKB Sync</a>
+      <a href="flasher.html" class="member-only">Flasher</a>
       <a href="hardware.html">Hardware</a>
       <a href="ckb-light-esp.html">Light Client</a>
       <a href="ckb.html">CKB Stack</a>
@@ -222,7 +228,7 @@
 
 <footer>
   <p>Wyltek Industries · <a href="https://github.com/toastmanAu" target="_blank">GitHub</a> · Built on <a href="https://nervos.org" target="_blank">Nervos CKB</a></p>
-  <p style="margin-top:.4rem;"><a href="ckbfs-viewer.html">CKBFS Viewer</a> · <a href="blog.html">Devlog</a></p>
+  <p style="margin-top:.4rem;"><a href="ckbfs-viewer.html" class="member-only">CKBFS Viewer</a> · <a href="blog.html" class="member-only">Devlog</a></p>
 </footer>
 
 <script type="module">
@@ -289,6 +295,15 @@ async function connectJoyID() {
 
     currentAddress = address;
     localStorage.setItem('wyltek_address', address);
+
+    // Redirect back if they came from a members-only page
+    const returnTo = sessionStorage.getItem('wyltek_return');
+    if (returnTo) {
+      sessionStorage.removeItem('wyltek_return');
+      location.replace(returnTo);
+      return;
+    }
+
     showQueue(address);
   } catch(e) {
     showMsg('connectMsg', '⚠ ' + (e.message || e), 'err');
@@ -407,5 +422,6 @@ document.getElementById('navToggle')?.addEventListener('click', () => {
 init();
 </script>
 
+  <script src="/js/member-nav.js"></script>
 </body>
 </html>
