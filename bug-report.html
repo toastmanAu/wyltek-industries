@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bug Report — Wyltek Industries</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <script src="/js/member-guard.js"></script>
+  <style>
+    :root {
+      --bg:#0a0c0f; --surface:#111318; --surface2:#181c23; --border:#1e2430;
+      --accent:#00c8ff; --accent2:#7b5cfa; --green:#00e5a0; --orange:#ff8c42;
+      --red:#ff4560; --text:#e2e8f0; --muted:#64748b; --tag-bg:#1a2035;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body { background:var(--bg); color:var(--text); font-family:'Segoe UI',system-ui,sans-serif; font-size:15px; line-height:1.6; min-height:100vh; }
+
+    header { border-bottom:1px solid var(--border); padding:0 2rem; position:sticky; top:0; background:rgba(10,12,15,.95); backdrop-filter:blur(12px); z-index:100; }
+    .header-inner { max-width:1100px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; height:60px; }
+    .logo { display:flex; align-items:center; gap:10px; font-weight:700; font-size:1.1rem; color:var(--text); text-decoration:none; }
+    .logo img { width:28px; height:28px; }
+
+    main { max-width:600px; margin:0 auto; padding:3rem 1.5rem 5rem; }
+
+    .page-header { margin-bottom:2rem; }
+    .page-header h1 { font-size:1.6rem; font-weight:800; display:flex; align-items:center; gap:.5rem; margin-bottom:.4rem; }
+    .page-header p { color:var(--muted); font-size:.9rem; }
+
+    .form-card {
+      background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:1.75rem;
+    }
+
+    .field { margin-bottom:1.25rem; }
+    label { display:block; font-size:.82rem; font-weight:600; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; margin-bottom:.4rem; }
+    input[type=text], textarea, select {
+      width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:8px;
+      color:var(--text); font-size:.95rem; padding:.6rem .85rem; outline:none; transition:border-color .2s;
+      font-family:inherit;
+    }
+    input[type=text]:focus, textarea:focus, select:focus { border-color:var(--accent2); }
+    textarea { resize:vertical; min-height:120px; }
+    select option { background:var(--surface2); }
+
+    .severity-row { display:grid; grid-template-columns:repeat(4,1fr); gap:.5rem; }
+    .sev-btn {
+      border:1px solid var(--border); background:var(--surface2); color:var(--muted);
+      border-radius:8px; padding:.45rem .3rem; font-size:.8rem; font-weight:600;
+      cursor:pointer; text-align:center; transition:all .15s; user-select:none;
+    }
+    .sev-btn:hover { border-color:var(--accent2); color:var(--text); }
+    .sev-btn.active { color:#fff; }
+    .sev-btn[data-sev="low"].active    { background:#2d6a1f; border-color:#4caf50; color:#a5d6a7; }
+    .sev-btn[data-sev="medium"].active { background:#5a3e00; border-color:#ff8c42; color:#ffcc80; }
+    .sev-btn[data-sev="high"].active   { background:#5a1a1a; border-color:#ff4560; color:#ffb3b3; }
+    .sev-btn[data-sev="critical"].active { background:#3d0b26; border-color:#e040fb; color:#ea80fc; }
+
+    .submit-btn {
+      width:100%; background:var(--accent2); color:#fff; border:none; border-radius:8px;
+      padding:.75rem 1.5rem; font-size:1rem; font-weight:700; cursor:pointer;
+      transition:opacity .2s; margin-top:.5rem;
+    }
+    .submit-btn:hover { opacity:.85; }
+    .submit-btn:disabled { opacity:.4; cursor:not-allowed; }
+
+    .status { margin-top:1rem; border-radius:8px; padding:.75rem 1rem; font-size:.9rem; display:none; }
+    .status.success { background:#0d2e1a; border:1px solid #1a5c30; color:#a5d6a7; display:block; }
+    .status.error   { background:#2e0d0d; border:1px solid #5c1a1a; color:#ffb3b3; display:block; }
+
+    .back-link { display:inline-flex; align-items:center; gap:.4rem; color:var(--muted); font-size:.85rem; margin-bottom:1.5rem; text-decoration:none; transition:color .2s; }
+    .back-link:hover { color:var(--text); }
+
+    .reporter-info { font-size:.8rem; color:var(--muted); margin-top:1rem; }
+    .reporter-info span { color:var(--accent); font-family:monospace; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="header-inner">
+      <a href="/" class="logo">
+        <img src="/wyltek-mark.png" alt="Wyltek" />
+        Wyltek Industries
+      </a>
+    </div>
+  </header>
+
+  <main>
+    <a href="javascript:history.back()" class="back-link">← Back</a>
+
+    <div class="page-header">
+      <h1>🪲 Bug Report</h1>
+      <p>Found something broken? Tell us what happened and we'll get it fixed.</p>
+    </div>
+
+    <div class="form-card">
+      <form id="bugForm">
+
+        <div class="field">
+          <label>Page</label>
+          <select id="pageSelect" name="page" required>
+            <option value="">— select a page —</option>
+            <option value="/">Home (index)</option>
+            <option value="/hardware.html">Hardware</option>
+            <option value="/ckb.html">CKB</option>
+            <option value="/ckb-light-esp.html">CKB Light ESP</option>
+            <option value="/ckb-node-finder.html">CKB Node Finder</option>
+            <option value="/ckb-node-update.html">CKB Node Update</option>
+            <option value="/ckb-sync.html">CKB Sync</option>
+            <option value="/ckbfs-viewer.html">CKBFS Viewer</option>
+            <option value="/flasher.html">Flasher</option>
+            <option value="/blog.html">Blog</option>
+            <option value="/research.html">Research</option>
+            <option value="/roadmap.html">Roadmap</option>
+            <option value="/members.html">Members</option>
+            <option value="/profile.html">Profile</option>
+            <option value="/tests.html">Tests</option>
+            <option value="other">Other / Not listed</option>
+          </select>
+        </div>
+
+        <div class="field" id="otherPageField" style="display:none">
+          <label>Page URL or name</label>
+          <input type="text" id="otherPage" placeholder="e.g. /mint/ or ckb-dob-minter" />
+        </div>
+
+        <div class="field">
+          <label>Title <span style="color:var(--red)">*</span></label>
+          <input type="text" id="bugTitle" placeholder="Short summary of the problem" required maxlength="120" />
+        </div>
+
+        <div class="field">
+          <label>Severity</label>
+          <div class="severity-row">
+            <div class="sev-btn" data-sev="low">🟡 Low</div>
+            <div class="sev-btn active" data-sev="medium">🟠 Medium</div>
+            <div class="sev-btn" data-sev="high">🔴 High</div>
+            <div class="sev-btn" data-sev="critical">🚨 Critical</div>
+          </div>
+        </div>
+
+        <div class="field">
+          <label>Description <span style="color:var(--red)">*</span></label>
+          <textarea id="bugDesc" placeholder="What happened? What did you expect? Steps to reproduce..." required maxlength="2000"></textarea>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Submit Bug Report</button>
+
+        <div id="statusMsg" class="status"></div>
+
+        <p class="reporter-info">
+          Reporting as: <span id="reporterAddr">—</span>
+        </p>
+      </form>
+    </div>
+  </main>
+
+  <script>
+    const WORKER_URL = 'https://wyltek-bug-reporter.toastmanau.workers.dev/report';
+
+    // ── Pre-fill page from URL param ──────────────────────────────────────
+    const params = new URLSearchParams(location.search);
+    const fromPage = params.get('page');
+    const pageSelect = document.getElementById('pageSelect');
+
+    if (fromPage) {
+      // Try to match existing option
+      let matched = false;
+      for (const opt of pageSelect.options) {
+        if (opt.value === fromPage) { opt.selected = true; matched = true; break; }
+      }
+      if (!matched) {
+        // Fall through to "other" and pre-fill the free-text
+        pageSelect.value = 'other';
+        document.getElementById('otherPageField').style.display = 'block';
+        document.getElementById('otherPage').value = fromPage;
+      }
+    }
+
+    // ── "Other" toggle ────────────────────────────────────────────────────
+    pageSelect.addEventListener('change', () => {
+      document.getElementById('otherPageField').style.display =
+        pageSelect.value === 'other' ? 'block' : 'none';
+    });
+
+    // ── Severity picker ───────────────────────────────────────────────────
+    let selectedSeverity = 'medium';
+    document.querySelectorAll('.sev-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        selectedSeverity = btn.dataset.sev;
+      });
+    });
+
+    // ── Reporter address ──────────────────────────────────────────────────
+    const addr = window.MEMBER_ADDRESS || localStorage.getItem('wyltek_address') || 'unknown';
+    const addrEl = document.getElementById('reporterAddr');
+    addrEl.textContent = addr.length > 20 ? addr.slice(0, 12) + '…' + addr.slice(-8) : addr;
+
+    // ── Browser info ──────────────────────────────────────────────────────
+    function getBrowserInfo() {
+      const ua = navigator.userAgent;
+      if (ua.includes('Firefox')) return 'Firefox';
+      if (ua.includes('Edg/')) return 'Edge';
+      if (ua.includes('Chrome')) return 'Chrome';
+      if (ua.includes('Safari')) return 'Safari';
+      return ua.slice(0, 60);
+    }
+
+    // ── Submit ────────────────────────────────────────────────────────────
+    document.getElementById('bugForm').addEventListener('submit', async (e) => {
+      e.preventDefault();
+
+      const page = pageSelect.value === 'other'
+        ? (document.getElementById('otherPage').value.trim() || 'unknown')
+        : pageSelect.value;
+
+      if (!page || page === '') {
+        showStatus('error', 'Please select a page.');
+        return;
+      }
+
+      const title = document.getElementById('bugTitle').value.trim();
+      const description = document.getElementById('bugDesc').value.trim();
+
+      if (!title || !description) {
+        showStatus('error', 'Please fill in a title and description.');
+        return;
+      }
+
+      const btn = document.getElementById('submitBtn');
+      btn.disabled = true;
+      btn.textContent = 'Submitting…';
+      hideStatus();
+
+      try {
+        const res = await fetch(WORKER_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            page,
+            title,
+            description,
+            severity: selectedSeverity,
+            browser: getBrowserInfo(),
+            address: addr,
+          }),
+        });
+
+        const data = await res.json();
+        if (res.ok && data.ok) {
+          showStatus('success', `✅ ${data.message}`);
+          document.getElementById('bugForm').reset();
+          selectedSeverity = 'medium';
+          document.querySelectorAll('.sev-btn').forEach(b => b.classList.remove('active'));
+          document.querySelector('[data-sev="medium"]').classList.add('active');
+        } else {
+          showStatus('error', `❌ ${data.error || 'Something went wrong. Try again.'}`);
+        }
+      } catch (err) {
+        showStatus('error', '❌ Network error. Check your connection and try again.');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = 'Submit Bug Report';
+      }
+    });
+
+    function showStatus(type, msg) {
+      const el = document.getElementById('statusMsg');
+      el.className = 'status ' + type;
+      el.textContent = msg;
+    }
+    function hideStatus() {
+      document.getElementById('statusMsg').className = 'status';
+    }
+  </script>
+</body>
+</html>
