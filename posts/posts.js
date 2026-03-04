@@ -17,6 +17,73 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id:      "2026-03-04-ckbfs-browser-sdk-minter",
+    date:    "2026-03-04",
+    project: "DOB Minter + CKBFS",
+    title:   "We built the thing that didn't exist: browser-native CKBFS publishing",
+    tags:    ["CKB", "CKBFS", "JoyID", "release", "open-source"],
+    body: [
+      "Today we shipped something that genuinely didn't exist before — a browser-native CKBFS publisher that works with any CKB wallet, with zero server infrastructure and zero Node.js.",
+      "CKBFS (CKB File System) is a protocol for storing files permanently in CKB transaction witnesses, referenced by a TypeID cell. The official SDK, <code>@ckbfs/api</code>, requires Node.js internals — <code>crypto</code>, <code>fs</code> — which means it can't run in a browser. Every dApp that wanted CKBFS storage needed a server proxy. Until today.",
+      { type: "h3", content: "What We Built" },
+      { type: "ul", content: [
+        "<code>@wyltek/ckbfs-browser</code> — a new npm package implementing the full CKBFS V2 publish flow using pure browser APIs + CCC. Works in Chrome, Firefox, Safari including iOS.",
+        "The package accepts any CCC-compatible signer — JoyID, MetaMask, hardware wallets, raw private key — and handles chunking, molecule encoding, TypeID derivation, and on-chain confirmation.",
+        "All constants verified against the official SDK AND a real mainnet transaction. A <code>VERIFICATION.md</code> documents exactly how each byte was confirmed.",
+        "Integrated into the DOB Minter as the CKBFS storage mode — select it, pick a file, sign twice with JoyID, image appears from chain."
+      ]},
+      { type: "h3", content: "What We Had to Figure Out" },
+      "This wasn't a matter of porting code. CCC's API has several non-obvious behaviours that aren't documented anywhere — we hit every one of them:",
+      { type: "ul", content: [
+        "<code>getAddresses()</code> returns strings, not Address objects. Need <code>getRecommendedAddressObj()</code> for the lock script.",
+        "<code>hashTypeId()</code> takes a full <code>CellInput</code> object, not <code>previousOutput</code> — despite the name suggesting otherwise.",
+        "<code>depType: 'dep_group'</code> silently encodes to <code>0x00</code> (same byte as <code>code</code>). The correct CCC value is <code>'depGroup'</code> (camelCase) which encodes to <code>0x01</code>. JoyID correctly rejects the wrong encoding.",
+        "Witnesses containing <code>Uint8Array</code> instead of hex strings break JoyID's tx serialisation — the popup closes immediately with no error.",
+        "The indexer lags 5-30 seconds behind confirmed blocks — <code>get_cells</code> returns nothing until it catches up. Viewer needs a retry loop.",
+        "Fee calculation must account for witness size — 30KB chunks at 3000 shannons/KB add significant tx weight."
+      ]},
+      "Every one of these required either reading CCC source code or trial-and-error against the live JoyID popup. The package documents all of it so nobody else has to.",
+      { type: "h3", content: "The Full Flow" },
+      "Select file → pick CKBFS storage → hit Mint → JoyID signs CKBFS upload tx (225 CKB locked permanently) → JoyID signs Spore mint tx (stores <code>ckbfs://</code> URI) → viewer polls indexer → resolves and renders image directly from chain. No IPFS, no URLs that can break, no servers.",
+      { type: "link", href: "https://github.com/toastmanAu/ckbfs-browser", text: "github.com/toastmanAu/ckbfs-browser" }
+    ],
+    links: [
+      { href: "https://github.com/toastmanAu/ckbfs-browser", text: "@wyltek/ckbfs-browser on GitHub" },
+      { href: "https://github.com/toastmanAu/ckb-dob-minter", text: "DOB Minter repo" },
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
+  {
+    id:      "2026-03-04-membership-system-launch",
+    date:    "2026-03-04",
+    project: "Wyltek Membership",
+    title:   "Membership is live — first 100 get a Founding Member DOB",
+    tags:    ["CKB", "JoyID", "release", "milestone"],
+    body: [
+      "The Wyltek membership system launched today. Sign in with JoyID, get a member number, and if you're in the first 100 — you get a Founding Member DOB minted to your address.",
+      { type: "h3", content: "How It Works" },
+      { type: "ul", content: [
+        "Connect JoyID on members.html — your CKB mainnet address becomes your identity. No email, no password.",
+        "Member number assigned from live DB count — no gaps, no guessing.",
+        "First 100 members go into a mint queue. A queue runner mints their DOB automatically every 30 minutes.",
+        "DOB image stored on CKBFS — permanently on-chain, no IPFS, no server dependency.",
+        "Member-gated pages redirect non-members automatically, with return redirect after login."
+      ]},
+      { type: "h3", content: "Profile System" },
+      "Members get a profile page — display name, avatar (stored in Supabase), bio, location, what you're building. A persistent banner nudges you to fill it in once. After that, gone.",
+      { type: "h3", content: "Research Community" },
+      "The research page now has a community CTA — drop a toast and a comment on any task you're interested in. Comments are crawled daily and assessed against our research vectors. Good signal becomes new research tasks.",
+      "All addresses are displayed in truncated format (<code>ckb1qzda…sp8phrw</code>) everywhere a second person could see them. Full address only visible to the owner, with a copy button.",
+      { type: "link", href: "/members.html", text: "Join the membership" }
+    ],
+    links: [
+      { href: "/members.html", text: "Sign up" },
+      { href: "/research.html", text: "Research page" },
+      { href: "/profile.html", text: "Your profile" },
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
+  {
     id: "2026-03-04-ckbfs-founding-member-dobs",
     date: "2026-03-04",
     title: "Founding Member DOBs — Files on a Blockchain, Not a Server",
