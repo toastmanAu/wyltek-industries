@@ -9,7 +9,6 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <script>(function(){const s=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',s);})();</script>
-  <link rel="stylesheet" href="js/theme.css" />
   <style>
     :root { --bg:#0d1018;--surface:#131720;--border:#1e2430;--text:#e2e8f0;--muted:#64748b;--accent:#00c8ff;--green:#00e5a0;--red:#f43f5e; }
     *{box-sizing:border-box;margin:0;padding:0;}
@@ -66,18 +65,21 @@
   </style>
 </head>
 <body>
-<nav>
-  <a class="nav-logo" href="/">
-    <img src="/wyltek-mark.png" alt="Wyltek" />
-    <span>Wyltek Industries</span>
-  </a>
-  <div class="nav-links">
-    <a href="/">Home</a>
-    <a href="/blog.html" class="member-only">Devlog</a>
-    <a href="/hardware.html">Hardware</a>
-    <a href="/tests.html" class="active member-only">Tests</a>
-  </div>
-</nav>
+<nav id="mainNav">
+      <a href="/index.html">Home</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/ckb.html">CKB</a>
+      <a href="/ckb-light-esp.html">Light Client</a>
+      <a href="/blackbox.html">BlackBox</a>
+      <a href="/roadmap.html">Roadmap</a>
+      <a href="/research.html" class="member-only active">Research</a>
+      <a href="/blog.html" class="member-only">Devlog</a>
+      <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
+      <a href="/flasher.html" class="member-only">Flasher</a>
+      <a href="/ckb-sync.html" class="member-only">Sync</a>
+      <a href="/members.html" class="nav-join">✦ Join</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
 <div class="page">
   <h1 class="page-title">Test Results</h1>
   <p class="page-sub">Host test suite results for our embedded libraries. Run on aarch64 Linux (Pi 5), updated automatically. Tests compile and run natively on the build host — no device required — keeping iteration fast and CI simple.</p>

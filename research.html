@@ -9,7 +9,6 @@
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <script>(function(){const s=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',s);})();</script>
-  <link rel="stylesheet" href="js/theme.css" />
   <style>
     :root{--bg:#0d1018;--surface:#131720;--border:#1e2430;--text:#e2e8f0;--muted:#64748b;--accent:#00c8ff;--green:#00e5a0;--red:#f43f5e;--yellow:#fbbf24;--purple:#a78bfa;}
     *{box-sizing:border-box;margin:0;padding:0;}
@@ -113,27 +112,21 @@
   </style>
 </head>
 <body>
-<nav>
-  <a class="nav-logo" href="/">
-    <img src="/wyltek-mark.png" alt="Wyltek" />
-    <span>Wyltek Industries</span>
-  </a>
-  <div class="nav-links" id="mainNav">
-    <a href="/">Home</a>
-    <a href="/hardware.html">Hardware</a>
-    <a href="/ckb.html">CKB Stack</a>
-    <a href="/ckb-light-esp.html">Light Client</a>
-    <a href="/roadmap.html">Roadmap</a>
-    <a href="/blog.html" class="member-only">Devlog</a>
-    <a href="/research.html" class="active member-only">Research</a>
-    <a href="/tests.html" class="member-only">Tests</a>
-    <a href="/flasher.html" class="member-only">Flasher</a>
-    <a href="/ckb-sync.html" class="member-only">Sync</a>
-    <a href="members.html" class="nav-join">✦ Membership</a>
-      <a href="profile.html" class="member-only">Profile</a>
-    <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
-  </div>
-</nav>
+<nav id="mainNav">
+      <a href="/index.html">Home</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/ckb.html">CKB</a>
+      <a href="/ckb-light-esp.html">Light Client</a>
+      <a href="/blackbox.html">BlackBox</a>
+      <a href="/roadmap.html">Roadmap</a>
+      <a href="/research.html" class="member-only active">Research</a>
+      <a href="/blog.html" class="member-only">Devlog</a>
+      <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
+      <a href="/flasher.html" class="member-only">Flasher</a>
+      <a href="/ckb-sync.html" class="member-only">Sync</a>
+      <a href="/members.html" class="nav-join">✦ Join</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
 
 <div class="page">
   <div class="page-header">
@@ -363,6 +356,18 @@ window.submitComment = async function(taskId) {
 
 render();
 </script>
+
+<footer>
+  <p style="margin-bottom:0.5rem">
+    Built by <a href="https://github.com/toastmanAu" target="_blank">toastmanAu</a> &nbsp;&middot;&nbsp;
+    All projects open source on <a href="https://github.com/toastmanAu" target="_blank">GitHub</a> &nbsp;&middot;&nbsp;
+    Nervos CKB community contributor
+  </p>
+  <p style="font-size:0.78rem; margin-top:0.4rem; opacity:0.5">
+    Wyltek Industries &mdash; wouldn\'t you like to know
+  </p>
+  <p style="margin-top:.8rem;font-size:.78rem;opacity:.7">Built in the Nervos CKB ecosystem &middot; <a href="https://nervos.org" target="_blank">nervos.org</a></p>
+</footer>
 <script src="js/research-tasks.js"></script>
 <script src="/js/member-nav.js"></script>
   <script src="/js/profile-banner.js"></script>

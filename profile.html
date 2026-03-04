@@ -3,12 +3,11 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>My Profile — Wyltek Industries</title>
+  <title>Profile — Wyltek Industries</title>
   <script src="/js/member-guard.js"></script>
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <script>(function(){const s=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',s);})();</script>
-  <link rel="stylesheet" href="js/theme.css" />
   <style>
     :root{--bg:#0d1018;--surface:#131720;--border:#1e2430;--text:#e2e8f0;--muted:#64748b;--accent:#00c8ff;--green:#00e5a0;--red:#f43f5e;--yellow:#fbbf24;}
     *{box-sizing:border-box;margin:0;padding:0;}
@@ -83,13 +82,16 @@
     <nav id="mainNav">
       <a href="index.html">Home</a>
       <a href="hardware.html">Hardware</a>
-      <a href="ckb.html">CKB Stack</a>
+      <a href="ckb.html">CKB</a>
       <a href="ckb-light-esp.html">Light Client</a>
+      <a href="blackbox.html">BlackBox</a>
       <a href="roadmap.html">Roadmap</a>
-      <a href="blog.html" class="member-only">Devlog</a>
       <a href="research.html" class="member-only">Research</a>
-      <a href="members.html" class="member-only">Membership</a>
-      <a href="profile.html" class="active member-only">Profile</a>
+      <a href="blog.html" class="member-only">Devlog</a>
+      <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
+      <a href="flasher.html" class="member-only">Flasher</a>
+      <a href="ckb-sync.html" class="member-only">Sync</a>
+      <a href="members.html" class="nav-join">✦ Join</a>
       <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
     </nav>
   </div>
@@ -306,5 +308,6 @@ init();
 </script>
 <script src="/js/addr-format.js"></script>
 <script src="/js/member-nav.js"></script>
+<script src="/js/profile-banner.js"></script>
 </body>
 </html>
