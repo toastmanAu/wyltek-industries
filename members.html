@@ -242,8 +242,8 @@ window.disconnect = disconnect;
 async function loadJoyID() {
   if (joyidConnect) return;
   const mod = await import('https://esm.sh/@joyid/ckb@1.1.3');
-  // Force mainnet — DOBs are minted on CKB mainnet
-  if (mod.initConfig) mod.initConfig({ network: 'mainnet' });
+  // Must set joyidAppURL explicitly — default in this SDK version is testnet.joyid.dev
+  if (mod.initConfig) mod.initConfig({ joyidAppURL: 'https://app.joy.id', network: 'mainnet' });
   joyidConnect = mod.connect;
   joyidSignMessage = mod.signChallenge || mod.signMessage;
 }
@@ -280,7 +280,7 @@ async function connectJoyID() {
   try {
     await loadJoyID();
     const callbackUrl = window.location.origin + '/joyid-callback.html';
-    const result = await joyidConnect({ redirectURL: callbackUrl, network: 'mainnet' });
+    const result = await joyidConnect({ redirectURL: callbackUrl, network: 'mainnet', joyidAppURL: 'https://app.joy.id' });
     const address = result.address;
 
     showMsg('connectMsg', '<span class="spinner"></span>Creating account…', 'info');
