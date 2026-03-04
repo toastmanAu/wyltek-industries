@@ -2,395 +2,550 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>CKBFS Viewer — Wyltek Industries</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <title>DOB Inventory — Wyltek Industries</title>
   <script src="/js/member-guard.js"></script>
-  <meta name="description" content="View files stored on-chain via the CKBFS protocol on Nervos CKB." />
+  <meta name="description" content="View your Nervos CKB DOBs and on-chain files." />
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
   <link rel="manifest" href="/site.webmanifest">
   <style>
     :root {
-      --bg:       #0a0c0f;
-      --surface:  #111318;
-      --surface2: #181c23;
-      --border:   #1e2430;
-      --accent:   #00c8ff;
-      --accent2:  #7b5cfa;
-      --green:    #00e5a0;
-      --orange:   #ff8c42;
-      --text:     #e2e8f0;
-      --muted:    #64748b;
-      --tag-bg:   #1a2035;
+      --bg:#0a0c0f; --surface:#111318; --surface2:#181c23; --border:#1e2430;
+      --accent:#00c8ff; --accent2:#7b5cfa; --green:#00e5a0; --orange:#ff8c42;
+      --text:#e2e8f0; --muted:#64748b;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      background: var(--bg);
-      color: var(--text);
-      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
-      font-size: 15px; line-height: 1.6;
-    }
-    a { color: var(--accent); text-decoration: none; }
-    a:hover { text-decoration: underline; }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.6;}
+    a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
 
-    header {
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem; position: sticky; top: 0;
-      background: rgba(10,12,15,0.93); backdrop-filter: blur(12px); z-index: 100;
-    }
-    .header-inner {
-      max-width: 1100px; margin: 0 auto;
-      display: flex; align-items: center; justify-content: space-between; height: 60px;
-    }
-    .logo {
-      display: flex; align-items: center; gap: 10px;
-      font-weight: 700; font-size: 1.1rem; letter-spacing: 0.02em;
-      color: var(--text); text-decoration: none;
-    }
-    nav { display: flex; gap: 1.5rem; }
-    nav a { color: var(--muted); font-size: 0.9rem; transition: color 0.2s; }
-    nav a:hover, nav a.active { color: var(--text); text-decoration: none; }
-    .nav-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
-
-    @media (max-width: 768px) {
-      .nav-toggle { display: block; }
-      nav#mainNav {
-        display: none; flex-direction: column; gap: 0; position: absolute;
-        top: 60px; left: 0; right: 0; background: var(--surface);
-        border-bottom: 1px solid var(--border); z-index: 99;
-      }
-      nav#mainNav.open { display: flex; }
-      nav#mainNav a { padding: 0.7rem 1.5rem; font-size: 1rem; border-bottom: 1px solid var(--border); }
+    header{border-bottom:1px solid var(--border);padding:0 2rem;position:sticky;top:0;background:rgba(10,12,15,.95);backdrop-filter:blur(12px);z-index:100;}
+    .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;color:var(--text);text-decoration:none;}
+    .logo img{width:28px;height:28px;}
+    nav{display:flex;gap:1.5rem;}
+    nav a{color:var(--muted);font-size:.9rem;transition:color .2s;}
+    nav a:hover,nav a.active{color:var(--text);text-decoration:none;}
+    .nav-join{background:var(--accent);color:#000!important;padding:.3rem .9rem;border-radius:99px;font-size:.82rem!important;font-weight:600;}
+    .nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;}
+    @media(max-width:768px){
+      .nav-toggle{display:block;}
+      nav#mainNav{display:none;flex-direction:column;gap:0;position:absolute;top:60px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);z-index:99;padding:.5rem 0;}
+      nav#mainNav.open{display:flex;}
+      nav#mainNav a{padding:.6rem 2rem;}
+      .member-only{display:none;}
     }
 
-    main { max-width: 900px; margin: 0 auto; padding: 2.5rem 1.5rem 4rem; overflow-x: hidden; }
-    h1 { font-size: 1.8rem; font-weight: 700; margin-bottom: 0.4rem; }
-    .subtitle { color: var(--muted); margin-bottom: 2rem; font-size: 0.95rem; }
+    main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem;}
+    .page-header{margin-bottom:1.5rem;}
+    .page-header h1{font-size:1.6rem;font-weight:700;}
+    .page-header p{color:var(--muted);font-size:.9rem;margin-top:.3rem;}
 
-    .input-card {
-      background: var(--surface); border: 1px solid var(--border);
-      border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem;
-    }
-    .input-row { display: flex; gap: 0.75rem; align-items: stretch; flex-wrap: wrap; }
-    .input-row input {
-      flex: 1; min-width: 0; background: var(--surface2);
-      border: 1px solid var(--border); border-radius: 8px;
-      color: var(--text); padding: 0.65rem 1rem;
-      font-size: 0.85rem; font-family: 'Consolas', 'Monaco', monospace;
-      outline: none; transition: border-color 0.2s;
-      overflow: hidden; text-overflow: ellipsis;
-    }
-    .input-row input:focus { border-color: var(--accent); }
-    .input-row input::placeholder { color: var(--muted); }
+    .toolbar{display:flex;align-items:center;gap:.75rem;margin-bottom:1.5rem;flex-wrap:wrap;}
+    .net-pill{display:flex;background:var(--surface);border:1px solid var(--border);border-radius:99px;overflow:hidden;}
+    .net-pill button{background:none;border:none;color:var(--muted);font-size:.82rem;padding:.35rem .9rem;cursor:pointer;transition:all .15s;}
+    .net-pill button.active{background:var(--accent);color:#000;font-weight:600;}
+    .wallet-badge{display:flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:.35rem .9rem;font-size:.82rem;color:var(--muted);}
+    .wallet-badge .dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;}
+    .wallet-badge .addr{color:var(--text);font-family:monospace;}
+    .btn-sm{background:var(--surface);border:1px solid var(--border);color:var(--text);font-size:.82rem;padding:.35rem .9rem;border-radius:99px;cursor:pointer;transition:border-color .15s;}
+    .btn-sm:hover{border-color:var(--accent);color:var(--accent);}
 
-    .btn {
-      background: var(--accent); color: #000; border: none; border-radius: 8px;
-      padding: 0.65rem 1.4rem; font-size: 0.9rem; font-weight: 600;
-      cursor: pointer; transition: opacity 0.2s; white-space: nowrap;
-    }
-    .btn:hover { opacity: 0.85; }
-    .btn:disabled { opacity: 0.4; cursor: not-allowed; }
-    .btn-ghost {
-      background: var(--surface2); color: var(--text);
-      border: 1px solid var(--border);
-    }
-    .btn-ghost:hover { border-color: var(--accent); opacity: 1; }
+    .state-msg{text-align:center;padding:3rem 1rem;color:var(--muted);}
+    .state-msg .icon{font-size:2.5rem;margin-bottom:.75rem;}
+    .state-msg h3{color:var(--text);margin-bottom:.4rem;}
+    .spinner-wrap{display:flex;flex-direction:column;align-items:center;gap:.75rem;padding:3rem;color:var(--muted);}
+    .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
 
-    .network-row { display: flex; gap: 0.75rem; margin-top: 0.85rem; align-items: center; }
-    .network-label { color: var(--muted); font-size: 0.85rem; }
-    .net-btn {
-      background: var(--surface2); border: 1px solid var(--border); border-radius: 6px;
-      color: var(--muted); padding: 0.3rem 0.8rem; font-size: 0.82rem; cursor: pointer; transition: all 0.2s;
+    /* Grid */
+    .inventory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(160px,1fr));gap:1rem;}
+    @media(max-width:480px){.inventory-grid{grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;}}
+    .dob-card{background:var(--surface);border:1px solid var(--border);border-radius:12px;overflow:hidden;cursor:pointer;transition:border-color .2s,transform .15s,box-shadow .2s;}
+    .dob-card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,200,255,.12);}
+    .dob-card.selected{border-color:var(--accent);box-shadow:0 0 0 2px rgba(0,200,255,.3);}
+    .dob-thumb{width:100%;aspect-ratio:1;background:var(--surface2);display:flex;align-items:center;justify-content:center;overflow:hidden;position:relative;}
+    .dob-thumb img{width:100%;height:100%;object-fit:cover;}
+    .dob-thumb .thumb-ph{font-size:2rem;color:var(--muted);}
+    .dob-thumb .thumb-spin{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--surface2);}
+    .dob-thumb .thumb-spin .spinner{width:20px;height:20px;border-width:2px;}
+    .dob-info{padding:.6rem .75rem;}
+    .dob-name{font-size:.82rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .dob-id{font-size:.72rem;color:var(--muted);font-family:monospace;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+    .dob-badge{display:inline-block;font-size:.65rem;padding:.1rem .4rem;border-radius:99px;margin-top:.25rem;background:rgba(0,200,255,.1);color:var(--accent);border:1px solid rgba(0,200,255,.2);}
+
+    /* Detail panel */
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:199;opacity:0;pointer-events:none;transition:opacity .3s;}
+    .overlay.visible{opacity:1;pointer-events:all;}
+    .detail-panel{position:fixed;right:0;top:0;bottom:0;width:430px;max-width:100vw;background:var(--surface);border-left:1px solid var(--border);z-index:200;display:flex;flex-direction:column;transform:translateX(100%);transition:transform .3s cubic-bezier(.16,1,.3,1);}
+    .detail-panel.open{transform:translateX(0);}
+    @media(max-width:600px){
+      .detail-panel{width:100vw;border-left:none;border-top:1px solid var(--border);top:auto;height:85vh;transform:translateY(100%);}
+      .detail-panel.open{transform:translateY(0);}
     }
-    .net-btn.active { border-color: var(--accent); color: var(--accent); background: rgba(0,200,255,0.08); }
+    .detail-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border);flex-shrink:0;}
+    .detail-header h3{font-size:1rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px;}
+    .btn-close{background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer;padding:.1rem .3rem;line-height:1;}
+    .btn-close:hover{color:var(--text);}
+    .detail-body{flex:1;overflow-y:auto;padding:1.25rem;}
+    .detail-preview{width:100%;border-radius:10px;overflow:hidden;background:var(--surface2);margin-bottom:1.25rem;display:flex;align-items:center;justify-content:center;min-height:180px;}
+    .detail-preview img{width:100%;max-height:360px;object-fit:contain;}
+    .detail-preview .prev-spin{display:flex;flex-direction:column;align-items:center;gap:.5rem;padding:2rem;color:var(--muted);font-size:.85rem;}
+    .detail-preview .prev-ph{font-size:3rem;padding:2rem;}
+    .meta-table{width:100%;border-collapse:collapse;margin-bottom:1.25rem;font-size:.83rem;}
+    .meta-table td{padding:.4rem 0;vertical-align:top;}
+    .meta-table td:first-child{color:var(--muted);white-space:nowrap;padding-right:1rem;width:90px;}
+    .meta-table td:last-child{color:var(--text);word-break:break-all;font-family:monospace;font-size:.78rem;}
+    .detail-actions{display:flex;gap:.5rem;flex-wrap:wrap;}
+    .btn-action{background:var(--surface2);border:1px solid var(--border);color:var(--text);font-size:.82rem;padding:.5rem 1rem;border-radius:8px;cursor:pointer;transition:border-color .15s;text-decoration:none;display:inline-flex;align-items:center;gap:.4rem;}
+    .btn-action:hover{border-color:var(--accent);color:var(--accent);text-decoration:none;}
 
-    .examples { margin-top: 0.85rem; font-size: 0.82rem; color: var(--muted); }
-    .examples a { color: var(--accent2); font-family: monospace; font-size: 0.78rem; }
+    /* Manual lookup */
+    .manual-section{margin-top:2.5rem;border-top:1px solid var(--border);padding-top:1.5rem;}
+    .manual-section h2{font-size:.95rem;font-weight:600;margin-bottom:.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+    .input-row{display:flex;gap:.5rem;}
+    .input-row input{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.6rem .9rem;border-radius:8px;font-size:.88rem;outline:none;min-width:0;}
+    .input-row input:focus{border-color:var(--accent);}
+    .input-row button{background:var(--accent);color:#000;border:none;padding:.6rem 1.2rem;border-radius:8px;font-weight:600;font-size:.88rem;cursor:pointer;white-space:nowrap;}
 
-    /* Status */
-    .status {
-      display: none; align-items: center; gap: 0.75rem;
-      padding: 1rem 1.25rem; border-radius: 10px; margin-bottom: 1.5rem; font-size: 0.9rem;
-    }
-    .status.loading { display: flex; background: var(--surface); border: 1px solid var(--border); color: var(--muted); }
-    .status.error   { display: flex; background: rgba(255,60,60,0.08); border: 1px solid rgba(255,60,60,0.3); color: #ff6b6b; }
-
-    .spinner {
-      width: 18px; height: 18px; border-radius: 50%;
-      border: 2px solid rgba(0,200,255,0.2); border-top-color: var(--accent);
-      animation: spin 0.7s linear infinite; flex-shrink: 0;
-    }
-    @keyframes spin { to { transform: rotate(360deg); } }
-
-    /* Result */
-    .result-card { display: none; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
-    .result-card.visible { display: block; }
-
-    .meta-bar {
-      padding: 1rem 1.5rem; border-bottom: 1px solid var(--border);
-      display: flex; flex-wrap: wrap; gap: 0.5rem 1.5rem; align-items: center;
-    }
-    .meta-item { font-size: 0.82rem; min-width: 0; word-break: break-all; }
-    .meta-label { color: var(--muted); }
-    .meta-value { color: var(--text); font-family: monospace; word-break: break-all; }
-    .tag {
-      background: var(--tag-bg); border: 1px solid var(--border); border-radius: 4px;
-      padding: 0.15rem 0.5rem; font-size: 0.78rem; color: var(--accent); font-family: monospace;
-    }
-
-    .viewer-area { padding: 1.5rem; }
-
-    .img-viewer {
-      display: flex; justify-content: center; align-items: center;
-      background: var(--surface2); border-radius: 8px; padding: 1rem; min-height: 200px;
-    }
-    .img-viewer img { max-width: 100%; max-height: 600px; border-radius: 6px; object-fit: contain; }
-
-    .text-viewer {
-      background: var(--surface2); border-radius: 8px; padding: 1.25rem;
-      font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
-      font-size: 0.85rem; line-height: 1.6; white-space: pre-wrap; word-break: break-all;
-      max-height: 500px; overflow-y: auto; color: var(--text);
-    }
-
-    .download-area {
-      display: flex; flex-direction: column; align-items: center;
-      gap: 1rem; padding: 2rem; background: var(--surface2); border-radius: 8px; text-align: center;
-    }
-    .file-icon { font-size: 3rem; }
-    .download-name { font-family: monospace; font-size: 0.9rem; color: var(--muted); }
-
-    .typeid-box {
-      margin-top: 1rem; padding: 0.75rem 1rem; background: var(--surface2);
-      border-radius: 8px; font-family: monospace; font-size: 0.72rem; color: var(--muted);
-      word-break: break-all; overflow-wrap: anywhere;
-    }
-    .typeid-box span { color: var(--accent); }
-
-    footer {
-      border-top: 1px solid var(--border); padding: 1.5rem 2rem;
-      text-align: center; color: var(--muted); font-size: 0.82rem;
-    }
-    footer a { color: var(--muted); }
-    footer a:hover { color: var(--accent); }
-  </style>
-  <style>.nav-join{color:var(--accent,#00c8ff)!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;transition:background .2s,border-color .2s!important;}.nav-join:hover{background:rgba(0,200,255,.1);border-color:var(--accent,#00c8ff);text-decoration:none!important;}</style>
-  <style>
-    /* Member-only nav links: hidden until .member-nav class is added by JS */
-    .member-only { display: none !important; }
-    #mainNav.member-nav .member-only,
-    .nav-links.member-nav .member-only { display: inline-flex !important; }
+    footer{text-align:center;padding:2rem;color:var(--muted);font-size:.82rem;margin-top:3rem;border-top:1px solid var(--border);}
   </style>
 </head>
 <body>
 
 <header>
   <div class="header-inner">
-    <a class="logo" href="index.html">
-      <img src="wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">
+    <a href="/" class="logo">
+      <img src="/wyltek-mark.png" alt="W" />
       Wyltek Industries
     </a>
+    <button class="nav-toggle" id="navToggle" aria-label="Menu">☰</button>
     <nav id="mainNav">
-      <a href="index.html">Home</a>
-      <a href="blog.html" class="member-only">Devlog</a>
-      <a href="blackbox.html">BlackBox</a>
-      <a href="ckb-sync.html" class="member-only">CKB Sync</a>
-      <a href="flasher.html" class="member-only">Flasher</a>
-      <a href="hardware.html">Hardware</a>
-      <a href="ckb-light-esp.html">Light Client</a>
-      <a href="ckb.html">CKB Stack</a>
-      <a href="ckbfs-viewer.html" class="active member-only">CKBFS Viewer</a>
-      <a href="members.html" class="nav-join">✦ Join</a>
-      <a href="profile.html" class="member-only">Profile</a>
-      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+      <a href="/index.html">Home</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/ckb.html">CKB</a>
+      <a href="/research.html" class="member-only">Research</a>
+      <a href="/ckbfs-viewer.html" class="active member-only">Inventory</a>
+      <a href="/members.html" class="nav-join">✦ Join</a>
     </nav>
-    <button class="nav-toggle" id="navToggle">&#9776;</button>
   </div>
 </header>
 
 <main>
-  <h1>CKBFS Viewer</h1>
-  <p class="subtitle">
-    View files stored on-chain via the <a href="https://github.com/code-monad/ckbfs" target="_blank">CKBFS protocol</a> on Nervos CKB.
-    Data lives in transaction witnesses — permanent, censorship-resistant, no IPFS.
-  </p>
+  <div class="page-header">
+    <h1>DOB Inventory</h1>
+    <p>Your on-chain Digital Objects on Nervos CKB</p>
+  </div>
 
-  <div class="input-card">
+  <div class="toolbar">
+    <div class="net-pill">
+      <button id="btnMainnet" onclick="switchNetwork('mainnet')">Mainnet</button>
+      <button id="btnTestnet" onclick="switchNetwork('testnet')">Testnet</button>
+    </div>
+    <div class="wallet-badge" id="walletBadge" style="display:none">
+      <span class="dot"></span>
+      <span class="addr" id="walletShort"></span>
+    </div>
+    <button class="btn-sm" onclick="loadInventory()">↺ Refresh</button>
+  </div>
+
+  <div id="inventoryState"></div>
+  <div id="inventoryGrid" class="inventory-grid"></div>
+
+  <div class="manual-section">
+    <h2>Manual Lookup</h2>
     <div class="input-row">
-      <input type="text" id="identifier"
-        placeholder="ckbfs://0x... or bare TypeID 0x..."
-        autocomplete="off" spellcheck="false" />
-      <button class="btn" id="loadBtn" onclick="loadFile()">Load</button>
-      <button class="btn btn-ghost" onclick="clearViewer()">Clear</button>
+      <input type="text" id="identifier" placeholder="TypeID (0x…) or tx hash" />
+      <button onclick="loadManual()">View</button>
     </div>
-    <div class="network-row">
-      <span class="network-label">Network:</span>
-      <button class="net-btn active" id="btnTestnet" onclick="setNetwork('testnet')">Testnet</button>
-      <button class="net-btn" id="btnMainnet" onclick="setNetwork('mainnet')">Mainnet</button>
-    </div>
-    <div class="examples">
-      Try: <a href="#" onclick="useExample();return false;">
-        0x061cc843e720a4274da71a1a2fec4802cd02f6d5ee7167e7429435878068abe0
-      </a>
-      &nbsp;(Wyltek Founding Member JPEG, testnet)
-    </div>
-  </div>
-
-  <div class="status" id="status">
-    <div class="spinner"></div>
-    <span id="statusText">Resolving…</span>
-  </div>
-
-  <div class="result-card" id="resultCard">
-    <div class="meta-bar" id="metaBar"></div>
-    <div class="viewer-area" id="viewerArea"></div>
   </div>
 </main>
 
-<footer>
-  <p>Wyltek Industries · <a href="https://github.com/toastmanAu" target="_blank">GitHub</a> · Built on <a href="https://nervos.org" target="_blank">Nervos CKB</a></p>
-  <p style="margin-top:0.4rem;">CKBFS protocol by <a href="https://github.com/code-monad/ckbfs" target="_blank">code-monad</a></p>
-</footer>
+<div class="overlay" id="overlay" onclick="closeDetail()"></div>
+
+<div class="detail-panel" id="detailPanel">
+  <div class="detail-header">
+    <h3 id="detailTitle">DOB Detail</h3>
+    <button class="btn-close" onclick="closeDetail()">×</button>
+  </div>
+  <div class="detail-body" id="detailBody"></div>
+</div>
+
+<footer>Wyltek Industries · Built on Nervos CKB</footer>
 
 <script type="module">
-  import { parseIdentifier, resolveCKBFS, formatSize } from './src/ckbfs-resolver.js?v=6';
+import { parseIdentifier, resolveCKBFS, formatSize } from './src/ckbfs-resolver.js?v=7';
 
-  let currentNetwork = 'testnet';
+const RPC_URL = { mainnet: 'https://mainnet.ckbapp.dev', testnet: 'https://testnet.ckbapp.dev' };
+const EXPLORER = { mainnet: 'https://explorer.nervos.org', testnet: 'https://pudge.explorer.nervos.org' };
 
-  window.setNetwork = (net) => {
-    currentNetwork = net;
-    document.getElementById('btnTestnet').classList.toggle('active', net === 'testnet');
-    document.getElementById('btnMainnet').classList.toggle('active', net === 'mainnet');
-  };
+let currentNetwork = 'mainnet';
+let currentAddress  = null;
+let dobCells        = [];
 
-  window.useExample = () => {
-    document.getElementById('identifier').value =
-      '0x061cc843e720a4274da71a1a2fec4802cd02f6d5ee7167e7429435878068abe0';
-    window.setNetwork('testnet');
-    window.loadFile();
-  };
+// ── Init ──────────────────────────────────────────────────────────────────────
+const storedAddr = localStorage.getItem('wyltek_address');
+if (storedAddr) {
+  currentAddress = storedAddr;
+  document.getElementById('walletBadge').style.display = 'flex';
+  document.getElementById('walletShort').textContent = storedAddr.slice(0, 10) + '…' + storedAddr.slice(-6);
+}
 
-  window.loadFile = async () => {
-    const raw = document.getElementById('identifier').value.trim();
-    if (!raw) return;
+document.getElementById('identifier').addEventListener('keydown', e => { if (e.key === 'Enter') loadManual(); });
+document.getElementById('navToggle')?.addEventListener('click', () => {
+  document.getElementById('mainNav').classList.toggle('open');
+});
 
-    let typeId;
-    try { typeId = parseIdentifier(raw); }
-    catch (e) { showError(e.message); return; }
+setNetwork('mainnet');
 
-    showLoading('Resolving TypeID…');
-    clearResult();
+// ── Network ───────────────────────────────────────────────────────────────────
+window.switchNetwork = setNetwork;
+function setNetwork(net) {
+  currentNetwork = net;
+  document.getElementById('btnMainnet').classList.toggle('active', net === 'mainnet');
+  document.getElementById('btnTestnet').classList.toggle('active', net === 'testnet');
+  loadInventory();
+}
 
-    try {
-      const result = await resolveCKBFS(typeId, currentNetwork, setStatus);
-      hideStatus();
-      showResult(result, typeId);
-    } catch (e) {
-      showError(e.message);
-    }
-  };
+// ── Load inventory ────────────────────────────────────────────────────────────
+window.loadInventory = loadInventory;
+async function loadInventory() {
+  const grid  = document.getElementById('inventoryGrid');
+  const state = document.getElementById('inventoryState');
+  grid.innerHTML = '';
+  closeDetail();
 
-  window.clearViewer = () => {
-    document.getElementById('identifier').value = '';
-    clearResult();
-    hideStatus();
-  };
+  if (!currentAddress) {
+    state.innerHTML = `<div class="state-msg">
+      <div class="icon">🔗</div>
+      <h3>Connect your wallet</h3>
+      <p>Sign in on the <a href="/members.html">members page</a> to view your DOBs.</p>
+    </div>`;
+    return;
+  }
 
-  function showResult({ fileBytes, contentType, filename, checksum, witnessIdx, chunkCount, txHash }, typeId) {
-    const explorerBase = currentNetwork === 'mainnet'
-      ? 'https://explorer.nervos.org/transaction'
-      : 'https://pudge.explorer.nervos.org/transaction';
+  state.innerHTML = `<div class="spinner-wrap"><div class="spinner"></div><span>Scanning for DOBs on ${currentNetwork}…</span></div>`;
 
-    document.getElementById('metaBar').innerHTML = `
-      <span class="tag">${contentType}</span>
-      <span class="meta-item"><span class="meta-label">File: </span><span class="meta-value">${filename || '(unnamed)'}</span></span>
-      <span class="meta-item"><span class="meta-label">Size: </span><span class="meta-value">${formatSize(fileBytes.length)}</span></span>
-      <span class="meta-item"><span class="meta-label">Checksum: </span><span class="meta-value">0x${checksum.toString(16).padStart(8,'0')}</span></span>
-      ${chunkCount > 1 ? `<span class="meta-item"><span class="meta-label">Chunks: </span><span class="meta-value">${chunkCount}</span></span>` : ''}
-      <a href="${explorerBase}/${txHash}" target="_blank" style="font-size:0.82rem;margin-left:auto">View tx ↗</a>
-    `;
+  try {
+    const cells = await fetchSporeCells(currentAddress, currentNetwork);
+    dobCells = cells;
+    state.innerHTML = '';
 
-    const viewerArea = document.getElementById('viewerArea');
-
-    if (contentType.startsWith('image/')) {
-      // base64 data URL — works on Safari iOS where createObjectURL can silently fail
-      let binary = '';
-      for (let i = 0; i < fileBytes.length; i++) binary += String.fromCharCode(fileBytes[i]);
-      const dataUrl = `data:${contentType};base64,${btoa(binary)}`;
-      viewerArea.innerHTML = `
-        <div class="img-viewer"><img src="${dataUrl}" alt="${filename}" /></div>
-        <div class="typeid-box">TypeID: <span>${typeId}</span></div>
-      `;
-    } else if (contentType.startsWith('text/') || contentType === 'application/json') {
-      const text = new TextDecoder().decode(fileBytes);
-      const display = contentType === 'application/json'
-        ? JSON.stringify(JSON.parse(text), null, 2) : text;
-      viewerArea.innerHTML = `
-        <div class="text-viewer">${escapeHtml(display)}</div>
-        <div class="typeid-box">TypeID: <span>${typeId}</span></div>
-      `;
-    } else {
-      const blob = new Blob([fileBytes], { type: contentType });
-      const url = URL.createObjectURL(blob);
-      viewerArea.innerHTML = `
-        <div class="download-area">
-          <div class="file-icon">📄</div>
-          <div class="download-name">${filename || 'ckbfs-file'}</div>
-          <div style="color:var(--muted);font-size:0.85rem">${contentType} · ${formatSize(fileBytes.length)}</div>
-          <a href="${url}" download="${filename || 'ckbfs-file'}" class="btn" style="text-decoration:none;display:inline-block;margin-top:0.5rem">⬇ Download</a>
-        </div>
-        <div class="typeid-box">TypeID: <span>${typeId}</span></div>
-      `;
+    if (!cells.length) {
+      state.innerHTML = `<div class="state-msg">
+        <div class="icon">📭</div>
+        <h3>No DOBs found</h3>
+        <p>No Spore DOBs on ${currentNetwork} for this address.<br>
+        <a href="https://mint.wyltekindustries.com" target="_blank">Mint one →</a></p>
+      </div>`;
+      return;
     }
 
-    document.getElementById('resultCard').classList.add('visible');
+    renderGrid(cells);
+  } catch (e) {
+    console.error('[inventory] load failed:', e);
+    state.innerHTML = `<div class="state-msg">
+      <div class="icon">⚠️</div>
+      <h3>Failed to load</h3>
+      <p>${e.message}</p>
+    </div>`;
   }
+}
 
-  function showLoading(msg) {
-    const s = document.getElementById('status');
-    s.className = 'status loading';
-    s.innerHTML = `<div class="spinner"></div><span id="statusText">${msg}</span>`;
-  }
-  function setStatus(msg) {
-    const el = document.getElementById('statusText');
-    if (el) el.textContent = msg;
-  }
-  function showError(msg) {
-    const s = document.getElementById('status');
-    s.className = 'status error';
-    s.innerHTML = `<span>⚠</span><span>${msg}</span>`;
-  }
-  function hideStatus() { document.getElementById('status').className = 'status'; }
-  function clearResult() {
-    document.getElementById('resultCard').classList.remove('visible');
-    document.getElementById('viewerArea').innerHTML = '';
-    document.getElementById('metaBar').innerHTML = '';
-  }
-  function escapeHtml(s) {
-    return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-  }
+// ── Fetch Spore cells via indexer ─────────────────────────────────────────────
+async function fetchSporeCells(address, network) {
+  const rpc = RPC_URL[network];
 
-  // Init
-  document.getElementById('identifier').addEventListener('keydown', e => {
-    if (e.key === 'Enter') window.loadFile();
+  // Spore type script code hashes
+  const SPORE_HASHES = [
+    '0x4a4dce1df3dffff7f8b2cd7dff7303df3b6150c9788cb75dcf6747247132b9f5', // mainnet v1
+    '0x5e063b4c0e7abeaa6a428df3b693521a1a22d24e6b', // mainnet v2 (approx)
+    '0x685a60219309029d01182c8d57c12166e6d39ea4e18a5b0a4b7e4c42fde851cb', // testnet
+  ];
+
+  // Use indexer get_cells with lock script filter + has type script
+  const resp = await fetch(rpc, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      jsonrpc: '2.0', id: 1,
+      method: 'get_cells',
+      params: [{
+        script: addressToLock(address, network),
+        script_type: 'lock',
+        with_data: true,
+        filter: { output_data_len_range: ['0x0', '0xffffff'] },
+      }, 'asc', '0x64'],
+    }),
   });
-  document.getElementById('navToggle')?.addEventListener('click', () => {
-    document.getElementById('mainNav').classList.toggle('open');
-  });
 
-  // URL params: ?id=0x...&net=mainnet
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get('id'), net = params.get('net');
-  if (id) {
-    document.getElementById('identifier').value = id;
-    if (net === 'mainnet') window.setNetwork('mainnet');
-    window.loadFile();
+  const json = await resp.json();
+  if (json.error) throw new Error(`RPC error: ${json.error.message}`);
+  const objects = json.result?.objects || [];
+
+  // Keep only cells that have a type script (DOBs / Spore / CKBFS)
+  return objects
+    .filter(c => c.output?.type)
+    .map(c => ({
+      outPoint:   c.out_point,
+      typeScript: c.output.type,
+      capacity:   c.output.capacity,
+      data:       c.output_data || '0x',
+    }));
+}
+
+function addressToLock(address, network) {
+  // JoyID lock (used by Phill + Wyltek members)
+  // code_hash: 0xd00c84f0ec8fd441c38bc3f87a371f547190f2fcff88e642bc5bf54b9e318323
+  // For secp256k1: 0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8
+  // Extract args by decoding the bech32m address
+  try {
+    const args = decodeAddressArgs(address);
+    // Try JoyID lock first (22-byte args = JoyID)
+    const codeHash = args.length === 44 // 22 bytes hex = 44 chars
+      ? '0xd00c84f0ec8fd441c38bc3f87a371f547190f2fcff88e642bc5bf54b9e318323'
+      : '0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8';
+    return { code_hash: codeHash, hash_type: 'type', args: '0x' + args };
+  } catch {
+    // Fallback: use secp256k1 with empty args (will return nothing but won't crash)
+    return { code_hash: '0x9bd7e06f3ecf4be0f2fcd2188b23f1b9fcc88e5d4b65a8637b17723bbda3cce8', hash_type: 'type', args: '0x' };
   }
+}
+
+function decodeAddressArgs(address) {
+  // CKB full address (bech32m): payload = type(1) + code_hash(32) + hash_type(1) + args
+  // Short address: prefix(1) + args(20)
+  // We decode bech32m and skip header bytes to get args
+  const words = bech32mDecode(address);
+  if (!words) throw new Error('Cannot decode address');
+  // Skip: format_type(1) + code_hash(32) + hash_type(1) = 34 bytes
+  const argsBytes = words.slice(34);
+  return argsBytes.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function bech32mDecode(addr) {
+  // Minimal bech32m decode — convert address to payload bytes
+  const CHARSET = 'qpzry9x8gf2tvdw0s3jn54khce6mua7l';
+  const sep = addr.lastIndexOf('1');
+  if (sep < 1) return null;
+  const data = addr.slice(sep + 1).toLowerCase();
+  const values = [];
+  for (const c of data) {
+    const v = CHARSET.indexOf(c);
+    if (v < 0) return null;
+    values.push(v);
+  }
+  // Convert 5-bit groups to 8-bit bytes (skip last 6 checksum chars)
+  const payload = values.slice(0, -6);
+  const bytes = [];
+  let acc = 0, bits = 0;
+  for (const v of payload) {
+    acc = (acc << 5) | v;
+    bits += 5;
+    if (bits >= 8) { bits -= 8; bytes.push((acc >> bits) & 0xff); }
+  }
+  return bytes;
+}
+
+// ── Render grid ───────────────────────────────────────────────────────────────
+function renderGrid(cells) {
+  const grid = document.getElementById('inventoryGrid');
+  grid.innerHTML = '';
+  cells.forEach((cell, idx) => {
+    const typeId  = cell.typeScript?.args || cell.outPoint?.tx_hash || '?';
+    const shortId = typeId.length > 16 ? typeId.slice(0, 10) + '…' + typeId.slice(-6) : typeId;
+
+    const card = document.createElement('div');
+    card.className = 'dob-card';
+    card.dataset.idx = idx;
+    card.innerHTML = `
+      <div class="dob-thumb"><div class="thumb-spin"><div class="spinner"></div></div></div>
+      <div class="dob-info">
+        <div class="dob-name">DOB #${idx + 1}</div>
+        <div class="dob-id" title="${typeId}">${shortId}</div>
+        <span class="dob-badge">Spore</span>
+      </div>`;
+    card.addEventListener('click', () => openDetail(cell, idx));
+    grid.appendChild(card);
+    loadThumb(card, cell, idx);
+  });
+}
+
+async function loadThumb(card, cell, idx) {
+  const thumbEl = card.querySelector('.dob-thumb');
+  const badgeEl = card.querySelector('.dob-badge');
+  const nameEl  = card.querySelector('.dob-name');
+
+  const setThumb = (src, label) => {
+    thumbEl.innerHTML = `<img src="${src}" alt="DOB ${idx}" loading="lazy" />`;
+    if (label) badgeEl.textContent = label;
+  };
+  const setPlaceholder = () => { thumbEl.innerHTML = '<span class="thumb-ph">📄</span>'; };
+
+  try {
+    // 1. Try inline image in cell data
+    const data = cell.data;
+    if (data && data.length > 4) {
+      const bytes = hexToBytes(data);
+      const mime  = sniffMime(bytes);
+      if (mime?.startsWith('image/')) {
+        const url = URL.createObjectURL(new Blob([bytes], { type: mime }));
+        setThumb(url, 'Inline');
+        nameEl.textContent = `DOB #${idx + 1}`;
+        return;
+      }
+    }
+
+    // 2. Try CKBFS resolve using type args as TypeID
+    const typeId = cell.typeScript?.args;
+    if (typeId && typeId.length === 66) {
+      try {
+        const result = await resolveCKBFS(typeId, currentNetwork, () => {});
+        if (result?.fileBytes && result.contentType?.startsWith('image/')) {
+          let bin = '';
+          for (let i = 0; i < result.fileBytes.length; i++) bin += String.fromCharCode(result.fileBytes[i]);
+          setThumb(`data:${result.contentType};base64,${btoa(bin)}`, 'CKBFS');
+          if (result.filename) nameEl.textContent = result.filename;
+          return;
+        }
+      } catch { /* not CKBFS */ }
+    }
+
+    setPlaceholder();
+  } catch { setPlaceholder(); }
+}
+
+// ── Detail panel ──────────────────────────────────────────────────────────────
+window.closeDetail = closeDetail;
+function closeDetail() {
+  document.getElementById('detailPanel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('visible');
+  document.querySelectorAll('.dob-card').forEach(c => c.classList.remove('selected'));
+}
+
+async function openDetail(cell, idx) {
+  document.querySelectorAll('.dob-card').forEach(c => c.classList.remove('selected'));
+  document.querySelector(`.dob-card[data-idx="${idx}"]`)?.classList.add('selected');
+
+  const panel = document.getElementById('detailPanel');
+  const body  = document.getElementById('detailBody');
+  document.getElementById('detailTitle').textContent = `DOB #${idx + 1}`;
+
+  body.innerHTML = `<div class="detail-preview"><div class="prev-spin"><div class="spinner"></div><span>Loading…</span></div></div>`;
+  panel.classList.add('open');
+  document.getElementById('overlay').classList.add('visible');
+
+  const typeId      = cell.typeScript?.args || '';
+  const txHash      = cell.outPoint?.tx_hash || '';
+  const explorerBase = EXPLORER[currentNetwork];
+  const shortTx     = txHash ? txHash.slice(0, 10) + '…' + txHash.slice(-6) : '–';
+  const shortType   = typeId ? typeId.slice(0, 10) + '…' + typeId.slice(-6) : '–';
+  const capacityCKB = cell.capacity ? (parseInt(cell.capacity, 16) / 1e8).toFixed(2) + ' CKB' : '–';
+
+  let previewHtml = '<div class="detail-preview"><span class="prev-ph">📄</span></div>';
+  let storageMode = 'Unknown';
+  let filename    = '';
+  let fileSize    = '';
+
+  try {
+    // Try inline
+    const data = cell.data;
+    if (data && data.length > 4) {
+      const bytes = hexToBytes(data);
+      const mime  = sniffMime(bytes);
+      if (mime?.startsWith('image/')) {
+        const url = URL.createObjectURL(new Blob([bytes], { type: mime }));
+        previewHtml = `<div class="detail-preview"><img src="${url}" alt="DOB" /></div>`;
+        storageMode = 'Inline';
+        fileSize    = formatSize(bytes.length);
+      }
+    }
+
+    // Try CKBFS
+    if (storageMode === 'Unknown' && typeId && typeId.length === 66) {
+      try {
+        const result = await resolveCKBFS(typeId, currentNetwork, () => {});
+        if (result?.fileBytes) {
+          storageMode = 'CKBFS';
+          filename    = result.filename || '';
+          fileSize    = formatSize(result.fileBytes.length);
+          if (result.contentType?.startsWith('image/')) {
+            let bin = '';
+            for (let i = 0; i < result.fileBytes.length; i++) bin += String.fromCharCode(result.fileBytes[i]);
+            previewHtml = `<div class="detail-preview"><img src="data:${result.contentType};base64,${btoa(bin)}" alt="${filename}" /></div>`;
+          }
+        }
+      } catch { /* not CKBFS */ }
+    }
+  } catch(e) { console.error('[detail]', e); }
+
+  body.innerHTML = `
+    ${previewHtml}
+    <table class="meta-table">
+      <tr><td>Storage</td><td>${storageMode}</td></tr>
+      ${filename ? `<tr><td>File</td><td>${filename}</td></tr>` : ''}
+      ${fileSize  ? `<tr><td>Size</td><td>${fileSize}</td></tr>` : ''}
+      <tr><td>Capacity</td><td>${capacityCKB}</td></tr>
+      <tr><td>Type args</td><td title="${typeId}">${shortType}</td></tr>
+      <tr><td>TX</td><td><a href="${explorerBase}/transaction/${txHash}" target="_blank" title="${txHash}">${shortTx} ↗</a></td></tr>
+      <tr><td>Network</td><td>${currentNetwork}</td></tr>
+    </table>
+    <div class="detail-actions">
+      <a href="${explorerBase}/transaction/${txHash}" target="_blank" class="btn-action">🔍 Explorer</a>
+      ${typeId.length === 66 ? `<button class="btn-action" onclick="viewInMinter('${typeId}')">👁 View in Minter</button>` : ''}
+      <button class="btn-action" onclick="copyText('${typeId || txHash}')">📋 Copy ID</button>
+    </div>
+  `;
+}
+
+window.viewInMinter = (typeId) => {
+  window.open(`https://mint.wyltekindustries.com?view=${typeId}&net=${currentNetwork}`, '_blank');
+};
+
+window.copyText = (text) => {
+  try { navigator.clipboard.writeText(text); } catch {
+    const ta = document.createElement('textarea');
+    ta.value = text; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+  }
+};
+
+// ── Manual lookup ─────────────────────────────────────────────────────────────
+window.loadManual = async () => {
+  const raw = document.getElementById('identifier').value.trim();
+  if (!raw) return;
+  let typeId;
+  try { typeId = parseIdentifier(raw); } catch(e) { alert(e.message); return; }
+  const fakeCell = {
+    outPoint: { tx_hash: typeId },
+    typeScript: { args: typeId, code_hash: '0x', hash_type: 'type' },
+    capacity: '0x0',
+    data: '0x',
+  };
+  await openDetail(fakeCell, -1);
+  document.getElementById('detailTitle').textContent = 'Manual Lookup';
+};
+
+// ── Utils ─────────────────────────────────────────────────────────────────────
+function hexToBytes(hex) {
+  const h = hex.startsWith('0x') ? hex.slice(2) : hex;
+  const arr = new Uint8Array(h.length / 2);
+  for (let i = 0; i < arr.length; i++) arr[i] = parseInt(h.slice(i*2, i*2+2), 16);
+  return arr;
+}
+
+function sniffMime(bytes) {
+  if (bytes[0]===0xFF && bytes[1]===0xD8) return 'image/jpeg';
+  if (bytes[0]===0x89 && bytes[1]===0x50) return 'image/png';
+  if (bytes[0]===0x47 && bytes[1]===0x49) return 'image/gif';
+  if (bytes[0]===0x52 && bytes[1]===0x49) return 'image/webp';
+  return null;
+}
 </script>
 
 <script src="/js/wyltek-auth.js"></script>
-  <script>(function(){var a=localStorage.getItem("wyltek_address");if(a){var el=document.querySelector("a.nav-join");if(el){el.textContent="✦ Membership";el.title="View your membership";}}})();</script>
-  <script src="/js/member-nav.js"></script>
-  <script src="/js/profile-banner.js"></script>
+<script>(function(){var a=localStorage.getItem("wyltek_address");if(a){var el=document.querySelector("a.nav-join");if(el){el.textContent="✦ Membership";el.title="View your membership";}}})();</script>
+<script src="/js/member-nav.js"></script>
+<script src="/js/profile-banner.js"></script>
 </body>
 </html>
