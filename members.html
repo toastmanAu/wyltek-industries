@@ -309,12 +309,16 @@ async function signInAnon(address) {
 }
 
 async function joinQueue(address) {
-  // Check cap
+  // Check cap and get next member number atomically
   const { count } = await sb.from('mint_queue').select('*', { count: 'exact', head: true });
-  if ((count ?? 0) >= MEMBER_CAP) throw new Error('All founding member spots have been claimed.');
+  const n = count ?? 0;
+  if (n >= MEMBER_CAP) throw new Error('All founding member spots have been claimed.');
 
-  // Upsert — idempotent if already in queue
-  const { error } = await sb.from('mint_queue').upsert({ ckb_address: address }, { onConflict: 'ckb_address', ignoreDuplicates: true });
+  // Upsert — idempotent if already in queue; set member_number from live count
+  const { error } = await sb.from('mint_queue').upsert(
+    { ckb_address: address, member_number: n + 1 },
+    { onConflict: 'ckb_address', ignoreDuplicates: true }
+  );
   if (error) throw new Error('Queue error: ' + error.message);
 }
 
