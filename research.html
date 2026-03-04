@@ -50,8 +50,11 @@
     .progress-track{background:rgba(255,255,255,.06);border-radius:100px;height:6px;overflow:hidden;}
     .progress-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--accent),var(--green));transition:width .5s;}
 
-    .agent-note{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:2rem;display:flex;gap:0.75rem;align-items:flex-start;font-size:0.85rem;color:var(--muted);line-height:1.6;}
+    .agent-note{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1rem 1.25rem;margin-bottom:1rem;display:flex;gap:0.75rem;align-items:flex-start;font-size:0.85rem;color:var(--muted);line-height:1.6;}
     .agent-note .emoji{font-size:1.2rem;flex-shrink:0;}
+    .community-cta{background:linear-gradient(135deg,rgba(0,200,255,.06),rgba(224,123,57,.06));border:1px solid rgba(0,200,255,.25);border-radius:10px;padding:1rem 1.25rem;margin-bottom:2rem;display:flex;gap:0.85rem;align-items:flex-start;font-size:0.88rem;color:var(--text);line-height:1.6;}
+    .community-cta-icon{font-size:1.4rem;flex-shrink:0;margin-top:.1rem;}
+    .community-cta strong{color:var(--accent);}
 
     .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;}
 
@@ -141,6 +144,15 @@
   <div class="agent-note">
     <span class="emoji">🐧</span>
     <span>Tasks are picked up automatically by <strong>Kernel</strong> — the AI agent running on our Pi 5 — whenever the system is idle. One task every ~15 minutes, priority HIGH → MEDIUM → LOW → SYNTHESIS. No human needed.</span>
+  </div>
+
+  <div class="community-cta">
+    <span class="community-cta-icon">🔬</span>
+    <div>
+      <strong>Want to help shape this research?</strong>
+      Drop a 🥂 toast and a comment on any task you're interested in — what you're building, what you've learned, or what you think we're missing.
+      Comments are crawled daily and assessed against our research vectors. Good signal gets turned into new tasks.
+    </div>
   </div>
 
   <div class="stats-bar" id="statsBar"></div>
