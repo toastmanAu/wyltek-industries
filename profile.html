@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>My Profile — Wyltek Industries</title>
+  <script src="/js/member-guard.js"></script>
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <script>(function(){const s=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',s);})();</script>
+  <link rel="stylesheet" href="js/theme.css" />
+  <style>
+    :root{--bg:#0d1018;--surface:#131720;--border:#1e2430;--text:#e2e8f0;--muted:#64748b;--accent:#00c8ff;--green:#00e5a0;--red:#f43f5e;--yellow:#fbbf24;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:15px;}
+
+    /* Nav */
+    header{background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+    .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 1.5rem;}
+    .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;color:var(--text);text-decoration:none;}
+    nav{display:flex;gap:1.5rem;}
+    nav a{color:var(--muted);text-decoration:none;font-size:.9rem;transition:color .15s;}
+    nav a:hover,nav a.active{color:var(--text);}
+    .member-only{display:none!important;}
+    nav.member-nav .member-only{display:inline-flex!important;}
+    .nav-join{color:var(--accent)!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;}
+
+    /* Page */
+    .page{max-width:640px;margin:0 auto;padding:2.5rem 1.5rem 5rem;}
+    .page-title{font-size:1.5rem;font-weight:700;margin-bottom:.35rem;}
+    .page-sub{color:var(--muted);font-size:.9rem;margin-bottom:2rem;line-height:1.6;}
+
+    /* Card */
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.5rem;margin-bottom:1.25rem;}
+    .card-title{font-size:1rem;font-weight:600;margin-bottom:1.25rem;}
+
+    /* Avatar */
+    .avatar-row{display:flex;align-items:center;gap:1.25rem;margin-bottom:1.5rem;}
+    .avatar-wrap{position:relative;cursor:pointer;}
+    .avatar-img{width:72px;height:72px;border-radius:50%;object-fit:cover;border:2px solid var(--border);background:var(--bg);}
+    .avatar-default{width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,#1a2540,#0a1520);border:2px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:1.75rem;}
+    .avatar-edit{position:absolute;bottom:0;right:0;background:var(--accent);color:#000;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;}
+    .avatar-hint{font-size:.8rem;color:var(--muted);line-height:1.5;}
+    #avatarInput{display:none;}
+
+    /* Fields */
+    .field-group{display:flex;flex-direction:column;gap:.4rem;margin-bottom:1rem;}
+    .field-label{font-size:.8rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;}
+    .field-input{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);padding:.6rem .8rem;border-radius:8px;font-size:.9rem;font-family:inherit;width:100%;transition:border-color .15s;}
+    .field-input:focus{outline:none;border-color:var(--accent);}
+    .field-input::placeholder{color:var(--muted);}
+    textarea.field-input{resize:vertical;min-height:80px;}
+    .field-hint{font-size:.75rem;color:var(--muted);}
+    .field-readonly{background:rgba(255,255,255,.02);border:1px solid var(--border);color:var(--muted);padding:.6rem .8rem;border-radius:8px;font-size:.85rem;font-family:monospace;word-break:break-all;}
+
+    /* Checkbox */
+    .check-row{display:flex;align-items:flex-start;gap:.75rem;padding:.75rem 0;border-top:1px solid var(--border);margin-top:.5rem;cursor:pointer;}
+    .check-row input[type=checkbox]{width:16px;height:16px;accent-color:var(--accent);margin-top:2px;flex-shrink:0;cursor:pointer;}
+    .check-label{font-size:.875rem;color:var(--muted);line-height:1.5;}
+    .check-label strong{color:var(--text);}
+
+    /* Buttons */
+    .btn-save{background:var(--accent);color:#000;border:none;padding:.65rem 1.5rem;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;width:100%;margin-top:.5rem;transition:opacity .15s;}
+    .btn-save:hover{opacity:.85;}
+    .btn-save:disabled{opacity:.4;cursor:not-allowed;}
+    .save-msg{font-size:.82rem;text-align:center;margin-top:.6rem;min-height:1.2em;}
+    .save-ok{color:var(--green);}
+    .save-err{color:var(--red);}
+
+    /* Member badge */
+    .member-badge{display:flex;align-items:center;gap:.6rem;background:rgba(0,200,255,.06);border:1px solid rgba(0,200,255,.2);border-radius:8px;padding:.65rem 1rem;font-size:.85rem;color:var(--accent);margin-bottom:1.25rem;}
+    .member-badge .num{font-size:1.1rem;font-weight:800;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="/">
+      <img src="wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">
+      Wyltek Industries
+    </a>
+    <nav id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="ckb.html">CKB Stack</a>
+      <a href="ckb-light-esp.html">Light Client</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="blog.html" class="member-only">Devlog</a>
+      <a href="research.html" class="member-only">Research</a>
+      <a href="members.html" class="member-only">Membership</a>
+      <a href="profile.html" class="active member-only">Profile</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
+  </div>
+</header>
+
+<div class="page">
+  <h1 class="page-title">Your Profile</h1>
+  <p class="page-sub">Shown to other Wyltek members. All fields optional — fill in as much or as little as you like.</p>
+
+  <div id="loadingState" style="color:var(--muted);font-size:.9rem;padding:2rem 0;">Loading…</div>
+
+  <div id="profileForm" style="display:none;">
+
+    <!-- Member badge -->
+    <div class="member-badge" id="memberBadge" style="display:none;">
+      🦞 Founding Member <span class="num" id="memberNum"></span>
+    </div>
+
+    <!-- Avatar + display name -->
+    <div class="card">
+      <div class="card-title">Identity</div>
+      <div class="avatar-row">
+        <div class="avatar-wrap" onclick="document.getElementById('avatarInput').click()">
+          <div class="avatar-default" id="avatarDefault">🐧</div>
+          <img class="avatar-img" id="avatarImg" src="" alt="avatar" style="display:none;" />
+          <div class="avatar-edit">✎</div>
+        </div>
+        <div class="avatar-hint">
+          Tap to upload a profile picture<br>
+          <span style="font-size:.72rem;">JPG/PNG · max 1 MB · stored in Supabase</span>
+        </div>
+        <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" onchange="handleAvatarChange(event)" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Display Name</label>
+        <input class="field-input" type="text" id="displayName" maxlength="40" placeholder="e.g. Phill · toastmanAu · anonymous builder" />
+        <span class="field-hint">How you'll appear in comments, research discussions, etc.</span>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">CKB Address <span style="font-weight:400;text-transform:none;">(your wallet)</span></label>
+        <div class="field-readonly" id="ckbAddressDisplay"></div>
+      </div>
+    </div>
+
+    <!-- About -->
+    <div class="card">
+      <div class="card-title">About You</div>
+
+      <div class="field-group">
+        <label class="field-label">Bio</label>
+        <textarea class="field-input" id="bio" maxlength="200" placeholder="Builder, tinkerer, CKB enthusiast…"></textarea>
+        <span class="field-hint">Max 200 chars</span>
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Location</label>
+        <input class="field-input" type="text" id="location" maxlength="60" placeholder="Adelaide, Australia · The Internet · 🌏" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">Website / GitHub</label>
+        <input class="field-input" type="url" id="website" maxlength="120" placeholder="https://github.com/yourname" />
+      </div>
+
+      <div class="field-group">
+        <label class="field-label">What are you building?</label>
+        <textarea class="field-input" id="building" maxlength="200" placeholder="ESP32 CKB light client, hardware wallet, something wild…"></textarea>
+      </div>
+    </div>
+
+    <!-- Preferences -->
+    <div class="card">
+      <div class="card-title">Preferences</div>
+
+      <label class="check-row" id="skipBannerRow">
+        <input type="checkbox" id="skipBanner" onchange="handleSkipBanner()" />
+        <span class="check-label"><strong>Don't show the profile reminder banner</strong><br>
+        Hide the "complete your profile" nudge — I know it's there, I just don't want to fill it in.</span>
+      </label>
+    </div>
+
+    <button class="btn-save" id="saveBtn" onclick="saveProfile()">Save Profile</button>
+    <div class="save-msg" id="saveMsg"></div>
+
+  </div>
+</div>
+
+<script type="module">
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+const SB_URL = 'https://yhntwgjzrzyhyxpiqcts.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InlobnR3Z2p6cnp5aHl4cGlxY3RzIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI1Mjc2ODMsImV4cCI6MjA4ODEwMzY4M30.HhTEKmSQs-qaOhoQr4cJxRfTfpWEjGqB3TwQnRWCm4Y';
+const sb = createClient(SB_URL, SB_KEY);
+
+const MY_ADDR = window.MEMBER_ADDRESS || localStorage.getItem('wyltek_address') || '';
+let avatarFile = null;
+let currentProfile = {};
+
+// ── Init ───────────────────────────────────────────────────────────
+async function init() {
+  document.getElementById('ckbAddressDisplay').textContent = MY_ADDR;
+
+  // Load member number
+  const { data: queueRow } = await sb.from('mint_queue')
+    .select('member_number').eq('ckb_address', MY_ADDR).maybeSingle();
+  if (queueRow?.member_number) {
+    document.getElementById('memberNum').textContent = `#${queueRow.member_number}`;
+    document.getElementById('memberBadge').style.display = 'flex';
+  }
+
+  // Load existing profile
+  const { data: profile } = await sb.from('profiles')
+    .select('*').eq('ckb_address', MY_ADDR).maybeSingle();
+
+  if (profile) {
+    currentProfile = profile;
+    document.getElementById('displayName').value = profile.display_name || '';
+    document.getElementById('bio').value          = profile.bio || '';
+    document.getElementById('location').value     = profile.location || '';
+    document.getElementById('website').value      = profile.website || '';
+    document.getElementById('building').value     = profile.building || '';
+    document.getElementById('skipBanner').checked = !!profile.skip_banner;
+
+    if (profile.avatar_url) {
+      const img = document.getElementById('avatarImg');
+      img.src = profile.avatar_url;
+      img.style.display = 'block';
+      document.getElementById('avatarDefault').style.display = 'none';
+    }
+  }
+
+  document.getElementById('loadingState').style.display = 'none';
+  document.getElementById('profileForm').style.display  = 'block';
+}
+
+// ── Avatar preview ─────────────────────────────────────────────────
+window.handleAvatarChange = function(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  if (file.size > 1024 * 1024) { alert('Image must be under 1 MB'); return; }
+  avatarFile = file;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    const img = document.getElementById('avatarImg');
+    img.src = ev.target.result;
+    img.style.display = 'block';
+    document.getElementById('avatarDefault').style.display = 'none';
+  };
+  reader.readAsDataURL(file);
+};
+
+// ── Skip banner checkbox ───────────────────────────────────────────
+window.handleSkipBanner = function() {
+  const skip = document.getElementById('skipBanner').checked;
+  localStorage.setItem('wyltek_skip_banner', skip ? '1' : '');
+};
+
+// ── Save ───────────────────────────────────────────────────────────
+window.saveProfile = async function() {
+  const btn = document.getElementById('saveBtn');
+  const msg = document.getElementById('saveMsg');
+  btn.disabled = true;
+  msg.textContent = '';
+
+  try {
+    let avatar_url = currentProfile.avatar_url || null;
+
+    // Upload avatar if changed
+    if (avatarFile) {
+      const ext  = avatarFile.name.split('.').pop();
+      const path = `${MY_ADDR.slice(0, 16)}.${ext}`;
+      const { error: uploadErr } = await sb.storage
+        .from('avatars')
+        .upload(path, avatarFile, { upsert: true, contentType: avatarFile.type });
+      if (uploadErr) throw new Error('Avatar upload failed: ' + uploadErr.message);
+      const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
+      avatar_url = urlData.publicUrl;
+    }
+
+    const payload = {
+      ckb_address:  MY_ADDR,
+      display_name: document.getElementById('displayName').value.trim(),
+      bio:          document.getElementById('bio').value.trim(),
+      location:     document.getElementById('location').value.trim(),
+      website:      document.getElementById('website').value.trim(),
+      building:     document.getElementById('building').value.trim(),
+      skip_banner:  document.getElementById('skipBanner').checked,
+      avatar_url,
+      updated_at:   new Date().toISOString(),
+    };
+
+    const { error } = await sb.from('profiles')
+      .upsert(payload, { onConflict: 'ckb_address' });
+
+    if (error) throw new Error(error.message);
+
+    currentProfile = { ...currentProfile, ...payload };
+    localStorage.setItem('wyltek_skip_banner', payload.skip_banner ? '1' : '');
+    msg.className = 'save-msg save-ok';
+    msg.textContent = '✓ Profile saved';
+    setTimeout(() => { msg.textContent = ''; }, 3000);
+  } catch (e) {
+    msg.className = 'save-msg save-err';
+    msg.textContent = '⚠ ' + e.message;
+  } finally {
+    btn.disabled = false;
+  }
+};
+
+init();
+</script>
+<script src="/js/member-nav.js"></script>
+</body>
+</html>
