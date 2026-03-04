@@ -236,7 +236,7 @@ async function loadInventory() {
         <div class="icon">📭</div>
         <h3>No DOBs found</h3>
         <p>No Spore DOBs on ${currentNetwork} for this address.<br>
-        <a href="https://mint.wyltekindustries.com" target="_blank">Mint one →</a></p>
+        <a href="/mint/" target="_blank">Mint one →</a></p>
       </div>`;
       return;
     }
@@ -499,7 +499,7 @@ async function openDetail(cell, idx) {
 }
 
 window.viewInMinter = (typeId) => {
-  window.open(`https://mint.wyltekindustries.com?view=${typeId}&net=${currentNetwork}`, '_blank');
+  window.open(`/mint/?view=${typeId}&net=${currentNetwork}`, '_blank');
 };
 
 window.copyText = (text) => {
