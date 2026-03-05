@@ -1,17 +1,17 @@
 {
-  "date": "2026-03-05 07:32",
+  "date": "2026-03-06 07:16",
   "commit": "0dee2aa",
   "platform": "aarch64 Linux (Pi 5)",
   "compiler": "g++ 11.4.0",
   "total_pass": 394,
   "total_fail": 0,
-  "total_time": "10042ms",
+  "total_time": "10098ms",
   "suites": [
     {
       "name": "header_chain",
       "pass": 6,
       "fail": 0,
-      "time": "574ms",
+      "time": "582ms",
       "tests": [
         "PASS: block_hash = Blake2b(struct || nonce_le)",
         "PASS: Eaglesong result <= compact_target",
@@ -25,7 +25,7 @@
       "name": "merkle",
       "pass": 11,
       "fail": 0,
-      "time": "315ms",
+      "time": "273ms",
       "tests": [
         "PASS: CBMT root correct",
         "PASS: CBMT verify succeeds",
@@ -43,7 +43,7 @@
       "name": "block_filter",
       "pass": 27,
       "fail": 0,
-      "time": "286ms",
+      "time": "295ms",
       "tests": [
         "PASS: addScriptHash returns true",
         "PASS: dequeue first = 42",
@@ -61,7 +61,7 @@
       "name": "wifi_transport",
       "pass": 41,
       "fail": 0,
-      "time": "440ms",
+      "time": "482ms",
       "tests": [
         "PASS: added \u2192 FETCH_PENDING",
         "PASS: _buildRequest",
@@ -79,7 +79,7 @@
       "name": "light_client",
       "pass": 36,
       "fail": 0,
-      "time": "557ms",
+      "time": "572ms",
       "tests": [
         "PASS: after begin() state is CONNECTING",
         "PASS: CONNECTING string",
@@ -97,7 +97,7 @@
       "name": "helpers",
       "pass": 29,
       "fail": 0,
-      "time": "466ms",
+      "time": "480ms",
       "tests": [
         "PASS: ckb_merge matches manual blake2b(a||b)",
         "PASS: empty input hash matches known vector",
@@ -115,7 +115,7 @@
       "name": "native_locks",
       "pass": 37,
       "fail": 0,
-      "time": "343ms",
+      "time": "330ms",
       "tests": [
         "PASS: 2-of-3 parses ok",
         "PASS: 2-of-3 verifies with sigs 0+1",
@@ -133,7 +133,7 @@
       "name": "ckbvm_interp",
       "pass": 24,
       "fail": 0,
-      "time": "5448ms",
+      "time": "5458ms",
       "tests": [
         "PASS: ADD/SUB",
         "PASS: cycle count at limit",
@@ -151,7 +151,7 @@
       "name": "lora_transport",
       "pass": 17,
       "fail": 0,
-      "time": "282ms",
+      "time": "281ms",
       "tests": [
         "PASS: begin() returns true",
         "PASS: connected after begin",
@@ -169,7 +169,7 @@
       "name": "bitchat",
       "pass": 108,
       "fail": 0,
-      "time": "323ms",
+      "time": "338ms",
       "tests": [
         "PASS: added packet in bloom",
         "PASS: all-FF is broadcast",
