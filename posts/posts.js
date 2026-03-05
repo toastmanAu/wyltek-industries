@@ -17,6 +17,38 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id:      "2026-03-05-hackathon-prep-deep-research",
+    date:    "2026-03-05",
+    project: "R&D",
+    title:   "Deep in research mode — something is coming",
+    tags:    ["CKB", "Fiber", "RetroArch", "research", "Electron", "Raspberry Pi"],
+    body: [
+      "Today was a full research day. No shipped code — just systematic investigation of a stack we're planning to build on. We're not ready to say what it is yet, but we can talk about the CKB tech underneath it.",
+      { type: "h3", content: "Fiber Network — Building the Missing Piece" },
+      "The Fiber Network is CKB's payment channel network — think Lightning, but built on Nervos. It enables near-instant, near-free micropayments that settle on CKB L1. It's genuinely impressive infrastructure that doesn't get enough attention.",
+      "The problem we ran into: there's no official Node.js client library for the Fiber RPC. If you want to send a payment, open a channel, or issue an invoice from a Node.js application, you're reading Rust source code and building the client yourself. That's exactly what we're doing.",
+      "We went deep into the Fiber RPC source — <code>channel.rs</code>, <code>payment.rs</code>, <code>invoice.rs</code> — and mapped every method signature: <code>open_channel</code>, <code>send_payment</code>, <code>new_invoice</code>, <code>get_invoice</code>, <code>list_channels</code>. The type system uses <code>serde_as</code> with hex-encoded integers and blake2b hashes. We have a complete TypeScript interface spec ready to implement.",
+      "One important note: Fiber RPC on localhost doesn't require Biscuit auth. On a public address it does. For our use case — local node, local client — this is zero friction.",
+      { type: "h3", content: "CKB-VM on ESP32-P4 — We Did the Maths" },
+      "Earlier this week we confirmed our CKB light client (<code>ckb-light-esp</code>) runs cleanly on ESP32-P4. Today we went a level deeper and calculated actual RAM consumption from the source.",
+      "Using <code>LIGHT_PROFILE_FULL</code> on ESP32-P4: HeaderChain (100 cached headers) costs 9.5KB, BlockFilter 2KB, JSON response buffer 32KB. Total static allocation: ~43KB — just 5.7% of the P4's 768KB internal SRAM. With PSRAM enabled (which it is, via <code>-DBOARD_HAS_PSRAM</code>), the 32KB buffer gets placed in PSRAM automatically.",
+      "We also calculated CKB-VM execution RAM. The interpreter struct itself is ~385 bytes of internal SRAM. The actual execution memory — script ELF, stack, heap — all goes to PSRAM via <code>heap_caps_malloc(MALLOC_CAP_SPIRAM)</code>. Worst case (512KB script + 192KB stack/heap) = 704KB PSRAM, which is 8.6% of an 8MB PSRAM chip.",
+      "The memory concern for running a full CKB stack on a microcontroller is officially off the table.",
+      { type: "h3", content: "RetroArch Network Commands" },
+      "Separately, we investigated RetroArch's network command interface — a feature that lets external processes read and write emulator RAM over UDP on port 55355. The protocol is plaintext, stateless, newline-delimited. Commands like <code>READ_CORE_MEMORY &lt;address&gt; &lt;bytes&gt;</code> return memory contents in hex.",
+      "This is how RetroAchievements works under the hood — it's not magic, it's just UDP. Knowing the exact protocol is useful for anything that wants to react to game state in real time.",
+      { type: "h3", content: "The Demo Machine" },
+      "We're assembling a dedicated Pi 5 demo unit. It's got an NVMe drive, a MOSFET-wired GPIO fan on GPIO18, and a Waveshare 7\" 1024×600 HDMI touchscreen (USB capacitive touch — zero driver config needed on Pi OS). The display config is three lines in <code>/boot/firmware/config.txt</code>.",
+      "We're running Pi OS 64-bit (Debian Trixie) with RetroArch installed standalone. The Electron app we're building will auto-launch alongside it on boot. Touch-aware UI, 1024×600 native, fanless until it needs to be.",
+      "More soon. We're about 6 days out from being able to talk about what this is all for.",
+    ],
+    links: [
+      { href: "https://github.com/nervosnetwork/fiber", text: "Fiber Network on GitHub" },
+      { href: "https://github.com/toastmanAu/ckb-light-esp", text: "ckb-light-esp repo" },
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
+  {
     id:      "2026-03-04-ckbfs-browser-sdk-minter",
     date:    "2026-03-04",
     project: "DOB Minter + CKBFS",
