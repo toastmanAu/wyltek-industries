@@ -17,6 +17,45 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id:      "2026-03-06-spore-burner-fiber-rpc-npm",
+    date:    "2026-03-06",
+    project: "Open Source Tools",
+    title:   "Shipping at midnight: Spore Burner live + fiber-rpc-js on npm",
+    tags:    ["CKB", "Spore", "CKBFS", "JoyID", "open-source", "fiber", "npm", "release"],
+    body: [
+      "Late night session. Two community tools shipped. Here\'s what happened.",
+      { type: "h3", content: "The Problem: Wallets Full of Dead Cells" },
+      "If you\'ve done any CKB testnet development — minting Spore DOBs, publishing CKBFS files, experimenting with DOB patterns — your JoyID wallet is probably full of cells you can\'t do anything with. Each one locks CKB capacity. Until tonight, the only way to reclaim it was the CLI. No GUI existed.",
+      { type: "h3", content: "Spore Burner" },
+      "We built one. <strong>Spore Burner</strong> is a single HTML file — no backend, no install, no Node.js. Connect JoyID, scan your wallet, select cells, confirm, sign. Locked CKB returns to your wallet.",
+      "The technical parts worth noting:",
+      { type: "ul", content: [
+        "Spore cell data is molecule-encoded — <code>contentType</code> string + raw image bytes. We wrote a pure-JS molecule decoder (<code>decodeSporeData()</code>) since <code>unpackToRawSporeData</code> isn\'t exposed in esm.sh builds of <code>@ckb-ccc/spore</code>.",
+        "Images render directly from chain data — no external fetch. The decoder creates a <code>Blob</code> and <code>objectURL</code> from the raw bytes. Works for inline <code>image/png</code>, <code>image/jpeg</code>, <code>image/svg+xml</code>, DOB render-param suffixes (<code>image/png;dob...</code>), JSON content with <code>url</code> fields, and <code>text/uri-list</code>.",
+        "<code>meltSpore()</code> returns <code>{ tx }</code> with fees intentionally incomplete — you must call <code>tx.completeFeeBy(signer, 1000n)</code> before sending. Omitting this caused a 2.9B shannon/KB fee rate error. Now documented.",
+        "Cards go greyed-out pending after submit. A <code>waitAndRemove()</code> function polls <code>getTransaction()</code> every 3 seconds and removes the card when the tx hits <code>\'committed\'</code> status. No disappearing-then-reappearing cells.",
+        "On-screen activity log shows every step with timestamps — no DevTools needed.",
+      ]},
+      "It\'s live as a standalone tool at <a href=\"https://toastmanau.github.io/spore-burner\" target=\"_blank\">toastmanau.github.io/spore-burner</a> and as a members tool here on the site.",
+      { type: "h3", content: "fiber-rpc-js on npm" },
+      "The other thing we shipped tonight: <strong>fiber-rpc-js@0.1.0</strong> is now published on npm.",
+      "<code>npm install fiber-rpc-js</code>",
+      "This is the Node.js client library for the Nervos Fiber Network RPC that didn\'t exist before we built it. Full coverage of the Fiber API — channels, payments, invoices, peers, graph queries. 35 tests passing against a live mainnet Fiber node. The library handles Fiber\'s quirks: currency enum (<code>\'Fibb\'</code> on mainnet, not <code>\'CKB\'</code>), hex-integer encoding, 0x-prefixed hashes, title-case status responses.",
+      "It supports mainnet, testnet, and devnet — pass <code>{ network: \'testnet\' }</code> to the constructor and it selects the right currency automatically.",
+      "We wrote a FAQ section in the README covering the questions we anticipated: Node.js as infrastructure vs frontend tooling, the trust model between the RPC node and your application, and what end users actually need to run Fiber.",
+      { type: "h3", content: "What a night" },
+      "Both tools fill real gaps in the CKB developer ecosystem. The Spore Burner is probably something several devs have been wishing existed. fiber-rpc-js is a prerequisite for building anything serious on Fiber from JavaScript — including what we\'re building for the hackathon.",
+      "March 11 is five days away.",
+    ],
+    links: [
+      { href: "https://toastmanau.github.io/spore-burner", text: "Spore Burner (GitHub Pages)" },
+      { href: "https://github.com/toastmanAu/spore-burner", text: "spore-burner on GitHub" },
+      { href: "https://www.npmjs.com/package/fiber-rpc-js", text: "fiber-rpc-js on npm" },
+      { href: "https://github.com/toastmanAu/fiber-rpc-js", text: "fiber-rpc-js on GitHub" },
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
+  {
     id:      "2026-03-05-hackathon-prep-deep-research",
     date:    "2026-03-05",
     project: "R&D",
