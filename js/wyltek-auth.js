@@ -9,6 +9,7 @@ const MEMBER_NAV_LINKS = [
   { href: 'research.html',      label: 'Research' },
   { href: 'ckbfs-viewer.html',  label: 'CKBFS Viewer' },
   { href: 'ckb-dob-minter/',    label: 'DOB Minter' },
+  { href: 'spore-burner.html',  label: '🔥 Burner' },
 ];
 
 function isMember() {
