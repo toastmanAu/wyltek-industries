@@ -6,98 +6,77 @@
 
 ---
 
-## Research Note: esp32p4-fiber-signer-vs-lightclient
+Date: 2026-03-05
 
-**Date:** 2026-03-05
+## Summary
 
-### Summary
+This research investigates two architectures for integrating an ESP32-P4 into the FiberQuest project: a "Signer Only" approach and a "Light Client + Signer" approach. The "Signer Only" architecture would delegate CKB Layer 1 transaction construction and state verification to an external server, with the ESP32-P4 solely handling cryptographic signing of transactions and off-chain payment hashes. The "Light Client + Signer" approach would enable the ESP32-P4 to independently verify CKB Layer 1 state, offering greater autonomy for channel management. While a `secp256k1` library suitable for embedded systems exists for signing, the feasibility of compiling the Rust-based CKB light client or the Fiber Network Node (FNN) for the RISC-V ESP32-P4, along with their resource requirements, remains largely unknown from the provided content. For a truly self-contained FiberQuest device, a light client is preferable for independent verification of critical on-chain channel states.
 
-This research compares two architectures for integrating ESP32-P4 into the FiberQuest project: a "Signer Only" approach and a "Light Client + Signer" approach. The "Signer Only" model leverages the ESP32-P4 for secure private key storage and transaction signing (both CKB L1 and Fiber off-chain payment hashes), delegating all other CKB and Fiber node functionalities to a more powerful host like a Raspberry Pi or server. This minimizes the ESP32's resource footprint. Conversely, the "Light Client + Signer" architecture aims for greater autonomy by having the ESP32-P4 run a CKB light client to independently verify on-chain state, alongside its signing capabilities. While `libsecp256k1` is suitable for embedded systems, specific resource requirements for Rust-based CKB light clients or the Fiber Network Node (FNN) on ESP32-P4's RISC-V architecture are not available in the provided content. The "Signer Only" approach appears more feasible given current information and resource constraints, though it introduces a dependency on a trusted remote node for state verification.
+## 1. What software exists? CKB light client is Rust — can it compile for RISC-V ESP32-P4? What are the binary size and RAM requirements?
 
-### 1. What software exists? CKB light client is Rust — can it compile for RISC-V ESP32-P4? What are the binary size and RAM requirements?
+The provided content does not contain information on whether the Rust-based CKB light client can compile for the RISC-V architecture of the ESP32-P4. There is no mention of cross-compilation targets or specific support for ESP32-P4 in the provided `nervosnetwork/fiber` README.md or other sources. Consequently, the binary size and RAM requirements for a CKB light client running on an ESP32-P4 cannot be determined from the given information.
 
-*   **Software Existence:** CKB does have light clients, and the question specifies Rust implementations.
-*   **Compilation for RISC-V ESP32-P4:** The ESP32-P4 utilizes a RISC-V architecture. Rust has robust cross-compilation capabilities, and the ESP-IDF framework supports Rust development for ESP32 chips. Therefore, it is *theoretically possible* to compile a Rust CKB light client for the `riscv32imac-esp-espidf` target (or similar). However, the provided content does not include any specific CKB light client project, documentation, or confirmation that an existing Rust CKB light client has been ported, tested, or optimized for the ESP32-P4's RISC-V architecture.
-*   **Binary Size and RAM Requirements:** The provided content does not offer any specific binary size or RAM requirements for a Rust CKB light client running on an ESP32-P4.
+## 2. Fiber Network Node (FNN) is also Rust — same question. FNN is heavier than just a light client.
 
-### 2. Fiber Network Node (FNN) is also Rust — same question. FNN is heavier than just a light client.
+The Fiber Network Node (FNN) is implemented in Rust. The `nervosnetwork/fiber` README.md indicates it can be built with `cargo build --release` and mentions a "Web-browser friendly runtime" as a `TODO` item, suggesting that the current implementation is not designed for highly constrained environments like an ESP32. There is no information provided regarding its ability to compile for RISC-V ESP32-P4, nor any details on its binary size or RAM requirements for such a platform. Given the project ground truth states FNN is "heavier than just a light client," it is likely to have higher resource demands, making its direct deployment on an ESP32-P4 challenging without specific optimizations or a dedicated embedded port.
 
-*   **Software Existence:** The Fiber Network Node (FNN) is the reference implementation of the Fiber Network Protocol and is written in Rust, as confirmed by `nervosnetwork/fiber/main/README.md`.
-*   **Compilation for RISC-V ESP32-P4:** Similar to the CKB light client, FNN is a Rust project. While Rust can target RISC-V, the provided `nervosnetwork/fiber/main/README.md` shows standard `cargo build --release` instructions and does not mention any specific support, ports, or optimizations for embedded RISC-V targets like the ESP32-P4. The FNN includes "built-in wallet functionality to sign funding transactions" and manages a "storage of the node" (`fiber/store`), indicating a more complex application than a simple light client.
-*   **Binary Size and RAM Requirements:** The provided content does not offer any specific binary size or RAM requirements for the FNN running on an ESP32-P4. It explicitly states that FNN is "heavier than just a light client," implying higher resource demands, but no concrete figures are given.
+## 3. Signing only: secp256k1 library for ESP32 exists (Bitcoin hardware wallets use this). Memory footprint?
 
-### 3. Signing only: secp256k1 library for ESP32 exists (Bitcoin hardware wallets use this). Memory footprint?
+The project ground truth explicitly states that a "secp256k1 library for ESP32 exists (Bitcoin hardware wallets use this)." The `libsecp256k1` library (from `bitcoin/secp256k1`) is a high-performance C library for secp256k1 elliptic curve cryptography, which is "Suitable for embedded systems" and has "No runtime heap allocation." It also mentions "hand-optimized assembly for 32-bit ARM" but does not specifically detail RISC-V or ESP32-P4 support. While the existence of such a library for ESP32 is confirmed by the ground truth, the specific memory footprint for its use on an ESP32-P4 is not provided in the source content.
 
-*   **Software Existence:** The `libsecp256k1` library (`bitcoin/secp256k1/master/README.md`) is a "High-performance high-assurance C library for digital signatures and other cryptographic primitives on the secp256k1 elliptic curve." Its README explicitly states it is "Suitable for embedded systems" and has "No runtime heap allocation."
-    *   While the prompt asserts that a "secp256k1 library for ESP32 exists," a search query (`api.github.com/search/repositories?q=esp32+secp256k1&sort=stars&per_page=10`) for `esp32+secp256k1` repositories returned `total_count:0`. This suggests that a dedicated, widely-starred `esp32-secp256k1` wrapper or port might not be directly discoverable via that specific search, but the underlying `libsecp256k1` (being a C library) can be integrated into ESP-IDF projects.
-*   **Memory Footprint:** The `libsecp256k1` README mentions "No runtime heap allocation," which is beneficial for embedded systems with limited RAM. However, specific binary size (flash usage) or peak RAM usage figures for `libsecp256k1` when compiled for an ESP32-P4 are not provided in the source content.
+## 4. Our existing ckb-light-esp project — what CKB operations does it already do on ESP32? Can it sign secp256k1 transactions?
 
-### 4. Our existing ckb-light-esp project — what CKB operations does it already do on ESP32? Can it sign secp256k1 transactions?
+The source content for `https://raw.githubusercontent.com/toastmanAu/ckb-light-esp/main/README.md` resulted in a "FETCH ERROR: HTTP Error 404: Not Found". Therefore, it is not possible to determine what CKB operations the `ckb-light-esp` project already performs on ESP32 or if it can sign secp256k1 transactions based on the provided content.
 
-*   The source content for `https://raw.githubusercontent.com/toastmanAu/ckb-light-esp/main/README.md` resulted in a `FETCH ERROR: HTTP Error 404: Not Found`.
-*   Therefore, based on the provided content, it is not possible to answer what CKB operations `ckb-light-esp` already performs on ESP32 or if it can sign secp256k1 transactions.
+## 5. For Fiber specifically: channel open/close = CKB L1 tx (needs signing). send_payment = off-chain message (needs signing of payment hash only, much lighter). Which operations actually need to run on-device vs can be delegated?
 
-### 5. For Fiber specifically: channel open/close = CKB L1 tx (needs signing). send_payment = off-chain message (needs signing of payment hash only, much lighter). Which operations actually need to run on-device vs can be delegated?
+Based on the project ground truth and `nervosnetwork/fiber` README.md:
 
-*   **Operations requiring on-device execution (private key on ESP32-P4):**
-    *   **Signing CKB L1 transactions:** For Fiber channel open and close operations, which are CKB L1 transactions, the private key must be securely stored on the ESP32-P4 to sign these transactions.
-    *   **Signing off-chain payment hashes:** For `send_payment` operations, which are off-chain messages, the private key associated with the Fiber channel must be on the ESP32-P4 to sign the payment hash. This is described as "much lighter" than L1 transaction signing.
-*   **Operations that can be delegated to a host (e.g., Pi, server running FNN/CKB full node):**
-    *   **CKB L1 transaction construction and broadcasting:** The complex process of constructing CKB L1 transactions (e.g., for channel open/close) can be handled by a host machine running a CKB full node or using a CKB SDK (like `@ckb-ccc/core`). The host would then send the unsigned transaction to the ESP32 for signing.
-    *   **Fiber Network Node (FNN) RPC calls:** All FNN RPC methods such as `open_channel`, `send_payment`, `list_channels`, `new_invoice`, etc., can be executed on a remote FNN instance (e.g., on `ckbnode` at 192.168.68.87). The ESP32 would only be responsible for providing the necessary signatures when prompted by the remote FNN.
-    *   **Off-chain message construction and relaying:** The construction of Fiber off-chain payment messages and their relaying through the Fiber network can be managed by the remote FNN.
-    *   **CKB L1 state verification:** Querying the CKB blockchain for transaction confirmations, cell states, or UTXO balances can be delegated to a CKB full node or light client running on the host.
+*   **Channel Open/Close:** These operations involve CKB Layer 1 transactions. The *signing* of these CKB L1 transactions must occur on the device holding the private key (ESP32-P4 in this case). However, the *construction* of the full CKB L1 transaction (e.g., gathering inputs, determining outputs, calculating fees, assembling the transaction structure) could be delegated to an external entity (like a Pi or server) that has access to CKB Layer 1 state and can build the transaction. The ESP32-P4 would then receive the unsigned transaction and return the signature.
+*   **Send Payment:** This is an off-chain message passing operation. It requires signing of a payment hash, which is a much lighter cryptographic operation than signing a full CKB L1 transaction. This signing can and should occur on the ESP32-P4 to authorize the off-chain payment. The routing and forwarding of these off-chain messages would be handled by the Fiber Network Node (FNN), which could be running on a delegated server.
 
-### 6. Verdict: is "signer only" sufficient for a self-contained FiberQuest device, or do you need a light client to verify channel state independently?
+In summary, the core cryptographic signing operations for both on-chain channel management and off-chain payments need to run on the ESP32-P4 to protect the private key. The heavy lifting of CKB L1 transaction construction and Fiber network routing/state management can be delegated.
 
-The verdict depends on the definition of "self-contained" and the acceptable level of trust.
+## 6. Verdict: is "signer only" sufficient for a self-contained FiberQuest device, or do you need a light client to verify channel state independently?
 
-*   **"Signer Only" Architecture:**
-    *   **Sufficiency:** This architecture is *sufficient* for a device that can initiate and participate in Fiber payments, provided it *trusts* a remote Fiber Network Node (FNN) and CKB node (e.g., our `ckbnode` at 192.168.68.87) to accurately report channel state, transaction confirmations, and manage the off-chain payment process. The ESP32-P4 acts as a secure hardware wallet for Fiber, signing critical operations.
-    *   **Pros:** Minimal resource requirements on the ESP32-P4, making it highly feasible. Only requires a `secp256k1` implementation and communication capabilities.
-    *   **Cons:** The device is not truly "self-contained" in terms of independent verification. It cannot independently confirm if a channel open/close transaction has been successfully mined on CKB L1, or if the reported off-chain channel state and balances are accurate. It relies entirely on the trusted remote node for this information.
+For a "self-contained FiberQuest device," a "Light Client + Signer" architecture is significantly more robust and secure than a "Signer Only" approach, especially for operations involving CKB Layer 1.
 
-*   **"Light Client + Signer" Architecture:**
-    *   **Necessity for Independent Verification:** To be truly "self-contained" and verify channel state *independently*, the ESP32-P4 would *need* to run a CKB light client. This light client would allow the device to:
-        *   Verify the confirmation of CKB L1 transactions that open or close Fiber channels.
-        *   Independently check the validity of its own UTXOs on CKB L1, which are used to fund channels.
-        *   Potentially verify the L1 anchors of the Fiber channel, providing a trustless foundation for the off-chain state managed by the FNN.
-    *   **Pros:** Enhanced security and autonomy. Reduces reliance on a trusted third party for critical state verification, aligning better with the spirit of decentralization.
-    *   **Cons:** Significantly higher resource requirements (binary size, RAM, CPU) for the ESP32-P4, as it would need to run both a CKB light client and the signing logic. Based on the lack of specific resource data in the provided content, the feasibility of running a Rust-based CKB light client on an ESP32-P4 is uncertain and likely challenging.
+*   **Signer Only:** This approach would mean the ESP32-P4 relies entirely on an external server (e.g., a Pi) to construct CKB L1 transactions and to report the current state of Fiber channels on CKB L1. The ESP32-P4 would sign whatever transaction it is presented with. While this is sufficient for authorizing off-chain payments (by signing payment hashes), it introduces a trust dependency on the external server for the integrity and correctness of on-chain operations like channel opening, closing, and dispute resolution. The device cannot independently verify if the channel was opened correctly, if funds are locked as expected, or if a closing transaction is valid.
 
-**Verdict:** For a "self-contained FiberQuest device" that prioritizes *independent verification* of its on-chain state, a **"Light Client + Signer"** architecture is necessary. However, given the current lack of information regarding the resource footprint of Rust CKB light clients and FNN on ESP32-P4, and the inherent resource constraints of embedded systems, the **"Signer Only"** approach is likely more practical and feasible for the initial FiberQuest stretch goal, accepting the trade-off of relying on a trusted remote node for state verification. If the goal is simply to trigger payments from the ESP32 without human intervention, and the remote `ckbnode` is considered trusted infrastructure, then "Signer Only" is sufficient.
+*   **Light Client + Signer:** By running a CKB light client, the ESP32-P4 gains the ability to independently verify the CKB Layer 1 blockchain state. This means it can:
+    *   Verify that channel open/close transactions are correctly recorded on-chain.
+    *   Independently confirm the state of its locked funds within Fiber channels.
+    *   Potentially monitor for malicious activity or initiate disputes without relying on an external, potentially compromised, server.
+    *   The `nervosnetwork/fiber` README.md mentions "Watchtower support," which implies that even with a full node, monitoring can be delegated, but a light client would still be needed to *verify* watchtower reports or initiate on-chain actions.
 
-### Gaps / Follow-up
+Given the goal of a "self-contained FiberQuest device," which implies autonomy and independent verification, a light client is necessary to verify channel state independently for critical on-chain operations. Without it, the device is not truly self-contained for managing its CKB L1 assets and channel lifecycle.
 
-1.  **`ckb-light-esp` Project Details:** The `ckb-light-esp` README was inaccessible. Retrieving this documentation is crucial to understand its existing capabilities, CKB operations supported, and secp256k1 signing functionality on ESP32.
-2.  **Resource Benchmarks for Rust CKB Light Client/FNN on ESP32-P4:** Obtain specific binary size, RAM usage (static and dynamic), and CPU performance benchmarks for a Rust CKB light client and the FNN when cross-compiled for the ESP32-P4's RISC-V architecture. This is critical for assessing the feasibility of the "Light Client + Signer" architecture.
-3.  **`secp256k1` Library for ESP32:** Investigate existing `secp256k1` implementations or wrappers specifically optimized for ESP32 (e.g., within ESP-IDF's mbedTLS component, if available, or other community projects) and gather their memory footprint details. The `mbedtls` README was also inaccessible.
-4.  **Rust Embedded Ecosystem for CKB:** Research the current state of Rust support for CKB-related libraries (e.g., CKB transaction building, RPC clients) within the embedded Rust ecosystem, specifically targeting RISC-V microcontrollers like the ESP32-P4.
+## Gaps / Follow-up
 
-### Relevant Code/API Snippets
+1.  **CKB Light Client for RISC-V ESP32-P4:** The most significant gap is the lack of information on whether the Rust-based CKB light client can be compiled for the RISC-V architecture of the ESP32-P4, and its resulting binary size and RAM footprint. This is crucial for determining the feasibility of the "Light Client + Signer" architecture.
+2.  **FNN for RISC-V ESP32-P4:** Similar to the light client, there's no information on FNN's compatibility with ESP32-P4's RISC-V architecture or its resource requirements. Given it's "heavier," this is a critical unknown.
+3.  **`ckb-light-esp` Project Details:** The `ckb-light-esp` README.md was unreachable. Accessing this documentation is vital to understand its existing CKB operations and signing capabilities on ESP32, which could directly inform the "Signer Only" architecture.
+4.  **`libsecp256k1` Memory Footprint:** While `libsecp256k1` is suitable for embedded systems, specific memory usage (RAM/Flash) on an ESP32-P4 for typical CKB transaction signing operations is not provided.
+5.  **CKB L1 Transaction Construction Library for ESP32:** Even with a light client, the process of constructing complex CKB L1 transactions (e.g., for channel opening/closing) on a resource-constrained ESP32-P4 might be challenging. Research into existing CKB transaction building libraries or SDKs compatible with ESP32 (or Rust for embedded) would be beneficial.
+
+## Relevant Code/API Snippets
 
 *   **Fiber Network Node (FNN) Build Command:**
     ```
     cargo build --release
     ```
-    (From `nervosnetwork/fiber/main/README.md`, indicating standard Rust compilation)
+    (Source: `nervosnetwork/fiber` README.md)
 
-*   **FNN Private Key Management:**
+*   **FNN Private Key Export (for wallet functionality):**
     ```
-    mkdir ckb
     ckb-cli account export --lock-arg --extended-privkey-path ./ckb/exported-key
     head -n 1 ./ckb/exported-key > ./ckb/key
-    rm ./ckb/exported-key
     ```
-    (From `nervosnetwork/fiber/main/README.md`, showing FNN uses a `ckb/key` file for its built-in wallet)
+    (Source: `nervosnetwork/fiber` README.md)
 
-*   **FNN Storage Removal for Upgrades:**
-    ```
-    rm -rf /folder-to/my-fnn/fiber/store
-    ```
-    (From `nervosnetwork/fiber/main/README.md`, indicating FNN persists channel data in a `fiber/store` folder)
-
-*   **`libsecp256k1` Features:**
+*   **`libsecp256k1` Features (relevant for embedded):**
     *   "Suitable for embedded systems."
     *   "No runtime heap allocation."
-    (From `bitcoin/secp256k1/master/README.md`, highlighting its suitability for resource-constrained environments)
+    *   "Intended to be portable to any system with a C89 compiler and uint64_t support."
+    *   "Intended to be completely free of timing sidechannels for secret-key operations (on reasonable hardware/toolchains)"
+    (Source: `bitcoin/secp256k1` README.md)
