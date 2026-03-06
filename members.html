@@ -352,26 +352,28 @@ async function connectJoyID() {
       await handleConnectResult(result);
     } else {
       // Brave / Firefox: cross-device WebSocket relay unreliable — use full redirect flow
-      // Store return path, then let JoyID redirect back via callbackUrl
       showMsg('connectMsg', '<span class="spinner"></span>Redirecting to JoyID…', 'info');
-      sessionStorage.setItem('joyid_return', window.location.href);
-      // Build JoyID auth URL manually using SDK helper
-      const mod = await import('https://esm.sh/@joyid/ckb@1.1.3');
-      if (mod.buildJoyIDURL) {
-        const authUrl = mod.buildJoyIDURL({
-          redirectURL: callbackUrl + '?returnTo=' + encodeURIComponent(window.location.href),
+      const callbackWithReturn = callbackUrl + '?returnTo=' + encodeURIComponent(window.location.href);
+      // Build the JoyID auth URL manually using @joyid/common buildJoyIDURL
+      try {
+        const common = await import('https://esm.sh/@joyid/common@0.2.1');
+        const authUrl = common.buildJoyIDURL({
+          redirectURL: callbackWithReturn,
           network: 'mainnet',
           joyidAppURL: 'https://app.joy.id',
         }, 'redirect', '/');
         window.location.href = authUrl;
-      } else {
-        // Fallback: popup with longer timeout + clear messaging
-        showMsg('connectMsg', '<span class="spinner"></span>Opening JoyID — scan the QR, may need 2-3 tries on Brave/Firefox…', 'info');
-        const result = await Promise.race([
-          joyidConnect({ redirectURL: callbackUrl, network: 'mainnet', joyidAppURL: 'https://app.joy.id' }),
-          new Promise((_, rej) => setTimeout(() => rej(new Error('TIMEOUT')), 90000))
-        ]);
-        await handleConnectResult(result);
+        return; // page navigates away
+      } catch(err) {
+        // buildJoyIDURL not available — construct URL manually
+        const base = 'https://app.joy.id';
+        const params = new URLSearchParams({
+          redirectURL: callbackWithReturn,
+          network: 'mainnet',
+          requestType: 'Auth',
+        });
+        window.location.href = `${base}/?${params.toString()}`;
+        return;
       }
     }
   } catch(e) {
