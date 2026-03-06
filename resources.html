@@ -1,0 +1,296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Resources — Wyltek Industries</title>
+  <link rel="icon" href="/favicon.ico"/>
+  <style>
+    :root {
+      --bg:#07090d; --surface:#0e1117; --surface2:#141820;
+      --border:#1a2030; --accent:#00c8ff; --accent2:#7b5cfa;
+      --green:#00e5a0; --red:#ff4560; --yellow:#fbbf24;
+      --text:#e2e8f0; --muted:#4a5568;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    html,body{max-width:100%;overflow-x:hidden;}
+    body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:15px;min-height:100vh;}
+    a{color:inherit;text-decoration:none;}
+    a:hover{text-decoration:underline;}
+
+    /* ── Header (shared pattern) ── */
+    header{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;}
+    .header-inner{width:100%;max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;}
+    .logo{font-size:1rem;font-weight:700;display:flex;align-items:center;gap:.5rem;color:var(--text);}
+    .logo img{width:28px;height:28px;border-radius:7px;object-fit:cover;}
+    nav{display:flex;gap:1.5rem;}
+    nav a{color:var(--muted);font-size:.9rem;transition:color .2s;}
+    nav a:hover{color:var(--text);}
+    .member-only{display:none!important;}
+    #mainNav.member-nav .member-only,.nav-links.member-nav .member-only{display:inline-flex!important;}
+    .nav-join{color:var(--accent)!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;transition:background .2s,border-color .2s!important;}
+    .nav-join:hover{background:rgba(0,200,255,.1);border-color:var(--accent);text-decoration:none!important;}
+    .nav-toggle{display:none;background:none;border:1px solid var(--border);color:var(--text);padding:.3rem .6rem;border-radius:6px;cursor:pointer;font-size:1.1rem;}
+    @media(max-width:680px){
+      nav#mainNav{display:none;flex-direction:column;gap:0;position:absolute;top:56px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);z-index:99;}
+      nav#mainNav.open{display:flex;}
+      nav#mainNav a{padding:.7rem 1.5rem;font-size:1rem;border-bottom:1px solid var(--border);}
+      nav#mainNav a:last-child{border-bottom:none;}
+      .nav-toggle{display:block;}
+    }
+
+    /* ── Gate overlay ── */
+    .gate{display:none;position:fixed;inset:0;background:rgba(7,9,13,.96);z-index:200;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:2rem;}
+    .gate.active{display:flex;}
+    .gate h2{font-size:1.4rem;margin-bottom:.75rem;}
+    .gate p{color:var(--muted);font-size:.9rem;max-width:360px;line-height:1.6;margin-bottom:1.5rem;}
+    .gate a{background:var(--accent);color:#000;font-weight:700;padding:.6rem 1.4rem;border-radius:8px;font-size:.9rem;}
+    .gate a:hover{opacity:.9;text-decoration:none;}
+
+    /* ── Main layout ── */
+    .page{max-width:900px;margin:0 auto;padding:2.5rem 1.5rem;}
+    .page-header{margin-bottom:2rem;}
+    .page-header h1{font-size:1.6rem;font-weight:800;margin-bottom:.4rem;}
+    .page-header p{color:var(--muted);font-size:.9rem;line-height:1.6;max-width:600px;}
+
+    /* ── Category sections ── */
+    .category{margin-bottom:2.5rem;}
+    .category-title{font-size:.72rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);margin-bottom:1rem;padding-bottom:.4rem;border-bottom:1px solid var(--border);}
+
+    /* ── Resource cards ── */
+    .resource-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:.85rem;}
+    .resource-card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.1rem 1.2rem;transition:border-color .2s,background .2s;display:flex;flex-direction:column;gap:.5rem;}
+    .resource-card:hover{border-color:rgba(0,200,255,.3);background:var(--surface2);}
+    .card-top{display:flex;align-items:flex-start;justify-content:space-between;gap:.5rem;}
+    .card-icon{font-size:1.1rem;flex-shrink:0;margin-top:.05rem;}
+    .card-name{font-size:.95rem;font-weight:700;color:var(--text);flex:1;}
+    .card-badge{font-size:.65rem;font-weight:700;padding:.15rem .45rem;border-radius:4px;flex-shrink:0;}
+    .badge-tool{background:rgba(0,200,255,.1);color:var(--accent);border:1px solid rgba(0,200,255,.2);}
+    .badge-script{background:rgba(123,92,250,.1);color:#a78bfa;border:1px solid rgba(123,92,250,.2);}
+    .badge-guide{background:rgba(0,229,160,.1);color:var(--green);border:1px solid rgba(0,229,160,.2);}
+    .badge-bot{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.2);}
+    .card-desc{font-size:.8rem;color:var(--muted);line-height:1.5;}
+    .card-meta{display:flex;gap:.6rem;flex-wrap:wrap;margin-top:.15rem;}
+    .card-tag{font-size:.68rem;color:var(--muted);background:rgba(255,255,255,.04);border:1px solid var(--border);padding:.1rem .4rem;border-radius:4px;}
+    .card-links{display:flex;gap:.6rem;margin-top:.25rem;}
+    .card-link{font-size:.75rem;font-weight:600;color:var(--accent);border:1px solid rgba(0,200,255,.25);padding:.2rem .55rem;border-radius:5px;transition:background .15s;}
+    .card-link:hover{background:rgba(0,200,255,.08);text-decoration:none;}
+    .card-link.gh{color:var(--muted);border-color:var(--border);}
+    .card-link.gh:hover{color:var(--text);background:rgba(255,255,255,.04);}
+
+    /* ── Suggest CTA ── */
+    .suggest{background:var(--surface);border:1px dashed var(--border);border-radius:10px;padding:1.2rem 1.5rem;text-align:center;margin-top:1rem;}
+    .suggest p{font-size:.82rem;color:var(--muted);line-height:1.5;}
+    .suggest a{color:var(--accent);}
+  </style>
+</head>
+<body>
+
+<!-- Gate: shown to non-members -->
+<div class="gate" id="gate">
+  <h2>🔒 Members Only</h2>
+  <p>The Resources section is available to Wyltek founding members. Sign in or join to access open-source tools, scripts, and guides built by Wyltek.</p>
+  <a href="/members.html">Join / Sign In</a>
+</div>
+
+<header>
+  <div class="header-inner">
+    <a href="/index.html" class="logo">
+      <img src="/wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">
+      Wyltek Industries
+    </a>
+    <nav id="mainNav">
+      <a href="research.html" class="member-only">Research</a>
+      <a href="blog.html" class="member-only">Devlog</a>
+      <a href="resources.html" class="member-only" style="color:var(--accent)">Resources</a>
+      <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
+      <a href="flasher.html" class="member-only">Flasher</a>
+      <a href="ckb-sync.html" class="member-only">Sync</a>
+      <a href="members.html" class="nav-join">✦ Membership</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+  </div>
+</header>
+
+<div class="page" id="content" style="display:none">
+  <div class="page-header">
+    <h1>⚙️ Resources</h1>
+    <p>Open-source tools, scripts, and guides built by Wyltek. Free to use — MIT licensed unless noted. Hosted on GitHub.</p>
+  </div>
+
+  <!-- OpenClaw / AI Agents -->
+  <div class="category">
+    <div class="category-title">OpenClaw &amp; AI Agents</div>
+    <div class="resource-grid">
+
+      <div class="resource-card">
+        <div class="card-top">
+          <span class="card-icon">⚡</span>
+          <span class="card-name">openclaw-tg-webhook</span>
+          <span class="card-badge badge-tool">Tool</span>
+        </div>
+        <div class="card-desc">Switch OpenClaw's Telegram integration from long-polling to webhook mode. ~31x faster message delivery via Cloudflare Tunnel. One command setup, no router port forwarding needed.</div>
+        <div class="card-meta">
+          <span class="card-tag">OpenClaw</span>
+          <span class="card-tag">Telegram</span>
+          <span class="card-tag">Cloudflare</span>
+          <span class="card-tag">Pi</span>
+        </div>
+        <div class="card-links">
+          <a class="card-link gh" href="https://github.com/toastmanAu/openclaw-tg-webhook" target="_blank">GitHub ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- CKB / Nervos -->
+  <div class="category">
+    <div class="category-title">CKB &amp; Nervos Network</div>
+    <div class="resource-grid">
+
+      <div class="resource-card">
+        <div class="card-top">
+          <span class="card-icon">📸</span>
+          <span class="card-name">ckb-node-dashboard</span>
+          <span class="card-badge badge-tool">Tool</span>
+        </div>
+        <div class="card-desc">Lightweight Node.js proxy + HTML dashboard for monitoring a CKB full node. Shows block height, peers, sync status. Polling-based, no dependencies.</div>
+        <div class="card-meta">
+          <span class="card-tag">CKB</span>
+          <span class="card-tag">Node.js</span>
+          <span class="card-tag">Dashboard</span>
+        </div>
+        <div class="card-links">
+          <a class="card-link gh" href="https://github.com/toastmanAu/ckb-node-dashboard" target="_blank">GitHub ↗</a>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="card-top">
+          <span class="card-icon">🐋</span>
+          <span class="card-name">ckb-whale-bot</span>
+          <span class="card-badge badge-bot">Bot</span>
+        </div>
+        <div class="card-desc">Telegram bot that monitors CKB transactions and alerts when large transfers occur. Configurable USD threshold, live CKB price from CoinGecko, filters self-transfers.</div>
+        <div class="card-meta">
+          <span class="card-tag">CKB</span>
+          <span class="card-tag">Telegram</span>
+          <span class="card-tag">Node.js</span>
+        </div>
+        <div class="card-links">
+          <a class="card-link gh" href="https://github.com/toastmanAu/ckb-whale-bot" target="_blank">GitHub ↗</a>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="card-top">
+          <span class="card-icon">🛡️</span>
+          <span class="card-name">ckb-antiscam</span>
+          <span class="card-badge badge-bot">Bot</span>
+        </div>
+        <div class="card-desc">Anti-scam Telegram bot for CKB community groups. Detects trading spam, bot behaviour, and suspicious join patterns. Learn mode with precision/recall calibration before going live.</div>
+        <div class="card-meta">
+          <span class="card-tag">CKB</span>
+          <span class="card-tag">Telegram</span>
+          <span class="card-tag">Moderation</span>
+        </div>
+        <div class="card-links">
+          <a class="card-link gh" href="https://github.com/toastmanAu/ckb-antiscam" target="_blank">GitHub ↗</a>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="card-top">
+          <span class="card-icon">⛏️</span>
+          <span class="card-name">ckb-stratum-proxy</span>
+          <span class="card-badge badge-tool">Tool</span>
+        </div>
+        <div class="card-desc">Stratum proxy for CKB mining. Handles ViaBTC protocol quirks, per-miner extranonce allocation, and provides stats via HTTP. Point your miners here instead of directly at the pool.</div>
+        <div class="card-meta">
+          <span class="card-tag">CKB</span>
+          <span class="card-tag">Mining</span>
+          <span class="card-tag">Stratum</span>
+        </div>
+        <div class="card-links">
+          <a class="card-link gh" href="https://github.com/toastmanAu/ckb-stratum-proxy" target="_blank">GitHub ↗</a>
+        </div>
+      </div>
+
+      <div class="resource-card">
+        <div class="card-top">
+          <span class="card-icon">🔥</span>
+          <span class="card-name">spore-burner</span>
+          <span class="card-badge badge-tool">Tool</span>
+        </div>
+        <div class="card-desc">Browser tool to burn (melt) Spore/DOB NFTs on CKB. Reclaims locked CKB capacity. JoyID wallet support, testnet/mainnet aware, shows on-chain images inline.</div>
+        <div class="card-meta">
+          <span class="card-tag">CKB</span>
+          <span class="card-tag">Spore</span>
+          <span class="card-tag">DOB</span>
+          <span class="card-tag">JoyID</span>
+        </div>
+        <div class="card-links">
+          <a class="card-link" href="https://toastmanau.github.io/spore-burner" target="_blank">Live ↗</a>
+          <a class="card-link gh" href="https://github.com/toastmanAu/spore-burner" target="_blank">GitHub ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Hardware / ESP32 -->
+  <div class="category">
+    <div class="category-title">Hardware &amp; Embedded</div>
+    <div class="resource-grid">
+
+      <div class="resource-card">
+        <div class="card-top">
+          <span class="card-icon">⛏️</span>
+          <span class="card-name">NerdMiner_CKB</span>
+          <span class="card-badge badge-tool">Tool</span>
+        </div>
+        <div class="card-desc">ESP32 Eaglesong miner for CKB. Based on NerdMiner, adapted for CKB's Eaglesong PoW. Targets the CYD (ESP32-2432S028R) with touchscreen display. PlatformIO build.</div>
+        <div class="card-meta">
+          <span class="card-tag">ESP32</span>
+          <span class="card-tag">CKB</span>
+          <span class="card-tag">Mining</span>
+          <span class="card-tag">Hardware</span>
+        </div>
+        <div class="card-links">
+          <a class="card-link gh" href="https://github.com/toastmanAu/NerdMiner_CKB" target="_blank">GitHub ↗</a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="suggest">
+    <p>Built something useful for the CKB ecosystem? <a href="/lounge.html">Share it in the Members Lounge</a> — if it's worth adding here we'll list it.</p>
+  </div>
+</div>
+
+<script src="/js/member-nav.js"></script>
+<script src="/js/bug-reporter.js"></script>
+<script>
+// Gate check
+(function() {
+  var addr = localStorage.getItem('wyltek_address');
+  if (addr) {
+    document.getElementById('gate').classList.remove('active');
+    document.getElementById('content').style.display = 'block';
+  } else {
+    document.getElementById('gate').classList.add('active');
+    document.getElementById('content').style.display = 'none';
+  }
+})();
+</script>
+<script>
+(function(){
+  var btn=document.getElementById('navToggle');
+  var nav=document.getElementById('mainNav');
+  if(btn&&nav){btn.addEventListener('click',function(){nav.classList.toggle('open');});}
+})();
+</script>
+</body>
+</html>
