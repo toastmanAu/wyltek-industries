@@ -505,10 +505,7 @@ function clearMsg(id) {
   if (el) { el.className = ''; el.innerHTML = ''; }
 }
 
-// ── Nav toggle ────────────────────────────────────────────────────
-document.getElementById('navToggle')?.addEventListener('click', () => {
-  document.getElementById('mainNav').classList.toggle('open');
-});
+// ── Nav toggle handled by /js/nav-toggle.js ───────────────────────
 
 init();
 </script>
