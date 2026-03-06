@@ -293,6 +293,13 @@ const EXPLORER = 'https://explorer.nervos.org/transaction';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_ANON);
 let currentAddress = null;
 let joyidConnect, joyidSignMessage;
+let _joyidConnector = null;
+async function loadJoyIDConnector() {
+  if (_joyidConnector) return _joyidConnector;
+  _joyidConnector = await import('/js/joyid-connector.js');
+  return _joyidConnector;
+}
+
 
 // ── Init ──────────────────────────────────────────────────────────
 window.connectJoyID = connectJoyID;
