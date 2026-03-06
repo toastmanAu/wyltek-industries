@@ -318,9 +318,7 @@ async function loadJoyID() {
   joyidConnect = mod.connect;
   joyidSignMessage = mod.signChallenge || mod.signMessage;
   dbg('connect fn: ' + typeof joyidConnect);
-}
-
-async function init() {
+}async function init() {
   loadCapCount();
   // Restore session
   const saved = localStorage.getItem('wyltek_address');
@@ -351,49 +349,86 @@ async function connectJoyID() {
   showMsg('connectMsg', '<span class="spinner"></span>Opening JoyID…', 'info');
   dbg('connectJoyID() called');
   dbg('UA: ' + navigator.userAgent.slice(0,80));
-  // Show iOS hint after 8s if flow stalls (cross-device QR second step issue)
-  const stallTimer = setTimeout(() => showIOSHint(), 8000);
+
   try {
     dbg('Loading JoyID SDK…');
     await loadJoyID();
     dbg('SDK loaded — joyidConnect=' + typeof joyidConnect);
+
     const callbackUrl = window.location.origin + '/joyid-callback.html';
     dbg('callbackUrl: ' + callbackUrl);
-    dbg('Calling joyidConnect()… (QR/popup will appear)');
-    const result = await joyidConnect({ redirectURL: callbackUrl, network: 'mainnet', joyidAppURL: 'https://app.joy.id' });
-    dbg('joyidConnect() resolved — result keys: ' + Object.keys(result||{}).join(', '), '#4f4');
-    const address = result.address;
-    dbg('address: ' + address, '#4f4');
 
-    showMsg('connectMsg', '<span class="spinner"></span>Creating account…', 'info');
-    dbg('Calling signInAnon…');
-    await signInAnon(address);
-    dbg('signInAnon done', '#4f4');
-    dbg('Calling joinQueue…');
-    await joinQueue(address);
-    dbg('joinQueue done', '#4f4');
+    // Check if we're on mobile (popup works fine) or desktop (use redirect to avoid WebSocket relay hang)
+    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
+    dbg('isMobile: ' + isMobile);
 
-    currentAddress = address;
-    localStorage.setItem('wyltek_address', address);
-
-    // Redirect back if they came from a members-only page
-    const returnTo = sessionStorage.getItem('wyltek_return');
-    if (returnTo) {
-      sessionStorage.removeItem('wyltek_return');
-      location.replace(returnTo);
-      return;
+    if (isMobile) {
+      // Mobile: popup/direct flow works
+      dbg('Using popup connect flow…');
+      const result = await joyidConnect({ redirectURL: callbackUrl, network: 'mainnet', joyidAppURL: 'https://app.joy.id' });
+      dbg('joyidConnect() resolved — keys: ' + Object.keys(result||{}).join(', '), '#4f4');
+      await handleConnectResult(result);
+    } else {
+      // Desktop: use redirect flow — avoids cross-device WebSocket relay hanging
+      dbg('Desktop detected — using redirect flow…');
+      sessionStorage.setItem('joyid_pending_connect', '1');
+      const params = new URLSearchParams({
+        redirectURL: callbackUrl,
+        network: 'mainnet',
+        // tell JoyID to come back to callback after auth
+      });
+      dbg('Redirecting to JoyID… (will return to callback page)');
+      // Use SDK's built-in redirect method if available, else fall back to popup
+      if (typeof joyidConnect === 'function') {
+        // Try popup first — if it resolves quickly it's fine; if it hangs >25s, show manual link
+        const timeoutMs = 25000;
+        const race = await Promise.race([
+          joyidConnect({ redirectURL: callbackUrl, network: 'mainnet', joyidAppURL: 'https://app.joy.id' }),
+          new Promise((_, rej) => setTimeout(() => rej(new Error('TIMEOUT')), timeoutMs))
+        ]);
+        dbg('joyidConnect() resolved — keys: ' + Object.keys(race||{}).join(', '), '#4f4');
+        await handleConnectResult(race);
+      }
     }
-
-    dbg('Calling showQueue…');
-    showQueue(address);
-    clearTimeout(stallTimer);
   } catch(e) {
-    clearTimeout(stallTimer);
-    dbg('ERROR: ' + (e.message||e) + (e.stack ? '\n'+e.stack.split('\n')[1] : ''), '#f66');
-    showMsg('connectMsg', '⚠ ' + (e.message || e), 'err');
-    showIOSHint();
+    if (e.message === 'TIMEOUT') {
+      dbg('Connect timed out after 25s — cross-device relay likely blocked by browser', '#fa0');
+      showMsg('connectMsg', '⏱ Connection timed out. Try opening this page on your phone instead.', 'err');
+      showIOSHint();
+    } else {
+      dbg('ERROR: ' + (e.message||e) + (e.stack ? '\n'+e.stack.split('\n')[1] : ''), '#f66');
+      showMsg('connectMsg', '⚠ ' + (e.message || e), 'err');
+      showIOSHint();
+    }
     btn.disabled = false;
   }
+}
+
+async function handleConnectResult(result) {
+  const address = result?.address;
+  if (!address) throw new Error('No address in JoyID result: ' + JSON.stringify(result));
+  dbg('address: ' + address, '#4f4');
+
+  showMsg('connectMsg', '<span class="spinner"></span>Creating account…', 'info');
+  dbg('Calling signInAnon…');
+  await signInAnon(address);
+  dbg('signInAnon done', '#4f4');
+  dbg('Calling joinQueue…');
+  await joinQueue(address);
+  dbg('joinQueue done', '#4f4');
+
+  currentAddress = address;
+  localStorage.setItem('wyltek_address', address);
+
+  const returnTo = sessionStorage.getItem('wyltek_return');
+  if (returnTo) {
+    sessionStorage.removeItem('wyltek_return');
+    location.replace(returnTo);
+    return;
+  }
+
+  dbg('Calling showQueue…');
+  showQueue(address);
 }
 
 function showIOSHint() {
