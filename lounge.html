@@ -317,7 +317,7 @@
     meta.className = 'msg-meta';
     meta.innerHTML =
       `<span class="msg-name">${esc(name)}</span>` +
-      `<span class="msg-addr">${esc(shortAddr(msg.address))}</span>` +
+      `<span class="msg-addr" title="${esc(msg.address)}">${p.display_name ? esc(shortAddr(msg.address)) : ''}</span>` +
       `<span class="msg-time" title="${esc(new Date(msg.created_at).toLocaleString())}">${relTime(msg.created_at)}</span>`;
 
     const txt = document.createElement('div');
@@ -527,6 +527,9 @@
 
   // ── Init ──────────────────────────────────────────────────────────────────
   setConn('connecting');
+  // Pre-load current user's own profile so their avatar shows immediately
+  if (MY_ADDR) ensureProfiles([MY_ADDR]);
+
   loadChannel(currentCh).then(() => subscribeRealtime());
 
 })();
