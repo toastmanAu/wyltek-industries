@@ -121,6 +121,7 @@
         </div>
         <div class="avatar-hint">
           Tap to upload a profile picture<br>
+          <span style="font-size:0.75rem;opacity:0.5">Images auto-resized to 2MB max</span>
           <span style="font-size:.72rem;">JPG/PNG · max 1 MB · stored in Supabase</span>
         </div>
         <input type="file" id="avatarInput" accept="image/jpeg,image/png,image/webp" onchange="handleAvatarChange(event)" />
@@ -231,19 +232,38 @@ async function init() {
 }
 
 // ── Avatar preview ─────────────────────────────────────────────────
-window.handleAvatarChange = function(e) {
+window.handleAvatarChange = async function(e) {
   const file = e.target.files[0];
   if (!file) return;
-  if (file.size > 1024 * 1024) { alert('Image must be under 1 MB'); return; }
-  avatarFile = file;
-  const reader = new FileReader();
-  reader.onload = ev => {
+
+  // Hard limit: reject anything over 10MB (clearly wrong file)
+  if (file.size > 10 * 1024 * 1024) {
+    showMsg('profileMsg', '⚠ File too large — max 10MB source image.', 'err');
+    return;
+  }
+
+  try {
+    const { resizeImageWithPreview } = await import('/js/image-resize.js');
+    const { blob, dataUrl, originalSize, newSize } = await resizeImageWithPreview(file, {
+      maxDim:   1024,
+      maxBytes: 2 * 1024 * 1024,  // 2MB output limit
+    });
+    avatarFile = new File([blob], 'avatar.jpg', { type: 'image/jpeg' });
+
     const img = document.getElementById('avatarImg');
-    img.src = ev.target.result;
+    img.src = dataUrl;
     img.style.display = 'block';
     document.getElementById('avatarDefault').style.display = 'none';
-  };
-  reader.readAsDataURL(file);
+
+    // Show resize notice if image was compressed
+    if (originalSize > newSize + 10240) {
+      const fromKB = Math.round(originalSize / 1024);
+      const toKB   = Math.round(newSize / 1024);
+      showMsg('profileMsg', `📐 Image resized: ${fromKB}KB → ${toKB}KB`, 'info');
+    }
+  } catch(err) {
+    showMsg('profileMsg', '⚠ Could not process image: ' + err.message, 'err');
+  }
 };
 
 // ── Skip banner checkbox ───────────────────────────────────────────
@@ -264,11 +284,10 @@ window.saveProfile = async function() {
 
     // Upload avatar if changed
     if (avatarFile) {
-      const ext  = avatarFile.name.split('.').pop();
-      const path = `${MY_ADDR.slice(0, 16)}.${ext}`;
+      const path = `${MY_ADDR.slice(0, 16)}.jpg`;  // always JPEG now
       const { error: uploadErr } = await sb.storage
         .from('avatars')
-        .upload(path, avatarFile, { upsert: true, contentType: avatarFile.type });
+        .upload(path, avatarFile, { upsert: true, contentType: 'image/jpeg' });
       if (uploadErr) throw new Error('Avatar upload failed: ' + uploadErr.message);
       const { data: urlData } = sb.storage.from('avatars').getPublicUrl(path);
       avatar_url = urlData.publicUrl;
