@@ -348,6 +348,18 @@ function isChromium() {
 async function connectJoyID() {
   const btn = document.getElementById('connectBtn');
   btn.disabled = true;
+
+  // Firefox desktop can't complete the passkey flow — tell them upfront
+  const connector = await loadJoyIDConnector();
+  if (connector.isFirefoxDesktop()) {
+    showMsg('connectMsg',
+      '⚠ Firefox doesn\'t support this sign-in method. Try <strong>Brave</strong>, <strong>Chrome</strong>, or open this page on your phone.',
+      'err');
+    btn.disabled = false;
+    showIOSHint();
+    return;
+  }
+
   showMsg('connectMsg', '<span class="spinner"></span>Opening JoyID…', 'info');
   try {
     const connector = await loadJoyIDConnector();

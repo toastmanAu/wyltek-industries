@@ -31,22 +31,22 @@ async function loadCommon() {
   return _common;
 }
 
-/**
- * Detect if current browser supports cross-device passkey relay.
- * Only Chrome/Chromium does reliably. Brave, Firefox, Safari don't.
- * navigator.brave.isBrave() is async — so we use UA string as primary signal.
- */
 function supportsPasskeyRelay() {
   const ua = navigator.userAgent;
   const isMobile = /Mobi|Android|iPhone|iPad/i.test(ua);
   if (isMobile) return true;
   if (/Firefox/.test(ua)) return false;
   if (/Edg\//.test(ua)) return false;
-  // Brave detection: UA says Chrome but window.navigator.brave exists (even if isBrave() is async)
   if (typeof navigator.brave !== 'undefined') return false;
-  // Chrome/Chromium
   if (!!(window.chrome) && /Chrome/.test(ua)) return true;
-  return false; // unknown — use redirect
+  return false;
+}
+
+// Firefox doesn't support CTAP2 hybrid (cross-device QR) well — redirect flow
+// hits a dead end. Better to tell them than leave them stuck.
+export function isFirefoxDesktop() {
+  const ua = navigator.userAgent;
+  return /Firefox/.test(ua) && !/Mobi|Android/i.test(ua);
 }
 
 /**
