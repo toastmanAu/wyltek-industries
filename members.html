@@ -210,6 +210,10 @@
       <div class="card-sub">No seed phrases. No gas fees. Just your JoyID passkey.</div>
       <button class="btn" id="connectBtn" onclick="connectJoyID()">🔐 Connect with JoyID</button>
       <div id="connectMsg"></div>
+      <div id="iosHint" style="display:none;margin-top:12px;padding:10px 14px;background:rgba(255,200,0,0.08);border:1px solid rgba(255,200,0,0.25);border-radius:8px;font-size:13px;color:#ccc;line-height:1.5">
+        📱 <strong style="color:#fff">On iPhone?</strong> For the best experience, open this page in <strong>Safari on your phone</strong> — JoyID connects in one tap with Face ID, no QR scanning needed.<br>
+        <a id="iosShareLink" href="" style="color:#f5a623;text-decoration:none;font-size:12px;margin-top:6px;display:inline-block">📋 Copy page link →</a>
+      </div>
     </div>
     <p style="text-align:center;font-size:.78rem;color:var(--muted);margin-top:.75rem;">
       JoyID uses a passkey stored in your phone's secure enclave — like Face ID for a crypto wallet.
@@ -332,6 +336,8 @@ async function connectJoyID() {
   const btn = document.getElementById('connectBtn');
   btn.disabled = true;
   showMsg('connectMsg', '<span class="spinner"></span>Opening JoyID…', 'info');
+  // Show iOS hint after 8s if flow stalls (cross-device QR second step issue)
+  const stallTimer = setTimeout(() => showIOSHint(), 8000);
   try {
     await loadJoyID();
     const callbackUrl = window.location.origin + '/joyid-callback.html';
@@ -354,11 +360,47 @@ async function connectJoyID() {
     }
 
     showQueue(address);
+    clearTimeout(stallTimer);
   } catch(e) {
+    clearTimeout(stallTimer);
     showMsg('connectMsg', '⚠ ' + (e.message || e), 'err');
+    showIOSHint(); // always show hint on error — likely the cross-device QR issue
     btn.disabled = false;
   }
 }
+
+function showIOSHint() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  const hint = document.getElementById('iosHint');
+  if (!hint) return;
+  // Show on: iOS non-Safari (best case), or any desktop with a stall (cross-device QR issue)
+  if (isIOS && isSafari) return; // Safari on iOS works fine — no hint needed
+  hint.style.display = 'block';
+  const link = document.getElementById('iosShareLink');
+  if (link) {
+    link.href = window.location.href;
+    link.onclick = (e) => {
+      e.preventDefault();
+      navigator.clipboard?.writeText(window.location.href)
+        .then(() => { link.textContent = '✓ Copied!'; setTimeout(() => link.textContent = '📋 Copy page link →', 2000); })
+        .catch(() => {});
+    };
+  }
+}
+
+// Show iOS hint immediately on page load if on iOS + not Safari
+(function() {
+  const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) ||
+    (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isSafari = /^((?!chrome|android).)*safari/i.test(navigator.userAgent);
+  const isDesktop = !/Mobi|Android/i.test(navigator.userAgent) && !isIOS;
+  // Show proactively on iOS non-Safari, or desktop (cross-device QR flow is unreliable)
+  if ((isIOS && !isSafari) || isDesktop) {
+    document.addEventListener('DOMContentLoaded', () => showIOSHint());
+  }
+})();
 
 async function signInAnon(address) {
   // Try restore existing session first
