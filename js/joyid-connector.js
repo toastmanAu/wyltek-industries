@@ -34,16 +34,19 @@ async function loadCommon() {
 /**
  * Detect if current browser supports cross-device passkey relay.
  * Only Chrome/Chromium does reliably. Brave, Firefox, Safari don't.
+ * navigator.brave.isBrave() is async — so we use UA string as primary signal.
  */
 function supportsPasskeyRelay() {
   const ua = navigator.userAgent;
   const isMobile = /Mobi|Android|iPhone|iPad/i.test(ua);
-  if (isMobile) return true;                                    // mobile always works
-  if (navigator.brave?.isBrave) return false;                   // Brave — no relay
-  if (/Firefox/.test(ua)) return false;                        // Firefox — no relay
-  if (/Edg\//.test(ua)) return false;                          // Edge — unreliable
-  if (!!(window.chrome) && /Chrome/.test(ua)) return true;     // Chrome/Chromium ✓
-  return false;                                                 // unknown — use redirect
+  if (isMobile) return true;
+  if (/Firefox/.test(ua)) return false;
+  if (/Edg\//.test(ua)) return false;
+  // Brave detection: UA says Chrome but window.navigator.brave exists (even if isBrave() is async)
+  if (typeof navigator.brave !== 'undefined') return false;
+  // Chrome/Chromium
+  if (!!(window.chrome) && /Chrome/.test(ua)) return true;
+  return false; // unknown — use redirect
 }
 
 /**
