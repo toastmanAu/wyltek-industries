@@ -428,17 +428,19 @@ async function signInAnon(address) {
 }
 
 async function joinQueue(address) {
-  // Check cap and get next member number atomically
-  const { count } = await sb.from('mint_queue').select('*', { count: 'exact', head: true });
-  const n = count ?? 0;
-  if (n >= MEMBER_CAP) throw new Error('All founding member spots have been claimed.');
-
-  // Upsert — idempotent if already in queue; set member_number from live count
-  const { error } = await sb.from('mint_queue').upsert(
-    { ckb_address: address, member_number: n + 1 },
-    { onConflict: 'ckb_address', ignoreDuplicates: true }
-  );
-  if (error) throw new Error('Queue error: ' + error.message);
+  try {
+    const { count } = await sb.from('mint_queue').select('*', { count: 'exact', head: true });
+    const n = count ?? 0;
+    if (n >= MEMBER_CAP) throw new Error('All founding member spots have been claimed.');
+    const { error } = await sb.from('mint_queue').upsert(
+      { ckb_address: address, member_number: n + 1 },
+      { onConflict: 'ckb_address', ignoreDuplicates: true }
+    );
+    if (error) throw new Error('Queue error: ' + error.message);
+  } catch(e) {
+    // Table may not exist yet — log and continue, don't block the UI
+    console.warn('[members] joinQueue error (schema may not be set up):', e.message);
+  }
 }
 
 // ── Show queue status ─────────────────────────────────────────────
@@ -446,31 +448,40 @@ async function showQueue(address) {
   showState('Queue');
   document.getElementById('walletAddr').textContent = address.slice(0,8) + '…' + address.slice(-6);
 
-  const { data } = await sb.from('mint_queue').select('*').eq('ckb_address', address).single();
-  if (!data) {
-    // Not in queue yet (existing session, hasn't joined)
-    await joinQueue(address);
-    return showQueue(address);
-  }
+  try {
+    const { data, error } = await sb.from('mint_queue').select('*').eq('ckb_address', address).single();
+    if (error && error.code !== 'PGRST116') throw error; // PGRST116 = no rows, that's ok
 
-  document.getElementById('memberNumber').innerHTML = `#${data.member_number}<small>Founding Member</small>`;
+    if (!data) {
+      await joinQueue(address);
+      return showQueue(address);
+    }
 
-  const statusMap = {
-    pending: { label: 'Queued — DOB incoming', cls: 'pending' },
-    minting: { label: 'Minting…', cls: 'minting' },
-    minted:  { label: 'DOB Minted ✓', cls: 'minted' },
-    failed:  { label: 'Mint failed — retrying', cls: 'failed' },
-  };
-  const s = statusMap[data.status] ?? { label: data.status, cls: 'pending' };
-  document.getElementById('statusPill').innerHTML =
-    `<span class="status-pill ${s.cls}"><span class="pill-dot"></span>${s.label}</span>`;
+    document.getElementById('memberNumber').innerHTML = `#${data.member_number}<small>Founding Member</small>`;
 
-  if (data.status === 'minted' && data.tx_hash) {
-    const txEl = document.getElementById('txInfo');
-    txEl.style.display = 'block';
-    const link = document.getElementById('txLink');
-    link.href = `${EXPLORER}/${data.tx_hash}`;
-    link.textContent = data.tx_hash.slice(0,20) + '…' + data.tx_hash.slice(-8);
+    const statusMap = {
+      pending: { label: 'Queued — DOB incoming', cls: 'pending' },
+      minting: { label: 'Minting…', cls: 'minting' },
+      minted:  { label: 'DOB Minted ✓', cls: 'minted' },
+      failed:  { label: 'Mint failed — retrying', cls: 'failed' },
+    };
+    const s = statusMap[data.status] ?? { label: data.status, cls: 'pending' };
+    document.getElementById('statusPill').innerHTML =
+      `<span class="status-pill ${s.cls}"><span class="pill-dot"></span>${s.label}</span>`;
+
+    if (data.status === 'minted' && data.tx_hash) {
+      const txEl = document.getElementById('txInfo');
+      txEl.style.display = 'block';
+      const link = document.getElementById('txLink');
+      link.href = `${EXPLORER}/${data.tx_hash}`;
+      link.textContent = data.tx_hash.slice(0,20) + '…' + data.tx_hash.slice(-8);
+    }
+  } catch(e) {
+    // Table may not exist yet — still show the connected state with address + disconnect
+    document.getElementById('memberNumber').innerHTML = `—<small>Founding Member</small>`;
+    document.getElementById('statusPill').innerHTML =
+      `<span class="status-pill pending"><span class="pill-dot"></span>Setting up…</span>`;
+    console.warn('[members] showQueue error:', e.message);
   }
 
   loadCapCount();
