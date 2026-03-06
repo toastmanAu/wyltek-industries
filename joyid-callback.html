@@ -16,36 +16,34 @@
 <body>
   <div class="spinner"></div>
   <p id="msg">Completing sign in…</p>
-  <script>
-    // This page is the redirectURL for JoyID.
-    // Two cases:
-    //  1. Popup mode: SDK posts result via window.opener.postMessage — just close.
-    //  2. Redirect mode: JoyID appended result as URL hash/params — parse and relay.
+  <script type="module">
+    import { isJoyIDCallback, joyidHandleCallback, getJoyIDPending, clearJoyIDPending }
+      from '/js/joyid-connector.js';
 
-    const params = new URLSearchParams(window.location.search);
-    const hash   = new URLSearchParams(window.location.hash.slice(1));
+    const msg = document.getElementById('msg');
 
-    // JoyID passes auth result as ?data=<base64> or #data=<base64>
-    const raw = params.get('data') || hash.get('data');
-    const returnTo = params.get('returnTo') || sessionStorage.getItem('joyid_return') || '/members.html';
-
-    if (raw) {
-      // Redirect flow — store result, go back to members page
+    if (isJoyIDCallback()) {
+      // Redirect flow — JoyID returned here with ?_data_=...
       try {
-        sessionStorage.setItem('joyid_redirect_result', raw);
-        document.getElementById('msg').textContent = 'Signed in! Redirecting…';
-        setTimeout(() => location.replace(returnTo), 400);
+        const result = await joyidHandleCallback();
+        const pending = getJoyIDPending();
+        clearJoyIDPending();
+        // Store result for the members page to pick up
+        sessionStorage.setItem('joyid_result', JSON.stringify(result));
+        msg.textContent = '✓ Signed in — returning…';
+        const returnTo = pending?.returnTo || '/members.html';
+        setTimeout(() => location.replace(returnTo), 300);
       } catch(e) {
-        document.getElementById('msg').textContent = 'Error: ' + e.message;
+        msg.textContent = '⚠ ' + (e.message || 'Authentication failed');
+        setTimeout(() => location.replace('/members.html'), 2000);
       }
     } else if (window.opener) {
-      // Popup flow — SDK handles it via postMessage; just close after short delay
-      document.getElementById('msg').textContent = '✓ Signed — closing…';
-      setTimeout(() => window.close(), 800);
+      // Popup flow — SDK handles result via postMessage; just close
+      msg.textContent = '✓ Signed — closing…';
+      setTimeout(() => window.close(), 500);
     } else {
-      // No data, no opener — probably a direct navigation; go home
-      document.getElementById('msg').textContent = 'Redirecting…';
-      setTimeout(() => location.replace('/members.html'), 800);
+      // No data, no opener — go home
+      location.replace('/members.html');
     }
   </script>
 </body>

@@ -343,48 +343,21 @@ async function connectJoyID() {
   btn.disabled = true;
   showMsg('connectMsg', '<span class="spinner"></span>Opening JoyID…', 'info');
   try {
-    await loadJoyID();
+    const connector = await loadJoyIDConnector();
     const callbackUrl = window.location.origin + '/joyid-callback.html';
-    const isMobile = /Mobi|Android|iPhone|iPad/i.test(navigator.userAgent);
-
-    if (isMobile || isChromium()) {
-      // Popup flow works on mobile + Chrome/Chromium
-      const result = await Promise.race([
-        joyidConnect({ redirectURL: callbackUrl, network: 'mainnet', joyidAppURL: 'https://app.joy.id' }),
-        new Promise((_, rej) => setTimeout(() => rej(new Error('TIMEOUT')), 60000))
-      ]);
-      await handleConnectResult(result);
-    } else {
-      // Brave / Firefox: cross-device WebSocket relay unreliable — use full redirect flow
-      showMsg('connectMsg', '<span class="spinner"></span>Redirecting to JoyID…', 'info');
-      const callbackWithReturn = callbackUrl + '?returnTo=' + encodeURIComponent(window.location.href);
-      // Build the JoyID auth URL manually using @joyid/common buildJoyIDURL
-      try {
-        const common = await import('https://esm.sh/@joyid/common@0.2.1');
-        const authUrl = common.buildJoyIDURL({
-          redirectURL: callbackWithReturn,
-          network: 'mainnet',
-          joyidAppURL: 'https://app.joy.id',
-        }, 'redirect', '/');
-        window.location.href = authUrl;
-        return; // page navigates away
-      } catch(err) {
-        // buildJoyIDURL not available — construct URL manually
-        const base = 'https://app.joy.id';
-        const params = new URLSearchParams({
-          redirectURL: callbackWithReturn,
-          network: 'mainnet',
-          requestType: 'Auth',
-        });
-        window.location.href = `${base}/?${params.toString()}`;
-        return;
-      }
-    }
+    // connector.joyidConnect handles browser detection internally
+    const result = await connector.joyidConnect({
+      redirectURL: callbackUrl,
+      network: 'mainnet',
+      joyidAppURL: 'https://app.joy.id',
+    });
+    // If we get here, popup flow succeeded
+    await handleConnectResult(result);
   } catch(e) {
-    if (e.message === 'TIMEOUT') {
-      showMsg('connectMsg', '⏱ Timed out — try scanning the QR again, or open this page on your phone.', 'err');
+    if (/timed out/i.test(e.message||'')) {
+      showMsg('connectMsg', '⏱ Timed out — try again or open this page on your phone.', 'err');
       showIOSHint();
-    } else if (/cancel|close|abort/i.test(e.message||'')) {
+    } else if (/cancel|close|abort|rejected/i.test(e.message||'')) {
       showMsg('connectMsg', '', '');
     } else {
       showMsg('connectMsg', '⚠ ' + (e.message || e), 'err');
@@ -394,18 +367,31 @@ async function connectJoyID() {
   }
 }
 
-// Check for redirect flow result on page load
-(function checkRedirectResult() {
-  const raw = sessionStorage.getItem('joyid_redirect_result');
-  if (!raw) return;
-  sessionStorage.removeItem('joyid_redirect_result');
+// Check for redirect flow result on page load (_data_ param set by JoyID, or via callback page)
+async function checkRedirectResult() {
   try {
-    const result = JSON.parse(atob(raw));
-    if (result?.address) {
-      handleConnectResult(result).catch(e => console.warn('[joyid redirect]', e));
+    // Case 1: returned directly from JoyID with _data_ in URL
+    const connector = await loadJoyIDConnector();
+    if (connector.isJoyIDCallback()) {
+      showMsg('connectMsg', '<span class="spinner"></span>Completing sign in…', 'info');
+      const result = await connector.joyidHandleCallback();
+      connector.clearJoyIDPending();
+      window.history.replaceState({}, '', window.location.pathname);
+      if (result?.address) { await handleConnectResult(result); return; }
     }
-  } catch(e) { console.warn('[joyid redirect parse]', e); }
-})();
+    // Case 2: callback page stored result in sessionStorage then redirected here
+    const stored = sessionStorage.getItem('joyid_result');
+    if (stored) {
+      sessionStorage.removeItem('joyid_result');
+      const result = JSON.parse(stored);
+      if (result?.address) { await handleConnectResult(result); return; }
+    }
+  } catch(e) {
+    console.warn('[joyid redirect]', e.message);
+    showState('Connect');
+  }
+}
+checkRedirectResult();
 
 async function handleConnectResult(result) {
   const address = result?.address;
