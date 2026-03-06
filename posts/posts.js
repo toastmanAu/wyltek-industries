@@ -17,6 +17,38 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id:      "2026-03-07-joyid-cross-browser-fix",
+    date:    "2026-03-07",
+    project: "Wyltek Membership",
+    title:   "Fixing JoyID for Brave (and every other browser that isn't Chrome)",
+    tags:    ["JoyID", "CKB", "membership", "open-source", "browser", "passkey"],
+    body: [
+      "The members.html sign-in worked perfectly on Chrome from day one. On Brave it took 2–4 QR scans and still timed out half the time. Tonight we dug into why — and fixed it properly.",
+      { type: "h3", content: "The Root Cause" },
+      "JoyID's <code>connect()</code> uses a WebSocket relay to pass the passkey signature from your phone back to the desktop browser. Chrome has Google's own FIDO2 cross-device transport infrastructure built in — it works seamlessly. Brave and Firefox don't get that. They fall back to JoyID's relay server, which is unreliable. Result: multiple scan attempts, frequent timeouts.",
+      { type: "h3", content: "The Fix: authWithRedirect()" },
+      "<code>authWithRedirect()</code> already exists in <code>@joyid/common</code> — it's just never been re-exported from <code>@joyid/ckb</code>. Instead of opening a popup and waiting for a WebSocket result, it navigates the whole tab to <code>app.joy.id</code>, the user authenticates with Face ID directly on JoyID's domain (no relay, no QR), then gets redirected back with the result encoded in the URL.",
+      "We wrote a custom connector (<code>/js/joyid-connector.js</code>) that detects the browser and picks the right flow automatically:",
+      { type: "ul", content: [
+        "<strong>Chrome / Chromium:</strong> popup flow — instant, no QR if passkey already stored",
+        "<strong>Brave:</strong> redirect flow — 1 Face ID tap, done",
+        "<strong>Firefox desktop:</strong> CTAP2 hybrid transport not supported — clear message directing to Brave/Chrome/phone",
+        "<strong>Safari iOS / mobile:</strong> direct Face ID, always worked"
+      ]},
+      { type: "h3", content: "Result" },
+      "Brave went from 3 scans + timeout risk → 1 Face ID tap. Chromium also 1-shots it. The fix is browser-agnostic and doesn't touch the happy path for Chrome users.",
+      { type: "h3", content: "Filed Upstream" },
+      "The fix is a one-line export in the JoyID SDK. We filed a GitHub issue on <code>nervina-labs/joyid-sdk-js</code> with the full analysis and the proposed change. Hopefully they ship it — it would fix cross-browser auth for every dapp in the Nervos ecosystem.",
+      { type: "h3", content: "Zero 3 Node Hardware" },
+      "While waiting on deploys — wired up an Orange Pi Zero 3 that will replace the current snapshot source node. ST7735 display connected via SPI1 (8 wires: MOSI, CLK, CS, DC, RST, 3.3V×2, GND). Will flash Armbian tonight, HDD tomorrow, CKB sync to follow."
+    ],
+    links: [
+      { text: "GitHub Issue #58 — joyid-sdk-js", href: "https://github.com/nervina-labs/joyid-sdk-js/issues/58" },
+      { text: "joyid-connector.js source", href: "https://github.com/toastmanAu/wyltek-industries/blob/master/js/joyid-connector.js" }
+    ]
+  },
+  // ────────────────────────────────────────────────────────────────
+  {
     id:      "2026-03-06-spore-burner-fiber-rpc-npm",
     date:    "2026-03-06",
     project: "Open Source Tools",
