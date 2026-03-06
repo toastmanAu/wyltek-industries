@@ -1,17 +1,52 @@
 <!DOCTYPE html>
 <html>
-<head><meta charset="UTF-8"><title>Signing…</title>
-<style>
-  body { background: #0a0c0f; color: #64748b; font-family: system-ui; 
-         display: flex; align-items: center; justify-content: center; 
-         height: 100vh; margin: 0; font-size: 0.9rem; }
-</style>
+<head>
+  <meta charset="UTF-8">
+  <title>Connecting JoyID…</title>
+  <style>
+    body { background:#0a0c0f; color:#64748b; font-family:system-ui;
+           display:flex; align-items:center; justify-content:center;
+           height:100vh; margin:0; font-size:.9rem; flex-direction:column; gap:12px; }
+    .spinner { width:28px; height:28px; border:3px solid #1e293b;
+               border-top-color:#00c8ff; border-radius:50%; animation:spin .8s linear infinite; }
+    @keyframes spin { to { transform:rotate(360deg); } }
+    p { color:#94a3b8; margin:0; }
+  </style>
 </head>
 <body>
-  <p>✓ Signed — you can close this window</p>
+  <div class="spinner"></div>
+  <p id="msg">Completing sign in…</p>
   <script>
-    // Auto-close after a short delay
-    setTimeout(() => window.close(), 800);
+    // This page is the redirectURL for JoyID.
+    // Two cases:
+    //  1. Popup mode: SDK posts result via window.opener.postMessage — just close.
+    //  2. Redirect mode: JoyID appended result as URL hash/params — parse and relay.
+
+    const params = new URLSearchParams(window.location.search);
+    const hash   = new URLSearchParams(window.location.hash.slice(1));
+
+    // JoyID passes auth result as ?data=<base64> or #data=<base64>
+    const raw = params.get('data') || hash.get('data');
+    const returnTo = params.get('returnTo') || sessionStorage.getItem('joyid_return') || '/members.html';
+
+    if (raw) {
+      // Redirect flow — store result, go back to members page
+      try {
+        sessionStorage.setItem('joyid_redirect_result', raw);
+        document.getElementById('msg').textContent = 'Signed in! Redirecting…';
+        setTimeout(() => location.replace(returnTo), 400);
+      } catch(e) {
+        document.getElementById('msg').textContent = 'Error: ' + e.message;
+      }
+    } else if (window.opener) {
+      // Popup flow — SDK handles it via postMessage; just close after short delay
+      document.getElementById('msg').textContent = '✓ Signed — closing…';
+      setTimeout(() => window.close(), 800);
+    } else {
+      // No data, no opener — probably a direct navigation; go home
+      document.getElementById('msg').textContent = 'Redirecting…';
+      setTimeout(() => location.replace('/members.html'), 800);
+    }
   </script>
 </body>
 </html>
