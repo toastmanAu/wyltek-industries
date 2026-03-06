@@ -322,16 +322,20 @@ async function loadJoyID() {
 
 // ── Cap counter ───────────────────────────────────────────────────
 async function loadCapCount() {
-  const { count } = await sb.from('mint_queue').select('*', { count: 'exact', head: true });
-  const n = count ?? 0;
-  document.getElementById('capCount').textContent = `${n} / ${MEMBER_CAP}`;
-  document.getElementById('capFill').style.width = `${Math.min(100, n / MEMBER_CAP * 100)}%`;
+  try {
+    const { count } = await sb.from('mint_queue').select('*', { count: 'exact', head: true });
+    const n = count ?? 0;
+    document.getElementById('capCount').textContent = `${n} / ${MEMBER_CAP}`;
+    document.getElementById('capFill').style.width = `${Math.min(100, n / MEMBER_CAP * 100)}%`;
+  } catch(e) { /* table may not exist yet */ }
 }
 
 // ── Connect ───────────────────────────────────────────────────────
 // Detect if browser supports cross-device passkey relay (Chrome/Chromium only)
 function isChromium() {
-  return !!(window.chrome) && /Chrome/.test(navigator.userAgent) && !/Edg|OPR/.test(navigator.userAgent);
+  // Brave has window.chrome AND navigator.brave — exclude it
+  if (navigator.brave?.isBrave) return false;
+  return !!(window.chrome) && /Chrome/.test(navigator.userAgent) && !/Edg|OPR|Firefox/.test(navigator.userAgent);
 }
 
 async function connectJoyID() {
@@ -406,16 +410,20 @@ async function connectJoyID() {
 async function handleConnectResult(result) {
   const address = result?.address;
   if (!address) throw new Error('No address in JoyID result');
-  showMsg('connectMsg', '<span class="spinner"></span>Creating account…', 'info');
-  await signInAnon(address);
-  await joinQueue(address);
+  // Show connected state IMMEDIATELY — don't wait for DB
   currentAddress = address;
   localStorage.setItem('wyltek_address', address);
-  // Unlock member nav immediately without page reload
+  showState('Queue');
+  document.getElementById('walletAddr').textContent = address.slice(0,8) + '…' + address.slice(-6);
+  // Unlock member nav
   const nav = document.getElementById('mainNav') || document.querySelector('.nav-links');
   if (nav) nav.classList.add('member-nav');
   const joinLink = document.querySelector('a.nav-join');
   if (joinLink) { joinLink.textContent = '✦ Membership'; joinLink.title = 'View your membership'; }
+  // Then do DB work in background
+  showMsg('connectMsg', '<span class="spinner"></span>Creating account…', 'info');
+  await signInAnon(address);
+  await joinQueue(address);
   const returnTo = sessionStorage.getItem('wyltek_return');
   if (returnTo) { sessionStorage.removeItem('wyltek_return'); location.replace(returnTo); return; }
   showQueue(address);
