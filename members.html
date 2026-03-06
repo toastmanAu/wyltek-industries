@@ -370,6 +370,11 @@ async function handleConnectResult(result) {
   await joinQueue(address);
   currentAddress = address;
   localStorage.setItem('wyltek_address', address);
+  // Unlock member nav immediately without page reload
+  const nav = document.getElementById('mainNav') || document.querySelector('.nav-links');
+  if (nav) nav.classList.add('member-nav');
+  const joinLink = document.querySelector('a.nav-join');
+  if (joinLink) { joinLink.textContent = '✦ Membership'; joinLink.title = 'View your membership'; }
   const returnTo = sessionStorage.getItem('wyltek_return');
   if (returnTo) { sessionStorage.removeItem('wyltek_return'); location.replace(returnTo); return; }
   showQueue(address);
@@ -478,6 +483,10 @@ function disconnect() {
   currentAddress = null;
   showState('Connect');
   clearMsg('connectMsg');
+  const nav = document.getElementById('mainNav') || document.querySelector('.nav-links');
+  if (nav) nav.classList.remove('member-nav');
+  const joinLink = document.querySelector('a.nav-join');
+  if (joinLink) { joinLink.textContent = 'Join'; joinLink.title = ''; }
 }
 
 // ── UI helpers ────────────────────────────────────────────────────
