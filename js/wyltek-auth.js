@@ -6,6 +6,7 @@
  */
 
 const MEMBER_NAV_LINKS = [
+  { href: 'lounge.html',        label: '💬 Lounge' },
   { href: 'research.html',      label: 'Research' },
   { href: 'ckbfs-viewer.html',  label: 'CKBFS Viewer' },
   { href: 'ckb-dob-minter/',    label: 'DOB Minter' },
