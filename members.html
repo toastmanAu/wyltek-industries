@@ -210,6 +210,11 @@
       <div class="card-sub">No seed phrases. No gas fees. Just your JoyID passkey.</div>
       <button class="btn" id="connectBtn" onclick="connectJoyID()">🔐 Connect with JoyID</button>
       <div id="connectMsg"></div>
+      <!-- DEBUG PANEL — remove after diagnosis -->
+      <div id="dbgPanel" style="display:none;margin-top:14px;background:#0a0a0a;border:1px solid #333;border-radius:8px;padding:10px 12px;font-family:monospace;font-size:11px;max-height:220px;overflow-y:auto">
+        <div style="color:#666;margin-bottom:6px;display:flex;justify-content:space-between"><span>🔬 Debug log</span><button onclick="document.getElementById('dbgPanel').style.display='none'" style="background:none;border:none;color:#555;cursor:pointer;font-size:11px">✕</button></div>
+        <div id="dbgLog"></div>
+      </div>
       <div id="iosHint" style="display:none;margin-top:12px;padding:10px 14px;background:rgba(255,200,0,0.08);border:1px solid rgba(255,200,0,0.25);border-radius:8px;font-size:13px;color:#ccc;line-height:1.5">
         📱 <strong style="color:#fff">On iPhone?</strong> For the best experience, open this page in <strong>Safari on your phone</strong> — JoyID connects in one tap with Face ID, no QR scanning needed.<br>
         <a id="iosShareLink" href="" style="color:#f5a623;text-decoration:none;font-size:12px;margin-top:6px;display:inline-block">📋 Copy page link →</a>
@@ -299,12 +304,20 @@ window.connectJoyID = connectJoyID;
 window.disconnect = disconnect;
 
 async function loadJoyID() {
-  if (joyidConnect) return;
+  if (joyidConnect) { dbg('SDK already loaded'); return; }
+  dbg('Importing @joyid/ckb@1.1.3 from esm.sh…');
   const mod = await import('https://esm.sh/@joyid/ckb@1.1.3');
+  dbg('Import done — exports: ' + Object.keys(mod).join(', '));
   // Must set joyidAppURL explicitly — default in this SDK version is testnet.joyid.dev
-  if (mod.initConfig) mod.initConfig({ joyidAppURL: 'https://app.joy.id', network: 'mainnet' });
+  if (mod.initConfig) {
+    mod.initConfig({ joyidAppURL: 'https://app.joy.id', network: 'mainnet' });
+    dbg('initConfig called');
+  } else {
+    dbg('initConfig not found on module', '#fa0');
+  }
   joyidConnect = mod.connect;
   joyidSignMessage = mod.signChallenge || mod.signMessage;
+  dbg('connect fn: ' + typeof joyidConnect);
 }
 
 async function init() {
@@ -336,17 +349,29 @@ async function connectJoyID() {
   const btn = document.getElementById('connectBtn');
   btn.disabled = true;
   showMsg('connectMsg', '<span class="spinner"></span>Opening JoyID…', 'info');
+  dbg('connectJoyID() called');
+  dbg('UA: ' + navigator.userAgent.slice(0,80));
   // Show iOS hint after 8s if flow stalls (cross-device QR second step issue)
   const stallTimer = setTimeout(() => showIOSHint(), 8000);
   try {
+    dbg('Loading JoyID SDK…');
     await loadJoyID();
+    dbg('SDK loaded — joyidConnect=' + typeof joyidConnect);
     const callbackUrl = window.location.origin + '/joyid-callback.html';
+    dbg('callbackUrl: ' + callbackUrl);
+    dbg('Calling joyidConnect()… (QR/popup will appear)');
     const result = await joyidConnect({ redirectURL: callbackUrl, network: 'mainnet', joyidAppURL: 'https://app.joy.id' });
+    dbg('joyidConnect() resolved — result keys: ' + Object.keys(result||{}).join(', '), '#4f4');
     const address = result.address;
+    dbg('address: ' + address, '#4f4');
 
     showMsg('connectMsg', '<span class="spinner"></span>Creating account…', 'info');
+    dbg('Calling signInAnon…');
     await signInAnon(address);
+    dbg('signInAnon done', '#4f4');
+    dbg('Calling joinQueue…');
     await joinQueue(address);
+    dbg('joinQueue done', '#4f4');
 
     currentAddress = address;
     localStorage.setItem('wyltek_address', address);
@@ -359,12 +384,14 @@ async function connectJoyID() {
       return;
     }
 
+    dbg('Calling showQueue…');
     showQueue(address);
     clearTimeout(stallTimer);
   } catch(e) {
     clearTimeout(stallTimer);
+    dbg('ERROR: ' + (e.message||e) + (e.stack ? '\n'+e.stack.split('\n')[1] : ''), '#f66');
     showMsg('connectMsg', '⚠ ' + (e.message || e), 'err');
-    showIOSHint(); // always show hint on error — likely the cross-device QR issue
+    showIOSHint();
     btn.disabled = false;
   }
 }
@@ -503,6 +530,21 @@ function showMsg(id, html, type) {
 function clearMsg(id) {
   const el = document.getElementById(id);
   if (el) { el.className = ''; el.innerHTML = ''; }
+}
+
+// ── Debug logger ──────────────────────────────────────────────────
+function dbg(msg, colour) {
+  const panel = document.getElementById('dbgPanel');
+  const log   = document.getElementById('dbgLog');
+  if (!panel || !log) return;
+  panel.style.display = 'block';
+  const ts = new Date().toLocaleTimeString('en-AU', {hour12:false});
+  const d  = document.createElement('div');
+  d.style.cssText = 'padding:2px 0;border-bottom:1px solid #1a1a1a;color:' + (colour||'#9cf');
+  d.textContent   = ts + ' ' + msg;
+  log.appendChild(d);
+  log.scrollTop = log.scrollHeight;
+  console.log('[JoyID debug]', msg);
 }
 
 // ── Nav toggle handled by /js/nav-toggle.js ───────────────────────
