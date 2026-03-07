@@ -17,6 +17,40 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id:      "2026-03-08-wyterminal-v2",
+    date:    "2026-03-08",
+    project: "WyTerminal",
+    title:   "WyTerminal v2: Telegram → Linux Companion (No Daemon, No Install)",
+    tags:    ["WyTerminal", "ESP32-S3", "AMOLED", "Telegram", "SSH", "screenshot", "HID"],
+    body: [
+      "We set out tonight to hack a headless SenseCAP M1 LoRa gateway into a CKB LoRa bridge — the kind of job where you need shell access to a machine with no keyboard, no monitor, and SSH refusing connections. WyTerminal was supposed to be the tool for the job. We ended up spending the night making that tool actually worthy of the task.",
+      { type: "h3", content: "The Original Problem" },
+      "WyTerminal v1 used a serial daemon — a Python script that had to be installed on the host machine via a <code>/deploy</code> command that typed a curl one-liner via USB HID. It worked, but it was fragile. The serial DTR pin kept resetting the ESP32 into bootloader mode on connect. The daemon reconnect loop spammed disconnect notifications. The port jumped between ACM0 and ACM1 on reset. It was held together with tape.",
+      { type: "h3", content: "The Architecture Shift" },
+      "Dropped the daemon entirely. The new design: ESP32 connects to WiFi and talks to a lightweight Flask relay running permanently on the Pi. The relay handles all the hard stuff — SSH into targets, taking screenshots, piping sudo passwords. The board itself stays dumb: poll Telegram, forward to relay, display results on AMOLED.",
+      { type: "ul", content: [
+        "No install on targets — relay SSHes in with existing keys",
+        "Dynamic targets: <code>/target user@192.168.1.50</code> — any machine, saved for later",
+        "<code>/shell &lt;cmd&gt;</code> — run anything, output back in Telegram",
+        "<code>/screenshot</code> — full-res desktop to Telegram, 240px preview on AMOLED",
+        "Sudo password relay: relay asks via Telegram, you reply with <code>/input &lt;password&gt;</code>",
+        "USB HID keyboard still works when plugged in — <code>/run</code>, <code>/key</code>, <code>/type</code>",
+      ]},
+      { type: "h3", content: "The Screenshot Battle" },
+      "Getting screenshots to work on GNOME Wayland was a journey. <code>scrot</code> captures X11 only — always black on Wayland. <code>grim</code> is blocked by GNOME's screencopy security policy. The GNOME Shell D-Bus screenshot interface returns <code>AccessDenied</code>. The answer was <code>gnome-screenshot</code> CLI with the correct <code>DBUS_SESSION_BUS_ADDRESS</code> from the user's session — the same tool the keyboard shortcut uses internally, just invoked properly.",
+      "Full-res JPEG goes to Telegram. A 240px-wide scaled preview renders inline on the AMOLED. The relay is a systemd user service — auto-starts on boot, auto-restarts on crash.",
+      { type: "h3", content: "The Flash Power Problem" },
+      "On the way we hit a nasty hardware issue: the ESP32-S3 kept dying at 17% through flashing when connected to the Pi USB. Small writes (bootloader, partition table) succeeded fine. The 1.2MB firmware blob caused the USB to drop. Turns out the old serial daemon's reconnect loop was pulsing DTR and resetting the board mid-flash — killing it every time. Once the daemon was dead, <code>--before no-reset</code> and a clean port gave us a full flash first try.",
+      { type: "h3", content: "Back to the SenseCAP" },
+      "5am. The SenseCAP M1 LoRa bridge — the actual mission — waits for tomorrow. WyTerminal v2 will be the tool we use to set it up: SSH in headlessly, run sx1302_hal, wire up the CKB light client bridge, all from Telegram. The tool is now actually worthy of the job.",
+    ],
+    links: [
+      { text: "WyTerminal on GitHub", href: "https://github.com/toastmanAu/WyTerminal" },
+      { text: "Roadmap", href: "/roadmap.html" },
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
+  {
     id:      "2026-03-07-joyid-cross-browser-fix",
     date:    "2026-03-07",
     project: "Wyltek Membership",
