@@ -136,6 +136,16 @@
     .findings-loading{color:var(--muted);font-size:.85rem;padding:.5rem 0;}
     .findings-pending{background:rgba(251,191,36,.05);border:1px solid rgba(251,191,36,.2);border-radius:8px;padding:.75rem 1rem;font-size:.85rem;color:var(--yellow);}
 
+    /* Search */
+    .search-wrap{position:relative;margin-bottom:1rem;}
+    .search-input{width:100%;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.6rem 1rem .6rem 2.4rem;border-radius:8px;font-size:.9rem;font-family:inherit;outline:none;transition:border-color .15s;}
+    .search-input:focus{border-color:var(--accent);}
+    .search-input::placeholder{color:var(--muted);}
+    .search-icon{position:absolute;left:.75rem;top:50%;transform:translateY(-50%);color:var(--muted);font-size:.95rem;pointer-events:none;}
+    .search-clear{position:absolute;right:.75rem;top:50%;transform:translateY(-50%);background:none;border:none;color:var(--muted);cursor:pointer;font-size:1rem;display:none;}
+    .search-clear.visible{display:block;}
+    .search-count{font-size:.8rem;color:var(--muted);margin-top:.4rem;}
+
     @media(max-width:600px){.page{padding:1.5rem 1rem 4rem;}.grid{grid-template-columns:1fr;}}
   </style>
 </head>
@@ -188,6 +198,13 @@
   <div class="stats-bar" id="statsBar"></div>
   <div class="progress-wrap" id="progressWrap"></div>
 
+  <div class="search-wrap">
+    <span class="search-icon">🔍</span>
+    <input type="text" class="search-input" id="searchInput" placeholder="Search topics, tags, goals…" oninput="onSearch(this.value)">
+    <button class="search-clear" id="searchClear" onclick="clearSearch()" title="Clear">✕</button>
+    <div class="search-count" id="searchCount"></div>
+  </div>
+
   <div class="filters" id="filters">
     <span class="filter-label">Filter:</span>
     <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">All</button>
@@ -222,6 +239,22 @@ function timeAgo(iso) {
 
 // ── Render ────────────────────────────────────────────────────────
 let currentFilter = 'all';
+let currentSearch = '';
+
+window.onSearch = function(val) {
+  currentSearch = val.trim().toLowerCase();
+  document.getElementById('searchClear').classList.toggle('visible', currentSearch.length > 0);
+  render();
+};
+
+window.clearSearch = function() {
+  document.getElementById('searchInput').value = '';
+  currentSearch = '';
+  document.getElementById('searchClear').classList.remove('visible');
+  document.getElementById('searchCount').textContent = '';
+  render();
+};
+
 window.setFilter = function(f, btn) {
   currentFilter = f;
   document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
@@ -231,12 +264,31 @@ window.setFilter = function(f, btn) {
 
 function render() {
   const tasks = RESEARCH_TASKS.filter(t => {
-    if (currentFilter === 'all') return true;
-    if (currentFilter === 'DONE') return t.status === 'DONE';
-    if (currentFilter === 'PENDING') return t.status === 'PENDING';
-    if (currentFilter === 'HIGH') return t.priority === 'HIGH';
+    // Status/priority filter
+    if (currentFilter !== 'all') {
+      if (currentFilter === 'DONE' && t.status !== 'DONE') return false;
+      if (currentFilter === 'PENDING' && t.status !== 'PENDING') return false;
+      if (currentFilter === 'HIGH' && t.priority !== 'HIGH') return false;
+    }
+    // Search filter
+    if (currentSearch) {
+      const haystack = [
+        t.id, t.goal,
+        (t.tags || []).join(' '),
+        t.status, t.priority
+      ].join(' ').toLowerCase();
+      if (!haystack.includes(currentSearch)) return false;
+    }
     return true;
   });
+
+  // Update search count
+  if (currentSearch) {
+    document.getElementById('searchCount').textContent =
+      `${tasks.length} result${tasks.length !== 1 ? 's' : ''} for "${currentSearch}"`;
+  } else {
+    document.getElementById('searchCount').textContent = '';
+  }
 
   document.getElementById('grid').innerHTML = tasks.map(t => `
     <div class="card ${t.status.toLowerCase()}" id="card-${t.id}">
