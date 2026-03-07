@@ -239,8 +239,8 @@
   async function ensureProfiles(addrs) {
     const missing = [...new Set(addrs)].filter(a => a && !profiles[a]);
     if (!missing.length) return;
-    const { data } = await sb.from('profiles').select('address,display_name,avatar_url').in('address', missing);
-    (data || []).forEach(p => { profiles[p.address] = p; });
+    const { data } = await sb.from('profiles').select('ckb_address,display_name,avatar_url').in('ckb_address', missing);
+    (data || []).forEach(p => { profiles[p.ckb_address] = p; });
   }
 
   // ── Reactions ─────────────────────────────────────────────────────────────
