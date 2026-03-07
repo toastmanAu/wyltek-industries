@@ -385,13 +385,13 @@
       <div class="card-top">
         <span class="card-icon">🔑</span>
         <div>
-          <div class="card-title">SPHINCS+ Hardware Wallet</div>
-          <div class="card-subtitle">Post-quantum signing · Quantum Purse integration</div>
+          <div class="card-title"><a href="https://github.com/toastmanAu/WyVault" target="_blank">WyVault</a></div>
+          <div class="card-subtitle">Open source CKB hardware wallet · Classical + post-quantum · Always PQR-safe storage</div>
         </div>
-        <span class="status-pill pill-later">Later</span>
+        <span class="status-pill pill-later">In Design</span>
       </div>
-      <div class="card-desc">SPHINCS+ post-quantum signatures on ESP32-P4, hardware SHA-accelerated. The on-chain counterpart — <a href="https://quantumpurse.org" target="_blank">Quantum Purse</a> by <a href="https://github.com/tea2x" target="_blank">tea2x</a> (CKB Eco Fund Spark grantee) — is the first quantum-resistant wallet live on CKB mainnet. We only need the embedded signing side: parse Molecule tx, sign with SPHINCS+, return witness. Fully air-gapped QR-code signing flow planned.</div>
-      <div class="card-tags"><span class="tag embedded">ESP32-P4</span><span class="tag c">Crypto</span><span class="tag">Post-Quantum</span><span class="tag">CKB</span></div>
+      <div class="card-desc">A CKB hardware wallet built on ESP32-P4 with a novel hybrid key architecture: everything is stored under SPHINCS+ (post-quantum) protection, but WyVault presents a classical secp256k1 address as a compatibility inbox. Funds sent to the classical address are automatically swept to the quantum-safe vault. Compatible with Neuron via Ledger APDU bridge, and <a href="https://github.com/tea2x/quantum-purse" target="_blank">Quantum Purse</a> natively. One device. Always quantum-safe. Works with all existing CKB tooling today — and is ready for the post-quantum future without any migration.</div>
+      <div class="card-tags"><span class="tag embedded">ESP32-P4</span><span class="tag c">Crypto</span><span class="tag">Post-Quantum</span><span class="tag">CKB</span><span class="tag">Neuron</span><span class="tag">Ledger Bridge</span></div>
     </div>
 
     <div class="card">
@@ -494,6 +494,20 @@
       <div class="card-desc">Stream ESP32 Serial output to Telegram in real time. Debug embedded devices remotely without USB. Live in the Arduino Library Manager.</div>
       <div class="card-tags"><span class="tag embedded">ESP32</span><span class="tag">Telegram</span><span class="tag">Debug</span></div>
       <a class="card-link" href="https://github.com/toastmanAu/TelegramSerial" target="_blank">github.com/toastmanAu/TelegramSerial ↗</a>
+    </div>
+
+    <div class="card done">
+      <div class="card-top">
+        <span class="card-icon">⌨️</span>
+        <div>
+          <div class="card-title">WyRelay</div>
+          <div class="card-subtitle">Arduino Library · ESP32-S3 USB HID Keyboard Relay</div>
+        </div>
+        <span class="status-pill pill-done">Shipped</span>
+      </div>
+      <div class="card-desc">Plug an ESP32-S3 into any Pi or PC — it appears as a USB keyboard. Send commands from Telegram and they get typed on the target machine. No SSH needed, no typing errors. Perfect for headless device management and remote terminal access.</div>
+      <div class="card-tags"><span class="tag embedded">ESP32-S3</span><span class="tag">Telegram</span><span class="tag">USB HID</span></div>
+      <a class="card-link" href="https://github.com/toastmanAu/WyRelay" target="_blank">github.com/toastmanAu/WyRelay ↗</a>
     </div>
 
     <div class="card done">
