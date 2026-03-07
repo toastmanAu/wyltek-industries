@@ -372,12 +372,12 @@
         <span class="card-icon">🔑</span>
         <div>
           <div class="card-title">SPHINCS+ Hardware Wallet</div>
-          <div class="card-subtitle">Post-quantum signing on ESP32-P4</div>
+          <div class="card-subtitle">Post-quantum signing · Quantum Purse integration</div>
         </div>
         <span class="status-pill pill-later">Later</span>
       </div>
-      <div class="card-desc">SPHINCS+ post-quantum signatures on ESP32-P4, hardware SHA-accelerated. The on-chain quantum-resistant lock script is already <a href="https://github.com/cryptape/quantum-resistant-lock-script" target="_blank">audited and deployed on mainnet</a> by Cryptape — we only need the embedded signing side. The P4's hardware SHA accelerators could make it practical.</div>
-      <div class="card-tags"><span class="tag embedded">ESP32-P4</span><span class="tag c">Crypto</span><span class="tag">Post-Quantum</span></div>
+      <div class="card-desc">SPHINCS+ post-quantum signatures on ESP32-P4, hardware SHA-accelerated. The on-chain counterpart — <a href="https://github.com/cryptape/quantum-resistant-lock-script" target="_blank">Quantum Purse</a> — is already audited and live on CKB mainnet. We only need the embedded signing side: parse Molecule tx, sign with SPHINCS+, return witness. Fully air-gapped QR-code signing flow planned.</div>
+      <div class="card-tags"><span class="tag embedded">ESP32-P4</span><span class="tag c">Crypto</span><span class="tag">Post-Quantum</span><span class="tag">CKB</span></div>
     </div>
 
     <div class="card">
