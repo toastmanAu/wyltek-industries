@@ -1,20 +1,20 @@
 #!/bin/bash
-# WyTerminal daemon installer
+# WyTerminal daemon installer — with udev auto-start/stop
 # curl -fsSL https://wyltekindustries.com/wyterminal/install.sh | sudo bash
 set -e
 
 BOT_TOKEN=""
 CHAT_ID=""
-PORT="auto"   # auto-detect ESP32 serial port
 INSTALL_DIR="/opt/wyterminal"
-SERVICE="wyterminal-daemon"
+UDEV_RULE="/etc/udev/rules.d/99-wyterminal.rules"
+# WyTerminal USB IDs: Espressif ESP32-S3
+VID="303a"
+PID="1001"
 
-# ── Parse args ────────────────────────────────────────────────────────
 while [[ $# -gt 0 ]]; do
     case $1 in
         --token) BOT_TOKEN="$2"; shift 2 ;;
         --chat)  CHAT_ID="$2";  shift 2 ;;
-        --port)  PORT="$2";     shift 2 ;;
         *) shift ;;
     esac
 done
@@ -24,24 +24,11 @@ echo "║   WyTerminal Daemon Installer    ║"
 echo "║   wyltekindustries.com           ║"
 echo "╚══════════════════════════════════╝"
 
-# ── Detect bot config from existing running daemon ────────────────────
-if [ -f /etc/wyterminal/config ]; then
-    source /etc/wyterminal/config
-    echo "[*] Found existing config"
-fi
+# Load existing config if present
+[ -f /etc/wyterminal/config ] && source /etc/wyterminal/config
 
-# ── Get config from firmware via serial if not provided ───────────────
 if [ -z "$BOT_TOKEN" ]; then
-    # Try to read from a config file left by a previous install
-    if [ -f "$INSTALL_DIR/.config" ]; then
-        source "$INSTALL_DIR/.config"
-    fi
-fi
-
-# ── If still no token, prompt ─────────────────────────────────────────
-if [ -z "$BOT_TOKEN" ]; then
-    echo ""
-    echo "Enter your WyTerminal bot token (from @TgKeyboardBot):"
+    echo "Enter WyTerminal bot token:"
     read -r BOT_TOKEN
 fi
 if [ -z "$CHAT_ID" ]; then
@@ -49,41 +36,16 @@ if [ -z "$CHAT_ID" ]; then
     read -r CHAT_ID
 fi
 
-# ── Auto-detect serial port ───────────────────────────────────────────
-if [ "$PORT" = "auto" ]; then
-    PORT=""
-    for p in /dev/ttyACM0 /dev/ttyACM1 /dev/ttyUSB0 /dev/ttyUSB1; do
-        if [ -e "$p" ]; then
-            # Check if it's an Espressif device
-            if udevadm info "$p" 2>/dev/null | grep -q "Espressif\|303a"; then
-                PORT="$p"
-                break
-            fi
-            # Fallback: just use first available ACM
-            [ -z "$PORT" ] && PORT="$p"
-        fi
-    done
-fi
+# Detect DISPLAY for screenshot support
+DISPLAY_VAL="${DISPLAY:-:0}"
 
-if [ -z "$PORT" ]; then
-    echo "[!] No serial port found. Connect WyTerminal USB and retry."
-    exit 1
-fi
-echo "[*] Using serial port: $PORT"
-
-# ── Install dependencies ──────────────────────────────────────────────
+# ── Dependencies ──────────────────────────────────────────────────────
 echo "[*] Installing dependencies..."
 pip3 install pyserial requests Pillow --quiet --break-system-packages 2>/dev/null || \
 pip3 install pyserial requests Pillow --quiet
+command -v apt-get &>/dev/null && apt-get install -y -q scrot xclip 2>/dev/null || true
 
-# Screenshot tools
-if command -v apt-get &>/dev/null; then
-    apt-get install -y -q scrot xclip 2>/dev/null || true
-elif command -v pacman &>/dev/null; then
-    pacman -S --noconfirm scrot xclip 2>/dev/null || true
-fi
-
-# ── Install daemon ────────────────────────────────────────────────────
+# ── Install files ─────────────────────────────────────────────────────
 mkdir -p "$INSTALL_DIR"
 echo "[*] Downloading daemon..."
 curl -fsSL "https://raw.githubusercontent.com/toastmanAu/WyTerminal/master/daemon/wyrelay-daemon.py" \
@@ -95,51 +57,87 @@ mkdir -p /etc/wyterminal
 cat > /etc/wyterminal/config << EOF
 BOT_TOKEN="$BOT_TOKEN"
 CHAT_ID="$CHAT_ID"
-PORT="$PORT"
+DISPLAY_VAL="$DISPLAY_VAL"
 EOF
 
-# ── Create systemd service ────────────────────────────────────────────
-DISPLAY_ENV=""
-if [ -n "$DISPLAY" ]; then
-    DISPLAY_ENV="Environment=DISPLAY=$DISPLAY"
-elif [ -e /tmp/.X11-unix/X0 ]; then
-    DISPLAY_ENV="Environment=DISPLAY=:0"
+# ── on-connect.sh ─────────────────────────────────────────────────────
+cat > "$INSTALL_DIR/on-connect.sh" << 'SCRIPT'
+#!/bin/bash
+# Called by udev on WyTerminal plug-in
+DEVNAME="$1"
+source /etc/wyterminal/config
+
+# Wait for device to be ready
+sleep 1
+
+export DISPLAY="$DISPLAY_VAL"
+PYTHONUNBUFFERED=1 python3 -u /opt/wyterminal/wyrelay-daemon.py \
+    --port "$DEVNAME" \
+    --token "$BOT_TOKEN" \
+    --chat "$CHAT_ID" \
+    >> /tmp/wyterminal-daemon.log 2>&1 &
+
+echo $! > /tmp/wyterminal-daemon.pid
+SCRIPT
+chmod +x "$INSTALL_DIR/on-connect.sh"
+
+# ── on-disconnect.sh ──────────────────────────────────────────────────
+cat > "$INSTALL_DIR/on-disconnect.sh" << 'SCRIPT'
+#!/bin/bash
+# Called by udev on WyTerminal unplug
+source /etc/wyterminal/config
+
+if [ -f /tmp/wyterminal-daemon.pid ]; then
+    PID=$(cat /tmp/wyterminal-daemon.pid)
+    kill "$PID" 2>/dev/null || true
+    rm -f /tmp/wyterminal-daemon.pid
 fi
 
-cat > /etc/systemd/system/${SERVICE}.service << EOF
-[Unit]
-Description=WyTerminal Daemon
-After=network.target
+# Also kill any stray daemon processes
+pkill -f wyrelay-daemon 2>/dev/null || true
 
-[Service]
-Type=simple
-ExecStart=/usr/bin/python3 -u $INSTALL_DIR/wyrelay-daemon.py --port $PORT --token $BOT_TOKEN --chat $CHAT_ID
-Restart=always
-RestartSec=3
-$DISPLAY_ENV
+# Notify via Telegram
+curl -s -X POST "https://api.telegram.org/bot${BOT_TOKEN}/sendMessage" \
+    -H "Content-Type: application/json" \
+    -d "{\"chat_id\": \"${CHAT_ID}\", \"text\": \"🔴 WyTerminal unplugged — daemon stopped\"}" \
+    >> /tmp/wyterminal-daemon.log 2>&1 &
+SCRIPT
+chmod +x "$INSTALL_DIR/on-disconnect.sh"
 
-[Install]
-WantedBy=multi-user.target
+# ── udev rule ─────────────────────────────────────────────────────────
+echo "[*] Installing udev rule..."
+cat > "$UDEV_RULE" << EOF
+# WyTerminal — auto-start/stop daemon on plug/unplug
+# VID=${VID} PID=${PID} = Espressif ESP32-S3 CDC
+
+ACTION=="add", SUBSYSTEM=="tty", \\
+    ATTRS{idVendor}=="${VID}", ATTRS{idProduct}=="${PID}", \\
+    RUN+="${INSTALL_DIR}/on-connect.sh %E{DEVNAME}"
+
+ACTION=="remove", SUBSYSTEM=="tty", \\
+    ATTRS{idVendor}=="${VID}", ATTRS{idProduct}=="${PID}", \\
+    RUN+="${INSTALL_DIR}/on-disconnect.sh"
 EOF
 
-# Add user to dialout for serial access
-usermod -aG dialout "${SUDO_USER:-$USER}" 2>/dev/null || true
+udevadm control --reload-rules
+udevadm trigger
 
-systemctl daemon-reload
-systemctl enable "$SERVICE"
-systemctl restart "$SERVICE"
-
-sleep 2
-if systemctl is-active --quiet "$SERVICE"; then
-    echo ""
-    echo "✅ WyTerminal daemon installed and running!"
-    echo "   Port:    $PORT"
-    echo "   Service: systemctl status $SERVICE"
-    echo "   Logs:    journalctl -u $SERVICE -f"
-    echo ""
-    echo "Check your Telegram — daemon startup notification sent."
-else
-    echo "❌ Service failed to start"
-    journalctl -u "$SERVICE" -n 10 --no-pager
-    exit 1
+# ── Remove old systemd service if present ─────────────────────────────
+if systemctl is-active --quiet wyterminal-daemon 2>/dev/null; then
+    systemctl stop wyterminal-daemon
+    systemctl disable wyterminal-daemon
+    rm -f /etc/systemd/system/wyterminal-daemon.service
+    systemctl daemon-reload
+    echo "[*] Removed old systemd service (replaced by udev)"
 fi
+
+echo ""
+echo "✅ WyTerminal installed!"
+echo ""
+echo "   From now on:"
+echo "   • Plug in WyTerminal → daemon starts automatically"
+echo "   • Unplug WyTerminal → daemon stops automatically"
+echo ""
+echo "   Logs: tail -f /tmp/wyterminal-daemon.log"
+echo ""
+echo "   Unplug and replug WyTerminal now to activate."
