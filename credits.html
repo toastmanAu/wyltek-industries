@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+  <title>Credits — Open Source &amp; Acknowledgements | Wyltek Industries</title>
+  <meta name="description" content="Wyltek Industries acknowledges the open source projects, protocols, and contributors that make our work possible." />
+  <link rel="canonical" href="https://wyltekindustries.com/credits.html" />
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Wyltek Industries" />
+  <meta property="og:title" content="Credits — Wyltek Industries" />
+  <meta property="og:description" content="Acknowledging the open source contributors, protocols, and projects that our work is built on." />
+  <meta property="og:url" content="https://wyltekindustries.com/credits.html" />
+  <meta property="og:image" content="https://wyltekindustries.com/wyltek-logo.png" />
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:title" content="Credits — Wyltek Industries" />
+  <meta name="twitter:image" content="https://wyltekindustries.com/wyltek-logo.png" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+  :root {
+    --bg:#07090f;--surface:#0f1117;--surface2:#141820;
+    --border:#1e2430;--text:#e2e8f0;--muted:#64748b;
+    --accent:#00c8ff;--accent2:#7c3aed;--green:#10b981;
+    --yellow:#f59e0b;--red:#ef4444;--orange:#f97316;
+  }
+  *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+  body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6}
+  a{color:var(--accent);text-decoration:none}
+  a:hover{text-decoration:underline}
+  code{font-family:'Consolas','Monaco',monospace;font-size:.88em;background:var(--surface2);padding:.1rem .4rem;border-radius:4px;border:1px solid var(--border)}
+  header{border-bottom:1px solid var(--border);background:rgba(7,9,15,.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100}
+  .header-inner{max-width:1200px;margin:0 auto;padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between}
+  .logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1rem;color:var(--text);text-decoration:none}
+  nav#mainNav{display:flex;gap:1.5rem}
+  nav#mainNav a{color:var(--muted);font-size:.9rem;transition:color .2s}
+  nav#mainNav a:hover,nav#mainNav a.active{color:var(--text)}
+  .nav-join{color:var(--accent)!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;transition:background .2s,border-color .2s!important;}
+  .nav-join:hover{background:rgba(0,200,255,.1);border-color:var(--accent);text-decoration:none!important;}
+  .nav-toggle{display:none;background:none;border:none;cursor:pointer;font-size:1.4rem;color:var(--text);padding:.2rem .4rem}
+  .member-only{display:none!important}
+  #mainNav.member-nav .member-only{display:inline-flex!important}
+  @media(max-width:700px){
+    nav#mainNav{display:none;flex-direction:column;gap:0;position:absolute;top:100%;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:.5rem 0;z-index:999}
+    nav#mainNav.open{display:flex}
+    nav#mainNav a{padding:.7rem 1.5rem;font-size:1rem;border-bottom:1px solid var(--border)}
+    .nav-toggle{display:block}
+    .header-inner{position:relative}
+  }
+  .page-hero{max-width:900px;margin:0 auto;padding:3rem 1.5rem 2rem}
+  .eyebrow{font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem}
+  .page-hero h1{font-size:clamp(1.8rem,4vw,2.8rem);font-weight:800;line-height:1.15;margin-bottom:.8rem}
+  .page-hero p{color:var(--muted);font-size:1.05rem;max-width:640px;line-height:1.7}
+  .main{max-width:900px;margin:0 auto;padding:0 1.5rem 5rem}
+  .section{margin:2.5rem 0 1rem}
+  .section-label{display:inline-flex;align-items:center;gap:.5rem;font-size:.72rem;font-weight:700;letter-spacing:.08em;text-transform:uppercase;padding:.3rem .8rem;border-radius:99px;margin-bottom:.8rem;background:rgba(0,200,255,.08);color:var(--accent);border:1px solid rgba(0,200,255,.2)}
+  .section h2{font-size:1.15rem;font-weight:700;margin-bottom:.3rem}
+  .section-desc{color:var(--muted);font-size:.88rem;max-width:680px;margin-bottom:1.2rem}
+  .credit-list{display:flex;flex-direction:column;gap:.6rem}
+  .credit{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1rem 1.2rem;display:flex;gap:1rem;align-items:flex-start;transition:border-color .2s}
+  .credit:hover{border-color:rgba(0,200,255,.2)}
+  .credit-icon{font-size:1.5rem;flex-shrink:0;margin-top:.05rem}
+  .credit-body{flex:1;min-width:0}
+  .credit-title{font-weight:700;font-size:.95rem;line-height:1.3;margin-bottom:.2rem}
+  .credit-title a{color:var(--text)}
+  .credit-title a:hover{color:var(--accent)}
+  .credit-author{font-size:.78rem;color:var(--accent);margin-bottom:.3rem}
+  .credit-desc{font-size:.83rem;color:var(--muted);line-height:1.55}
+  .credit-tags{display:flex;flex-wrap:wrap;gap:.3rem;margin-top:.5rem}
+  .tag{padding:.15rem .5rem;border-radius:4px;font-size:.68rem;font-weight:600;background:rgba(0,200,255,.08);color:var(--accent);border:1px solid rgba(0,200,255,.18)}
+  .tag.nervos{background:rgba(60,198,138,.08);color:var(--green);border-color:rgba(60,198,138,.2)}
+  .tag.esp32{background:rgba(249,115,22,.08);color:var(--orange);border-color:rgba(249,115,22,.2)}
+  .tag.crypto{background:rgba(124,58,237,.08);color:#a78bfa;border-color:rgba(124,58,237,.2)}
+  .note{background:rgba(0,200,255,.04);border:1px solid rgba(0,200,255,.15);border-radius:10px;padding:1rem 1.2rem;font-size:.85rem;color:var(--muted);margin:2rem 0}
+  .note strong{color:var(--text)}
+  footer{border-top:1px solid var(--border);padding:2.5rem 1.5rem;text-align:center;color:var(--muted);font-size:.85rem}
+  .footer-inner{max-width:600px;margin:0 auto}
+  footer a{color:var(--muted)}
+  footer a:hover{color:var(--accent)}
+</style>
+  <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
+  <link rel="manifest" href="/site.webmanifest">
+  <meta name="theme-color" content="#07090f">
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a class="logo" href="index.html"><img src="wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">Wyltek Industries</a>
+    <nav id="mainNav">
+      <a href="index.html">Home</a>
+      <a href="hardware.html">Hardware</a>
+      <a href="ckb.html">CKB</a>
+      <a href="ckb-light-esp.html">Light Client</a>
+      <a href="blackbox.html">BlackBox</a>
+      <a href="roadmap.html">Roadmap</a>
+      <a href="research.html" class="member-only">Research</a>
+      <a href="blog.html" class="member-only">Devlog</a>
+      <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
+      <a href="flasher.html" class="member-only">Flasher</a>
+      <a href="ckb-sync.html" class="member-only">Sync</a>
+      <a href="members.html" class="nav-join">✦ Join / Sign In</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+  </div>
+</header>
+
+<div class="page-hero">
+  <div class="eyebrow">Standing on shoulders</div>
+  <h1>Credits &amp; Acknowledgements</h1>
+  <p>Everything at Wyltek Industries is built on the work of open source contributors, protocol researchers, and community builders. This page exists to make sure they get credit. If we've used your work and missed you here, <a href="https://github.com/toastmanAu" target="_blank">open an issue</a>.</p>
+</div>
+
+<div class="main">
+
+  <div class="note">
+    <strong>Open source is the foundation.</strong> None of this — the light client, the miner, the wallet tooling, the DOB minter — would exist without the researchers and engineers who built the underlying protocols and published their work freely. This page is a small attempt to honour that.
+  </div>
+
+  <!-- Nervos CKB Core -->
+  <div class="section">
+    <div class="section-label">⛓️ Nervos CKB Core</div>
+    <h2>Protocol, VM &amp; tooling</h2>
+    <div class="section-desc">The foundation everything runs on.</div>
+  </div>
+  <div class="credit-list">
+
+    <div class="credit">
+      <div class="credit-icon">🧱</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/nervosnetwork/ckb" target="_blank">CKB Node</a></div>
+        <div class="credit-author">nervosnetwork · <a href="https://github.com/nervosnetwork" target="_blank">github.com/nervosnetwork</a></div>
+        <div class="credit-desc">The CKB full node in Rust. Our node dashboard, stratum proxy, whale bot, and light client all talk to it. Everything depends on this.</div>
+        <div class="credit-tags"><span class="tag nervos">Nervos</span><span class="tag">Rust</span><span class="tag">Protocol</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">📡</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/nervosnetwork/rfcs/blob/master/rfcs/0044-ckb-light-client/0044-ckb-light-client.md" target="_blank">RFC 0044 — CKB Light Client Protocol</a></div>
+        <div class="credit-author">nervosnetwork RFCs</div>
+        <div class="credit-desc">The spec our ESP32 light client implements from scratch in C. Every packet, handshake, and state machine in ckb-light-esp traces back to this document.</div>
+        <div class="credit-tags"><span class="tag nervos">Nervos</span><span class="tag">RFC</span><span class="tag esp32">ESP32</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">🔗</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/nervosnetwork/tentacle" target="_blank">Tentacle P2P</a></div>
+        <div class="credit-author">nervosnetwork</div>
+        <div class="credit-desc">The P2P networking layer CKB nodes speak. Our light client implements the Tentacle handshake, Yamux multiplexing, and SecIO encryption natively in C to connect to the network.</div>
+        <div class="credit-tags"><span class="tag nervos">Nervos</span><span class="tag">Rust</span><span class="tag">P2P</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">🧬</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/nervosnetwork/molecule" target="_blank">Molecule Serialization</a></div>
+        <div class="credit-author">nervosnetwork</div>
+        <div class="credit-desc">CKB's canonical binary serialization format. Our light client implements Molecule parsing in C. The upcoming WyMolecule library is a full ESP32 port.</div>
+        <div class="credit-tags"><span class="tag nervos">Nervos</span><span class="tag">Serialization</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">⚡</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/nervosnetwork/fiber" target="_blank">Fiber Network</a></div>
+        <div class="credit-author">nervosnetwork</div>
+        <div class="credit-desc">CKB's payment channel network — fast off-chain payments, on-chain settlement. We run Fiber nodes and are building FiberQuest, a retro gaming payment layer on top of it.</div>
+        <div class="credit-tags"><span class="tag nervos">Nervos</span><span class="tag">Payments</span><span class="tag">Rust</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">🌱</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/sporeprotocol/spore-sdk" target="_blank">Spore Protocol</a></div>
+        <div class="credit-author">sporeprotocol · nervosnetwork</div>
+        <div class="credit-desc">The on-chain Digital Object (DOB) standard on CKB. Our DOB minter and Founding Member NFTs are built on Spore. Permanent, owner-controlled, no platform risk.</div>
+        <div class="credit-tags"><span class="tag nervos">Nervos</span><span class="tag">DOB</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">🔧</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/ckb-devrel/ccc" target="_blank">CCC — CKB JavaScript SDK</a></div>
+        <div class="credit-author">ckb-devrel · <a href="https://github.com/ckb-devrel" target="_blank">github.com/ckb-devrel</a></div>
+        <div class="credit-desc">The modern CKB TypeScript SDK. Our DOB minter, membership system, and all browser-side CKB interactions are built on CCC. Handles wallet connections, transaction building, and Spore minting cleanly.</div>
+        <div class="credit-tags"><span class="tag nervos">Nervos</span><span class="tag">TypeScript</span><span class="tag">SDK</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">🗄️</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/nervape/ckbfs" target="_blank">CKBFS — CKB File System</a></div>
+        <div class="credit-author">nervape</div>
+        <div class="credit-desc">On-chain file storage for CKB. We use CKBFS to publish the Founding Member DOB image permanently on-chain and built a browser SDK adapter on top of it.</div>
+        <div class="credit-tags"><span class="tag nervos">Nervos</span><span class="tag">Storage</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Cryptape -->
+  <div class="section">
+    <div class="section-label">🔐 Cryptape</div>
+    <h2>Security research &amp; advanced protocols</h2>
+    <div class="section-desc">The team behind CKB's cryptographic foundations.</div>
+  </div>
+  <div class="credit-list">
+
+    <div class="credit">
+      <div class="credit-icon">⚛️</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/cryptape/quantum-resistant-lock-script" target="_blank">Quantum-Resistant Lock Script</a></div>
+        <div class="credit-author">Cryptape · <a href="https://github.com/cryptape" target="_blank">github.com/cryptape</a></div>
+        <div class="credit-desc">The audited SPHINCS+ lock script deployed on CKB mainnet. Our planned SPHINCS+ hardware wallet targets this as its on-chain counterpart — we only need to build the embedded signing side.</div>
+        <div class="credit-tags"><span class="tag crypto">Post-Quantum</span><span class="tag nervos">Nervos</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">🔒</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/cryptape/nostr-binding" target="_blank">Nostr Binding Protocol</a></div>
+        <div class="credit-author">Cryptape</div>
+        <div class="credit-desc">Lets any Nostr identity own CKB cells — same secp256k1 curve, no separate wallet needed. On our radar for bridging BitChat mesh identity with on-chain CKB assets.</div>
+        <div class="credit-tags"><span class="tag crypto">Crypto</span><span class="tag nervos">Nervos</span><span class="tag">Nostr</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Community Contributors -->
+  <div class="section">
+    <div class="section-label">🙌 Community Contributors</div>
+    <h2>Builders in the ecosystem</h2>
+    <div class="section-desc">Independent developers whose work we build on or alongside.</div>
+  </div>
+  <div class="credit-list">
+
+    <div class="credit">
+      <div class="credit-icon">🛡️</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://quantumpurse.org" target="_blank">Quantum Purse</a></div>
+        <div class="credit-author"><a href="https://github.com/tea2x" target="_blank">tea2x</a> · CKB Eco Fund Spark Program grantee</div>
+        <div class="credit-desc">The first quantum-resistant wallet on CKB mainnet, using SPHINCS+ signatures. Our planned hardware wallet is designed to be a signing companion to Quantum Purse — air-gapped, post-quantum, embedded. Respect to tea2x for building this.</div>
+        <div class="credit-tags"><span class="tag crypto">Post-Quantum</span><span class="tag nervos">Nervos</span><span class="tag">Wallet</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">🔑</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://joy.id" target="_blank">JoyID</a></div>
+        <div class="credit-author">Nervina Labs</div>
+        <div class="credit-desc">Passkey-based wallet for CKB — Face ID / Touch ID, no seed phrases, no extension. Powers the entire Wyltek membership system and DOB minter. The reason joining takes one tap on iPhone.</div>
+        <div class="credit-tags"><span class="tag nervos">Nervos</span><span class="tag">Wallet</span><span class="tag">Auth</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">⛏️</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/BitMaker-hub/NerdMiner_v2" target="_blank">NerdMiner_v2</a></div>
+        <div class="credit-author"><a href="https://github.com/BitMaker-hub" target="_blank">BitMaker-hub</a> &amp; contributors</div>
+        <div class="credit-desc">The original ESP32 Bitcoin solo miner that NerdMiner CKB is forked from. BitMaker-hub's architecture — display, stratum client, WiFiManager — formed the starting point we adapted for Eaglesong/CKB.</div>
+        <div class="credit-tags"><span class="tag esp32">ESP32</span><span class="tag">Mining</span><span class="tag">Bitcoin</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">💬</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/HackerHouseYT/bitchat" target="_blank">BitChat</a></div>
+        <div class="credit-author">Hacker House · <a href="https://github.com/HackerHouseYT" target="_blank">github.com/HackerHouseYT</a></div>
+        <div class="credit-desc">Decentralised BLE mesh chat protocol and Android app. Our ckb-light-esp includes a BitChat mesh relay engine, and we're working on a LoRa bridge extending the mesh over kilometres.</div>
+        <div class="credit-tags"><span class="tag esp32">ESP32</span><span class="tag">BLE</span><span class="tag">Mesh</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Embedded Ecosystem -->
+  <div class="section">
+    <div class="section-label">🔌 Embedded Ecosystem</div>
+    <h2>ESP32 libraries &amp; tooling</h2>
+    <div class="section-desc">The Arduino and PlatformIO community that makes embedded development accessible.</div>
+  </div>
+  <div class="credit-list">
+
+    <div class="credit">
+      <div class="credit-icon">🖥️</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/moononournation/Arduino_GFX" target="_blank">GFX Library for Arduino</a></div>
+        <div class="credit-author"><a href="https://github.com/moononournation" target="_blank">moononournation</a></div>
+        <div class="credit-desc">Multi-display graphics library for Arduino/ESP32. Used in wyltek-embedded-builder to drive displays across 32 board targets.</div>
+        <div class="credit-tags"><span class="tag esp32">ESP32</span><span class="tag">Display</span><span class="tag">Arduino</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">📡</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/tzapu/WiFiManager" target="_blank">WiFiManager</a></div>
+        <div class="credit-author"><a href="https://github.com/tzapu" target="_blank">tzapu</a></div>
+        <div class="credit-desc">Captive portal WiFi config for ESP32/8266. Used in NerdMiner CKB — plug in, connect to the AP, enter your credentials, and you're mining.</div>
+        <div class="credit-tags"><span class="tag esp32">ESP32</span><span class="tag">WiFi</span><span class="tag">Arduino</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">📦</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/bblanchon/ArduinoJson" target="_blank">ArduinoJson</a></div>
+        <div class="credit-author"><a href="https://github.com/bblanchon" target="_blank">Benoît Blanchon</a></div>
+        <div class="credit-desc">The go-to JSON library for embedded C++. Used across Wyltek projects for parsing API responses, config files, and stratum protocol messages.</div>
+        <div class="credit-tags"><span class="tag esp32">ESP32</span><span class="tag">C++</span><span class="tag">JSON</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">🔲</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/ricmoo/QRCode" target="_blank">QRCode</a></div>
+        <div class="credit-author"><a href="https://github.com/ricmoo" target="_blank">ricmoo</a></div>
+        <div class="credit-desc">Compact QR code generation for Arduino. Used in wyltek-embedded-builder and the CKB POS system to display payment QR codes on embedded screens.</div>
+        <div class="credit-tags"><span class="tag esp32">ESP32</span><span class="tag">QR</span><span class="tag">Arduino</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">🖱️</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/paulstoffregen/XPT2046_Touchscreen" target="_blank">XPT2046_Touchscreen</a></div>
+        <div class="credit-author"><a href="https://github.com/paulstoffregen" target="_blank">Paul Stoffregen</a></div>
+        <div class="credit-desc">Resistive touchscreen driver for XPT2046 controllers — the chip on most ESP32 Cheap Yellow Display (CYD) boards. Used in wyltek-embedded-builder touch support.</div>
+        <div class="credit-tags"><span class="tag esp32">ESP32</span><span class="tag">Touch</span><span class="tag">Arduino</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">🔤</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/takkaO/OpenFontRender" target="_blank">OpenFontRender</a></div>
+        <div class="credit-author"><a href="https://github.com/takkaO" target="_blank">takkaO</a></div>
+        <div class="credit-desc">TrueType font rendering on ESP32 via FreeType. Used in NerdMiner CKB for clean display typography instead of bitmap fonts.</div>
+        <div class="credit-tags"><span class="tag esp32">ESP32</span><span class="tag">Display</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">🕒</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://github.com/arduino-libraries/NTPClient" target="_blank">NTPClient</a></div>
+        <div class="credit-author">Arduino Libraries</div>
+        <div class="credit-desc">NTP time sync for Arduino. Used in NerdMiner CKB for accurate timestamps on the mining display.</div>
+        <div class="credit-tags"><span class="tag esp32">ESP32</span><span class="tag">Arduino</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Infrastructure & Web -->
+  <div class="section">
+    <div class="section-label">🏗️ Infrastructure &amp; Web</div>
+    <h2>Platforms &amp; services</h2>
+    <div class="section-desc">The tools and platforms the Wyltek web stack is built on.</div>
+  </div>
+  <div class="credit-list">
+
+    <div class="credit">
+      <div class="credit-icon">🟩</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://supabase.com" target="_blank">Supabase</a></div>
+        <div class="credit-author">Supabase Inc. · Open Source</div>
+        <div class="credit-desc">Open source Firebase alternative. Powers the Wyltek membership system — profiles, lounge messages, reactions, mint queue. Postgres + Realtime + Storage, all open source.</div>
+        <div class="credit-tags"><span class="tag">PostgreSQL</span><span class="tag">Open Source</span><span class="tag">Backend</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">⚡</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://vitejs.dev" target="_blank">Vite</a></div>
+        <div class="credit-author">Evan You &amp; contributors</div>
+        <div class="credit-desc">Fast build tooling for the DOB minter web app. Zero-config dev server, instant HMR, clean production builds.</div>
+        <div class="credit-tags"><span class="tag">JavaScript</span><span class="tag">Tooling</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">⚛️</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://react.dev" target="_blank">React</a></div>
+        <div class="credit-author">Meta &amp; contributors</div>
+        <div class="credit-desc">UI library powering the DOB minter. Component model made the wallet connection flow, cluster panel, and batch mint progress trackable cleanly.</div>
+        <div class="credit-tags"><span class="tag">JavaScript</span><span class="tag">UI</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">🟠</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://armbian.com" target="_blank">Armbian</a></div>
+        <div class="credit-author">Armbian community</div>
+        <div class="credit-desc">Linux distribution for ARM SBCs. Our SBC image builds, OPi3B nodes, and the board running this site all run on Armbian. The userpatches system makes per-board CKB customisation possible.</div>
+        <div class="credit-tags"><span class="tag">Linux</span><span class="tag">SBC</span><span class="tag">ARM</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">🌐</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://pages.github.com" target="_blank">GitHub Pages</a></div>
+        <div class="credit-author">GitHub</div>
+        <div class="credit-desc">This site is hosted on GitHub Pages. Free, fast, and the source is always one click away from every page.</div>
+        <div class="credit-tags"><span class="tag">Hosting</span><span class="tag">Open Source</span></div>
+      </div>
+    </div>
+
+    <div class="credit">
+      <div class="credit-icon">🔶</div>
+      <div class="credit-body">
+        <div class="credit-title"><a href="https://platform.openai.com" target="_blank">OpenAI / Anthropic / Google</div>
+        <div class="credit-author">Multiple providers</div>
+        <div class="credit-desc">AI models used during research and development — architecture decisions, protocol research, code review, and the research crawl system that powers the member research library.</div>
+        <div class="credit-tags"><span class="tag">AI</span><span class="tag">Research</span></div>
+      </div>
+    </div>
+
+  </div>
+
+  <div class="note" style="margin-top:3rem">
+    <strong>This list grows.</strong> As we build more and integrate more open source work, this page gets updated. Last updated: March 2026. If you see something missing, <a href="https://github.com/toastmanAu/wyltek-industries/issues" target="_blank">let us know</a>.
+  </div>
+
+</div>
+
+<footer>
+  <div class="footer-inner">
+    <p><a href="index.html">← Home</a> &nbsp;·&nbsp; <a href="roadmap.html">Roadmap</a> &nbsp;·&nbsp; <a href="https://github.com/toastmanAu" target="_blank">GitHub</a></p>
+    <div style="margin-top:.8rem;font-size:.78rem;opacity:.7">Built in the Nervos CKB ecosystem · <a href="https://nervos.org" target="_blank">nervos.org</a></div>
+  </div>
+</footer>
+  <script src="/js/nav-toggle.js"></script>
+  <script src="/js/member-nav.js"></script>
+  <script>(function(){var a=localStorage.getItem("wyltek_address");if(a){var el=document.querySelector("a.nav-join");if(el){el.textContent="✦ Membership";el.title="View your membership";}}})();</script>
+  <script src="/js/bug-reporter.js"></script>
+</body>
+</html>
