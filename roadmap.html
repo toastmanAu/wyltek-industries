@@ -85,6 +85,7 @@
   .tag.rust{background:rgba(249,115,22,.08);color:var(--orange);border-color:rgba(249,115,22,.2)}
   .tag.c{background:rgba(124,58,237,.08);color:#a78bfa;border-color:rgba(124,58,237,.2)}
   .tag.embedded{background:rgba(16,185,129,.08);color:var(--green);border-color:rgba(16,185,129,.2)}
+  .tested-badge{display:inline-block;margin-top:.4rem;padding:.15rem .5rem;border-radius:4px;font-size:.68rem;font-weight:600;background:rgba(16,185,129,.12);color:var(--green);border:1px solid rgba(16,185,129,.3)}
   .tag.sbc{background:rgba(100,116,139,.1);color:var(--muted);border-color:rgba(100,116,139,.2)}
   .status-pill{margin-left:auto;font-size:.68rem;font-weight:700;padding:.18rem .5rem;border-radius:99px;white-space:nowrap;flex-shrink:0}
   .pill-done   {background:rgba(16,185,129,.15);color:var(--green);border:1px solid rgba(16,185,129,.3)}
@@ -498,6 +499,20 @@
 
     <div class="card done">
       <div class="card-top">
+        <span class="card-icon">🖥️</span>
+        <div>
+          <div class="card-title">WyTerminal</div>
+          <div class="card-subtitle">ESP32-S3 AMOLED · Linux Terminal over Telegram</div>
+        </div>
+        <span class="status-pill pill-done">Shipped</span>
+      </div>
+      <div class="card-desc">Full Linux shell over Telegram on a LilyGO T-Display S3 AMOLED. Commands you send appear on the 1.91" AMOLED display. Run shell commands and get output back in chat. Screenshot your target machine's screen — it sends to Telegram and renders inline on the AMOLED. USB HID keyboard injection + WiFi shell bridge in one device. <span class="tested-badge">✅ Tested: T-Display S3 AMOLED (RM67162)</span></div>
+      <div class="card-tags"><span class="tag embedded">ESP32-S3</span><span class="tag">AMOLED</span><span class="tag">Telegram</span><span class="tag">USB HID</span><span class="tag">Shell</span></div>
+      <a class="card-link" href="https://github.com/toastmanAu/WyTerminal" target="_blank">github.com/toastmanAu/WyTerminal ↗</a>
+    </div>
+
+    <div class="card done">
+      <div class="card-top">
         <span class="card-icon">⌨️</span>
         <div>
           <div class="card-title">WyRelay</div>
@@ -505,7 +520,7 @@
         </div>
         <span class="status-pill pill-done">Shipped</span>
       </div>
-      <div class="card-desc">Plug an ESP32-S3 into any Pi or PC — it appears as a USB keyboard. Send commands from Telegram and they get typed on the target machine. No SSH needed, no typing errors. Perfect for headless device management and remote terminal access.</div>
+      <div class="card-desc">The minimal sibling to WyTerminal. Plug an ESP32-S3 into any machine — it appears as a USB keyboard. Send commands from Telegram and they get typed on the target. No SSH, no open ports, no setup on the target machine. Simple, clean, reliable.</div>
       <div class="card-tags"><span class="tag embedded">ESP32-S3</span><span class="tag">Telegram</span><span class="tag">USB HID</span></div>
       <a class="card-link" href="https://github.com/toastmanAu/WyRelay" target="_blank">github.com/toastmanAu/WyRelay ↗</a>
     </div>
