@@ -1010,6 +1010,10 @@ window.clearQuote = function(taskId) {
   if (preview) preview.style.display = 'none';
 };
 
+// Offline outbox
+let _outbox = null;
+import('/js/offline-outbox.js').then(m => { _outbox = m.outbox; });
+
 window.submitComment = async function(taskId) {
   const input = document.getElementById('comment-input-' + taskId);
   const btn = input?.nextElementSibling;
@@ -1018,6 +1022,27 @@ window.submitComment = async function(taskId) {
   const quote = (_pendingQuote.taskId === taskId) ? _pendingQuote.text.slice(0, 500) : null;
   btn.disabled = true;
   btn.textContent = '…';
+
+  if (!navigator.onLine && _outbox) {
+    // Queue for later — show confirmation
+    await _outbox.add({
+      type: 'research_comment',
+      label: 'Research comment on task ' + taskId,
+      data: { task_id: taskId, ckb_address: MY_ADDR, content: body, quote }
+    });
+    input.value = '';
+    btn.disabled = false;
+    btn.textContent = 'Post';
+    clearQuote(taskId);
+    // Show inline feedback
+    const note = document.createElement('div');
+    note.style.cssText = 'font-size:.75rem;color:#f59e0b;margin-top:.35rem';
+    note.textContent = '📤 Saved offline — will upload when you reconnect';
+    input.parentNode.insertBefore(note, input.nextSibling.nextSibling);
+    setTimeout(() => note.remove(), 4000);
+    return;
+  }
+
   await sb.from('research_comments').insert({ task_id: taskId, ckb_address: MY_ADDR, body, quote });
   input.value = '';
   btn.disabled = false;

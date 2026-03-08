@@ -525,7 +525,27 @@
         charCt.textContent = '0 / 500';
       }
     } catch (e) {
-      composeErr.textContent = 'Network error — try again';
+      // Offline? Queue for later
+      if (!navigator.onLine) {
+        try {
+          const { outbox } = await import('/js/offline-outbox.js');
+          await outbox.add({
+            type: 'lounge_message',
+            label: 'Lounge message in #' + currentCh,
+            data: { address: MY_ADDR, channel: currentCh, message: msg }
+          });
+          msgInput.value = '';
+          msgInput.style.height = 'auto';
+          charCt.textContent = '0 / 500';
+          composeErr.style.color = '#f59e0b';
+          composeErr.textContent = '📤 Saved offline — will upload when you reconnect';
+          setTimeout(() => { composeErr.textContent = ''; composeErr.style.color = ''; }, 4000);
+        } catch {
+          composeErr.textContent = 'Offline — message not saved';
+        }
+      } else {
+        composeErr.textContent = 'Network error — try again';
+      }
     } finally {
       sendBtn.disabled = false;
       msgInput.focus();
