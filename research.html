@@ -52,6 +52,9 @@
     .filter-btn.active{background:#1a2540;border-color:var(--accent);color:var(--accent);}
     .filter-btn.fav-active{background:#2a1a05;border-color:#fbbf24;color:#fbbf24;}
     .filter-btn.suggest-active{background:#0a2218;border-color:var(--green);color:var(--green);}
+    .filter-btn.toast-active{background:#2a1205;border-color:#e07b39;color:#e07b39;}
+    .filter-btn.toast-active img,.filter-btn:hover img{opacity:1;}
+    .filter-btn img{height:16px;width:16px;object-fit:contain;vertical-align:middle;opacity:.6;transition:opacity .15s;border-radius:3px;}
 
     /* Empty state messages */
     .empty-state{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;text-align:center;gap:1rem;}
@@ -279,6 +282,7 @@
     <button class="filter-btn" data-filter="PENDING" onclick="setFilter('PENDING',this)">Pending</button>
     <button class="filter-btn" data-filter="HIGH" onclick="setFilter('HIGH',this)">High priority</button>
     <button class="filter-btn" data-filter="FAVOURITES" id="favFilterBtn" onclick="setFilter('FAVOURITES',this)">⭐ Favourites</button>
+    <button class="filter-btn" data-filter="TOASTED" id="toastFilterBtn" onclick="setFilter('TOASTED',this)"><img src="/kernel-avatar.png" alt=""> Toasted</button>
     <button class="filter-btn" data-filter="SUGGESTED" id="suggestFilterBtn" onclick="setFilter('SUGGESTED',this)">✦ For You</button>
   </div>
 
@@ -342,10 +346,11 @@ window.clearSearch = function() {
 window.setFilter = function(f, btn) {
   currentFilter = f;
   document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.remove('active', 'fav-active', 'suggest-active');
+    b.classList.remove('active', 'fav-active', 'suggest-active', 'toast-active');
   });
   if (f === 'FAVOURITES') btn.classList.add('fav-active');
   else if (f === 'SUGGESTED') btn.classList.add('suggest-active');
+  else if (f === 'TOASTED') btn.classList.add('toast-active');
   else btn.classList.add('active');
   render();
 };
@@ -359,6 +364,9 @@ function render() {
       if (currentFilter === 'HIGH' && t.priority !== 'HIGH') return false;
       if (currentFilter === 'FAVOURITES') {
         if (!MY_ADDR || !myFavourites.has(t.id)) return false;
+      }
+      if (currentFilter === 'TOASTED') {
+        if (!MY_ADDR || !myToasted.has(t.id)) return false;
       }
       if (currentFilter === 'SUGGESTED') {
         if (!suggestedIds.has(t.id)) return false;
@@ -387,6 +395,14 @@ function render() {
   }
   if (currentFilter === 'FAVOURITES' && myFavourites.size === 0) {
     document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon">⭐</div><div class="empty-state-title">No favourites yet</div><div class="empty-state-sub">Star research topics you care about — tap the ⭐ button when reading any finding. Your favourites also power the "For You" suggestions.</div></div>`;
+    renderStats(); return;
+  }
+  if (currentFilter === 'TOASTED' && !MY_ADDR) {
+    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon"><img src="/kernel-avatar.png" style="height:48px;border-radius:8px;"></div><div class="empty-state-title">Sign in to see your toasts</div><div class="empty-state-sub">Connect your CKB wallet to track research you've toasted.</div></div>`;
+    renderStats(); return;
+  }
+  if (currentFilter === 'TOASTED' && myToasted.size === 0) {
+    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon"><img src="/kernel-avatar.png" style="height:48px;border-radius:8px;"></div><div class="empty-state-title">No toasts yet</div><div class="empty-state-sub">Open any research finding and give it a 🥂 toast — they'll all show up here.</div></div>`;
     renderStats(); return;
   }
   if (currentFilter === 'SUGGESTED' && !MY_ADDR) {
@@ -458,13 +474,19 @@ const findingsCache = {};
 
 // ── Favourites & Suggestions ──────────────────────────────────────
 const myFavourites = new Set();   // task IDs favourited by this user
+const myToasted   = new Set();    // task IDs this user gave a toast to
 const suggestedIds = new Set();   // task IDs suggested based on favourites
 
 async function loadMyFavourites() {
   if (!MY_ADDR) return;
-  const { data } = await sb.from('research_favourites').select('task_id').eq('ckb_address', MY_ADDR);
+  const [favRes, toastRes] = await Promise.all([
+    sb.from('research_favourites').select('task_id').eq('ckb_address', MY_ADDR),
+    sb.from('research_likes').select('task_id').eq('ckb_address', MY_ADDR),
+  ]);
   myFavourites.clear();
-  (data || []).forEach(r => myFavourites.add(r.task_id));
+  (favRes.data || []).forEach(r => myFavourites.add(r.task_id));
+  myToasted.clear();
+  (toastRes.data || []).forEach(r => myToasted.add(r.task_id));
   recomputeSuggestions();
   // Update star badges on existing cards
   document.querySelectorAll('.card').forEach(c => {
@@ -540,6 +562,7 @@ function getVisibleTasks() {
       if (currentFilter === 'PENDING' && t.status !== 'PENDING') return false;
       if (currentFilter === 'HIGH' && t.priority !== 'HIGH') return false;
       if (currentFilter === 'FAVOURITES' && !myFavourites.has(t.id)) return false;
+      if (currentFilter === 'TOASTED' && !myToasted.has(t.id)) return false;
       if (currentFilter === 'SUGGESTED' && !suggestedIds.has(t.id)) return false;
     }
     if (currentSearch) {
@@ -776,9 +799,11 @@ window.toggleLike = async function(taskId) {
   if (liked) {
     await sb.from('research_likes').delete().eq('task_id', taskId).eq('ckb_address', MY_ADDR);
     myLikes.delete(taskId);
+    myToasted.delete(taskId);
   } else {
     await sb.from('research_likes').upsert({ task_id: taskId, ckb_address: MY_ADDR }, { onConflict: 'task_id,ckb_address' });
     myLikes.add(taskId);
+    myToasted.add(taskId);
   }
   btn.disabled = false;
   await loadLikes(taskId);
