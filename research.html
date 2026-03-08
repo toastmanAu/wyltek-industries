@@ -207,6 +207,8 @@
     .fav-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:.35rem .85rem;border-radius:99px;font-size:.82rem;cursor:pointer;display:flex;align-items:center;gap:.35rem;transition:all .15s;}
     .fav-btn:hover{border-color:#fbbf24;color:#fbbf24;}
     .fav-btn.faved{background:rgba(251,191,36,.1);border-color:#fbbf24;color:#fbbf24;}
+    .share-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:.35rem .85rem;border-radius:99px;font-size:.82rem;cursor:pointer;display:flex;align-items:center;gap:.35rem;transition:all .15s;}
+    .share-btn:hover{border-color:rgba(0,200,255,.5);color:#67e8f9;}
     .fav-count{font-size:.78rem;color:var(--muted);}
     /* Star badge on card */
     .card-fav-star{position:absolute;top:.6rem;right:.6rem;font-size:.9rem;opacity:0;transition:opacity .15s;}
@@ -772,6 +774,9 @@ async function renderViewer(task) {
           </button>
           <span class="like-count" id="like-count-${task.id}"></span>
         </div>
+        <button class="share-btn" onclick="wyShare({title:'Wyltek Research: ${task.id.replace(/'/g,"\\'")}',text:'${task.goal.replace(/'/g,"\\'").replace(/\n/g,' ').slice(0,120)}',url:location.origin+location.pathname+'#${task.id}'})">
+          ↗ Share
+        </button>
       </div>
       <div class="comments-section" id="comments-${task.id}">
         <div class="loading-comments">Loading comments…</div>
@@ -950,6 +955,7 @@ loadMyFavourites(); // async — updates stars + suggestions after initial rende
 <script src="/js/member-nav.js"></script>
   <script src="/js/nav-toggle.js"></script>
   <script src="/js/profile-banner.js"></script>
+  <script src="/js/wyltek-share.js"></script>
   <script src="/js/bug-reporter.js"></script>
 </body>
 </html>

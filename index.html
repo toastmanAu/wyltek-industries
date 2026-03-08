@@ -846,6 +846,22 @@
 <script src="/js/wyltek-auth.js"></script>
   <script>(function(){var a=localStorage.getItem("wyltek_address");if(a){var el=document.querySelector("a.nav-join");if(el){el.textContent="✦ Membership";el.title="View your membership";}}})();</script>
   <script src="/js/member-nav.js"></script>
+  <script src="/js/wyltek-share.js"></script>
+  <script>
+  // Inject share buttons into project cards on the homepage
+  document.querySelectorAll('.card-featured, .card').forEach(card => {
+    const title = card.querySelector('.card-title')?.textContent?.trim() || 'Wyltek Industries';
+    const desc  = card.querySelector('.card-desc, p')?.textContent?.trim().slice(0, 120) || '';
+    const ghLink = card.querySelector('a[href*="github"]')?.href || window.location.href;
+    const btn = document.createElement('button');
+    btn.innerHTML = '↗ Share';
+    btn.style.cssText = 'background:none;border:1px solid rgba(255,255,255,.12);color:#6b7280;padding:.28rem .75rem;border-radius:99px;font-size:.75rem;cursor:pointer;margin-top:.5rem;transition:all .15s;display:block;';
+    btn.addEventListener('mouseenter', () => { btn.style.borderColor='rgba(0,200,255,.4)'; btn.style.color='#67e8f9'; });
+    btn.addEventListener('mouseleave', () => { btn.style.borderColor='rgba(255,255,255,.12)'; btn.style.color='#6b7280'; });
+    btn.onclick = () => wyShare({ title: 'Wyltek: ' + title, text: desc, url: ghLink });
+    card.appendChild(btn);
+  });
+  </script>
   <script src="/js/bug-reporter.js"></script>
 </body>
 </html>
