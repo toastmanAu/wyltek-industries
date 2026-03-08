@@ -439,6 +439,19 @@ function updateFilterUI() {
 
 window.setFilter = function() {}; // legacy stub — no longer used
 
+window.onSearch = function(val) {
+  currentSearch = val.trim().toLowerCase();
+  document.getElementById('searchClear').style.display = currentSearch ? 'block' : 'none';
+  render();
+};
+
+window.clearSearch = function() {
+  currentSearch = '';
+  document.getElementById('searchInput').value = '';
+  document.getElementById('searchClear').style.display = 'none';
+  render();
+};
+
 function render() {
   const af = activeFilters;
 
