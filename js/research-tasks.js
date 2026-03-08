@@ -1,5 +1,5 @@
 // research-tasks.js — auto-generated from research/queue.md
-// 143 tasks (136 done, 7 pending)
+// 144 tasks (142 done, 2 pending)
 const RESEARCH_TASKS = [
   {"id": "ckh-and-snapshot-strategy", "status": "DONE", "priority": "HIGH", "goal": "|", "tags": ["hardware", "lora", "ckb", "sensecap", "pi4"]},
   {"id": "wyterminal-usb-hid-telegram-relay", "status": "DONE", "priority": "HIGH", "goal": "Research and implement ESP32-S3 AMOLED device as USB HID keyboard + Telegram-controlled Linux terminal relay", "tags": ["esp32", "usb-hid", "telegram", "linux", "relay"]},
@@ -20,10 +20,10 @@ const RESEARCH_TASKS = [
   {"id": "ckb-snapshot-community-expectations", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Snapshot Community Expectations", "tags": []},
   {"id": "esp32-p4-sphincs-plus-revisit", "status": "DONE", "priority": "MEDIUM", "goal": "Esp32 P4 Sphincs Plus Revisit", "tags": []},
   {"id": "obd2-clio-rs172-esp32-revisit", "status": "DONE", "priority": "MEDIUM", "goal": "Obd2 Clio Rs172 Esp32 Revisit", "tags": []},
-  {"id": "ckb-chess-fiber-rpcs-revisit", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Chess Fiber Rpcs Revisit", "tags": []},
   {"id": "handheld-gaming-rk3566-deep-dive", "status": "DONE", "priority": "MEDIUM", "goal": "Handheld Gaming Rk3566 Deep Dive", "tags": []},
-  {"id": "llm-cost-optimisation-pricing-update", "status": "DONE", "priority": "MEDIUM", "goal": "Llm Cost Optimisation Pricing Update", "tags": []},
   {"id": "esp32-ckb-dob-signing-flow", "status": "DONE", "priority": "MEDIUM", "goal": "Esp32 Ckb Dob Signing Flow", "tags": []},
+  {"id": "ckb-chess-fiber-rpcs-revisit", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Chess Fiber Rpcs Revisit", "tags": []},
+  {"id": "llm-cost-optimisation-pricing-update", "status": "DONE", "priority": "MEDIUM", "goal": "Llm Cost Optimisation Pricing Update", "tags": []},
   {"id": "ckb-did-cell-format-and-contract", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Did Cell Format And Contract", "tags": []},
   {"id": "ckbfs-wasm-browser-adapter", "status": "DONE", "priority": "MEDIUM", "goal": "Ckbfs Wasm Browser Adapter", "tags": []},
   {"id": "gameboy-hardware-wallet", "status": "DONE", "priority": "MEDIUM", "goal": "Gameboy Hardware Wallet", "tags": []},
@@ -134,14 +134,15 @@ const RESEARCH_TASKS = [
   {"id": "rk3528-ckb-node-setup", "status": "DONE", "priority": "MEDIUM", "goal": "Rk3528 Ckb Node Setup", "tags": []},
   {"id": "esp32s3-signing-remote-architecture", "status": "DONE", "priority": "MEDIUM", "goal": "Esp32S3 Signing Remote Architecture", "tags": []},
   {"id": "ckb-chess-fiber-electron-gui", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Chess Fiber Electron Gui", "tags": []},
+  {"id": "opi3b-dual-display-dsi-hdmi", "status": "DONE", "priority": "MEDIUM", "goal": "Opi3B Dual Display Dsi Hdmi", "tags": []},
+  {"id": "ickb-stack-integration", "status": "DONE", "priority": "MEDIUM", "goal": "Ickb Stack Integration", "tags": []},
+  {"id": "wyvault-neuron-sphincs-integration", "status": "DONE", "priority": "MEDIUM", "goal": "Wyvault Neuron Sphincs Integration", "tags": []},
   {"id": "wyrelay-usb-hid-keyboard-esp32", "status": "DONE", "priority": "MEDIUM", "goal": "Minimal USB HID keyboard relay via Telegram \u2014 type any text or key combo on any connected machine remotely", "tags": ["esp32", "usb-hid", "telegram", "keyboard"]},
   {"id": "sensecap-m1-repurpose-ckb-lora", "status": "DONE", "priority": "MEDIUM", "goal": "Repurpose decommissioned SenseCAP M1 Helium gateways (MT7628 + SX1302) as CKB LoRa bridges. Replace Helium OS with Raspberry Pi OS or OpenWrt, run sx1302_hal + CKB light client.", "tags": ["sensecap", "lora", "sx1302", "ckb", "helium", "openwrt"]},
   {"id": "nerdminer-ckb-esp32-eaglesong", "status": "DONE", "priority": "MEDIUM", "goal": "ESP32 solo Eaglesong miner (NerdMiner fork) targeting CKB network. Stratum protocol, pool-compatible, display block/hashrate on TFT.", "tags": ["esp32", "ckb", "eaglesong", "mining", "stratum"]},
-  {"id": "ckb-snapshot-infra-revisit", "status": "PENDING", "priority": "MEDIUM", "goal": "Ckb Snapshot Infra Revisit", "tags": []},
+  {"id": "wyvault-lite-ckb-signing", "status": "DONE", "priority": "MEDIUM", "goal": "Wyvault Lite Ckb Signing", "tags": []},
+  {"id": "wyvault-lite-bip39-esp32", "status": "DONE", "priority": "MEDIUM", "goal": "Wyvault Lite Bip39 Esp32", "tags": []},
+  {"id": "wyvault-lite-qr-airgap", "status": "DONE", "priority": "MEDIUM", "goal": "Wyvault Lite Qr Airgap", "tags": []},
   {"id": "hispo-s8-android-deep-dive", "status": "PENDING", "priority": "MEDIUM", "goal": "Hispo S8 Android Deep Dive", "tags": []},
   {"id": "github-raw-rate-limits-and-semantic-search", "status": "PENDING", "priority": "MEDIUM", "goal": "Github Raw Rate Limits And Semantic Search", "tags": []},
-  {"id": "opi3b-dual-display-dsi-hdmi", "status": "PENDING", "priority": "MEDIUM", "goal": "Opi3B Dual Display Dsi Hdmi", "tags": []},
-  {"id": "ickb-stack-integration", "status": "PENDING", "priority": "MEDIUM", "goal": "Ickb Stack Integration", "tags": []},
-  {"id": "wyvault-neuron-sphincs-integration", "status": "PENDING", "priority": "MEDIUM", "goal": "Wyvault Neuron Sphincs Integration", "tags": []},
-  {"id": "wylora-usb-lora-dongle", "status": "PENDING", "priority": "MEDIUM", "goal": "Design USB dongle with ESP32-S3 + SX1262 LoRa radio + SMA connector. Appears as USB NCM ethernet adapter on host. Exposes local HTTP API for LoRa send/receive. CKB node + WyLora = instant LoRa gateway, no Helium hardware needed.", "tags": ["esp32", "lora", "sx1262", "usb-ncm", "ckb", "dongle"]},
 ];
