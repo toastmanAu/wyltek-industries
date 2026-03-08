@@ -245,6 +245,13 @@
 
     @media(max-width:600px){.page{padding:1.5rem 1rem 4rem;}.grid{grid-template-columns:1fr;}}
   </style>
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Wyltek">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="theme-color" content="#07090f">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>
 <header>
@@ -1040,5 +1047,6 @@ loadMyFavourites(); // async — updates stars + suggestions after initial rende
   <script src="/js/profile-banner.js"></script>
   <script src="/js/wyltek-share.js"></script>
   <script src="/js/bug-reporter.js"></script>
+  <script src="/js/pwa.js" defer></script>
 </body>
 </html>
