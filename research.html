@@ -46,15 +46,34 @@
     .stat-n{font-size:1.6rem;font-weight:800;color:var(--accent);line-height:1;}
     .stat-l{font-size:0.75rem;color:var(--muted);text-transform:uppercase;letter-spacing:.05em;margin-top:0.2rem;}
 
-    .filters{display:flex;gap:0.5rem;flex-wrap:wrap;margin-bottom:1.5rem;align-items:center;}
-    .filter-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:0.3rem 0.75rem;border-radius:100px;font-size:0.8rem;cursor:pointer;transition:all .15s;}
-    .filter-btn:hover{color:var(--text);}
-    .filter-btn.active{background:#1a2540;border-color:var(--accent);color:var(--accent);}
-    .filter-btn.fav-active{background:#2a1a05;border-color:#fbbf24;color:#fbbf24;}
-    .filter-btn.suggest-active{background:#0a2218;border-color:var(--green);color:var(--green);}
-    .filter-btn.toast-active{background:#2a1205;border-color:#e07b39;color:#e07b39;}
-    .filter-btn.toast-active img,.filter-btn:hover img{opacity:1;}
-    .filter-btn img{height:16px;width:16px;object-fit:contain;vertical-align:middle;opacity:.6;transition:opacity .15s;border-radius:3px;}
+    /* ── Filter dropdown ── */
+    .filter-wrap{position:relative;margin-bottom:1.5rem;display:flex;align-items:center;gap:.6rem;flex-wrap:wrap;}
+    .filter-trigger{display:flex;align-items:center;gap:.5rem;background:var(--surface);border:1px solid var(--border);color:var(--text);padding:.45rem .85rem;border-radius:8px;font-size:.85rem;cursor:pointer;transition:border-color .15s;user-select:none;white-space:nowrap;}
+    .filter-trigger:hover,.filter-trigger.open{border-color:var(--accent);}
+    .filter-trigger-icon{font-size:.75rem;color:var(--muted);transition:transform .2s;}
+    .filter-trigger.open .filter-trigger-icon{transform:rotate(180deg);}
+    .filter-active-chips{display:flex;gap:.35rem;flex-wrap:wrap;align-items:center;}
+    .filter-chip{display:inline-flex;align-items:center;gap:.3rem;padding:.2rem .55rem;border-radius:99px;font-size:.75rem;font-weight:600;cursor:pointer;transition:opacity .15s;}
+    .filter-chip:hover{opacity:.75;}
+    .filter-chip.chip-status{background:#1a2540;border:1px solid var(--accent);color:var(--accent);}
+    .filter-chip.chip-fav{background:#2a1a05;border:1px solid #fbbf24;color:#fbbf24;}
+    .filter-chip.chip-toast{background:#2a1205;border:1px solid #e07b39;color:#e07b39;}
+    .filter-chip.chip-suggest{background:#0a2218;border:1px solid var(--green);color:var(--green);}
+    .filter-chip img{height:12px;width:12px;object-fit:contain;border-radius:2px;}
+    .filter-clear{font-size:.75rem;color:var(--muted);cursor:pointer;padding:.2rem .4rem;border-radius:4px;border:1px solid var(--border);background:none;display:none;}
+    .filter-clear.visible{display:inline-block;}
+    .filter-clear:hover{color:var(--text);border-color:var(--muted);}
+    .filter-dropdown{position:absolute;top:calc(100% + .4rem);left:0;z-index:50;background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:.4rem;min-width:220px;box-shadow:0 8px 32px rgba(0,0,0,.5);display:none;}
+    .filter-dropdown.open{display:block;}
+    .filter-dropdown-section{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;padding:.4rem .6rem .25rem;}
+    .filter-option{display:flex;align-items:center;gap:.6rem;padding:.5rem .7rem;border-radius:6px;cursor:pointer;font-size:.85rem;color:var(--muted);transition:background .1s;}
+    .filter-option:hover{background:rgba(255,255,255,.05);color:var(--text);}
+    .filter-option.selected{color:var(--text);}
+    .filter-option-check{width:14px;height:14px;border:1px solid var(--border);border-radius:3px;display:flex;align-items:center;justify-content:center;font-size:.65rem;flex-shrink:0;transition:all .15s;}
+    .filter-option.selected .filter-option-check{background:var(--accent);border-color:var(--accent);color:#000;}
+    .filter-option img{height:14px;width:14px;object-fit:contain;border-radius:2px;opacity:.7;}
+    .filter-option.selected img{opacity:1;}
+    .filter-divider{border:none;border-top:1px solid var(--border);margin:.3rem 0;}
 
     /* Empty state messages */
     .empty-state{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;text-align:center;gap:1rem;}
@@ -275,15 +294,36 @@
     <div class="search-count" id="searchCount"></div>
   </div>
 
-  <div class="filters" id="filters">
-    <span class="filter-label">Filter:</span>
-    <button class="filter-btn active" data-filter="all" onclick="setFilter('all',this)">All</button>
-    <button class="filter-btn" data-filter="DONE" onclick="setFilter('DONE',this)">Done</button>
-    <button class="filter-btn" data-filter="PENDING" onclick="setFilter('PENDING',this)">Pending</button>
-    <button class="filter-btn" data-filter="HIGH" onclick="setFilter('HIGH',this)">High priority</button>
-    <button class="filter-btn" data-filter="FAVOURITES" id="favFilterBtn" onclick="setFilter('FAVOURITES',this)">⭐ Favourites</button>
-    <button class="filter-btn" data-filter="TOASTED" id="toastFilterBtn" onclick="setFilter('TOASTED',this)"><img src="/kernel-avatar.png" alt=""> Toasted</button>
-    <button class="filter-btn" data-filter="SUGGESTED" id="suggestFilterBtn" onclick="setFilter('SUGGESTED',this)">✦ For You</button>
+  <div class="filter-wrap" id="filterWrap">
+    <div class="filter-trigger" id="filterTrigger" onclick="toggleFilterDropdown()">
+      <span>🔧 Filter</span>
+      <span class="filter-trigger-icon">▾</span>
+    </div>
+    <div class="filter-active-chips" id="filterChips"></div>
+    <button class="filter-clear" id="filterClearBtn" onclick="clearAllFilters()">✕ Clear</button>
+    <div class="filter-dropdown" id="filterDropdown">
+      <div class="filter-dropdown-section">Status</div>
+      <div class="filter-option" data-filter="DONE" onclick="toggleFilter('DONE')">
+        <span class="filter-option-check"></span><span>Done</span>
+      </div>
+      <div class="filter-option" data-filter="PENDING" onclick="toggleFilter('PENDING')">
+        <span class="filter-option-check"></span><span>Pending</span>
+      </div>
+      <div class="filter-option" data-filter="HIGH" onclick="toggleFilter('HIGH')">
+        <span class="filter-option-check"></span><span>High priority</span>
+      </div>
+      <hr class="filter-divider">
+      <div class="filter-dropdown-section">My Research</div>
+      <div class="filter-option" data-filter="FAVOURITES" onclick="toggleFilter('FAVOURITES')">
+        <span class="filter-option-check"></span><span>⭐ Favourites</span>
+      </div>
+      <div class="filter-option" data-filter="TOASTED" onclick="toggleFilter('TOASTED')">
+        <span class="filter-option-check"></span><img src="/kernel-avatar.png" alt=""><span>Toasted</span>
+      </div>
+      <div class="filter-option" data-filter="SUGGESTED" onclick="toggleFilter('SUGGESTED')">
+        <span class="filter-option-check"></span><span>✦ For You</span>
+      </div>
+    </div>
   </div>
 
   <div class="grid" id="grid"></div>
@@ -326,53 +366,109 @@ function timeAgo(iso) {
 }
 
 // ── Render ────────────────────────────────────────────────────────
-let currentFilter = 'all';
+let activeFilters = new Set();  // multi-select
 let currentSearch = '';
 
-window.onSearch = function(val) {
-  currentSearch = val.trim().toLowerCase();
-  document.getElementById('searchClear').classList.toggle('visible', currentSearch.length > 0);
+// ── Filter dropdown ───────────────────────────────────────────────
+window.toggleFilterDropdown = function() {
+  const trigger = document.getElementById('filterTrigger');
+  const dropdown = document.getElementById('filterDropdown');
+  const isOpen = dropdown.classList.contains('open');
+  dropdown.classList.toggle('open', !isOpen);
+  trigger.classList.toggle('open', !isOpen);
+};
+
+// Close dropdown when clicking outside
+document.addEventListener('click', e => {
+  if (!document.getElementById('filterWrap')?.contains(e.target)) {
+    document.getElementById('filterDropdown')?.classList.remove('open');
+    document.getElementById('filterTrigger')?.classList.remove('open');
+  }
+});
+
+window.toggleFilter = function(f) {
+  // SUGGESTED is mutually exclusive with FAVOURITES/TOASTED for UX clarity
+  if (activeFilters.has(f)) {
+    activeFilters.delete(f);
+  } else {
+    activeFilters.add(f);
+  }
+  updateFilterUI();
   render();
 };
 
-window.clearSearch = function() {
-  document.getElementById('searchInput').value = '';
-  currentSearch = '';
-  document.getElementById('searchClear').classList.remove('visible');
-  document.getElementById('searchCount').textContent = '';
+window.clearAllFilters = function() {
+  activeFilters.clear();
+  updateFilterUI();
   render();
 };
 
-window.setFilter = function(f, btn) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => {
-    b.classList.remove('active', 'fav-active', 'suggest-active', 'toast-active');
+function updateFilterUI() {
+  // Update checkmarks in dropdown
+  document.querySelectorAll('.filter-option').forEach(opt => {
+    const f = opt.dataset.filter;
+    opt.classList.toggle('selected', activeFilters.has(f));
+    const check = opt.querySelector('.filter-option-check');
+    if (check) check.textContent = activeFilters.has(f) ? '✓' : '';
   });
-  if (f === 'FAVOURITES') btn.classList.add('fav-active');
-  else if (f === 'SUGGESTED') btn.classList.add('suggest-active');
-  else if (f === 'TOASTED') btn.classList.add('toast-active');
-  else btn.classList.add('active');
-  render();
-};
+
+  // Render chips
+  const CHIP_META = {
+    DONE:       { label: 'Done',        cls: 'chip-status' },
+    PENDING:    { label: 'Pending',     cls: 'chip-status' },
+    HIGH:       { label: 'High',        cls: 'chip-status' },
+    FAVOURITES: { label: '⭐ Fav',      cls: 'chip-fav' },
+    TOASTED:    { label: '🦞 Toasted',  cls: 'chip-toast', img: '/kernel-avatar.png' },
+    SUGGESTED:  { label: '✦ For You',   cls: 'chip-suggest' },
+  };
+  const chipsEl = document.getElementById('filterChips');
+  chipsEl.innerHTML = [...activeFilters].map(f => {
+    const m = CHIP_META[f] || { label: f, cls: 'chip-status' };
+    const img = m.img ? `<img src="${m.img}" alt="">` : '';
+    return `<span class="filter-chip ${m.cls}" onclick="toggleFilter('${f}')">${img}${m.label} ✕</span>`;
+  }).join('');
+
+  // Show/hide clear button
+  document.getElementById('filterClearBtn').classList.toggle('visible', activeFilters.size > 0);
+
+  // Update trigger label
+  const trigger = document.getElementById('filterTrigger');
+  const count = activeFilters.size;
+  trigger.querySelector('span').textContent = count > 0 ? `🔧 Filter (${count})` : '🔧 Filter';
+}
+
+window.setFilter = function() {}; // legacy stub — no longer used
 
 function render() {
+  const af = activeFilters;
+
+  // Guard empty states for member-only single-filter views
+  if (af.size === 1) {
+    if (af.has('FAVOURITES') && !MY_ADDR) { showEmpty('🔐','Sign in to use Favourites','Connect your CKB wallet to track research topics.'); return; }
+    if (af.has('FAVOURITES') && myFavourites.size === 0) { showEmpty('⭐','No favourites yet','Star research topics you care about — tap the ⭐ button when reading any finding.'); return; }
+    if (af.has('TOASTED') && !MY_ADDR) { showEmptyImg('/kernel-avatar.png','Sign in to see your toasts','Connect your CKB wallet to track research you\'ve toasted.'); return; }
+    if (af.has('TOASTED') && myToasted.size === 0) { showEmptyImg('/kernel-avatar.png','No toasts yet','Open any research finding and give it a 🥂 toast — they\'ll show up here.'); return; }
+    if (af.has('SUGGESTED') && !MY_ADDR) { showEmpty('🔐','Sign in for suggestions','Connect your CKB wallet, star some topics, and we\'ll surface related work.'); return; }
+    if (af.has('SUGGESTED') && myFavourites.size === 0) { showEmpty('✦','Select at least one favourite topic to get suggestions','Star research topics you\'re interested in, then come back here for suggestions.'); return; }
+    if (af.has('SUGGESTED') && suggestedIds.size === 0) { showEmpty('🔬','No relevant research found for your favourites','Try starring more topics with varied tags — the more you favourite, the better your suggestions.'); return; }
+  }
+
   const tasks = RESEARCH_TASKS.filter(t => {
-    // Status/priority filter
-    if (currentFilter !== 'all') {
-      if (currentFilter === 'DONE' && t.status !== 'DONE') return false;
-      if (currentFilter === 'PENDING' && t.status !== 'PENDING') return false;
-      if (currentFilter === 'HIGH' && t.priority !== 'HIGH') return false;
-      if (currentFilter === 'FAVOURITES') {
-        if (!MY_ADDR || !myFavourites.has(t.id)) return false;
-      }
-      if (currentFilter === 'TOASTED') {
-        if (!MY_ADDR || !myToasted.has(t.id)) return false;
-      }
-      if (currentFilter === 'SUGGESTED') {
-        if (!suggestedIds.has(t.id)) return false;
-      }
+    // Status group (OR within group)
+    const statusFilters = ['DONE','PENDING','HIGH'].filter(f => af.has(f));
+    if (statusFilters.length > 0) {
+      const pass = statusFilters.some(f =>
+        (f==='DONE' && t.status==='DONE') ||
+        (f==='PENDING' && t.status==='PENDING') ||
+        (f==='HIGH' && t.priority==='HIGH')
+      );
+      if (!pass) return false;
     }
-    // Search filter
+    // My-research (AND — must satisfy all selected)
+    if (af.has('FAVOURITES') && !myFavourites.has(t.id)) return false;
+    if (af.has('TOASTED')    && !myToasted.has(t.id))    return false;
+    if (af.has('SUGGESTED')  && !suggestedIds.has(t.id)) return false;
+    // Search
     if (currentSearch) {
       const h = [t.id, t.goal, (t.tags||[]).join(' '), t.status, t.priority].join(' ').toLowerCase();
       if (!h.includes(currentSearch)) return false;
@@ -380,91 +476,51 @@ function render() {
     return true;
   });
 
-  // Update search count
-  if (currentSearch) {
-    document.getElementById('searchCount').textContent =
-      `${tasks.length} result${tasks.length !== 1 ? 's' : ''} for "${currentSearch}"`;
-  } else {
-    document.getElementById('searchCount').textContent = '';
-  }
+  document.getElementById('searchCount').textContent = currentSearch
+    ? `${tasks.length} result${tasks.length!==1?'s':''} for "${currentSearch}"` : '';
 
-  // Empty states for special filters
-  if (currentFilter === 'FAVOURITES' && !MY_ADDR) {
-    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔐</div><div class="empty-state-title">Sign in to use Favourites</div><div class="empty-state-sub">Connect your CKB wallet to track research topics and get personalised suggestions.</div></div>`;
-    renderStats(); return;
-  }
-  if (currentFilter === 'FAVOURITES' && myFavourites.size === 0) {
-    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon">⭐</div><div class="empty-state-title">No favourites yet</div><div class="empty-state-sub">Star research topics you care about — tap the ⭐ button when reading any finding. Your favourites also power the "For You" suggestions.</div></div>`;
-    renderStats(); return;
-  }
-  if (currentFilter === 'TOASTED' && !MY_ADDR) {
-    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon"><img src="/kernel-avatar.png" style="height:48px;border-radius:8px;"></div><div class="empty-state-title">Sign in to see your toasts</div><div class="empty-state-sub">Connect your CKB wallet to track research you've toasted.</div></div>`;
-    renderStats(); return;
-  }
-  if (currentFilter === 'TOASTED' && myToasted.size === 0) {
-    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon"><img src="/kernel-avatar.png" style="height:48px;border-radius:8px;"></div><div class="empty-state-title">No toasts yet</div><div class="empty-state-sub">Open any research finding and give it a 🥂 toast — they'll all show up here.</div></div>`;
-    renderStats(); return;
-  }
-  if (currentFilter === 'SUGGESTED' && !MY_ADDR) {
-    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔐</div><div class="empty-state-title">Sign in for suggestions</div><div class="empty-state-sub">Connect your CKB wallet, star some research topics, and we'll surface related work you might have missed.</div></div>`;
-    renderStats(); return;
-  }
-  if (currentFilter === 'SUGGESTED' && myFavourites.size === 0) {
-    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon">✦</div><div class="empty-state-title">Select at least one favourite topic to get suggestions</div><div class="empty-state-sub">Star research topics you're interested in using the ⭐ button, then come back here to discover related work.</div></div>`;
-    renderStats(); return;
-  }
-  if (currentFilter === 'SUGGESTED' && suggestedIds.size === 0) {
-    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔬</div><div class="empty-state-title">No relevant research found for your favourites</div><div class="empty-state-sub">We couldn't find closely related topics based on your current favourites. Try starring more topics with varied tags — the more you favourite, the better your suggestions.</div></div>`;
-    renderStats(); return;
-  }
-  if (tasks.length === 0) {
-    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔭</div><div class="empty-state-title">No results</div><div class="empty-state-sub">Try adjusting your search or filter.</div></div>`;
-    renderStats(); return;
-  }
+  if (tasks.length === 0) { showEmpty('🔭','No results','Try adjusting your filters or search.'); return; }
 
   document.getElementById('grid').innerHTML = tasks.map(t => {
     const isFaved = myFavourites.has(t.id);
-    return `
-    <div class="card ${t.status.toLowerCase()}${isFaved ? ' faved-card' : ''}" id="card-${t.id}" onclick="openViewer('${t.id}')">
+    return `<div class="card ${t.status.toLowerCase()}${isFaved?' faved-card':''}" id="card-${t.id}" onclick="openViewer('${t.id}')">
       <span class="card-fav-star">⭐</span>
       <div class="card-header">
-        <div class="card-top">
-          <div class="card-id">${t.id}</div>
-          <div class="card-badges">
-            <span class="badge badge-${t.status.toLowerCase()}">${t.status}</span>
-            <span class="badge badge-${t.priority.toLowerCase()}">${t.priority}</span>
-          </div>
+        <div class="card-top"><div class="card-id">${t.id}</div>
+          <div class="card-badges"><span class="badge badge-${t.status.toLowerCase()}">${t.status}</span><span class="badge badge-${t.priority.toLowerCase()}">${t.priority}</span></div>
         </div>
         <div class="card-goal">${t.goal}</div>
         <div class="card-footer-row">
-          <div class="card-tags">${(t.tags||[]).map(tag => `<span class="tag">${tag}</span>`).join('')}</div>
-          <div class="expand-hint">${t.status === 'DONE' ? 'read findings →' : 'pending…'}</div>
+          <div class="card-tags">${(t.tags||[]).map(tag=>`<span class="tag">${tag}</span>`).join('')}</div>
+          <div class="expand-hint">${t.status==='DONE'?'read findings →':'pending…'}</div>
         </div>
       </div>
     </div>`;
   }).join('');
+  renderStats();
+}
 
+function showEmpty(icon, title, sub) {
+  document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon">${icon}</div><div class="empty-state-title">${title}</div><div class="empty-state-sub">${sub}</div></div>`;
+  renderStats();
+}
+function showEmptyImg(src, title, sub) {
+  document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon"><img src="${src}" style="height:48px;border-radius:8px;"></div><div class="empty-state-title">${title}</div><div class="empty-state-sub">${sub}</div></div>`;
   renderStats();
 }
 
 function renderStats() {
-
-  // Stats
-  const done = RESEARCH_TASKS.filter(t => t.status === 'DONE').length;
-  const pending = RESEARCH_TASKS.filter(t => t.status === 'PENDING').length;
-  const pct = Math.round((done / RESEARCH_TASKS.length) * 100);
-
+  const done = RESEARCH_TASKS.filter(t => t.status==='DONE').length;
+  const pending = RESEARCH_TASKS.filter(t => t.status==='PENDING').length;
+  const pct = Math.round((done/RESEARCH_TASKS.length)*100);
   document.getElementById('statsBar').innerHTML = `
     <div class="stat"><div class="stat-n">${RESEARCH_TASKS.length}</div><div class="stat-l">Total tasks</div></div>
     <div class="stat"><div class="stat-n" style="color:var(--green)">${done}</div><div class="stat-l">Completed</div></div>
     <div class="stat"><div class="stat-n" style="color:var(--yellow)">${pending}</div><div class="stat-l">In queue</div></div>
-    <div class="stat"><div class="stat-n">${pct}%</div><div class="stat-l">Complete</div></div>
-  `;
-
+    <div class="stat"><div class="stat-n">${pct}%</div><div class="stat-l">Complete</div></div>`;
   document.getElementById('progressWrap').innerHTML = `
     <div class="progress-label"><span>Research progress</span><span>${done} / ${RESEARCH_TASKS.length} tasks</span></div>
-    <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>
-  `;
+    <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>`;
 }
 
 // ── Viewer ────────────────────────────────────────────────────────
@@ -556,15 +612,20 @@ async function loadFavCount(taskId) {
 }
 
 function getVisibleTasks() {
+  const af = activeFilters;
   return RESEARCH_TASKS.filter(t => {
-    if (currentFilter !== 'all') {
-      if (currentFilter === 'DONE' && t.status !== 'DONE') return false;
-      if (currentFilter === 'PENDING' && t.status !== 'PENDING') return false;
-      if (currentFilter === 'HIGH' && t.priority !== 'HIGH') return false;
-      if (currentFilter === 'FAVOURITES' && !myFavourites.has(t.id)) return false;
-      if (currentFilter === 'TOASTED' && !myToasted.has(t.id)) return false;
-      if (currentFilter === 'SUGGESTED' && !suggestedIds.has(t.id)) return false;
+    const statusFilters = ['DONE','PENDING','HIGH'].filter(f => af.has(f));
+    if (statusFilters.length > 0) {
+      const pass = statusFilters.some(f =>
+        (f==='DONE' && t.status==='DONE') ||
+        (f==='PENDING' && t.status==='PENDING') ||
+        (f==='HIGH' && t.priority==='HIGH')
+      );
+      if (!pass) return false;
     }
+    if (af.has('FAVOURITES') && !myFavourites.has(t.id)) return false;
+    if (af.has('TOASTED')    && !myToasted.has(t.id))    return false;
+    if (af.has('SUGGESTED')  && !suggestedIds.has(t.id)) return false;
     if (currentSearch) {
       const h = [t.id, t.goal, (t.tags||[]).join(' '), t.status, t.priority].join(' ').toLowerCase();
       if (!h.includes(currentSearch)) return false;
