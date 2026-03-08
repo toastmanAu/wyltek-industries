@@ -137,6 +137,7 @@
     .comment-addr{font-size:0.72rem;font-family:monospace;color:var(--accent);}
     .comment-time{font-size:0.7rem;color:var(--muted);}
     .comment-body{font-size:0.84rem;color:var(--text);line-height:1.5;}
+    .comment-quote{font-size:.78rem;color:var(--muted);border-left:2px solid var(--accent);padding:.25rem .6rem;margin-bottom:.4rem;font-style:italic;opacity:.8;background:rgba(0,200,255,.04);border-radius:0 4px 4px 0;}
     .comment-input-row{display:flex;gap:0.5rem;margin-top:0.25rem;}
     .comment-input{flex:1;background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--text);padding:0.5rem 0.75rem;border-radius:6px;font-size:0.84rem;font-family:inherit;resize:none;}
     .comment-input:focus{outline:none;border-color:var(--accent);}
@@ -144,6 +145,11 @@
     .comment-submit:hover{opacity:.85;}
     .comment-submit:disabled{opacity:.4;cursor:not-allowed;}
     .no-comments{font-size:0.82rem;color:var(--muted);font-style:italic;}
+    /* Highlight-to-comment bubble */
+    #highlight-bubble{position:fixed;z-index:9999;background:var(--accent);color:#000;border:none;border-radius:20px;padding:.3rem .85rem;font-size:.78rem;font-weight:700;cursor:pointer;box-shadow:0 4px 16px rgba(0,0,0,.4);display:none;transform:translateX(-50%);white-space:nowrap;}
+    #highlight-bubble:hover{opacity:.85;}
+    .comment-quote-preview{font-size:.78rem;color:var(--muted);border-left:2px solid var(--accent);padding:.2rem .55rem;margin-bottom:.35rem;font-style:italic;background:rgba(0,200,255,.05);border-radius:0 4px 4px 0;display:flex;justify-content:space-between;align-items:flex-start;gap:.5rem;}
+    .comment-quote-preview button{background:none;border:none;color:var(--muted);cursor:pointer;font-size:.9rem;padding:0;flex-shrink:0;}
     .loading-comments{font-size:0.8rem;color:var(--muted);}
 
     /* Findings panel */
@@ -660,6 +666,7 @@ window.openViewer = async function(id) {
 
   await renderViewer(task);
   document.getElementById('viewerOverlay').classList.add('open');
+  document.getElementById('viewerOverlay').dataset.taskId = id;
   document.getElementById('viewerBody').scrollTop = 0;
   document.body.style.overflow = 'hidden';
 };
@@ -683,8 +690,13 @@ window.viewerNav = async function(dir) {
 // Close on Escape
 document.addEventListener('keydown', e => {
   if (e.key === 'Escape') closeViewer();
-  if (e.key === 'ArrowRight' && document.getElementById('viewerOverlay').classList.contains('open')) viewerNav(1);
-  if (e.key === 'ArrowLeft' && document.getElementById('viewerOverlay').classList.contains('open')) viewerNav(-1);
+  // Don't hijack arrow keys when user is typing in an input/textarea
+  const tag = document.activeElement?.tagName;
+  const isEditing = tag === 'INPUT' || tag === 'TEXTAREA' || document.activeElement?.isContentEditable;
+  if (!isEditing && document.getElementById('viewerOverlay').classList.contains('open')) {
+    if (e.key === 'ArrowRight') viewerNav(1);
+    if (e.key === 'ArrowLeft')  viewerNav(-1);
+  }
 });
 
 // Handle hash on load
@@ -908,6 +920,7 @@ function renderComments(taskId, comments) {
             <span class="comment-addr">${shortAddr(c.ckb_address)}</span>
             <span class="comment-time">${timeAgo(c.created_at)}</span>
           </div>
+          ${c.quote ? `<div class="comment-quote">${c.quote.replace(/</g,'&lt;').replace(/>/g,'&gt;').slice(0,200)}</div>` : ''}
           <div class="comment-body">${c.body.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</div>
         </div>`).join('')
     : '<div class="no-comments">No comments yet — be the first.</div>';
@@ -915,6 +928,10 @@ function renderComments(taskId, comments) {
   el.innerHTML = `
     <div class="comments-title">Discussion</div>
     ${list}
+    <div id="quote-preview-${taskId}" style="display:none" class="comment-quote-preview">
+      <span id="quote-text-${taskId}" style="flex:1"></span>
+      <button onclick="clearQuote('${taskId}')" title="Remove quote">✕</button>
+    </div>
     <div class="comment-input-row">
       <textarea class="comment-input" id="comment-input-${taskId}" rows="2" placeholder="Share a thought…"></textarea>
       <button class="comment-submit" onclick="submitComment('${taskId}')">Post</button>
@@ -922,17 +939,83 @@ function renderComments(taskId, comments) {
   `;
 }
 
+// ── Highlight-to-comment ──────────────────────────────────────────────────────
+let _pendingQuote = { taskId: null, text: '' };
+
+// Inject bubble element once
+if (!document.getElementById('highlight-bubble')) {
+  const bubble = document.createElement('button');
+  bubble.id = 'highlight-bubble';
+  bubble.textContent = '💬 Comment on this';
+  document.body.appendChild(bubble);
+  bubble.addEventListener('click', () => {
+    bubble.style.display = 'none';
+    const taskId = _pendingQuote.taskId;
+    if (!taskId) return;
+    // Show quote preview above textarea
+    const preview = document.getElementById('quote-preview-' + taskId);
+    const previewText = document.getElementById('quote-text-' + taskId);
+    if (preview && previewText) {
+      previewText.textContent = '"' + _pendingQuote.text.slice(0, 200) + '"';
+      preview.style.display = 'flex';
+    }
+    // Focus textarea
+    const input = document.getElementById('comment-input-' + taskId);
+    if (input) { input.focus(); input.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  });
+}
+
+document.addEventListener('mouseup', () => {
+  const sel = window.getSelection();
+  const text = sel?.toString().trim();
+  const bubble = document.getElementById('highlight-bubble');
+  if (!bubble) return;
+
+  if (!text || text.length < 10) { bubble.style.display = 'none'; return; }
+
+  // Only trigger within the viewer findings body
+  const anchor = sel.anchorNode?.parentElement?.closest('#viewerInner');
+  if (!anchor) { bubble.style.display = 'none'; return; }
+
+  // Find current task ID
+  const taskId = document.getElementById('viewerOverlay')?.dataset?.taskId;
+  if (!taskId) { bubble.style.display = 'none'; return; }
+
+  _pendingQuote = { taskId, text };
+
+  // Position bubble above selection
+  const range = sel.getRangeAt(0);
+  const rect = range.getBoundingClientRect();
+  bubble.style.left = (rect.left + rect.width / 2) + 'px';
+  bubble.style.top  = (rect.top + window.scrollY - 42) + 'px';
+  bubble.style.display = 'block';
+});
+
+document.addEventListener('mousedown', e => {
+  if (e.target.id !== 'highlight-bubble') {
+    document.getElementById('highlight-bubble').style.display = 'none';
+  }
+});
+
+window.clearQuote = function(taskId) {
+  _pendingQuote = { taskId: null, text: '' };
+  const preview = document.getElementById('quote-preview-' + taskId);
+  if (preview) preview.style.display = 'none';
+};
+
 window.submitComment = async function(taskId) {
   const input = document.getElementById('comment-input-' + taskId);
   const btn = input?.nextElementSibling;
   const body = input?.value?.trim();
   if (!body || !MY_ADDR) return;
+  const quote = (_pendingQuote.taskId === taskId) ? _pendingQuote.text.slice(0, 500) : null;
   btn.disabled = true;
   btn.textContent = '…';
-  await sb.from('research_comments').insert({ task_id: taskId, ckb_address: MY_ADDR, body });
+  await sb.from('research_comments').insert({ task_id: taskId, ckb_address: MY_ADDR, body, quote });
   input.value = '';
   btn.disabled = false;
   btn.textContent = 'Post';
+  clearQuote(taskId);
   await loadComments(taskId);
 };
 
