@@ -17,6 +17,45 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id:      "2026-03-09-wyvault-pwa-wyterminal-v42",
+    date:    "2026-03-09",
+    project: "WyVault / WyTerminal / Wyltek PWA",
+    title:   "WyVault Lite Scaffold, Wyltek PWA, and WyTerminal v4.2 First Shell",
+    tags:    ["WyVault", "WyTerminal", "ESP32-S3", "hardware-wallet", "CKB", "PWA", "offline", "security"],
+    body: [
+      "A big Sunday — three separate projects shipped, a hardware wallet designed from scratch, the Wyltek site turned into an installable phone app, and WyTerminal v4.2 finally got its SSH working (mostly). Here's what happened.",
+      { type: "h3", content: "WyVault Lite: Hardware Wallet Scaffold" },
+      "Started the night talking about novel security features for a hardware wallet. Ended up designing one. WyVault Lite targets the Guition JC3248W535 — an ESP32-S3 N16R8 board with a 3.5\" IPS touchscreen and battery connector. The scaffold is on GitHub and builds clean: 291KB, 91% flash free.",
+      "The security model is more interesting than a Ledger. Real AES-256-GCM encrypted seed storage via NVS, key derived from HKDF(PIN || device_secret_eFuse). Five wrong PINs wipes the device. But the novel bits are the features nobody ships:",
+      { type: "ul", content: [
+        "<strong>WiFi location binding</strong> — device scans nearby SSIDs, hashes the fingerprint. Known location = PIN only. New location = PIN + fingerprint required. Attacker who steals your device can't unlock it at their house.",
+        "<strong>Duress finger</strong> — enroll two fingerprints. Finger 1 = real wallet. Finger 2 = decoy wallet with small balance. No visual indicator which mode you're in. Optional silent canary alert sent to your phone on duress unlock.",
+        "<strong>Dual wallet architecture</strong> — Cold (m/44'/309'/0', air-gapped) and Hot (m/44'/309'/1', WiFi-connected) derived from the same seed. Seamless transfer UI: 'Top up spending wallet' sends from cold to hot with one tap, signing in a WiFi-isolated critical section.",
+        "<strong>Neuron plugin</strong> — scaffolded alongside the firmware. USB CDC signing bridge that lets Neuron desktop wallet use WyVault as a hardware signer. First open-source CKB hardware wallet with native Neuron integration.",
+      ]},
+      "The crypto is all stubs right now — trezor-crypto, BLAKE2b, and the LVGL display driver go in post-hackathon. But the architecture is solid, the AES-GCM storage is real, and the security design is done.",
+      { type: "h3", content: "Wyltek as a PWA" },
+      "Someone asked: can the website be a phone app? Answer: it already basically is — it just needed two files and a meta tag. Shipped in an hour.",
+      "The site now has a full service worker with cache-first static assets and network-first pages. iOS users can 'Add to Home Screen' for a full-screen no-chrome experience. Android shows an install banner. App shortcuts (Research, Lounge, Members) appear on long-press. Offline fallback page serves from cache when there's no connection.",
+      "The more interesting piece: an offline outbox. Write a research comment or lounge message while offline — it saves to IndexedDB instead of failing. When you reconnect, a review panel slides up from the bottom showing each queued item with its timestamp and preview. Upload or discard each one individually, or bulk upload/trash all. It's the kind of UX that makes offline feel intentional rather than broken.",
+      "JoyID works identically in PWA mode — which makes sense, since JoyID itself is a PWA. The whole stack is passkeys all the way down.",
+      { type: "h3", content: "WyTerminal v4.2: The FFat Saga" },
+      "WyTerminal v4.2 was supposed to be done last session. It generates an ed25519 keypair on first boot, broadcasts the public key over USB CDC, and SSH-authenticates to targets without passwords. The theory was solid. The practice involved three separate bugs.",
+      "First: SPIFFS. The board's partition scheme (<code>app3M_fat9M_16MB</code>) only exposes FAT filesystem options — there's no SPIFFS partition. The firmware was trying to mount SPIFFS, failing silently (well, not that silently — the display showed 'SPIFFS mount fail'), and the key never generated. Fix: swap to FFat with a <code>/spiffs</code> mount point to keep the libssh key paths working.",
+      "Second: FFat path prefix confusion. FFat's own API (<code>FFat.exists()</code>, <code>FFat.mkdir()</code>) uses paths relative to its root — no mount prefix. But the libssh VFS functions use the full path through the OS layer. So <code>FFat.mkdir(\"/spiffs/.ssh\")</code> was silently doing nothing, the directory was never created, and the key file never wrote. The fix was obvious once seen: <code>FFat.mkdir(\"/.ssh\")</code> for the FFat API, <code>/spiffs/.ssh/id_ed25519</code> for libssh.",
+      "Third: TCP timeout. The SSH connect was timing out at 30 seconds. Both the board and ckbnode are on WiFi — 60-90ms ping between them, which is high for a LAN. Bumped timeout to 60s, enabled <code>UseDNS no</code> on the target sshd (reverse DNS lookups were adding to the handshake time). Still investigating — switching to the target's ethernet IP is the next test.",
+      "Current status: key=ok (FFat persisting correctly), TCP timeout still being debugged. The board responds to <code>/status</code> and <code>/target</code> via Telegram. <code>/shell</code> is one TCP fix away.",
+      { type: "h3", content: "What's Next" },
+      "WyTerminal <code>/shell</code> TCP issue — probably just the WiFi→WiFi routing. Switching target to ethernet IP should fix it. WyVault crypto integration (trezor-crypto, BLAKE2b) and LVGL display driver post-hackathon. Push notification infrastructure for the Wyltek PWA.",
+    ],
+    links: [
+      { text: "WyVault Lite on GitHub", href: "https://github.com/toastmanAu/wyvault-lite" },
+      { text: "WyRelay (WyTerminal) on GitHub", href: "https://github.com/toastmanAu/WyRelay" },
+      { text: "Wyltek Industries", href: "https://wyltekindustries.com" },
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
+  {
     id:      "2026-03-08-wyterminal-v2",
     date:    "2026-03-08",
     project: "WyTerminal",
