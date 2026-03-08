@@ -279,7 +279,7 @@
     <span class="community-cta-icon">🔬</span>
     <div>
       <strong>Want to help shape this research?</strong>
-      Drop a 🥂 toast and a comment on any task you're interested in — what you're building, what you've learned, or what you think we're missing.
+      Drop a <img src="/kernel-avatar.png" style="height:16px;width:16px;object-fit:contain;vertical-align:middle;border-radius:3px;" alt="toast"> toast and a comment on any task you're interested in — what you're building, what you've learned, or what you think we're missing.
       Comments are crawled daily and assessed against our research vectors. Good signal gets turned into new tasks.
     </div>
   </div>
@@ -447,7 +447,7 @@ function render() {
     if (af.has('FAVOURITES') && !MY_ADDR) { showEmpty('🔐','Sign in to use Favourites','Connect your CKB wallet to track research topics.'); return; }
     if (af.has('FAVOURITES') && myFavourites.size === 0) { showEmpty('⭐','No favourites yet','Star research topics you care about — tap the ⭐ button when reading any finding.'); return; }
     if (af.has('TOASTED') && !MY_ADDR) { showEmptyImg('/kernel-avatar.png','Sign in to see your toasts','Connect your CKB wallet to track research you\'ve toasted.'); return; }
-    if (af.has('TOASTED') && myToasted.size === 0) { showEmptyImg('/kernel-avatar.png','No toasts yet','Open any research finding and give it a 🥂 toast — they\'ll show up here.'); return; }
+    if (af.has('TOASTED') && myToasted.size === 0) { showEmptyImg('/kernel-avatar.png','No toasts yet','Open any research finding and give it a toast — they\'ll show up here.'); return; }
     if (af.has('SUGGESTED') && !MY_ADDR) { showEmpty('🔐','Sign in for suggestions','Connect your CKB wallet, star some topics, and we\'ll surface related work.'); return; }
     if (af.has('SUGGESTED') && myFavourites.size === 0) { showEmpty('✦','Select at least one favourite topic to get suggestions','Star research topics you\'re interested in, then come back here for suggestions.'); return; }
     if (af.has('SUGGESTED') && suggestedIds.size === 0) { showEmpty('🔬','No relevant research found for your favourites','Try starring more topics with varied tags — the more you favourite, the better your suggestions.'); return; }
