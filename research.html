@@ -50,6 +50,14 @@
     .filter-btn{background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:0.3rem 0.75rem;border-radius:100px;font-size:0.8rem;cursor:pointer;transition:all .15s;}
     .filter-btn:hover{color:var(--text);}
     .filter-btn.active{background:#1a2540;border-color:var(--accent);color:var(--accent);}
+    .filter-btn.fav-active{background:#2a1a05;border-color:#fbbf24;color:#fbbf24;}
+    .filter-btn.suggest-active{background:#0a2218;border-color:var(--green);color:var(--green);}
+
+    /* Empty state messages */
+    .empty-state{grid-column:1/-1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:3rem 2rem;text-align:center;gap:1rem;}
+    .empty-state-icon{font-size:2.5rem;}
+    .empty-state-title{font-size:1rem;font-weight:700;color:var(--text);}
+    .empty-state-sub{font-size:.875rem;color:var(--muted);max-width:380px;line-height:1.6;}
     .filter-label{font-size:0.8rem;color:var(--muted);margin-right:0.25rem;}
 
     .progress-wrap{margin-bottom:2rem;}
@@ -172,6 +180,16 @@
     .viewer-pending{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:1.5rem;text-align:center;color:var(--yellow);font-size:.9rem;}
     .viewer-social{margin-top:2.5rem;padding-top:1.5rem;border-top:1px solid var(--border);display:flex;flex-direction:column;gap:1rem;}
     .viewer-social-title{font-size:.78rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;}
+    .viewer-social-row{display:flex;align-items:center;gap:.75rem;flex-wrap:wrap;}
+    /* Favourite button */
+    .fav-btn{background:none;border:1px solid var(--border);color:var(--muted);padding:.35rem .85rem;border-radius:99px;font-size:.82rem;cursor:pointer;display:flex;align-items:center;gap:.35rem;transition:all .15s;}
+    .fav-btn:hover{border-color:#fbbf24;color:#fbbf24;}
+    .fav-btn.faved{background:rgba(251,191,36,.1);border-color:#fbbf24;color:#fbbf24;}
+    .fav-count{font-size:.78rem;color:var(--muted);}
+    /* Star badge on card */
+    .card-fav-star{position:absolute;top:.6rem;right:.6rem;font-size:.9rem;opacity:0;transition:opacity .15s;}
+    .card{position:relative;}
+    .card.faved-card .card-fav-star{opacity:1;}
     .viewer-nav{display:flex;gap:.75rem;margin-top:2rem;padding-top:1.5rem;border-top:1px solid var(--border);}
     .viewer-nav-btn{flex:1;background:var(--surface);border:1px solid var(--border);color:var(--muted);padding:.6rem 1rem;border-radius:8px;font-size:.82rem;cursor:pointer;text-align:center;transition:all .15s;}
     .viewer-nav-btn:hover:not(:disabled){border-color:var(--accent);color:var(--text);}
@@ -260,6 +278,8 @@
     <button class="filter-btn" data-filter="DONE" onclick="setFilter('DONE',this)">Done</button>
     <button class="filter-btn" data-filter="PENDING" onclick="setFilter('PENDING',this)">Pending</button>
     <button class="filter-btn" data-filter="HIGH" onclick="setFilter('HIGH',this)">High priority</button>
+    <button class="filter-btn" data-filter="FAVOURITES" id="favFilterBtn" onclick="setFilter('FAVOURITES',this)">⭐ Favourites</button>
+    <button class="filter-btn" data-filter="SUGGESTED" id="suggestFilterBtn" onclick="setFilter('SUGGESTED',this)">✦ For You</button>
   </div>
 
   <div class="grid" id="grid"></div>
@@ -321,8 +341,12 @@ window.clearSearch = function() {
 
 window.setFilter = function(f, btn) {
   currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+  document.querySelectorAll('.filter-btn').forEach(b => {
+    b.classList.remove('active', 'fav-active', 'suggest-active');
+  });
+  if (f === 'FAVOURITES') btn.classList.add('fav-active');
+  else if (f === 'SUGGESTED') btn.classList.add('suggest-active');
+  else btn.classList.add('active');
   render();
 };
 
@@ -333,15 +357,17 @@ function render() {
       if (currentFilter === 'DONE' && t.status !== 'DONE') return false;
       if (currentFilter === 'PENDING' && t.status !== 'PENDING') return false;
       if (currentFilter === 'HIGH' && t.priority !== 'HIGH') return false;
+      if (currentFilter === 'FAVOURITES') {
+        if (!MY_ADDR || !myFavourites.has(t.id)) return false;
+      }
+      if (currentFilter === 'SUGGESTED') {
+        if (!suggestedIds.has(t.id)) return false;
+      }
     }
     // Search filter
     if (currentSearch) {
-      const haystack = [
-        t.id, t.goal,
-        (t.tags || []).join(' '),
-        t.status, t.priority
-      ].join(' ').toLowerCase();
-      if (!haystack.includes(currentSearch)) return false;
+      const h = [t.id, t.goal, (t.tags||[]).join(' '), t.status, t.priority].join(' ').toLowerCase();
+      if (!h.includes(currentSearch)) return false;
     }
     return true;
   });
@@ -354,8 +380,37 @@ function render() {
     document.getElementById('searchCount').textContent = '';
   }
 
-  document.getElementById('grid').innerHTML = tasks.map(t => `
-    <div class="card ${t.status.toLowerCase()}" id="card-${t.id}" onclick="openViewer('${t.id}')">
+  // Empty states for special filters
+  if (currentFilter === 'FAVOURITES' && !MY_ADDR) {
+    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔐</div><div class="empty-state-title">Sign in to use Favourites</div><div class="empty-state-sub">Connect your CKB wallet to track research topics and get personalised suggestions.</div></div>`;
+    renderStats(); return;
+  }
+  if (currentFilter === 'FAVOURITES' && myFavourites.size === 0) {
+    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon">⭐</div><div class="empty-state-title">No favourites yet</div><div class="empty-state-sub">Star research topics you care about — tap the ⭐ button when reading any finding. Your favourites also power the "For You" suggestions.</div></div>`;
+    renderStats(); return;
+  }
+  if (currentFilter === 'SUGGESTED' && !MY_ADDR) {
+    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔐</div><div class="empty-state-title">Sign in for suggestions</div><div class="empty-state-sub">Connect your CKB wallet, star some research topics, and we'll surface related work you might have missed.</div></div>`;
+    renderStats(); return;
+  }
+  if (currentFilter === 'SUGGESTED' && myFavourites.size === 0) {
+    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon">✦</div><div class="empty-state-title">Select at least one favourite topic to get suggestions</div><div class="empty-state-sub">Star research topics you're interested in using the ⭐ button, then come back here to discover related work.</div></div>`;
+    renderStats(); return;
+  }
+  if (currentFilter === 'SUGGESTED' && suggestedIds.size === 0) {
+    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔬</div><div class="empty-state-title">No relevant research found for your favourites</div><div class="empty-state-sub">We couldn't find closely related topics based on your current favourites. Try starring more topics with varied tags — the more you favourite, the better your suggestions.</div></div>`;
+    renderStats(); return;
+  }
+  if (tasks.length === 0) {
+    document.getElementById('grid').innerHTML = `<div class="empty-state"><div class="empty-state-icon">🔭</div><div class="empty-state-title">No results</div><div class="empty-state-sub">Try adjusting your search or filter.</div></div>`;
+    renderStats(); return;
+  }
+
+  document.getElementById('grid').innerHTML = tasks.map(t => {
+    const isFaved = myFavourites.has(t.id);
+    return `
+    <div class="card ${t.status.toLowerCase()}${isFaved ? ' faved-card' : ''}" id="card-${t.id}" onclick="openViewer('${t.id}')">
+      <span class="card-fav-star">⭐</span>
       <div class="card-header">
         <div class="card-top">
           <div class="card-id">${t.id}</div>
@@ -370,8 +425,13 @@ function render() {
           <div class="expand-hint">${t.status === 'DONE' ? 'read findings →' : 'pending…'}</div>
         </div>
       </div>
-    </div>
-  `).join('');
+    </div>`;
+  }).join('');
+
+  renderStats();
+}
+
+function renderStats() {
 
   // Stats
   const done = RESEARCH_TASKS.filter(t => t.status === 'DONE').length;
@@ -396,12 +456,91 @@ let currentTaskIndex = -1;
 let visibleTasks = [];
 const findingsCache = {};
 
+// ── Favourites & Suggestions ──────────────────────────────────────
+const myFavourites = new Set();   // task IDs favourited by this user
+const suggestedIds = new Set();   // task IDs suggested based on favourites
+
+async function loadMyFavourites() {
+  if (!MY_ADDR) return;
+  const { data } = await sb.from('research_favourites').select('task_id').eq('ckb_address', MY_ADDR);
+  myFavourites.clear();
+  (data || []).forEach(r => myFavourites.add(r.task_id));
+  recomputeSuggestions();
+  // Update star badges on existing cards
+  document.querySelectorAll('.card').forEach(c => {
+    const id = c.id.replace('card-', '');
+    c.classList.toggle('faved-card', myFavourites.has(id));
+  });
+}
+
+function recomputeSuggestions() {
+  suggestedIds.clear();
+  if (myFavourites.size === 0) return;
+
+  // Collect all tags from favourited tasks
+  const favTags = new Set();
+  RESEARCH_TASKS.forEach(t => {
+    if (myFavourites.has(t.id)) (t.tags || []).forEach(tag => favTags.add(tag.toLowerCase()));
+  });
+
+  // Score non-favourited tasks by tag overlap
+  const scored = RESEARCH_TASKS
+    .filter(t => !myFavourites.has(t.id))
+    .map(t => {
+      const overlap = (t.tags || []).filter(tag => favTags.has(tag.toLowerCase())).length;
+      return { id: t.id, score: overlap };
+    })
+    .filter(t => t.score > 0)
+    .sort((a, b) => b.score - a.score);
+
+  scored.forEach(t => suggestedIds.add(t.id));
+}
+
+window.toggleFavourite = async function(taskId, e) {
+  if (e) e.stopPropagation();
+  if (!MY_ADDR) return;
+  const isFaved = myFavourites.has(taskId);
+  if (isFaved) {
+    await sb.from('research_favourites').delete().eq('task_id', taskId).eq('ckb_address', MY_ADDR);
+    myFavourites.delete(taskId);
+  } else {
+    await sb.from('research_favourites').upsert({ task_id: taskId, ckb_address: MY_ADDR }, { onConflict: 'task_id,ckb_address' });
+    myFavourites.add(taskId);
+  }
+  recomputeSuggestions();
+  // Update card badge
+  const card = document.getElementById('card-' + taskId);
+  if (card) card.classList.toggle('faved-card', myFavourites.has(taskId));
+  // Update viewer button if open
+  updateFavBtn(taskId);
+  // Re-render if in FAVOURITES/SUGGESTED view
+  if (currentFilter === 'FAVOURITES' || currentFilter === 'SUGGESTED') render();
+};
+
+function updateFavBtn(taskId) {
+  const btn = document.getElementById('fav-btn-' + taskId);
+  if (!btn) return;
+  const faved = myFavourites.has(taskId);
+  btn.className = 'fav-btn' + (faved ? ' faved' : '');
+  btn.innerHTML = `${faved ? '⭐' : '☆'} <span>${faved ? 'Favourited' : 'Favourite'}</span>`;
+  const cnt = document.getElementById('fav-count-' + taskId);
+  if (cnt) loadFavCount(taskId);
+}
+
+async function loadFavCount(taskId) {
+  const { count } = await sb.from('research_favourites').select('*', { count: 'exact', head: true }).eq('task_id', taskId);
+  const el = document.getElementById('fav-count-' + taskId);
+  if (el) el.textContent = count > 0 ? `${count} starred` : '';
+}
+
 function getVisibleTasks() {
   return RESEARCH_TASKS.filter(t => {
     if (currentFilter !== 'all') {
       if (currentFilter === 'DONE' && t.status !== 'DONE') return false;
       if (currentFilter === 'PENDING' && t.status !== 'PENDING') return false;
       if (currentFilter === 'HIGH' && t.priority !== 'HIGH') return false;
+      if (currentFilter === 'FAVOURITES' && !myFavourites.has(t.id)) return false;
+      if (currentFilter === 'SUGGESTED' && !suggestedIds.has(t.id)) return false;
     }
     if (currentSearch) {
       const h = [t.id, t.goal, (t.tags||[]).join(' '), t.status, t.priority].join(' ').toLowerCase();
@@ -525,11 +664,17 @@ async function renderViewer(task) {
     ${findingsHtml}
     <div class="viewer-social">
       <div class="viewer-social-title">Community</div>
-      <div class="like-row">
-        <button class="like-btn" id="like-btn-${task.id}" onclick="toggleLike('${task.id}')">
-          <img src="/kernel-avatar.png" alt="toast" /> <span id="like-label-${task.id}">Toast</span>
+      <div class="viewer-social-row">
+        <button class="fav-btn${myFavourites.has(task.id) ? ' faved' : ''}" id="fav-btn-${task.id}" onclick="toggleFavourite('${task.id}', event)">
+          ${myFavourites.has(task.id) ? '⭐' : '☆'} <span>${myFavourites.has(task.id) ? 'Favourited' : 'Favourite'}</span>
         </button>
-        <span class="like-count" id="like-count-${task.id}"></span>
+        <span class="fav-count" id="fav-count-${task.id}"></span>
+        <div class="like-row" style="margin:0">
+          <button class="like-btn" id="like-btn-${task.id}" onclick="toggleLike('${task.id}')">
+            <img src="/kernel-avatar.png" alt="toast" /> <span id="like-label-${task.id}">Toast</span>
+          </button>
+          <span class="like-count" id="like-count-${task.id}"></span>
+        </div>
       </div>
       <div class="comments-section" id="comments-${task.id}">
         <div class="loading-comments">Loading comments…</div>
@@ -539,7 +684,7 @@ async function renderViewer(task) {
   `;
 
   // Load social in parallel
-  await Promise.all([loadLikes(task.id), loadComments(task.id)]);
+  await Promise.all([loadLikes(task.id), loadComments(task.id), loadFavCount(task.id)]);
 }
 
 // ── Findings markdown renderer ────────────────────────────────────
@@ -688,6 +833,7 @@ window.submitComment = async function(taskId) {
 };
 
 render();
+loadMyFavourites(); // async — updates stars + suggestions after initial render
 </script>
 
 <footer>
