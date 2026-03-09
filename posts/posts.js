@@ -17,6 +17,42 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id:      "2026-03-10-mini-app-launch-bounty-outage",
+    date:    "2026-03-10",
+    project: "Wyltek Mini App / Bug Bounty",
+    title:   "Mini App Goes Live, Bug Bounty Launches, and Eight Hours of Anthropic Hell",
+    tags:    ["Telegram", "mini-app", "CKB", "JoyID", "Cloudflare", "bug-bounty", "devops"],
+    body: [
+      "Yesterday was supposed to be a clean launch day. It was — eventually. The Wyltek Telegram Mini App is fully live, the bug bounty system is running, we hit 100 founding members, and then the AI backbone went dark for eight hours. A lot happened.",
+      { type: "h3", content: "Mini App: Full Stack Deployed" },
+      "The app has been iterating for a few days. Yesterday it went from 'deployed on GitHub Pages with a janky cache problem' to 'properly live on Cloudflare with a real backend'. The stack is now:",
+      { type: "ul", content: [
+        "<strong>Cloudflare Pages</strong> — <code>wyltek-miniapp.pages.dev</code>, content-hashed assets, <code>no-store</code> on index.html so Telegram's WebView can't serve stale builds",
+        "<strong>Cloudflare Worker</strong> — <code>wyltek-rpc.toastman-one.workers.dev</code>, proxying to four internal nodes: CKB mainnet (ckbnode), CKB light client (Pi), Fiber (N100 via autossh tunnel), Bitcoin node",
+        "<strong>Cloudflare Tunnel</strong> — four persistent connections to the edge, routing by <code>Host</code> header to the right LAN service. No port forwarding, no exposed IPs.",
+      ]},
+      "The app itself has six primary tabs — Home, Chain, Tools, Social, Research, Settings — with sub-tabs under each. Chain shows live CKB + BTC + Fiber stats. Research renders 140+ findings inline. Social has the Lounge, Members, and the new Bounty tab. The RPC console lets you call any CKB, Light Client, or Fiber method with a searchable dropdown and typed param fields — useful for the technically curious member.",
+      { type: "h3", content: "JoyID Auth: Finally Fixed" },
+      "JoyID redirect auth had been almost-working for a couple of sessions. The flow: tap Connect → JoyID opens in browser → completes → Telegram re-opens the mini app with the auth data. The last bug was subtle — the Worker was storing auth tokens in an in-memory Map, which is process-local. Cloudflare Workers run in many isolates; the isolate that handled the callback wasn't the one serving the next request. The token was gone.",
+      "Fix: move everything to Cloudflare KV (globally consistent across all isolates). The callback writes to KV with a 5-minute TTL, the mini app reads it on boot via <code>start_param</code>, stores the address in localStorage. Clean, and now it actually works.",
+      { type: "h3", content: "Bug Bounty: 2,000 CKB Weekly Pool" },
+      "The bounty system is live end-to-end. File a bug in the app → GitHub Issue created with your CKB address attached → label changes trigger a webhook → Supabase updates your point tally instantly. Every Monday, the Pi pays the top three reporters directly to their CKB addresses and posts the winners to the Nervos group.",
+      "Scoring: submitting a bug earns 2 points, confirmation earns 5, critical severity adds 10 more. Only the current week's points count for prizes — all-time points track your overall standing. Prize split: 1,000 / 600 / 400 CKB.",
+      { type: "h3", content: "100 Founding Members" },
+      "We hit 100 founding members. No fanfare planned — it just happened while the AI was down. The DOB minter has been running on the Pi, minting Spore cells on CKB mainnet as members join. Member #1 is blocked on a wallet funding issue; everyone else is queued and processing.",
+      { type: "h3", content: "The Outage" },
+      "Anthropic had a major incident yesterday. HTTP 525 errors across the board — the TLS handshake between Cloudflare and Anthropic's origin was failing. The assistant was completely unresponsive from roughly 1pm to 9pm Adelaide time. Eight hours.",
+      "The CKBDev shared API (our primary fallback) runs on Anthropic's infrastructure too, so it went down simultaneously. Nothing to do but wait it out. Services kept running — the Pi's heartbeat checks, node monitoring, whale bot, stratum proxy — all of that is autonomous and kept going. Just no conversational layer.",
+      "Lesson: the fallback chain needs at least one provider that's fully independent of Anthropic's infrastructure. Adding a local Ollama option as an emergency fallback is on the list.",
+    ],
+    links: [
+      { text: "Wyltek Mini App", href: "https://t.me/WyltekIndustriesBot" },
+      { text: "Bug Reports", href: "https://github.com/toastmanAu/wyltek-bug-reports/issues" },
+      { text: "Wyltek Industries", href: "https://wyltekindustries.com" },
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
+  {
     id:      "2026-03-09-wyvault-pwa-wyterminal-v42",
     date:    "2026-03-09",
     project: "WyVault / WyTerminal / Wyltek PWA",
