@@ -17,6 +17,43 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id:      "2026-03-11-fiber-installer-hackathon",
+    date:    "2026-03-11",
+    project: "Fiber Node Installer",
+    title:   "One-Line Fiber Node Installer — Ready for the Hackathon",
+    tags:    ["Fiber", "CKB", "installer", "hackathon", "open-source", "aarch64", "dashboard"],
+    body: [
+      "The FiberQuest hackathon kicks off tomorrow. We wanted something in the ecosystem before it started — something useful, not just another project pitch. The Fiber Node Installer is it.",
+      { type: "h3", content: "What It Does" },
+      "One command installs a fully configured Fiber Network node:",
+      { type: "code", content: "curl -sSL https://raw.githubusercontent.com/toastmanAu/fiber-installer/master/install.sh | bash" },
+      "It handles everything: downloading or building the binary, generating your private key, writing config, setting up a systemd service (or launchd on macOS), and optionally launching a local web dashboard. Works on Linux (x86_64 and aarch64), macOS, and Windows via WSL. Root or regular user — it detects the environment and adapts.",
+      { type: "h3", content: "The Dashboard" },
+      "The optional dashboard is a zero-dependency Python script that runs locally and gives you a full node management UI in your browser. No npm, no venv, no external calls — just stdlib.",
+      { type: "ul", content: [
+        "Live node info, peer count, wallet address and balance",
+        "Channel list with capacity and state",
+        "Payment send/receive via the Fiber RPC",
+        "Maintenance tools: view config, verify key, clean lock files, backup data",
+        "<strong>Edit Settings</strong> — fix your CKB RPC URL in the browser, no nano required",
+        "<strong>Check for Updates</strong> — OTA updates for both the dashboard and fnn binary",
+        "<strong>Bug Report</strong> — file GitHub issues directly from the UI with node context attached",
+      ]},
+      { type: "h3", content: "aarch64 Support" },
+      "Fiber hasn't shipped prebuilt aarch64 binaries historically. The installer auto-detects the architecture and builds from source with a persistent cargo cache at <code>~/.fiber-build-cache</code> — so the first install on a Pi or ARM board takes 20-30 minutes, but subsequent installs and updates are fast. A PR we submitted (#1187) was merged upstream — future Fiber releases will include prebuilt aarch64 binaries, dropping install time to under a minute on any arch.",
+      { type: "h3", content: "OTA Updates" },
+      "During the hackathon we expect to ship fixes fast. The 'Check for Updates' button in the dashboard handles it: it fetches the latest <code>fiber-dash.py</code> from GitHub, backs up the current version, replaces it, and restarts the service. The page refreshes automatically. No SSH, no re-running the installer.",
+      { type: "h3", content: "What's Next" },
+      "Windows (WSL) testing is up next, then a proper v1.0 tagged release once the test matrix is complete: aarch64 Linux (root and user), x86_64 Linux, macOS, Windows. If you're building on Fiber for the hackathon, give it a try and file issues — the bug report button goes straight to GitHub.",
+    ],
+    links: [
+      { text: "Installer Repo", href: "https://github.com/toastmanAu/fiber-installer" },
+      { text: "File an Issue", href: "https://github.com/toastmanAu/fiber-installer/issues" },
+      { text: "Fiber Network", href: "https://github.com/nervosnetwork/fiber" },
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
+  {
     id:      "2026-03-10-mini-app-launch-bounty-outage",
     date:    "2026-03-10",
     project: "Wyltek Mini App / Bug Bounty",
