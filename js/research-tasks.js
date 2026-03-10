@@ -1,5 +1,5 @@
 // research-tasks.js — auto-generated from research/queue.md
-// 148 tasks (144 done, 4 pending)
+// 156 tasks (150 done, 6 pending)
 const RESEARCH_TASKS = [
   {"id": "ckh-and-snapshot-strategy", "status": "DONE", "priority": "HIGH", "goal": "|", "tags": ["hardware", "lora", "ckb", "sensecap", "pi4"]},
   {"id": "wyterminal-usb-hid-telegram-relay", "status": "DONE", "priority": "HIGH", "goal": "Research and implement ESP32-S3 AMOLED device as USB HID keyboard + Telegram-controlled Linux terminal relay", "tags": ["esp32", "usb-hid", "telegram", "linux", "relay"]},
@@ -143,10 +143,18 @@ const RESEARCH_TASKS = [
   {"id": "wyvault-lite-ckb-signing", "status": "DONE", "priority": "MEDIUM", "goal": "Wyvault Lite Ckb Signing", "tags": []},
   {"id": "wyvault-lite-bip39-esp32", "status": "DONE", "priority": "MEDIUM", "goal": "Wyvault Lite Bip39 Esp32", "tags": []},
   {"id": "wyvault-lite-qr-airgap", "status": "DONE", "priority": "MEDIUM", "goal": "Wyvault Lite Qr Airgap", "tags": []},
+  {"id": "ckb-flyclient-mmr-rpc", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Flyclient Mmr Rpc", "tags": []},
   {"id": "ckb-gcs-block-filters-js", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Gcs Block Filters Js", "tags": []},
+  {"id": "ckb-browser-light-client-poc", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Browser Light Client Poc", "tags": []},
   {"id": "ckb-gcs-block-filters-js-revisit", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Gcs Block Filters Js Revisit", "tags": []},
+  {"id": "ckb-custom-lang-feasibility", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Custom Lang Feasibility", "tags": []},
+  {"id": "ckb-risc-v-compiler-toolchain", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Risc V Compiler Toolchain", "tags": []},
+  {"id": "ckb-lang-embedded-implementation", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Lang Embedded Implementation", "tags": []},
+  {"id": "ckb-vm-risc-v-embedded-port", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Vm Risc V Embedded Port", "tags": []},
   {"id": "hispo-s8-android-deep-dive", "status": "PENDING", "priority": "MEDIUM", "goal": "Hispo S8 Android Deep Dive", "tags": []},
   {"id": "github-raw-rate-limits-and-semantic-search", "status": "PENDING", "priority": "MEDIUM", "goal": "Github Raw Rate Limits And Semantic Search", "tags": []},
-  {"id": "ckb-flyclient-mmr-rpc", "status": "PENDING", "priority": "MEDIUM", "goal": "Ckb Flyclient Mmr Rpc", "tags": []},
-  {"id": "ckb-browser-light-client-poc", "status": "PENDING", "priority": "MEDIUM", "goal": "Ckb Browser Light Client Poc", "tags": []},
+  {"id": "fiberquest-fiber-rpc-live-test", "status": "PENDING", "priority": "MEDIUM", "goal": "Fiberquest Fiber Rpc Live Test", "tags": []},
+  {"id": "fiberquest-nodejs-client-design", "status": "PENDING", "priority": "MEDIUM", "goal": "Fiberquest Nodejs Client Design", "tags": []},
+  {"id": "fiberquest-hackathon-criteria-scrape", "status": "PENDING", "priority": "MEDIUM", "goal": "Fiberquest Hackathon Criteria Scrape", "tags": []},
+  {"id": "ckb-lora-proof-of-coverage", "status": "PENDING", "priority": "MEDIUM", "goal": "Ckb Lora Proof Of Coverage", "tags": []},
 ];
