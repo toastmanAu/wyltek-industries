@@ -17,6 +17,43 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id:      "2026-03-12-fiberquest-day2",
+    date:    "2026-03-12",
+    project: "FiberQuest",
+    title:   "FiberQuest Day 2: Autonomous Payouts, CKB LC Verified on 3 Boards, Quest 2 Submitted",
+    tags:    ["FiberQuest", "Fiber", "CKB", "hackathon", "RetroArch", "aarch64", "tournament"],
+    body: [
+      "Day 2 of the Claw & Order hackathon. We started at midnight and didn't stop until 3:30am. Here's what shipped.",
+      { type: "h3", content: "CKB Light Client v0.5.5-rc1 — Verified on 3 boards" },
+      "The Nervos team dropped a release candidate for the CKB light client. We wrote an automated verification script and ran it across the hardware fleet:",
+      { type: "ul", content: [
+        "<strong>Orange Pi 5</strong> — Ubuntu 22.04 / Linux 5.10 rockchip — ✅ 8 peers",
+        "<strong>Orange Pi Zero 3</strong> — Armbian / Linux 6.12 sunxi64 — ✅ 4 peers",
+        "<strong>Orange Pi 3B</strong> — Armbian edge / Linux 6.10 rockchip64 (WiFi) — ✅ 3 peers",
+      ]},
+      "All three: binary runs, RPC responds on 127.0.0.1:9000, connects to testnet peers within ~10 seconds. Four different kernel versions covered. The verification script and full report are in the repo for anyone wanting to reproduce it on their own hardware.",
+      { type: "h3", content: "tournament-manager.js — The Core Loop" },
+      "This is the piece that closes the loop. It wires the RAM event engine to the Fiber payment layer and manages the full tournament lifecycle:",
+      { type: "code", content: "CREATED → WAITING_PLAYERS → ACTIVE → SCORING → PAYING → COMPLETE" },
+      "In practice: the manager generates a Fiber invoice for each player's entry fee, polls for incoming payments, starts the RAM engine when everyone's paid, tracks scores every poll cycle, determines the winner when time expires or a target is hit, and fires the payout. All without a human in the loop.",
+      "We tested it against the live mainnet Fiber node (901 CKB balance) — it generated a real invoice (<code>fibb1000000001pms3ac...</code>), connected the RAM engine, and ran a full 1-minute Tetris tournament.",
+      { type: "h3", content: "Autonomous Payout" },
+      "The last gap in the autonomous loop was payout direction — the agent could receive entry fees, but needed a human to manually send the winner's payment. Fixed today.",
+      "Players now submit a payout invoice at registration time (generated on their own Fiber node). When the tournament ends, the agent calls <code>send_payment(payoutInvoice)</code> immediately — no confirmation, no human, no delay. The gap between 'game over' and 'money received' is sub-second.",
+      "If a player doesn't pre-register an invoice (e.g. a walkup player at a demo), the system gracefully falls back to a <code>payout_needed</code> event and waits for a manual submission. Nothing breaks.",
+      { type: "h3", content: "Quest 2 Submitted" },
+      "CKBoost Quest 2 asks for system design, environment, tooling, current functionality, and future plans. We put together detailed answers covering the full architecture — RAM engine, tournament manager, Fiber client, game library, hardware setup — and submitted. The full answers are in the repo for reference.",
+      { type: "h3", content: "What's Next" },
+      "The RG35XX H handheld is charging. It runs KNULLI, which has RetroArch with network commands pre-enabled — the same UDP interface our RAM engine already uses. In theory: boot it, get the IP, point the engine at it, done. We'll test that tomorrow.",
+      "After that: end-to-end demo on testnet, renderer wiring for the live score overlay, and screenshots for the final submission.",
+    ],
+    links: [
+      { text: "FiberQuest Repo", href: "https://github.com/toastmanAu/fiberquest" },
+      { text: "LC Verify Report", href: "https://github.com/toastmanAu/fiberquest/blob/main/ckb-lc-test-results/REPORT.md" },
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
+  {
     id:      "2026-03-11-fiber-installer-hackathon",
     date:    "2026-03-11",
     project: "Fiber Node Installer",
