@@ -159,6 +159,34 @@
 
     <div class="card active">
       <div class="card-top">
+        <span class="card-icon">🎮</span>
+        <div>
+          <div class="card-title"><a href="https://github.com/toastmanAu/fiberquest" target="_blank">FiberQuest</a></div>
+          <div class="card-subtitle">Autonomous retro gaming tournaments on Fiber Network</div>
+        </div>
+        <span class="status-pill pill-active">Hackathon — Mar 2026</span>
+      </div>
+      <div class="card-desc">Players pay entry fees over Fiber Network payment channels. An agent polls RetroArch's RAM at 20Hz, scores the match in real time, and autonomously pays the winner — no human in the loop. 24 games across 7 platforms (NES, SNES, Mega Drive, N64, Arcade). Includes <strong>fiber-client.js</strong> — the first open-source Node.js Fiber RPC client. Built during the Claw &amp; Order hackathon.</div>
+      <div class="card-tags"><span class="tag">Fiber</span><span class="tag">Gaming</span><span class="tag">Node.js</span><span class="tag">RetroArch</span><span class="tag">Hackathon</span></div>
+      <a class="card-link" href="https://github.com/toastmanAu/fiberquest" target="_blank">GitHub ↗</a>
+    </div>
+
+    <div class="card active">
+      <div class="card-top">
+        <span class="card-icon">⚡</span>
+        <div>
+          <div class="card-title"><a href="https://github.com/toastmanAu/fiber-installer" target="_blank">Fiber Node Installer</a></div>
+          <div class="card-subtitle">One-command Fiber Network node setup</div>
+        </div>
+        <span class="status-pill pill-active">In Progress</span>
+      </div>
+      <div class="card-desc">One curl command installs a fully configured Fiber Network node — binary, config, systemd service, optional dashboard. Auto-detects architecture (x86_64, aarch64, macOS). Builds from source on aarch64 with persistent cargo cache. OTA dashboard updates via browser. Bug reporting built in. Contributed aarch64 prebuilt binary support upstream (PR #1187, merged).</div>
+      <div class="card-tags"><span class="tag">Fiber</span><span class="tag sbc">aarch64</span><span class="tag">Shell</span><span class="tag">CKB</span></div>
+      <a class="card-link" href="https://github.com/toastmanAu/fiber-installer" target="_blank">GitHub ↗</a>
+    </div>
+
+    <div class="card active">
+      <div class="card-top">
         <span class="card-icon">⚡</span>
         <div>
           <div class="card-title">TelegramOTA</div>
@@ -373,13 +401,13 @@
         <span class="card-icon">🎮</span>
         <div>
           <div class="card-title">Fiber Game Protocol</div>
-          <div class="card-subtitle">Channel-as-game-session</div>
+          <div class="card-subtitle">Channel-as-game-session — spec + future extensions</div>
         </div>
-        <span class="status-pill pill-later">Later</span>
+        <span class="status-pill pill-active">In FiberQuest</span>
       </div>
-      <div class="card-desc">Payment channel IS the game session. Open channel = game starts, close = final score settled on-chain. Each move is an off-chain balance update. Rage-quitting forfeits locked funds — enforced by timelock. Turn-based MVP buildable today with existing Fiber RPC, no protocol changes needed.</div>
+      <div class="card-desc">Payment channel IS the game session. Open channel = game starts, close = final score settled on-chain. FiberQuest implements the first version of this — entry fees over Fiber, RAM-based scoring, autonomous winner payout. Future extensions: streaming micropayments per in-game event, PTLC-based move commitments for trustless turn-based games, spectator bet pools.</div>
       <div class="card-tags"><span class="tag">Fiber</span><span class="tag">Gaming</span><span class="tag">CKB</span><span class="tag sbc">P2P</span></div>
-      <a class="card-link" href="https://github.com/toastmanAu/ckb-embedded-research/blob/master/embedded-networking/fiber-gaming-protocol.md" target="_blank">Research doc ↗</a>
+      <a class="card-link" href="https://github.com/toastmanAu/fiberquest" target="_blank">FiberQuest repo ↗</a>
     </div>
 
     <div class="card">
@@ -656,7 +684,7 @@
         <span class="card-icon">🪙</span>
         <div>
           <div class="card-title">Founding Member DOBs</div>
-          <div class="card-subtitle">Spore Protocol · CKB Mainnet · 18/100 claimed</div>
+          <div class="card-subtitle">Spore Protocol · CKB Mainnet · 100 members</div>
         </div>
         <span class="status-pill pill-done">Live</span>
       </div>
@@ -677,6 +705,46 @@
       <div class="card-desc">Members-only lounge, research library, and devlog — gated by JoyID wallet. Real-time chat, profiles, avatars, reactions. 100+ completed research tasks browseable and commentable by members.</div>
       <div class="card-tags"><span class="tag">CKB</span><span class="tag">Community</span><span class="tag">Web App</span></div>
       <a class="card-link" href="/members.html">Join to access ↗</a>
+    </div>
+
+    <div class="card done">
+      <div class="card-top">
+        <span class="card-icon">💬</span>
+        <div>
+          <div class="card-title"><a href="https://t.me/WyltekIndustriesBot" target="_blank">Wyltek Telegram Mini App</a></div>
+          <div class="card-subtitle">Chain · Research · Lounge · Members — in Telegram</div>
+        </div>
+        <span class="status-pill pill-done">Live</span>
+      </div>
+      <div class="card-desc">Full Wyltek platform accessible as a Telegram Mini App. Live CKB + BTC + Fiber node stats, member lounge with real-time messaging, research library, JoyID auth, RPC console, and bug reporting — all from the Telegram keyboard button. Hosted on Cloudflare Pages, node data proxied via Cloudflare Worker + Tunnel to LAN nodes.</div>
+      <div class="card-tags"><span class="tag">Telegram</span><span class="tag">CKB</span><span class="tag">Fiber</span><span class="tag">Cloudflare</span></div>
+      <a class="card-link" href="https://t.me/WyltekIndustriesBot" target="_blank">Open in Telegram ↗</a>
+    </div>
+
+    <div class="card done">
+      <div class="card-top">
+        <span class="card-icon">🤖</span>
+        <div>
+          <div class="card-title">PoPo Anti-Scam Bot</div>
+          <div class="card-subtitle">ML-assisted Telegram moderation for Nervos groups</div>
+        </div>
+        <span class="status-pill pill-done">Live — calibrating</span>
+      </div>
+      <div class="card-desc">AI-assisted moderation bot running in Nervos Nation and Nervos Network Telegram groups. Scores new users on join: fresh accounts, lurker rate, fast posting patterns, forward sources, trading spam. Runs in learn mode — flags without banning while gathering calibration data. Daily digest reports precision/recall metrics. Built to protect the community during growth phases.</div>
+      <div class="card-tags"><span class="tag">Telegram</span><span class="tag">Bot</span><span class="tag">AI</span><span class="tag">Nervos</span></div>
+    </div>
+
+    <div class="card done">
+      <div class="card-top">
+        <span class="card-icon">📸</span>
+        <div>
+          <div class="card-title">CKB Mainnet Snapshot Pipeline</div>
+          <div class="card-subtitle">Weekly automated snapshots to Cloudflare R2</div>
+        </div>
+        <span class="status-pill pill-done">Live</span>
+      </div>
+      <div class="card-desc">Weekly automated pipeline: rsync CKB mainnet DB from node to NucBox NVMe, compress with zstd, upload to Cloudflare R2 public bucket. Lets anyone bootstrap a CKB full node in minutes instead of days. Runs every Sunday 2am ACST, sends Telegram notifications on completion. v6 build with LAN-optimised rsync (AES-128-GCM cipher, no compression on already-compressed SST files).</div>
+      <div class="card-tags"><span class="tag">CKB</span><span class="tag">Infrastructure</span><span class="tag">Cloudflare</span></div>
     </div>
 
   </div>
