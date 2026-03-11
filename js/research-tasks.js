@@ -1,5 +1,5 @@
 // research-tasks.js — auto-generated from research/queue.md
-// 156 tasks (150 done, 6 pending)
+// 156 tasks (153 done, 3 pending)
 const RESEARCH_TASKS = [
   {"id": "ckh-and-snapshot-strategy", "status": "DONE", "priority": "HIGH", "goal": "|", "tags": ["hardware", "lora", "ckb", "sensecap", "pi4"]},
   {"id": "wyterminal-usb-hid-telegram-relay", "status": "DONE", "priority": "HIGH", "goal": "Research and implement ESP32-S3 AMOLED device as USB HID keyboard + Telegram-controlled Linux terminal relay", "tags": ["esp32", "usb-hid", "telegram", "linux", "relay"]},
@@ -151,10 +151,10 @@ const RESEARCH_TASKS = [
   {"id": "ckb-risc-v-compiler-toolchain", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Risc V Compiler Toolchain", "tags": []},
   {"id": "ckb-lang-embedded-implementation", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Lang Embedded Implementation", "tags": []},
   {"id": "ckb-vm-risc-v-embedded-port", "status": "DONE", "priority": "MEDIUM", "goal": "Ckb Vm Risc V Embedded Port", "tags": []},
+  {"id": "fiberquest-fiber-rpc-live-test", "status": "DONE", "priority": "MEDIUM", "goal": "Fiberquest Fiber Rpc Live Test", "tags": []},
+  {"id": "fiberquest-nodejs-client-design", "status": "DONE", "priority": "MEDIUM", "goal": "Fiberquest Nodejs Client Design", "tags": []},
+  {"id": "fiberquest-hackathon-criteria-scrape", "status": "DONE", "priority": "MEDIUM", "goal": "Fiberquest Hackathon Criteria Scrape", "tags": []},
   {"id": "hispo-s8-android-deep-dive", "status": "PENDING", "priority": "MEDIUM", "goal": "Hispo S8 Android Deep Dive", "tags": []},
   {"id": "github-raw-rate-limits-and-semantic-search", "status": "PENDING", "priority": "MEDIUM", "goal": "Github Raw Rate Limits And Semantic Search", "tags": []},
-  {"id": "fiberquest-fiber-rpc-live-test", "status": "PENDING", "priority": "MEDIUM", "goal": "Fiberquest Fiber Rpc Live Test", "tags": []},
-  {"id": "fiberquest-nodejs-client-design", "status": "PENDING", "priority": "MEDIUM", "goal": "Fiberquest Nodejs Client Design", "tags": []},
-  {"id": "fiberquest-hackathon-criteria-scrape", "status": "PENDING", "priority": "MEDIUM", "goal": "Fiberquest Hackathon Criteria Scrape", "tags": []},
   {"id": "ckb-lora-proof-of-coverage", "status": "PENDING", "priority": "MEDIUM", "goal": "Ckb Lora Proof Of Coverage", "tags": []},
 ];
