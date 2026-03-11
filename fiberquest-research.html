@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>FiberQuest Research — Wyltek Industries</title>
+  <meta name="description" content="Open research notes powering FiberQuest — the autonomous retro gaming tournament agent built on CKB Fiber Network.">
+  <link rel="icon" type="image/png" href="/favicon-32x32.png">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Fira+Code:wght@400;500&display=swap">
+  <style>
+    :root{--bg:#0d1018;--surface:#131720;--border:#1e2535;--accent:#4f8ef7;--green:#34d399;--yellow:#fbbf24;--muted:#8899aa;--text:#e2e8f0;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;min-height:100vh;}
+    a{color:var(--accent);text-decoration:none;}
+    a:hover{text-decoration:underline;}
+
+    header{border-bottom:1px solid var(--border);padding:0 2rem;position:sticky;top:0;background:rgba(13,16,24,.95);backdrop-filter:blur(12px);z-index:100;}
+    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;gap:1.5rem;height:56px;}
+    .logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1rem;color:var(--text);text-decoration:none;white-space:nowrap;}
+    .logo img{width:28px;height:28px;border-radius:7px;object-fit:cover;}
+    nav{display:flex;gap:1.25rem;margin-left:auto;}
+    nav a{font-size:.875rem;color:var(--muted);}
+    nav a:hover{color:var(--text);}
+
+    .hero{padding:3rem 2rem 2rem;max-width:1200px;margin:0 auto;}
+    .hero h1{font-size:1.8rem;font-weight:700;margin-bottom:.5rem;}
+    .hero h1 span{color:var(--accent);}
+    .hero p{color:var(--muted);max-width:680px;line-height:1.7;margin-bottom:1rem;}
+    .hero-meta{display:flex;gap:1rem;flex-wrap:wrap;font-size:.82rem;color:var(--muted);}
+    .hero-meta a{color:var(--accent);}
+    .badge{display:inline-flex;align-items:center;gap:.35rem;background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.3);color:var(--accent);border-radius:99px;padding:.2rem .65rem;font-size:.75rem;font-weight:600;}
+
+    .layout{max-width:1200px;margin:0 auto;padding:0 2rem 4rem;display:grid;grid-template-columns:280px 1fr;gap:1.5rem;align-items:start;}
+    @media(max-width:768px){.layout{grid-template-columns:1fr;}}
+
+    /* Sidebar */
+    .sidebar{position:sticky;top:72px;}
+    .sidebar-section{margin-bottom:1.5rem;}
+    .sidebar-label{font-size:.7rem;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:.5rem;}
+    .task-list{display:flex;flex-direction:column;gap:.25rem;}
+    .task-item{padding:.45rem .7rem;border-radius:6px;cursor:pointer;border:1px solid transparent;font-size:.82rem;display:flex;align-items:center;gap:.5rem;transition:background .1s,border-color .1s;}
+    .task-item:hover{background:var(--surface);}
+    .task-item.active{background:rgba(79,142,247,.1);border-color:rgba(79,142,247,.3);color:var(--accent);}
+    .task-item .dot{width:7px;height:7px;border-radius:50%;background:var(--green);flex-shrink:0;}
+    .task-item .dot.pending{background:var(--yellow);}
+    .task-item .name{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+
+    /* Main panel */
+    .main-panel{min-height:400px;}
+    .welcome{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:2rem;text-align:center;color:var(--muted);}
+    .welcome h2{font-size:1.1rem;font-weight:600;color:var(--text);margin-bottom:.5rem;}
+
+    .findings-panel{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:1.5rem;font-size:.875rem;line-height:1.8;color:var(--text);display:none;}
+    .findings-panel.visible{display:block;}
+    .findings-panel h2{font-size:1rem;font-weight:700;color:var(--accent);margin:1.1rem 0 .4rem;padding-bottom:.25rem;border-bottom:1px solid var(--border);}
+    .findings-panel h2:first-child{margin-top:0;}
+    .findings-panel h3{font-size:.9rem;font-weight:700;color:var(--text);margin:.9rem 0 .3rem;}
+    .findings-panel h4{font-size:.85rem;font-weight:600;color:var(--muted);margin:.7rem 0 .2rem;}
+    .findings-panel p{margin:.4rem 0;color:#c8d4e0;}
+    .findings-panel ul,.findings-panel ol{margin:.4rem 0 .4rem 1.3rem;color:#c8d4e0;}
+    .findings-panel li{margin:.2rem 0;}
+    .findings-panel code{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.1);border-radius:3px;padding:1px 5px;font-size:.82rem;font-family:'Fira Code',monospace;}
+    .findings-panel pre{background:rgba(0,0,0,.3);border:1px solid var(--border);border-radius:6px;padding:1rem;overflow-x:auto;margin:.75rem 0;}
+    .findings-panel pre code{background:none;border:none;padding:0;font-size:.8rem;}
+    .findings-panel a{color:var(--accent);}
+    .findings-header{display:flex;align-items:center;gap:.75rem;margin-bottom:1.25rem;padding-bottom:.75rem;border-bottom:1px solid var(--border);}
+    .findings-title{font-size:1rem;font-weight:700;}
+    .findings-loading{color:var(--muted);font-size:.85rem;padding:2rem;text-align:center;}
+
+    .stats-bar{display:flex;gap:1.5rem;flex-wrap:wrap;padding:1rem 2rem;background:var(--surface);border-bottom:1px solid var(--border);}
+    .stat{font-size:.82rem;color:var(--muted);}
+    .stat strong{color:var(--text);font-weight:600;}
+    .stat-max{max-width:1200px;margin:0 auto;width:100%;display:flex;gap:1.5rem;flex-wrap:wrap;}
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <a href="/index.html" class="logo">
+      <img src="/wyltek-mark.png" alt="Wyltek">
+      Wyltek Industries
+    </a>
+    <nav>
+      <a href="/blog.html">Devlog</a>
+      <a href="https://github.com/toastmanAu/fiberquest" target="_blank">GitHub ↗</a>
+      <a href="/members.html">Members</a>
+    </nav>
+  </div>
+</header>
+
+<div style="background:var(--surface);border-bottom:1px solid var(--border);">
+  <div class="stat-max" style="padding:.75rem 2rem;">
+    <div class="stat"><strong id="taskCount">—</strong> research tasks</div>
+    <div class="stat"><strong id="doneCount">—</strong> completed</div>
+    <div class="stat">Project: <strong>FiberQuest</strong></div>
+    <div class="stat">Hackathon: <strong>Claw &amp; Order · Mar 2026</strong></div>
+    <div class="stat" style="margin-left:auto;"><a href="https://github.com/toastmanAu/fiberquest" target="_blank">→ View repo</a></div>
+  </div>
+</div>
+
+<div class="hero">
+  <h1>FiberQuest <span>Research</span></h1>
+  <p>Open research notes that powered FiberQuest — an autonomous retro gaming tournament agent built on CKB Fiber Network. Every finding below was generated by an AI research crawler before a single line of code was written. This is why we moved fast.</p>
+  <div class="hero-meta">
+    <span>🎮 RetroArch RAM polling → autonomous Fiber payments</span>
+    <span>·</span>
+    <a href="https://github.com/toastmanAu/fiberquest">github.com/toastmanAu/fiberquest</a>
+    <span>·</span>
+    <span>Solo · <a href="https://wyltekindustries.com">Wyltek Industries</a></span>
+  </div>
+</div>
+
+<div class="layout">
+  <div class="sidebar">
+    <div class="sidebar-section">
+      <div class="sidebar-label">Fiber Network</div>
+      <div class="task-list" id="list-fiber"></div>
+    </div>
+    <div class="sidebar-section">
+      <div class="sidebar-label">FiberQuest</div>
+      <div class="task-list" id="list-fiberquest"></div>
+    </div>
+  </div>
+
+  <div class="main-panel">
+    <div class="welcome" id="welcome">
+      <h2>Select a research task</h2>
+      <p>Click any task on the left to read the full findings. All research is public — no login required.</p>
+    </div>
+    <div class="findings-panel" id="findings">
+      <div class="findings-header">
+        <div class="findings-title" id="findings-title"></div>
+        <div class="badge" id="findings-badge">DONE</div>
+      </div>
+      <div id="findings-body" class="findings-loading">Loading…</div>
+    </div>
+  </div>
+</div>
+
+<script>
+// Marked.js for markdown rendering
+const MARKED_CDN = 'https://cdn.jsdelivr.net/npm/marked/marked.min.js';
+
+const TASKS = [
+  {"id":"fiber-network-deep-dive","goal":"Fiber Network Deep Dive","status":"DONE"},
+  {"id":"fiber-rpc-api-reference","goal":"Fiber RPC API Reference","status":"DONE"},
+  {"id":"fiber-rpc-api-verification","goal":"Fiber RPC API Verification","status":"DONE"},
+  {"id":"fiber-rpc-json-format-details","goal":"Fiber RPC JSON Format Details","status":"DONE"},
+  {"id":"fiber-rpc-raw-source","goal":"Fiber RPC Raw Source","status":"DONE"},
+  {"id":"fiber-nodejs-client-feasibility","goal":"Fiber Node.js Client Feasibility","status":"DONE"},
+  {"id":"fiber-nodejs-client-library-development","goal":"Fiber Node.js Client Library Development","status":"DONE"},
+  {"id":"fiber-node-js-client-library-search","goal":"Fiber Node.js Client Library Search","status":"DONE"},
+  {"id":"fiber-channel-funding-ux","goal":"Fiber Channel Funding UX","status":"DONE"},
+  {"id":"fiber-trampoline-routing","goal":"Fiber Trampoline Routing","status":"DONE"},
+  {"id":"fiber-agent-ideas-brainstorm","goal":"Fiber Agent Ideas Brainstorm","status":"DONE"},
+  {"id":"fiber-hackathon-prior-art","goal":"Fiber Hackathon Prior Art","status":"DONE"},
+  {"id":"fiber-hackathon-synthesis","goal":"Fiber Hackathon Synthesis","status":"DONE"},
+  {"id":"fiber-retroarch-architecture","goal":"Fiber + RetroArch Architecture","status":"DONE"},
+  {"id":"fiber-retroarch-synthesis","goal":"Fiber + RetroArch Synthesis","status":"DONE"},
+  {"id":"fiber-testnet-reliability-assessment","goal":"Fiber Testnet Reliability Assessment","status":"DONE"},
+  {"id":"fiberquest-game-catalog","goal":"FiberQuest Game Catalog","status":"DONE"},
+  {"id":"fiberquest-target-games","goal":"FiberQuest Target Games","status":"DONE"},
+  {"id":"fiberquest-ram-addresses","goal":"FiberQuest RAM Addresses","status":"DONE"},
+  {"id":"fiberquest-ram-maps-multi-game","goal":"FiberQuest RAM Maps — Multi Game","status":"DONE"},
+  {"id":"fiberquest-sf2-ram-map","goal":"FiberQuest SF2 RAM Map","status":"DONE"},
+  {"id":"fiberquest-sf2-ram-addresses","goal":"FiberQuest SF2 RAM Addresses","status":"DONE"},
+  {"id":"fiberquest-retroarch-memory-read-empirical","goal":"FiberQuest RetroArch Memory Read (Empirical)","status":"DONE"},
+  {"id":"fiberquest-retroarch-multi-session","goal":"FiberQuest RetroArch Multi-Session","status":"DONE"},
+  {"id":"fiberquest-payment-mechanics","goal":"FiberQuest Payment Mechanics","status":"DONE"},
+  {"id":"fiberquest-fiber-rpc-node-client","goal":"FiberQuest Fiber RPC Node Client","status":"DONE"},
+  {"id":"fiberquest-fiber-rpc-live-test","goal":"FiberQuest Fiber RPC Live Test","status":"DONE"},
+  {"id":"fiberquest-electron-sidecar-scaffold","goal":"FiberQuest Electron Sidecar Scaffold","status":"DONE"},
+  {"id":"fiberquest-hub-architecture","goal":"FiberQuest Hub Architecture","status":"DONE"},
+  {"id":"fiberquest-hub-synthesis","goal":"FiberQuest Hub Synthesis","status":"DONE"},
+  {"id":"fiberquest-console-hub-protocols","goal":"FiberQuest Console Hub Protocols","status":"DONE"},
+  {"id":"fiberquest-existing-console-bridges","goal":"FiberQuest Existing Console Bridges","status":"DONE"},
+  {"id":"fiberquest-custom-protocol","goal":"FiberQuest Custom Protocol","status":"DONE"},
+  {"id":"fiberquest-online-multiplayer","goal":"FiberQuest Online Multiplayer","status":"DONE"},
+  {"id":"fiberquest-multiplayer-synthesis","goal":"FiberQuest Multiplayer Synthesis","status":"DONE"},
+  {"id":"fiberquest-poker-games","goal":"FiberQuest Poker Games","status":"DONE"},
+  {"id":"fiberquest-tournament-escrow-patterns","goal":"FiberQuest Tournament Escrow Patterns","status":"DONE"},
+  {"id":"fiberquest-tournament-onchain-cell-design","goal":"FiberQuest Tournament On-Chain Cell Design","status":"DONE"},
+  {"id":"fiberquest-tournament-ui-design","goal":"FiberQuest Tournament UI Design","status":"DONE"},
+  {"id":"fiberquest-ui-design-patterns","goal":"FiberQuest UI Design Patterns","status":"DONE"},
+  {"id":"fiberquest-live-ui-reference-design","goal":"FiberQuest Live UI Reference Design","status":"DONE"},
+  {"id":"fiberquest-sdk-design","goal":"FiberQuest SDK Design","status":"DONE"},
+  {"id":"fiberquest-nodejs-client-design","goal":"FiberQuest Node.js Client Design","status":"DONE"},
+  {"id":"fiberquest-web-client","goal":"FiberQuest Web Client","status":"DONE"},
+  {"id":"fiberquest-embedded-node","goal":"FiberQuest Embedded Node","status":"DONE"},
+  {"id":"fiberquest-esp32s3-node","goal":"FiberQuest ESP32-S3 Node","status":"DONE"},
+  {"id":"fiberquest-esp32p4-capabilities","goal":"FiberQuest ESP32-P4 Capabilities","status":"DONE"},
+  {"id":"fiberquest-hardware-synthesis","goal":"FiberQuest Hardware Synthesis","status":"DONE"},
+  {"id":"fiberquest-retropie-pi5-status","goal":"FiberQuest RetroPie Pi5 Status","status":"DONE"},
+  {"id":"fiberquest-catalog-synthesis","goal":"FiberQuest Catalog Synthesis","status":"DONE"},
+  {"id":"fiberquest-gap-analysis-architecture","goal":"FiberQuest Gap Analysis — Architecture","status":"DONE"},
+  {"id":"fiberquest-gap-analysis-risks","goal":"FiberQuest Gap Analysis — Risks","status":"DONE"},
+  {"id":"fiberquest-hackathon-gap-analysis","goal":"FiberQuest Hackathon Gap Analysis","status":"DONE"},
+  {"id":"fiberquest-hackathon-submission-prep","goal":"FiberQuest Hackathon Submission Prep","status":"DONE"},
+  {"id":"fiberquest-synthesis-final-2026-03-10","goal":"FiberQuest Final Synthesis","status":"DONE"},
+];
+
+// Split into fiber vs fiberquest
+const fiberTasks = TASKS.filter(t => t.id.startsWith('fiber-') && !t.id.startsWith('fiberquest-'));
+const fiberquestTasks = TASKS.filter(t => t.id.startsWith('fiberquest-'));
+
+document.getElementById('taskCount').textContent = TASKS.length;
+document.getElementById('doneCount').textContent = TASKS.filter(t => t.status === 'DONE').length;
+
+function renderList(tasks, containerId) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = tasks.map(t => `
+    <div class="task-item" data-id="${t.id}" onclick="loadTask('${t.id}', this)">
+      <span class="dot${t.status !== 'DONE' ? ' pending' : ''}"></span>
+      <span class="name">${t.goal}</span>
+    </div>`).join('');
+}
+
+renderList(fiberTasks, 'list-fiber');
+renderList(fiberquestTasks, 'list-fiberquest');
+
+let markedReady = false;
+function loadMarked(cb) {
+  if (markedReady) return cb();
+  const s = document.createElement('script');
+  s.src = MARKED_CDN;
+  s.onload = () => { markedReady = true; cb(); };
+  document.head.appendChild(s);
+}
+
+async function loadTask(id, el) {
+  // Deselect all
+  document.querySelectorAll('.task-item').forEach(x => x.classList.remove('active'));
+  el.classList.add('active');
+
+  document.getElementById('welcome').style.display = 'none';
+  const panel = document.getElementById('findings');
+  panel.classList.add('visible');
+  document.getElementById('findings-title').textContent = el.querySelector('.name').textContent;
+  document.getElementById('findings-body').innerHTML = '<div class="findings-loading">Loading…</div>';
+
+  try {
+    const res = await fetch(`/research/${id}.md`);
+    if (!res.ok) throw new Error('Not found');
+    const md = await res.text();
+    loadMarked(() => {
+      document.getElementById('findings-body').innerHTML = marked.parse(md);
+    });
+  } catch(e) {
+    document.getElementById('findings-body').innerHTML = `<div class="findings-loading">Could not load findings for <code>${id}</code>.</div>`;
+  }
+}
+</script>
+
+</body>
+</html>
