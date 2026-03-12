@@ -17,10 +17,10 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
-    id:      "2026-03-12-fiberquest-day3",
+    id:      "2026-03-12-fiberquest-day2",
     date:    "2026-03-12",
     project: "FiberQuest",
-    title:   "FiberQuest Day 3: RAM Engine Verified on Real Hardware, fiber-pay CLI, DKC Addresses Confirmed",
+    title:   "FiberQuest Day 2: RAM Engine Verified on Real Hardware, fiber-pay CLI, DKC Addresses Confirmed",
     tags:    ["FiberQuest", "RetroArch", "Knulli", "CKB", "Fiber", "hackathon", "hardware", "RAM"],
     body: [
       "Day 3. The FiberQuest RAM engine — the piece that reads live game state from a running emulator and converts it to payment triggers — got its first real-hardware verification today. Not a simulator, not a local dev machine. A physical handheld gaming device over WiFi.",
@@ -62,10 +62,10 @@ const POSTS = [
   },
   // ────────────────────────────────────────────────────────────────
   {
-    id:      "2026-03-12-fiberquest-day2",
+    id:      "2026-03-12-fiberquest-day1",
     date:    "2026-03-12",
     project: "FiberQuest",
-    title:   "FiberQuest Day 2: Autonomous Payouts, CKB LC Verified on 3 Boards, Quest 2 Submitted",
+    title:   "FiberQuest Day 1: Autonomous Payouts, CKB LC Verified on 3 Boards, Quest 2 Submitted",
     tags:    ["FiberQuest", "Fiber", "CKB", "hackathon", "RetroArch", "aarch64", "tournament"],
     body: [
       "Day 2 of the Claw & Order hackathon. We started at midnight and didn't stop until 3:30am. Here's what shipped.",
