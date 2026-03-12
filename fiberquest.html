@@ -188,21 +188,28 @@
 
     <!-- Game library -->
     <div class="section">
-      <div class="section-title">📚 Community Game Library</div>
-      <div id="games-loading">Loading games from GitHub…</div>
-      <table class="game-table" id="games-table" style="display:none">
-        <thead>
-          <tr>
-            <th>Game</th>
-            <th>Console</th>
-            <th>Core</th>
-            <th>Addresses</th>
-            <th></th>
-          </tr>
-        </thead>
-        <tbody id="games-tbody"></tbody>
-      </table>
-      <div class="empty-library" id="games-empty" style="display:none">No games in the library yet. Be the first to submit one!</div>
+      <div class="section-title" style="justify-content:space-between">
+        <span>📚 Community Game Library</span>
+        <span style="display:flex;align-items:center;gap:.6rem;">
+          <span id="games-count" style="font-size:.75rem;color:var(--muted);font-weight:400;"></span>
+          <span id="games-live-dot" style="width:7px;height:7px;border-radius:50%;background:var(--muted);display:inline-block;"></span>
+          <span style="font-size:.72rem;color:var(--muted);font-weight:400;">live</span>
+        </span>
+      </div>
+      <div id="games-box" style="
+        background:#080b10;
+        border:1px solid var(--border);
+        border-radius:8px;
+        font-family:monospace;
+        font-size:.8rem;
+        line-height:1.7;
+        padding:.75rem 1rem;
+        height:280px;
+        overflow-y:auto;
+        color:#a0b0c0;
+      ">
+        <span style="color:var(--muted);">Fetching game library…</span>
+      </div>
     </div>
 
     <!-- Open PRs -->
@@ -293,47 +300,71 @@
   const GITHUB_API = 'https://api.github.com/repos/toastmanAu/ram-viewer';
   const GITHUB_RAW = 'https://raw.githubusercontent.com/toastmanAu/ram-viewer/main/games';
 
-  // ── Load game library ───────────────────────────────────────────────────────
+  // ── Load game library (live scrollable box) ─────────────────────────────────
+  const gamesBox  = document.getElementById('games-box');
+  const gamesCount = document.getElementById('games-count');
+  const liveDot   = document.getElementById('games-live-dot');
+  let lastGameList = '';
+  let gameRefreshTimer = null;
+
+  function renderGamesBox(games) {
+    if (games.length === 0) {
+      gamesBox.innerHTML = '<span style="color:var(--muted)">No games yet — be the first to submit one!</span>';
+      gamesCount.textContent = '0 games';
+      return;
+    }
+    const lines = games.map(g => {
+      const addrs = (g.addresses || []).map(a =>
+        `<span style="color:#4f8ef7">${a.address}</span> <span style="color:#8899aa">${a.label}</span>`
+      ).join('  ·  ');
+      const safeName = (g.name||'').toLowerCase().replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-');
+      const ghUrl = `https://github.com/toastmanAu/ram-viewer/blob/main/games/${safeName}.json`;
+      return `<div style="padding:.3rem 0;border-bottom:1px solid #1a2035;display:flex;gap:.75rem;align-items:baseline;flex-wrap:wrap;">
+  <span style="color:#34d399;font-weight:700;min-width:200px">${g.name || '?'}</span>
+  <span style="color:#fbbf24;font-size:.75rem">[${g.console||'?'}/${g.core||'?'}]</span>
+  <span style="font-size:.77rem;flex:1;min-width:120px">${addrs || '<span style="color:var(--muted)">no addresses</span>'}</span>
+  <a href="${ghUrl}" target="_blank" style="color:#4f8ef7;font-size:.73rem;text-decoration:none;white-space:nowrap">JSON ↗</a>
+</div>`;
+    });
+    // Header line
+    const header = `<div style="color:#4f8ef7;border-bottom:1px solid var(--border);padding-bottom:.4rem;margin-bottom:.2rem;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase">
+  NAME${' '.repeat(30)}CONSOLE/CORE${' '.repeat(10)}ADDRESSES</div>`;
+    gamesBox.innerHTML = header + lines.join('');
+    gamesCount.textContent = `${games.length} game${games.length !== 1 ? 's' : ''}`;
+  }
+
   async function loadGames() {
+    // Blink dot
+    liveDot.style.background = '#fbbf24';
     try {
       const resp = await fetch(`${GITHUB_API}/contents/games`, {
-        headers: { Accept: 'application/vnd.github.v3+json' }
+        headers: { Accept: 'application/vnd.github.v3+json' },
+        cache: 'no-store'
       });
       const files = await resp.json();
+      if (!Array.isArray(files)) throw new Error('bad response');
       const jsonFiles = files.filter(f => f.name.endsWith('.json') && f.name !== 'INDEX.md');
 
-      if (jsonFiles.length === 0) {
-        document.getElementById('games-loading').style.display = 'none';
-        document.getElementById('games-empty').style.display = 'block';
-        return;
-      }
-
-      const games = await Promise.all(jsonFiles.map(async f => {
+      const games = (await Promise.all(jsonFiles.map(async f => {
         try {
-          const r = await fetch(`${GITHUB_RAW}/${f.name}`);
+          const r = await fetch(`${GITHUB_RAW}/${f.name}?_=${Date.now()}`, { cache: 'no-store' });
           return await r.json();
         } catch { return null; }
-      }));
+      }))).filter(Boolean);
 
-      const tbody = document.getElementById('games-tbody');
-      for (const g of games.filter(Boolean)) {
-        const tr = document.createElement('tr');
-        const safeName = g.name.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
-        tr.innerHTML = `
-          <td><div class="game-name">${g.name || '—'}</div></td>
-          <td><span class="game-console">${g.console || '—'}</span></td>
-          <td><span class="game-console">${g.core || '—'}</span></td>
-          <td><span class="addr-count">${(g.addresses || []).length} addrs</span></td>
-          <td><a href="${GITHUB_API}/blob/main/games/${safeName}.json" target="_blank">View</a></td>
-        `;
-        tbody.appendChild(tr);
+      // Only re-render if list changed
+      const sig = JSON.stringify(games.map(g => g.name));
+      if (sig !== lastGameList) {
+        lastGameList = sig;
+        renderGamesBox(games);
       }
-
-      document.getElementById('games-loading').style.display = 'none';
-      document.getElementById('games-table').style.display = 'table';
+      liveDot.style.background = '#34d399'; // green = live
     } catch (e) {
-      document.getElementById('games-loading').textContent = 'Failed to load library.';
+      gamesBox.innerHTML = `<span style="color:#f87171">Failed to load library: ${e.message}</span>`;
+      liveDot.style.background = '#f87171';
     }
+    // Poll every 30s
+    gameRefreshTimer = setTimeout(loadGames, 30000);
   }
 
   // ── Load open PRs ───────────────────────────────────────────────────────────
