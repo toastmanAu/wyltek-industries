@@ -1,5 +1,31 @@
 // posts.js — Wyltek Industries devlog entries
 // To add a new post: add an object to the front of the POSTS array.
+  {
+    id:      "2026-03-14-fiberquest-architecture",
+    date:    "2026-03-14",
+    project: "FiberQuest",
+    title:   "FiberQuest Complete Architecture: Installer, Games DB Repo, Toast Translate Bot Live",
+    tags:    ["FiberQuest", "hackathon", "installer", "architecture", "CKB", "Fiber", "bot"],
+    body: [
+      "Day 5 of Claw & Order. The tournament platform evolved from scattered components into a shippable product today: a one-command installer, a centralized games database on GitHub, and a translation bot live in both Nervos TG communities.",
+      { type: "h3", content: "FiberQuest Installer — One Command to Deploy" },
+      "Built fiberquest-installer.sh: a RetroPie-style installer that sets up a complete FiberQuest instance in three modes: GUI (demo), Daemon (headless), Server (hosted). The installer is parametric — no hardcoded paths, all secrets stay local in ~/.fiberquest/.env. Users bring their own ROMs.",
+      { type: "h3", content: "fiberquest-games-db — Central Curated Repository" },
+      "Created toastmanAu/fiberquest-games-db: a public GitHub repo containing games-db.json (metadata), images/ (covers, screenshots, thumbs), and validators/ (cheating detection logic per game). When users install FiberQuest, the daemon syncs this repo automatically. New games available instantly.",
+      "MVP games in the repo: Pokémon Fire Red (GBA), Mortal Kombat II (SNES), Mario Kart 64 (N64). Each with confirmed CRCs and working validators.",
+      { type: "h3", content: "Pi 5 Demo Machine — Ready for Agent Build" },
+      "Set up a Raspberry Pi 5 as the complete demo: Ubuntu Desktop, website (port 3000), PostgreSQL, RetroArch ready, Electron sidecar (1024x640 HDMI). All systemd auto-start. Zero downtime on reboot. Disabled sleep/suspend — 24/7 demo kiosk.",
+      { type: "h3", content: "Toast Translate Bot — Live in Nervos Communities" },
+      "Deployed @WyTranslateBot to Cloudflare Workers. 43 languages, smart input cleaning (strips emoji/URLs to prevent loops), direct commands (/en, /zh, /es, etc.), clean output with flag emoji. Already live and smooth in both Nervos TG and Nervos Nation.",
+      { type: "h3", content: "What's Next" },
+      "Build the FiberQuest Agent (~8 hours): escrow monitoring, auto-publisher, Fiber channel manager. Full E2E testing on testnet. Hackathon deadline: March 25. On track. 🎯",
+    ],
+    links: [
+      { text: "FiberQuest Installer", href: "https://github.com/toastmanAu/fiberquest" },
+      { text: "Games DB Repo", href: "https://github.com/toastmanAu/fiberquest-games-db" },
+      { text: "Toast Translate Bot", href: "https://t.me/WyTranslateBot" },
+    ],
+  },
 // Fields:
 //   id:      unique slug (used for anchor links)
 //   date:    "YYYY-MM-DD"
