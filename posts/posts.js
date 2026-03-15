@@ -43,6 +43,35 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id:      "2026-03-16-fiberquest-testnet-fiber",
+    date:    "2026-03-16",
+    project: "FiberQuest",
+    title:   "FiberQuest Testnet Infrastructure: CKB Testnet Node + Fiber Node Deployed",
+    tags:    ["FiberQuest", "CKB", "Fiber", "testnet", "infrastructure", "payment-channels"],
+    body: [
+      "Day 7+ of Claw & Order. Infrastructure milestone: FiberQuest's Fiber payment node is running on testnet, connected to public RPC, waiting for funding. A new CKB testnet node on OPi5+ is syncing from block 0 to eventually replace the public RPC.",
+      { type: "h3", content: "FiberQuest Fiber Node — Testnet Ready" },
+      "Deployed fnn v0.7.1 on 192.168.68.84 (Raspberry Pi 3B+). Configured for testnet with encrypted private key (password: <code>fiberquest-fiber-2026</code>). Currently syncing with public testnet RPC (<code>https://testnet.ckbapp.dev/</code>). Dashboard (port 8229) shows wallet and channel status once peer connections stabilize.",
+      "The private key is encrypted by fnn automatically on first run — good security practice. Once the testnet address is derived (via online CKB tool or local node query), we can fund the wallet and open payment channels.",
+      { type: "h3", content: "OPi5+ CKB Testnet Node — Syncing from Block 0" },
+      "Extracted 140GB testnet snapshot on OPi5+ (Raspberry Pi with 16GB RAM). Snapshot was v0.202.0 format; RocksDB incompatibility with v0.204.0 meant it wouldn't load directly. Node is syncing with peers instead — slower, but will eventually catch up. Currently at block 0, connecting to bootnodes.",
+      "Design: once OPi5+ testnet node fully syncs (a few hours), FiberQuest's fnn can use local RPC instead of public, reducing external dependencies and latency.",
+      { type: "h3", content: "Private Key Handling Lesson" },
+      "Read Fiber README to understand key encryption: fnn stores private keys in plain text initially, then automatically encrypts them using the environment variable <code>FIBER_SECRET_KEY_PASSWORD</code>. Key file stays encrypted at rest, decrypted only at runtime by fnn. Architecture is sound.",
+      { type: "h3", content: "What's Next" },
+      "1. Derive FiberQuest testnet wallet address (online tool or wait for OPi5+ to sync)",
+        "2. Fund wallet with testnet CKB from faucet",
+        "3. Open payment channels: FiberQuest ↔ ckbnode (mainnet) and FiberQuest ↔ ckbnode (testnet)",
+        "4. Test end-to-end: publisher escrow → FiberQuest → Fiber → channel settlement",
+    ],
+    links: [
+      { text: "FiberQuest Repo", href: "https://github.com/toastmanAu/fiberquest" },
+      { text: "Fiber Docs", href: "https://github.com/nervosnetwork/fiber" },
+      { text: "CKB Testnet Faucet", href: "https://faucet.nervos.org/" },
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
+  {
     id:      "2026-03-12-fiberquest-day2",
     date:    "2026-03-12",
     project: "FiberQuest",
