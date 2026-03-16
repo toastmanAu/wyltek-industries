@@ -1,5 +1,71 @@
 // posts.js — Wyltek Industries devlog entries
 // To add a new post: add an object to the front of the POSTS array.
+
+const POSTS = [
+  {
+    id:      "2026-03-16-fiberquest-agent-hmi-live",
+    date:    "2026-03-16",
+    project: "FiberQuest",
+    title:   "FiberQuest Tournament Agent, HMI, and RAM Validators Live — Hackathon MVP Ready",
+    tags:    ["FiberQuest", "hackathon", "CKB", "Fiber", "ESP32", "tournament", "infrastructure"],
+    body: [
+      "March 10–16 progress: FiberQuest's core platform is production-ready. The tournament orchestrator (Node.js + AI validation), physical display (ESP32 4\" touchscreen), and game data extraction tools are all live. Fiber nodes are paired and awaiting funding to open settlement channels.",
+      { type: "h3", content: "FiberQuest Tournament Agent" },
+      "Complete orchestrator for retro game competitions with CKB escrow + Fiber settlement. The agent:",
+      { type: "ul", content: [
+        "Polls for CKB deposits via JoyID SDK (players enter tournaments via data field)",
+        "Validates game results using chain-of-thought reasoning (Ollama Deepseek-r1:32b on NucBox)",
+        "Opens Fiber payment channels and settles payouts to winners instantly",
+        "Manages 3 launch games: Pokémon Fire Red (speedrun), Mortal Kombat II (1v1), Mario Kart 64 (GP)",
+        "Exposes API endpoints: /api/tournament/create, /join, /queue/validate-game, /api/channel/open, WebSocket /events for real-time tournament state",
+      ]},
+      "Auto-scaling: GPIO18 PWM controls a fan that scales with CPU temperature (game validation can be compute-heavy).",
+      { type: "h3", content: "FiberQuest HMI — Physical Tournament Display" },
+      "Built a real-time tournament dashboard on a Guition ESP32-S3-4848S040 (4\" 480×480 RGB parallel display, GT911 capacitive touch):",
+      { type: "ul", content: [
+        "Splash screen (boot logo + spinner)",
+        "Home (Join Tournament / Fiber Channel buttons)",
+        "Tournaments list (live sync via WebSocket)",
+        "Live Game (real-time 2-player scorecards + timer)",
+        "Winner screen (celebration + payout amount)",
+        "Channel status (Fiber balance + payment history)",
+      ]},
+      "Uses LVGL rendering for 60 FPS updates. WebSocket connection to the agent receives JSON events: <code>game_start</code>, <code>score</code>, <code>timer</code>, <code>winner</code>, <code>tournament_list</code>.",
+      { type: "h3", content: "RAM Address Validator & Game Data Parser" },
+      "Built ram-viewer: utility suite for validating game RAM addresses and parsing live game state from running emulators. Includes:",
+      { type: "ul", content: [
+        "Address validator: vets RAM addresses across platforms (NES, SNES, GB, N64, Dreamcast, etc.)",
+        "Per-game parsers: Pokémon Fire Red, SF2 Turbo, Mortal Kombat II, Mario Kart 64",
+        "MDNS discovery: ram-viewer.local for LAN discovery",
+        "Game state extraction: XP, lives, scores, match results from emulator RAM",
+      ]},
+      { type: "h3", content: "Fiber Network Infrastructure" },
+      "Two Fiber nodes ready for tournament settlement:",
+      { type: "ul", content: [
+        "<strong>ckbnode (OPi3B):</strong> Fiber v0.7.0, testnet CKB v0.204.0 with Indexer enabled, systemd service, wallet funded",
+        "<strong>NucBox (primary inference):</strong> Fiber v0.7.1, Ollama endpoint (Deepseek-r1:32b + others), new wallet awaiting seed funding (99+ CKB)",
+      ]},
+      "Both nodes paired and ready. RPC tunnel active.",
+      { type: "h3", content: "Hackathon Prep Status" },
+      { type: "ul", content: [
+        "✅ Tournament agent running (deposit polling, game validation, Fiber settlement)",
+        "✅ Physical HMI (ESP32-S3 display, live tournament sync)",
+        "✅ Game validators (RAM address parsing for 3 launch games)",
+        "✅ Fiber nodes paired (ready to open channels)",
+        "✅ Ollama AI engine (chain-of-thought reasoning for result verification)",
+      ]},
+      { type: "h3", content: "What's Next" },
+      "1. Fund NucBox wallet to open first settlement channel",
+        "2. End-to-end test: player deposit → game validation → payout",
+        "3. Deploy website components (tournament browse/join)",
+        "4. Stress test: concurrent tournaments, player throughput",
+    ],
+    links: [
+      { text: "FiberQuest Agent", href: "https://github.com/toastmanAu/fiberquest-agent" },
+      { text: "FiberQuest HMI", href: "https://github.com/toastmanAu/fiberquest-hmi" },
+      { text: "RAM Viewer", href: "https://github.com/toastmanAu/ram-viewer" },
+    ],
+  },
   {
     id:      "2026-03-14-fiberquest-architecture",
     date:    "2026-03-14",
