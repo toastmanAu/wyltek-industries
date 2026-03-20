@@ -575,7 +575,7 @@ function render() {
     if (af.has('SUGGESTED') && suggestedIds.size === 0) { showEmpty('🔬','No relevant research found for your favourites','Try starring more topics with varied tags — the more you favourite, the better your suggestions.'); return; }
   }
 
-  const tasks = RESEARCH_FINDINGS.filter(t => {
+  let tasks = RESEARCH_FINDINGS.filter(t => {
     // Status group (OR within group)
     const statusFilters = ['DONE','PENDING','HIGH'].filter(f => af.has(f));
     if (statusFilters.length > 0) {
@@ -600,6 +600,8 @@ function render() {
 
   document.getElementById('searchCount').textContent = currentSearch
     ? `${tasks.length} result${tasks.length!==1?'s':''} for "${currentSearch}"` : '';
+
+  console.log('[research] Filtered tasks:', tasks.length);
 
   if (tasks.length === 0) { showEmpty('🔭','No results','Try adjusting your filters or search.'); return; }
 
