@@ -302,7 +302,8 @@ let joyidConnect, joyidSignMessage;
 let _joyidConnector = null;
 async function loadJoyIDConnector() {
   if (_joyidConnector) return _joyidConnector;
-  _joyidConnector = await import('/js/joyid-connector.js');
+  // Use patched connector for iOS standalone mode fix
+  _joyidConnector = await import('/js/joyid-connector-ios-fix.js');
   return _joyidConnector;
 }
 
@@ -355,6 +356,9 @@ async function connectJoyID() {
   const btn = document.getElementById('connectBtn');
   btn.disabled = true;
 
+  console.log('[JoyID] Starting connection, userAgent:', navigator.userAgent);
+  console.log('[JoyID] Standalone mode:', window.navigator.standalone);
+  
   // Firefox desktop can't complete the passkey flow — tell them upfront
   const connector = await loadJoyIDConnector();
   if (connector.isFirefoxDesktop()) {
