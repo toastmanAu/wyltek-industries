@@ -561,7 +561,7 @@ window.clearSearch = function() {
 };
 
 function render() {
-  console.log('[research] render() called, tasks:', RESEARCH_TASKS.length);
+  console.log('[research] render() called, tasks:', RESEARCH_FINDINGS.length);
   const af = activeFilters;
 
   // Guard empty states for member-only single-filter views
@@ -575,7 +575,7 @@ function render() {
     if (af.has('SUGGESTED') && suggestedIds.size === 0) { showEmpty('🔬','No relevant research found for your favourites','Try starring more topics with varied tags — the more you favourite, the better your suggestions.'); return; }
   }
 
-  const tasks = RESEARCH_TASKS.filter(t => {
+  const tasks = RESEARCH_FINDINGS.filter(t => {
     // Status group (OR within group)
     const statusFilters = ['DONE','PENDING','HIGH'].filter(f => af.has(f));
     if (statusFilters.length > 0) {
@@ -643,16 +643,16 @@ function showEmptyImg(src, title, sub) {
 }
 
 function renderStats() {
-  const done = RESEARCH_TASKS.filter(t => t.status==='DONE').length;
-  const pending = RESEARCH_TASKS.filter(t => t.status==='PENDING').length;
-  const pct = Math.round((done/RESEARCH_TASKS.length)*100);
+  const done = RESEARCH_FINDINGS.filter(t => t.status==='DONE').length;
+  const pending = RESEARCH_FINDINGS.filter(t => t.status==='PENDING').length;
+  const pct = Math.round((done/RESEARCH_FINDINGS.length)*100);
   document.getElementById('statsBar').innerHTML = `
-    <div class="stat"><div class="stat-n">${RESEARCH_TASKS.length}</div><div class="stat-l">Total tasks</div></div>
+    <div class="stat"><div class="stat-n">${RESEARCH_FINDINGS.length}</div><div class="stat-l">Total tasks</div></div>
     <div class="stat"><div class="stat-n" style="color:var(--green)">${done}</div><div class="stat-l">Completed</div></div>
     <div class="stat"><div class="stat-n" style="color:var(--yellow)">${pending}</div><div class="stat-l">In queue</div></div>
     <div class="stat"><div class="stat-n">${pct}%</div><div class="stat-l">Complete</div></div>`;
   document.getElementById('progressWrap').innerHTML = `
-    <div class="progress-label"><span>Research progress</span><span>${done} / ${RESEARCH_TASKS.length} tasks</span></div>
+    <div class="progress-label"><span>Research progress</span><span>${done} / ${RESEARCH_FINDINGS.length} tasks</span></div>
     <div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div>`;
 }
 
@@ -690,12 +690,12 @@ function recomputeSuggestions() {
 
   // Collect all tags from favourited tasks
   const favTags = new Set();
-  RESEARCH_TASKS.forEach(t => {
+  RESEARCH_FINDINGS.forEach(t => {
     if (myFavourites.has(t.id)) (t.tags || []).forEach(tag => favTags.add(tag.toLowerCase()));
   });
 
   // Score non-favourited tasks by tag overlap
-  const scored = RESEARCH_TASKS
+  const scored = RESEARCH_FINDINGS
     .filter(t => !myFavourites.has(t.id))
     .map(t => {
       const overlap = (t.tags || []).filter(tag => favTags.has(tag.toLowerCase())).length;
@@ -746,7 +746,7 @@ async function loadFavCount(taskId) {
 
 function getVisibleTasks() {
   const af = activeFilters;
-  return RESEARCH_TASKS.filter(t => {
+  return RESEARCH_FINDINGS.filter(t => {
     const statusFilters = ['DONE','PENDING','HIGH'].filter(f => af.has(f));
     if (statusFilters.length > 0) {
       const pass = statusFilters.some(f =>
@@ -818,7 +818,7 @@ document.addEventListener('keydown', e => {
 window.addEventListener('load', () => {
   const hash = window.location.hash.slice(1);
   if (hash) {
-    const task = RESEARCH_TASKS.find(t => t.id === hash);
+    const task = RESEARCH_FINDINGS.find(t => t.id === hash);
     if (task) openViewer(hash);
   }
 });
@@ -1175,7 +1175,7 @@ loadMyFavourites(); // async — updates stars + suggestions after initial rende
   </p>
   <p style="margin-top:.8rem;font-size:.78rem;opacity:.7">Built in the Nervos CKB ecosystem &middot; <a href="https://nervos.org" target="_blank">nervos.org</a></p>
 </footer>
-<script src="js/research-tasks.js"></script>
+<script src="js/research-findings.js"></script>
 <script src="/js/member-nav.js"></script>
   <script src="/js/nav-toggle.js"></script>
   <script src="/js/profile-banner.js"></script>
