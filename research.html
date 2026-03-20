@@ -411,23 +411,32 @@ window.setSort = function(sortMode) {
 };
 
 async function loadTaskStats() {
-  // Load star counts
-  const { data: starData } = await sb.from('research_favourites')
-    .select('task_id');
-  starData?.forEach(r => {
-    const id = r.task_id;
-    if (!taskStats.has(id)) taskStats.set(id, { stars: 0, views: 0 });
-    taskStats.get(id).stars++;
-  });
+  try {
+    console.log('[research] Loading task stats from Supabase...');
+    // Load star counts
+    const { data: starData, error: starError } = await sb.from('research_favourites')
+      .select('task_id');
+    if (starError) throw starError;
+    starData?.forEach(r => {
+      const id = r.task_id;
+      if (!taskStats.has(id)) taskStats.set(id, { stars: 0, views: 0 });
+      taskStats.get(id).stars++;
+    });
 
-  // Load view counts
-  const { data: viewData } = await sb.from('research_views')
-    .select('finding_id');
-  viewData?.forEach(r => {
-    const id = r.finding_id;
-    if (!taskStats.has(id)) taskStats.set(id, { stars: 0, views: 0 });
-    taskStats.get(id).views++;
-  });
+    // Load view counts
+    const { data: viewData, error: viewError } = await sb.from('research_views')
+      .select('finding_id');
+    if (viewError) throw viewError;
+    viewData?.forEach(r => {
+      const id = r.finding_id;
+      if (!taskStats.has(id)) taskStats.set(id, { stars: 0, views: 0 });
+      taskStats.get(id).views++;
+    });
+    console.log('[research] Task stats loaded:', taskStats.size, 'tasks with stats');
+  } catch (err) {
+    console.error('[research] Failed to load task stats:', err);
+    // Don't break the page if stats fail
+  }
 }
 
 function sortTasks(tasks) {
@@ -552,6 +561,7 @@ window.clearSearch = function() {
 };
 
 function render() {
+  console.log('[research] render() called, tasks:', RESEARCH_TASKS.length);
   const af = activeFilters;
 
   // Guard empty states for member-only single-filter views
@@ -595,6 +605,7 @@ function render() {
 
   // Apply sort
   tasks = sortTasks(tasks);
+  console.log('[research] Rendering', tasks.length, 'tasks after filters/sort');
 
   document.getElementById('grid').innerHTML = tasks.map(t => {
     const stats = taskStats.get(t.id) || { stars: 0, views: 0 };
