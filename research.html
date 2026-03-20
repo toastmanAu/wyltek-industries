@@ -114,6 +114,9 @@
     .card-goal{font-size:0.86rem;color:var(--muted);line-height:1.6;}
     .card-tags{display:flex;gap:0.3rem;flex-wrap:wrap;}
     .tag{background:rgba(255,255,255,.04);border:1px solid var(--border);color:var(--muted);padding:1px 8px;border-radius:4px;font-size:0.72rem;}
+    .card-stats{display:flex;gap:.4rem;align-items:center;font-size:.72rem;color:var(--muted);margin-top:.35rem;}
+    .card-stat{display:flex;align-items:center;gap:.25rem;}
+    .card-stat-icon{font-size:.85rem;}
     .card-footer-row{display:flex;align-items:center;justify-content:space-between;margin-top:0.25rem;}
     .expand-hint{font-size:0.75rem;color:var(--muted);}
 
@@ -317,6 +320,17 @@
     <div class="filter-active-chips" id="filterChips"></div>
     <button class="filter-clear" id="filterClearBtn" onclick="clearAllFilters()">✕ Clear</button>
     <div class="filter-dropdown" id="filterDropdown">
+      <div class="filter-dropdown-section">Sort By</div>
+      <div class="filter-option" data-sort="newest" onclick="setSort('newest')">
+        <span class="filter-option-check"></span><span>🆕 Newest first</span>
+      </div>
+      <div class="filter-option" data-sort="stars" onclick="setSort('stars')">
+        <span class="filter-option-check"></span><span>⭐ Most stars</span>
+      </div>
+      <div class="filter-option" data-sort="views" onclick="setSort('views')">
+        <span class="filter-option-check"></span><span>👁️ Most viewed</span>
+      </div>
+      <hr class="filter-divider">
       <div class="filter-dropdown-section">Status</div>
       <div class="filter-option" data-filter="DONE" onclick="toggleFilter('DONE')">
         <span class="filter-option-check"></span><span>Done</span>
@@ -378,6 +392,76 @@ function timeAgo(iso) {
   if (s < 3600) return `${Math.floor(s/60)}m ago`;
   if (s < 86400) return `${Math.floor(s/3600)}h ago`;
   return `${Math.floor(s/86400)}d ago`;
+}
+
+
+// ── Sorting ───────────────────────────────────────────────────────
+let currentSort = 'newest'; // newest, stars, views
+const taskStats = new Map(); // taskId → { stars: N, views: N }
+
+window.setSort = function(sortMode) {
+  currentSort = sortMode;
+  // Update UI
+  document.querySelectorAll('[data-sort]').forEach(opt => {
+    opt.classList.toggle('selected', opt.dataset.sort === sortMode);
+    const check = opt.querySelector('.filter-option-check');
+    if (check) check.textContent = opt.dataset.sort === sortMode ? '✓' : '';
+  });
+  render();
+};
+
+async function loadTaskStats() {
+  // Load star counts
+  const { data: starData } = await sb.from('research_favourites')
+    .select('task_id');
+  starData?.forEach(r => {
+    const id = r.task_id;
+    if (!taskStats.has(id)) taskStats.set(id, { stars: 0, views: 0 });
+    taskStats.get(id).stars++;
+  });
+
+  // Load view counts
+  const { data: viewData } = await sb.from('research_views')
+    .select('finding_id');
+  viewData?.forEach(r => {
+    const id = r.finding_id;
+    if (!taskStats.has(id)) taskStats.set(id, { stars: 0, views: 0 });
+    taskStats.get(id).views++;
+  });
+}
+
+function sortTasks(tasks) {
+  if (currentSort === 'newest') {
+    return tasks; // Already in reverse chronological order from queue.md
+  } else if (currentSort === 'stars') {
+    return [...tasks].sort((a, b) => {
+      const aStars = taskStats.get(a.id)?.stars || 0;
+      const bStars = taskStats.get(b.id)?.stars || 0;
+      return bStars - aStars;
+    });
+  } else if (currentSort === 'views') {
+    return [...tasks].sort((a, b) => {
+      const aViews = taskStats.get(a.id)?.views || 0;
+      const bViews = taskStats.get(b.id)?.views || 0;
+      return bViews - aViews;
+    });
+  }
+  return tasks;
+}
+
+async function trackView(taskId) {
+  if (!MY_ADDR) return;
+  try {
+    await sb.from('research_views').insert({
+      finding_id: taskId,
+      user_address: MY_ADDR
+    });
+    // Update local count
+    if (!taskStats.has(taskId)) taskStats.set(taskId, { stars: 0, views: 0 });
+    taskStats.get(taskId).views++;
+  } catch(e) {
+    // Ignore duplicate errors (same user viewing again)
+  }
 }
 
 // ── Render ────────────────────────────────────────────────────────
@@ -509,7 +593,16 @@ function render() {
 
   if (tasks.length === 0) { showEmpty('🔭','No results','Try adjusting your filters or search.'); return; }
 
+  // Apply sort
+  tasks = sortTasks(tasks);
+
   document.getElementById('grid').innerHTML = tasks.map(t => {
+    const stats = taskStats.get(t.id) || { stars: 0, views: 0 };
+    const statsHtml = (stats.stars > 0 || stats.views > 0) ? `
+      <div class="card-stats">
+        ${stats.stars > 0 ? `<span class="card-stat"><span class="card-stat-icon">⭐</span>${stats.stars}</span>` : ''}
+        ${stats.views > 0 ? `<span class="card-stat"><span class="card-stat-icon">👁️</span>${stats.views}</span>` : ''}
+      </div>` : '';
     const isFaved = myFavourites.has(t.id);
     return `<div class="card ${t.status.toLowerCase()}${isFaved?' faved-card':''}" id="card-${t.id}" onclick="openViewer('${t.id}')">
       <span class="card-fav-star">⭐</span>
@@ -522,6 +615,7 @@ function render() {
           <div class="card-tags">${(t.tags||[]).map(tag=>`<span class="tag">${tag}</span>`).join('')}</div>
           <div class="expand-hint">${t.status==='DONE'?'read findings →':'pending…'}</div>
         </div>
+        ${statsHtml}
       </div>
     </div>`;
   }).join('');
@@ -663,6 +757,9 @@ function getVisibleTasks() {
 }
 
 window.openViewer = async function(id) {
+  // Track view
+  await trackView(id);
+
   visibleTasks = getVisibleTasks();
   currentTaskIndex = visibleTasks.findIndex(t => t.id === id);
   const task = visibleTasks[currentTaskIndex];
