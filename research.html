@@ -1148,6 +1148,7 @@ window.submitComment = async function(taskId) {
   await loadComments(taskId);
 };
 
+loadTaskStats();
 render();
 loadMyFavourites(); // async — updates stars + suggestions after initial render
 </script>
