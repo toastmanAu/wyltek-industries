@@ -428,6 +428,8 @@ async function handleConnectResult(result) {
   // Show connected state IMMEDIATELY — don't wait for DB
   currentAddress = address;
   localStorage.setItem('wyltek_address', address);
+  // Trigger auth change event for other scripts (member-nav.js on other pages)
+  window.dispatchEvent(new Event('wyltek-auth-changed'));
   showState('Queue');
   document.getElementById('walletAddr').textContent = address.slice(0,8) + '…' + address.slice(-6);
   // Unlock member nav
@@ -555,6 +557,8 @@ async function showQueue(address) {
 function disconnect() {
   sb.auth.signOut();
   localStorage.removeItem('wyltek_address');
+  // Trigger auth change event for other scripts
+  window.dispatchEvent(new Event('wyltek-auth-changed'));
   currentAddress = null;
   showState('Connect');
   clearMsg('connectMsg');
