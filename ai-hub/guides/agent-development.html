@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Development Guide - Wyltek AI Hub</title>
+    <style>
+        :root {
+            --bg: #0a0c0f;
+            --surface: #111318;
+            --border: #1e2430;
+            --accent: #00c8ff;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 15, 0.93);
+            z-index: 100;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        .logo { color: var(--text); font-weight: 700; font-size: 1.1rem; }
+        .guide-content {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        h1 { color: var(--accent); margin-bottom: 1rem; font-size: 1.8rem; }
+        h2 { margin-top: 2rem; color: #7b5cfa; margin-bottom: 1rem; font-size: 1.2rem; }
+        h3 { margin-top: 1.5rem; color: var(--text); font-size: 1rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+        code {
+            background: rgba(0, 200, 255, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        pre {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        pre code { background: none; border: none; padding: 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th { background: rgba(123, 92, 250, 0.1); }
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        a:hover { text-decoration: underline; }
+        .back {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--muted);
+        }
+        .back:hover { color: var(--text); }
+        .callout {
+            background: rgba(123, 92, 250, 0.1);
+            border-left: 3px solid #7b5cfa;
+            padding: 1rem;
+            margin: 1rem 0;
+            border-radius: 4px;
+        }
+        .success { background: rgba(0, 229, 160, 0.1); border-left-color: #00e5a0; }
+        .warning { background: rgba(255, 140, 66, 0.1); border-left-color: #ff8c42; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Wyltek Industries — AI Hub</div>
+    </header>
+
+    <div class="guide-content">
+        <a href="/ai-hub/" class="back">← Back to AI Hub</a>
+
+        <h1>🤖 Agent Development Guide</h1>
+
+        <p>Build autonomous AI agents with OpenClaw. Create personalities, manage memory, coordinate with other agents, and integrate with knowledge systems.</p>
+
+        <h2>Agent Architecture</h2>
+
+        <p>An OpenClaw agent is:</p>
+        <ul>
+            <li><strong>Identity</strong> — SOUL.md (personality, values, boundaries)</li>
+            <li><strong>Memory</strong> — Daily logs + long-term knowledge base</li>
+            <li><strong>Capabilities</strong> — Skills, tools, integrations</li>
+            <li><strong>Context</strong> — Access to files, APIs, external services</li>
+            <li><strong>Autonomy</strong> — Can spawn sub-agents, run on schedule</li>
+        </ul>
+
+        <h2>Step 1: Define Your Agent's Personality</h2>
+
+        <p>Create <code>SOUL.md</code> in your workspace:</p>
+
+        <pre><code># SOUL.md - Who I Am
+
+## Core Identity
+- Name: My Agent Name
+- Role: What you do
+- Vibe: How you communicate
+
+## Core Truths
+1. Be genuinely helpful, not performatively helpful
+2. Have opinions and preferences
+3. Be resourceful before asking for help
+4. Earn trust through competence
+
+## Boundaries
+- Don't exfiltrate private data
+- Ask before taking external actions (emails, posts, etc.)
+- Be careful with destructive commands
+- Never bypass safeguards
+
+## What You're Good At
+- List your strengths
+- What problems you solve
+- Your specialization
+</code></pre>
+
+        <h2>Step 2: Set Up Memory</h2>
+
+        <p>Your agent has three memory layers:</p>
+
+        <table>
+            <tr>
+                <th>Layer</th>
+                <th>File</th>
+                <th>Purpose</th>
+                <th>Retention</th>
+            </tr>
+            <tr>
+                <td><strong>Session</strong></td>
+                <td>Current context</td>
+                <td>Current conversation</td>
+                <td>This turn only</td>
+            </tr>
+            <tr>
+                <td><strong>Daily</strong></td>
+                <td>memory/YYYY-MM-DD.md</td>
+                <td>Raw logs, what happened today</td>
+                <td>Searchable, 30+ days</td>
+            </tr>
+            <tr>
+                <td><strong>Long-term</strong></td>
+                <td>MEMORY.md</td>
+                <td>Curated wisdom, decisions, patterns</td>
+                <td>Forever (human-maintained)</td>
+            </tr>
+        </table>
+
+        <h3>Writing to Memory</h3>
+        <pre><code># Daily memory: memory/2026-03-21.md
+## Session 1 (14:00)
+- Built RAG system for team
+- Learned: FAISS + SQLite works well for small teams
+- Decision: Use shared vector store, not per-agent
+
+## Session 2 (16:00)
+- Deployed to production
+- Next: Monitor performance, scale if needed
+
+---
+
+# Long-term memory: MEMORY.md
+## Team Infrastructure
+- RAG System running on NucBox (192.168.68.79:9990)
+- Vector store: FAISS + SQLite (no distributed DB needed yet)
+- Agents: Kernel (systematic), Shannon (exploratory)
+- Status: Production ✅
+
+## Key Learnings
+- Shared index with per-agent profiles > per-agent indexes
+- FAISS fast enough for <1M chunks
+- SQLite metadata: keep it denormalized for speed
+</code></pre>
+
+        <h2>Step 3: Create Skills (Reusable Tools)</h2>
+
+        <p>Bundle capabilities as skills:</p>
+
+        <pre><code># ~/.openclaw/skills/my-skill/SKILL.md
+
+# My Skill
+
+Use this skill for: <describe purpose>
+
+## Installation
+<setup instructions>
+
+## Usage
+<examples>
+
+## Commands
+- skill-command [args] — what it does
+</code></pre>
+
+        <p>See <a href="https://clawhub.com">clawhub.com</a> for community skills (GitHub auth, email, weather, etc.).</p>
+
+        <h2>Step 4: Connect to Knowledge Systems</h2>
+
+        <h3>Using RAG for Grounded Answers</h3>
+        <pre><code>// Query the RAG system
+const rag = require('./rag-client');
+
+const context = await rag.retrieve({
+  query: "How do I set up authentication?",
+  agent_id: "systematic",
+  k: 5
+});
+
+// Use context in your response
+const answer = `Based on our knowledge base:\n${
+  context.chunks.map(c => `- ${c.text}`).join('\n')
+}`;
+</code></pre>
+
+        <h3>Integrating with Local Inference</h3>
+        <pre><code>// Use local models instead of cloud APIs
+const ollama = require('ollama');
+
+const response = await ollama.generate({
+  model: "qwen2.5:7b",
+  prompt: "Explain Fiber protocol",
+  stream: false
+});
+
+console.log(response.response);
+</code></pre>
+
+        <h2>Step 5: Multi-Agent Coordination</h2>
+
+        <p>Spawn other agents to handle tasks:</p>
+
+        <pre><code>// Spawn a research agent
+const research = await sessions.spawn({
+  task: "Research CKB light client architecture",
+  agentId: "researcher",
+  model: "anthropic/claude-sonnet-4-5"
+});
+
+// Get result
+const findings = await research.wait();
+console.log(findings);
+
+// Or run in background
+const bg = sessions.spawn({
+  task: "Background job",
+  mode: "session"  // persistent session
+});
+// Main continues immediately
+</code></pre>
+
+        <h2>Step 6: Implement Autonomous Behavior</h2>
+
+        <h3>Scheduled Tasks (Heartbeat)</h3>
+        <pre><code># HEARTBEAT.md - What you do automatically
+
+## Health Check (every hour)
+- Verify all services running
+- Alert if any down
+
+## Daily Backup (1x/day at 4pm)
+- Commit to git
+- Rsync to secondary location
+
+## Weekly Summary (Sundays at 9am)
+- Summarize what happened
+- Plan for next week
+</code></pre>
+
+        <h3>Reactive Tasks (on-demand)</h3>
+        <pre><code># Listen for messages and respond
+- If mentioned in group chat → participate
+- If task added to queue → pick it up
+- If error occurs → investigate and fix
+</code></pre>
+
+        <h2>Example: Research Agent Loop</h2>
+
+        <pre><code>1. Read research/queue.md for tasks
+2. Find next PENDING task (HIGH > MEDIUM > LOW)
+3. Fetch seed URLs, verify reachable
+4. Call Gemini 2.5 Flash with ground truth
+5. Write findings to research/findings/
+6. Ingest to RAG system (auto-sync)
+7. Auto-generate follow-up tasks
+8. Update heartbeat-state.json
+9. Loop (next task)
+
+Cost: ~$0.03-0.05 per task (Gemini 2.5 Flash)
+Yield: 5-10 new knowledge chunks per task
+</code></pre>
+
+        <h2>Best Practices</h2>
+
+        <div class="callout success">
+            <strong>✅ Do This:</strong>
+            <ul>
+                <li>Use RAG for grounded, sourced answers</li>
+                <li>Cache locally (reduce API calls)</li>
+                <li>Log decisions (audit trail)</li>
+                <li>Use local inference when possible (cost savings)</li>
+                <li>Batch API calls (reduce latency)</li>
+                <li>Say "I don't know" rather than hallucinate</li>
+                <li>Ask before taking external actions</li>
+                <li>Test before deploying to production</li>
+            </ul>
+        </div>
+
+        <div class="callout warning">
+            <strong>❌ Don't Do This:</strong>
+            <ul>
+                <li>Hallucinate or make up facts</li>
+                <li>Spam external APIs</li>
+                <li>Exfiltrate private data</li>
+                <li>Run destructive commands without confirmation</li>
+                <li>Ignore rate limits or API quotas</li>
+                <li>Store secrets in code</li>
+                <li>Bypass safety guardrails</li>
+                <li>Deploy untested changes to production</li>
+            </ul>
+        </div>
+
+        <h2>Testing Your Agent</h2>
+
+        <pre><code># Run locally first
+openclaw agent run --config openclaw.json --local
+
+# Test with safe API key (limited quota)
+export API_KEY=test-key-with-limit
+
+# Verify memory system
+ls memory/
+cat MEMORY.md
+
+# Check logs
+tail -100 ~/.openclaw/logs/agent.log
+
+# Then deploy to production
+openclaw agent deploy --production
+</code></pre>
+
+        <h2>Resources</h2>
+
+        <ul>
+            <li><a href="https://docs.openclaw.ai">OpenClaw Docs</a> — Official documentation</li>
+            <li><a href="https://clawhub.com">ClawHub</a> — Skill marketplace</li>
+            <li><a href="/ai-hub/guides/rag-system.html">RAG Systems</a> — Knowledge base integration</li>
+            <li><a href="/ai-hub/guides/local-inference.html">Local Inference</a> — Running models locally</li>
+            <li><a href="https://github.com/toastmanAu/rag-system">RAG System Repo</a> — Multi-agent example</li>
+        </ul>
+
+        <h2>Going Deeper</h2>
+
+        <ul>
+            <li><strong>Multi-agent frameworks:</strong> Crew AI, AutoGen, LangChain</li>
+            <li><strong>Knowledge bases:</strong> FAISS, Milvus, Weaviate, Pinecone</li>
+            <li><strong>Local models:</strong> Ollama, vLLM, LocalAI</li>
+            <li><strong>Model tuning:</strong> LoRA, fine-tuning on domain data</li>
+            <li><strong>Eval & monitoring:</strong> Logging, tracing, metrics</li>
+        </ul>
+
+        <p style="margin-top: 3rem; color: var(--muted);">
+            <a href="/ai-hub/">← Back to AI Hub</a>
+        </p>
+    </div>
+</body>
+</html>

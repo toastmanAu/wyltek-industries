@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw Setup Guide</title>
+    <style>
+        :root {
+            --bg: #0a0c0f;
+            --surface: #111318;
+            --border: #1e2430;
+            --accent: #00c8ff;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 15, 0.93);
+            z-index: 100;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        .logo { color: var(--text); font-weight: 700; font-size: 1.1rem; }
+        .guide-content {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        h1 { color: var(--accent); margin-bottom: 1rem; font-size: 1.8rem; }
+        h2 { margin-top: 2rem; color: #7b5cfa; margin-bottom: 1rem; font-size: 1.2rem; }
+        h3 { margin-top: 1.5rem; color: var(--text); font-size: 1rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+        code {
+            background: rgba(0, 200, 255, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        pre {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        pre code { background: none; border: none; padding: 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th { background: rgba(123, 92, 250, 0.1); }
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        a:hover { text-decoration: underline; }
+        .back {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--muted);
+        }
+        .back:hover { color: var(--text); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Wyltek Industries — AI Hub</div>
+    </header>
+
+    <div class="guide-content">
+        <a href="/ai-hub/" class="back">← Back to AI Hub</a>
+
+        <h1>🚀 OpenClaw Agent Setup</h1>
+
+        <h2>System Requirements</h2>
+        <p>OpenClaw runs on Linux (arm64, amd64, armv7) and macOS. Minimum:</p>
+        <ul>
+            <li><strong>CPU:</strong> Dual-core 1.5+ GHz (single-board computers to servers)</li>
+            <li><strong>RAM:</strong> 2GB minimum, 4GB recommended</li>
+            <li><strong>Disk:</strong> 8GB free (more for models)</li>
+            <li><strong>Network:</strong> Stable internet connection</li>
+        </ul>
+
+        <h2>Installation</h2>
+
+        <h3>Linux (ARM64 / Raspberry Pi 5, Orange Pi)</h3>
+        <pre><code># Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install Node.js 22+
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Install OpenClaw
+npm install -g openclaw
+
+# Initialize agent
+openclaw init --non-interactive
+openclaw pairing approve telegram CODE_HERE
+
+# Start
+openclaw agent run
+</code></pre>
+
+        <h3>Linux (AMD64 / x86 desktop, server)</h3>
+        <pre><code># Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install Node.js 22+
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Install OpenClaw
+npm install -g openclaw
+
+# Initialize agent
+openclaw init --non-interactive
+openclaw pairing approve telegram CODE_HERE
+
+# Start
+openclaw agent run
+</code></pre>
+
+        <h3>macOS</h3>
+        <pre><code># Install Homebrew if needed
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install Node.js
+brew install node@22
+
+# Install OpenClaw
+npm install -g openclaw
+
+# Initialize agent
+openclaw init --non-interactive
+openclaw pairing approve telegram CODE_HERE
+
+# Start
+openclaw agent run
+</code></pre>
+
+        <h2>Configuration</h2>
+        <p>Edit <code>~/.openclaw/openclaw.json</code>:</p>
+        <pre><code>{
+  "agent": {
+    "name": "MyAgent",
+    "model": "anthropic/claude-sonnet-4-5"
+  },
+  "channels": {
+    "telegram": { "enabled": true }
+  },
+  "plugins": {
+    "entries": {
+      "telegram": { "enabled": true }
+    }
+  }
+}
+</code></pre>
+
+        <h2>Model Selection & Local Inference</h2>
+        <p>OpenClaw can use both cloud APIs (Anthropic Claude, OpenAI) and local models (Ollama, vLLM).</p>
+        
+        <h3>Cloud Models (Default)</h3>
+        <ul>
+            <li><strong>Anthropic Claude Sonnet 4.5:</strong> Primary model, best reasoning</li>
+            <li><strong>CKBDev API:</strong> Free shared tier (fallback)</li>
+            <li><strong>OpenAI GPT-5:</strong> Optional, requires API key</li>
+        </ul>
+
+        <h3>Local Models</h3>
+        <p>For cost savings (85% reduction), run local Ollama inference:</p>
+        <pre><code># Install Ollama
+curl https://ollama.ai/install.sh | sh
+
+# Download a model
+ollama pull qwen2.5:7b
+
+# OpenClaw will auto-detect on localhost:11434
+</code></pre>
+
+        <h3>Hardware & Model Recommendations</h3>
+        <p>See <a href="local-inference.html">Local LLM Inference Guide</a> for 20+ hardware tiers (Raspberry Pi to H100) with:</p>
+        <ul>
+            <li>✅ Complete hardware specs (Jetson, Mac Studio, RTX 3090/4090/5090, etc.)</li>
+            <li>✅ Cost estimates ($15 to $40k+)</li>
+            <li>✅ Throughput benchmarks</li>
+            <li>✅ Model recommendations per tier</li>
+        </ul>
+
+        <h3>Configure Local Inference in OpenClaw</h3>
+        <p>Edit <code>openclaw.json</code>:</p>
+        <pre><code>{
+  "agent": {
+    "name": "MyAgent",
+    "model": "ollama/qwen2.5:7b"  ← Switch to local model
+  },
+  "providers": {
+    "ollama": {
+      "endpoint": "http://localhost:11434",
+      "fallback": "anthropic/claude-sonnet-4-5"  ← Cloud fallback if Ollama down
+    }
+  }
+}
+</code></pre>
+
+        <h2>Local Model Setup (Optional)</h2>
+        <p>For cost savings, use local Ollama inference:</p>
+        <pre><code># Install Ollama
+curl https://ollama.ai/install.sh | sh
+
+# Run locally
+ollama run qwen2.5:7b
+
+# Configure OpenClaw to use local inference
+# See: Local LLM Inference guide in AI Hub
+</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <ul>
+            <li><strong>Telegram auth fails:</strong> DM the bot first, then use correct code</li>
+            <li><strong>Model timeouts:</strong> Increase timeout in config, check local inference health</li>
+            <li><strong>Disk full:</strong> Models can be large; use quantized versions (GGUF)</li>
+            <li><strong>Permission denied:</strong> You may need to add your user to the dialout group: <code>sudo usermod -a -G dialout $USER</code></li>
+        </ul>
+
+        <p style="margin-top: 3rem; color: var(--muted);">
+            <a href="/ai-hub/">← Back to AI Hub</a>
+        </p>
+    </div>
+</body>
+</html>

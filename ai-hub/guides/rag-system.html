@@ -1,0 +1,439 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Systems Guide - Wyltek AI Hub</title>
+    <style>
+        :root {
+            --bg: #0a0c0f;
+            --surface: #111318;
+            --border: #1e2430;
+            --accent: #00c8ff;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 15, 0.93);
+            z-index: 100;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        .logo { color: var(--text); font-weight: 700; font-size: 1.1rem; }
+        .guide-content {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        h1 { color: var(--accent); margin-bottom: 1rem; font-size: 1.8rem; }
+        h2 { margin-top: 2rem; color: #7b5cfa; margin-bottom: 1rem; font-size: 1.2rem; }
+        h3 { margin-top: 1.5rem; color: var(--text); font-size: 1rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+        code {
+            background: rgba(0, 200, 255, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        pre {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        pre code { background: none; border: none; padding: 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            font-size: 0.9rem;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th { background: rgba(123, 92, 250, 0.1); font-weight: 700; }
+        tr:hover { background: rgba(0, 200, 255, 0.05); }
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        a:hover { text-decoration: underline; }
+        .back {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--muted);
+        }
+        .back:hover { color: var(--text); }
+        .tier-label {
+            display: inline-block;
+            padding: 0.2rem 0.5rem;
+            border-radius: 3px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            margin-right: 0.5rem;
+        }
+        .tier-minimal { background: rgba(100, 150, 255, 0.2); color: #6496ff; }
+        .tier-entry { background: rgba(0, 229, 160, 0.2); color: #00e5a0; }
+        .tier-mid { background: rgba(0, 200, 255, 0.2); color: #00c8ff; }
+        .tier-high { background: rgba(255, 140, 66, 0.2); color: #ff8c42; }
+        .tier-enterprise { background: rgba(123, 92, 250, 0.2); color: #7b5cfa; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Wyltek Industries — AI Hub</div>
+    </header>
+
+    <div class="guide-content">
+        <a href="/ai-hub/" class="back">← Back to AI Hub</a>
+
+        <h1>📖 Retrieval-Augmented Generation (RAG)</h1>
+
+        <h2>What is RAG?</h2>
+        <p>RAG combines knowledge retrieval + LLM generation:</p>
+        <ol>
+            <li>User asks a question</li>
+            <li>System retrieves relevant documents (vector similarity search)</li>
+            <li>LLM reads the documents + answers based on context</li>
+            <li>Result: accurate, sourced, up-to-date answers</li>
+        </ol>
+
+        <h2>Why RAG?</h2>
+        <ul>
+            <li>✅ <strong>Reduces hallucinations</strong> — grounded in real data</li>
+            <li>✅ <strong>Keeps knowledge fresh</strong> — add new documents anytime</li>
+            <li>✅ <strong>Cheaper than fine-tuning</strong> — no retraining needed</li>
+            <li>✅ <strong>Citable</strong> — sources included in responses</li>
+            <li>✅ <strong>Domain-specific</strong> — works on proprietary data</li>
+        </ul>
+
+        <h2>Wyltek RAG System Architecture</h2>
+        <pre><code>Documents (research, blog posts, internal docs)
+    ↓
+Chunking (300-token chunks with overlap)
+    ↓
+Embedding (sentence-transformers: all-MiniLM-L6-v2, 384-dim)
+    ↓
+Vector Store (FAISS: fast similarity search + SQLite metadata)
+    ↓
+Retrieval (top-K similar chunks + metadata filtering)
+    ↓
+LLM Generation (context-aware answering with temp/top-p control)
+    ↓
+Cited Response (with source attribution)
+</code></pre>
+
+        <h2>Deploy Wyltek RAG</h2>
+        <pre><code># Clone from GitHub
+git clone https://github.com/toastmanAu/rag-system.git ~/rag-system
+
+# Setup
+cd ~/rag-system
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Run on port 9990
+python3 app.py
+
+# Test health
+curl http://localhost:9990/health
+# → {"status": "ok", "service": "rag-system"}
+</code></pre>
+
+        <h2>Ingest Documents</h2>
+        <pre><code>curl -X POST http://localhost:9990/rag/ingest \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com/doc",
+    "html": "<html>...</html>",
+    "tags": ["research", "fiber", "payments"]
+  }'
+</code></pre>
+
+        <h2>Query with RAG</h2>
+        <pre><code># Retrieve context (no LLM)
+curl -X POST http://localhost:9990/rag/retrieve \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "How do I set up Fiber payments?",
+    "agent_id": "kernel",
+    "k": 5
+  }'
+
+# Ask with LLM (retrieve + generate)
+curl -X POST http://localhost:9990/rag/ask \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "How do I set up Fiber payments?",
+    "agent_id": "kernel",
+    "temperature": 0.2
+  }'
+</code></pre>
+
+        <h2>Multi-Agent Profiles</h2>
+        <p>Configure different agents to interpret the same knowledge differently:</p>
+        <pre><code>agents.yaml:
+
+agents:
+  kernel:
+    agent_name: "Kernel"
+    temperature: 0.2
+    retrieval_config:
+      k_retrieve: 20
+      k_rerank: 5
+    source_weights:
+      docs: 1.0
+      research-findings: 0.8
+
+  shannon:
+    agent_name: "Shannon"
+    temperature: 0.7
+    retrieval_config:
+      k_retrieve: 20
+      k_rerank: 5
+    source_weights:
+      blog: 1.0
+      research-findings: 0.6
+</code></pre>
+
+        <h2>Hardware Tiers for RAG Deployment</h2>
+        <p>Choose based on knowledge base size, query volume, and latency requirements:</p>
+
+        <table>
+            <tr>
+                <th>Tier</th>
+                <th>Hardware</th>
+                <th>RAM</th>
+                <th>Storage</th>
+                <th>Throughput</th>
+                <th>Cost (USD)</th>
+                <th>Use Case</th>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-minimal">Minimal</span></td>
+                <td>Raspberry Pi Zero 2 W</td>
+                <td>512MB</td>
+                <td>64GB SD</td>
+                <td>~0.5 req/s</td>
+                <td>$15</td>
+                <td>Hobby, embedded</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-minimal">Minimal</span></td>
+                <td>Raspberry Pi 4 (2GB)</td>
+                <td>2GB</td>
+                <td>32GB SD</td>
+                <td>~2 req/s</td>
+                <td>$35</td>
+                <td>Personal RAG, edge device</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-entry">Entry</span></td>
+                <td>Raspberry Pi 5 (4GB)</td>
+                <td>4GB</td>
+                <td>128GB SSD</td>
+                <td>~3 req/s</td>
+                <td>$65</td>
+                <td>Small team RAG</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-entry">Entry</span></td>
+                <td>Orange Pi 5 Plus (16GB)</td>
+                <td>16GB</td>
+                <td>256GB NVMe</td>
+                <td>~5 req/s</td>
+                <td>$120</td>
+                <td>Personal RAG server</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-entry">Entry</span></td>
+                <td>Jetson Orin Nano (8GB)</td>
+                <td>8GB</td>
+                <td>128GB NVMe</td>
+                <td>~8 req/s</td>
+                <td>$199</td>
+                <td>Edge AI RAG with GPU</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-mid">Mid</span></td>
+                <td>Intel NUC 12 (i5-1240P, 32GB)</td>
+                <td>32GB</td>
+                <td>512GB SSD</td>
+                <td>~15 req/s</td>
+                <td>$600</td>
+                <td>Home/office RAG server</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-mid">Mid</span></td>
+                <td>Desktop (Ryzen 5 5600X, 32GB)</td>
+                <td>32GB</td>
+                <td>1TB SSD</td>
+                <td>~20 req/s</td>
+                <td>$800</td>
+                <td>Single workstation</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-mid">Mid</span></td>
+                <td>Jetson Orin AGX (64GB)</td>
+                <td>64GB</td>
+                <td>512GB NVMe</td>
+                <td>~25 req/s</td>
+                <td>$999</td>
+                <td>AI research, embedded RAG</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-high">High</span></td>
+                <td>Desktop (RTX 3090, 64GB)</td>
+                <td>64GB</td>
+                <td>2TB SSD</td>
+                <td>~40 req/s</td>
+                <td>$2,500</td>
+                <td>Team RAG with GPU accel</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-high">High</span></td>
+                <td>Desktop (RTX 4070 Super, 32GB)</td>
+                <td>32GB</td>
+                <td>1TB SSD</td>
+                <td>~35 req/s</td>
+                <td>$2,000</td>
+                <td>Balanced GPU RAG</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-high">High</span></td>
+                <td>Desktop (RTX 4080, 48GB)</td>
+                <td>48GB</td>
+                <td>2TB SSD</td>
+                <td>~50 req/s</td>
+                <td>$3,200</td>
+                <td>Heavy-duty RAG + LLM</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-high">High</span></td>
+                <td>Desktop (RTX 4090, 128GB)</td>
+                <td>128GB</td>
+                <td>4TB SSD</td>
+                <td>~80 req/s</td>
+                <td>$5,000</td>
+                <td>Production RAG cluster node</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-high">High</span></td>
+                <td>Desktop (AMD R9 7950X, 192GB)</td>
+                <td>192GB</td>
+                <td>4TB SSD</td>
+                <td>~60 req/s</td>
+                <td>$4,500</td>
+                <td>Enterprise RAG (CPU-heavy)</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-enterprise">Enterprise</span></td>
+                <td>Mac Studio (M2 Ultra, 128GB)</td>
+                <td>128GB</td>
+                <td>2TB SSD</td>
+                <td>~45 req/s</td>
+                <td>$4,000</td>
+                <td>Apple ecosystem RAG</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-enterprise">Enterprise</span></td>
+                <td>Mac Studio (M2 Max, 96GB)</td>
+                <td>96GB</td>
+                <td>2TB SSD</td>
+                <td>~35 req/s</td>
+                <td>$3,500</td>
+                <td>Mac team RAG</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-enterprise">Enterprise</span></td>
+                <td>Nvidia Jetson AGX Orin (64GB)</td>
+                <td>64GB</td>
+                <td>512GB NVMe</td>
+                <td>~30 req/s</td>
+                <td>$999</td>
+                <td>Edge AI RAG deployment</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-enterprise">Enterprise</span></td>
+                <td>Server (Dual Xeon, RTX 5090, 768GB)</td>
+                <td>768GB</td>
+                <td>8TB SSD/NVMe</td>
+                <td>~200+ req/s</td>
+                <td>$15,000+</td>
+                <td>Multi-tenant RAG service</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-enterprise">Enterprise</span></td>
+                <td>Server (Dual Xeon, RTX 6000 Ada, 512GB)</td>
+                <td>512GB</td>
+                <td>8TB SSD/NVMe</td>
+                <td>~150 req/s</td>
+                <td>$12,000</td>
+                <td>Professional RAG (multi-GPU)</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-enterprise">Enterprise</span></td>
+                <td>H100 GPU (40GB) + Server</td>
+                <td>512GB</td>
+                <td>8TB SSD</td>
+                <td>~300+ req/s</td>
+                <td>$40,000+</td>
+                <td>High-volume RAG with fine-tuning</td>
+            </tr>
+            <tr>
+                <td><span class="tier-label tier-enterprise">Enterprise</span></td>
+                <td>Cloud (AWS g4dn.12xlarge)</td>
+                <td>192GB</td>
+                <td>4x 550GB</td>
+                <td>~100 req/s</td>
+                <td>$5/hour</td>
+                <td>Scalable cloud RAG (on-demand)</td>
+            </tr>
+        </table>
+
+        <h2>Key Metrics</h2>
+        <ul>
+            <li><strong>Throughput:</strong> Requests per second (small batch)</li>
+            <li><strong>Latency:</strong> Query → Response time (typically 100-2000ms)</li>
+            <li><strong>Knowledge base size:</strong> Up to 10M+ chunks (scalable)</li>
+            <li><strong>Embedding dimension:</strong> 384-1024 dims (all-MiniLM: 384)</li>
+            <li><strong>Vector DB:</strong> FAISS (in-memory) or Milvus/Weaviate (distributed)</li>
+        </ul>
+
+        <h2>Cost vs Performance</h2>
+        <ul>
+            <li><strong>Budget:</strong> Raspberry Pi 5 + local Ollama (~$200 total) = perfect for hobby/learning</li>
+            <li><strong>Small team:</strong> Desktop + RTX 4070 (~$2,000) = fast, reliable, no cloud costs</li>
+            <li><strong>Production:</strong> Server + RTX 4090/5090 (~$5,000-8,000) = handles high volume, multi-user</li>
+            <li><strong>Enterprise:</strong> Multi-GPU / H100 ($15k+) = unlimited scale, fine-tuning, compliance</li>
+        </ul>
+
+        <p style="margin-top: 3rem; color: var(--muted);">
+            <a href="/ai-hub/">← Back to AI Hub</a>
+        </p>
+    </div>
+</body>
+</html>

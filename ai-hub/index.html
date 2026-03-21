@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Resource Hub - Wyltek Industries</title>
+    <style>
+        :root {
+            --bg:       #0a0c0f;
+            --surface:  #111318;
+            --surface2: #181c23;
+            --border:   #1e2430;
+            --accent:   #00c8ff;
+            --accent2:  #7b5cfa;
+            --green:    #00e5a0;
+            --text:     #e2e8f0;
+            --muted:    #64748b;
+            --tag-bg:   #1a2035;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Header — matching main site */
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 15, 0.93);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+        }
+
+        .header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.02em;
+            color: var(--text);
+        }
+
+        .logo img {
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            object-fit: cover;
+        }
+
+        nav {
+            display: flex;
+            gap: 1.5rem;
+        }
+
+        nav a {
+            color: var(--muted);
+            font-size: 0.9rem;
+            transition: color 0.2s;
+        }
+
+        nav a:hover,
+        nav a.active {
+            color: var(--text);
+            text-decoration: none;
+        }
+
+        /* Mobile nav toggle */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        @media (max-width: 700px) {
+            nav { display: none; flex-direction: column; gap: 0; position: absolute;
+                top: 100%; left: 0; right: 0; background: var(--surface);
+                border-bottom: 1px solid var(--border); padding: 0.5rem 0; z-index: 999; }
+            nav.open { display: flex; }
+            nav a { padding: 0.7rem 1.5rem; font-size: 1rem; border-bottom: 1px solid var(--border); }
+            nav a:last-child { border-bottom: none; }
+            .nav-toggle { display: block; }
+            .header-inner { position: relative; }
+        }
+
+        /* Main content */
+        .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+
+        .page-header {
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .page-header p {
+            color: var(--muted);
+            font-size: 1rem;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+            border-bottom: 1px solid var(--border);
+            flex-wrap: wrap;
+        }
+
+        .tab-button {
+            background: none;
+            border: none;
+            color: var(--muted);
+            padding: 1rem 1.5rem;
+            cursor: pointer;
+            font-size: 0.9rem;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .tab-button:hover {
+            color: var(--text);
+        }
+
+        .tab-button.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        /* Tab content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Feed */
+        .feed {
+            display: grid;
+            gap: 1.2rem;
+        }
+
+        .post {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.4rem;
+            transition: border-color 0.2s;
+        }
+
+        .post:hover {
+            border-color: var(--accent);
+        }
+
+        .post-title {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        .post-meta {
+            display: flex;
+            gap: 1rem;
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .post-content {
+            color: var(--muted);
+            margin: 1rem 0;
+            line-height: 1.6;
+        }
+
+        .post-tags {
+            display: flex;
+            gap: 0.5rem;
+            flex-wrap: wrap;
+            margin-top: 1rem;
+        }
+
+        .tag {
+            background: var(--surface2);
+            color: var(--accent);
+            padding: 0.25rem 0.75rem;
+            border-radius: 4px;
+            font-size: 0.75rem;
+            border: 1px solid var(--border);
+        }
+
+        .post-link {
+            display: inline-block;
+            color: var(--accent);
+            padding: 0.5rem 1rem;
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            transition: all 0.2s;
+            margin-top: 0.5rem;
+        }
+
+        .post-link:hover {
+            background: var(--surface2);
+            border-color: var(--accent);
+            text-decoration: none;
+        }
+
+        /* Grid */
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 1.2rem;
+        }
+
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.4rem;
+            transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+        }
+
+        .card-icon {
+            font-size: 1.8rem;
+        }
+
+        .card-title {
+            font-weight: 700;
+            color: var(--text);
+        }
+
+        .card-desc {
+            color: var(--muted);
+            font-size: 0.9rem;
+        }
+
+        /* Empty state */
+        .empty-state {
+            text-align: center;
+            padding: 3rem;
+            color: var(--muted);
+        }
+
+        .empty-state h3 {
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
+        }
+
+        .spinner {
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 1rem;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container { padding: 1rem; }
+            .page-header h1 { font-size: 1.5rem; }
+            nav { gap: 0.75rem; font-size: 0.8rem; }
+            .tabs { flex-direction: column; border-left: 2px solid var(--border); border-bottom: none; }
+            .tab-button { border-left: 2px solid transparent; border-bottom: none; padding: 0.75rem 1rem; }
+            .tab-button.active { border-left-color: var(--accent); }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-inner">
+            <a href="/" class="logo">
+                <img src="/wyltek-mark.png" alt="Wyltek">
+                Wyltek Industries
+            </a>
+            <nav id="mainNav">
+                <a href="/">Home</a>
+                <a href="/mint/">DOB Minter</a>
+                <a href="/ai-hub/" class="active">AI Hub</a>
+            </nav>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="page-header">
+            <h1>🤖 AI Resource Hub</h1>
+            <p>Community knowledge base for AI tools, research, and agent development</p>
+        </div>
+
+        <div class="tabs">
+            <button class="tab-button active" data-tab="articles">📰 Articles</button>
+            <button class="tab-button" data-tab="guides">📚 Guides</button>
+            <button class="tab-button" data-tab="tools">🛠️ Tools</button>
+        </div>
+
+        <!-- Articles Tab -->
+        <div id="articles" class="tab-content active">
+            <div class="feed">
+                <div class="empty-state">
+                    <h3>Member Content</h3>
+                    <p>Articles and tools shared by the Wyltek AI community</p>
+                    <p style="margin-top: 1rem;">Coming soon — content posted by members</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Guides Tab -->
+        <div id="guides" class="tab-content">
+            <div class="grid">
+                <a href="guides/openclaw-setup.html" class="card">
+                    <div class="card-icon">⚙️</div>
+                    <div class="card-title">OpenClaw Setup</div>
+                    <div class="card-desc">Installing and configuring OpenClaw agents</div>
+                </a>
+                <a href="guides/local-inference.html" class="card">
+                    <div class="card-icon">🧠</div>
+                    <div class="card-title">Local LLM Inference</div>
+                    <div class="card-desc">Running Ollama models locally, optimization tips</div>
+                </a>
+                <a href="guides/rag-system.html" class="card">
+                    <div class="card-icon">📖</div>
+                    <div class="card-title">RAG Systems</div>
+                    <div class="card-desc">Building retrieval-augmented generation</div>
+                </a>
+                <a href="guides/agent-development.html" class="card">
+                    <div class="card-icon">🤖</div>
+                    <div class="card-title">Agent Development</div>
+                    <div class="card-desc">Creating and deploying agentic systems</div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Tools Tab -->
+        <div id="tools" class="tab-content">
+            <div class="grid">
+                <a href="https://github.com/toastmanAu/rag-system" target="_blank" class="card">
+                    <div class="card-icon">🔍</div>
+                    <div class="card-title">RAG System</div>
+                    <div class="card-desc">Multi-agent retrieval-augmented generation with FAISS</div>
+                </a>
+                <a href="https://github.com/toastmanAu/local-task-router" target="_blank" class="card">
+                    <div class="card-icon">⚙️</div>
+                    <div class="card-title">Local Task Router</div>
+                    <div class="card-desc">Route AI tasks to local Ollama machines, save 85% on inference</div>
+                </a>
+                <a href="https://github.com/toastmanAu/ckb-access" target="_blank" class="card">
+                    <div class="card-icon">📦</div>
+                    <div class="card-title">CKB Access Installers</div>
+                    <div class="card-desc">One-command installers for Fiber, CKB nodes, tools</div>
+                </a>
+                <a href="https://docs.openclaw.ai" target="_blank" class="card">
+                    <div class="card-icon">📖</div>
+                    <div class="card-title">OpenClaw Docs</div>
+                    <div class="card-desc">Official OpenClaw agent framework documentation</div>
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/nav-toggle.js"></script>
+    <script>
+        // Tab switching
+        document.querySelectorAll('.tab-button').forEach(btn => {
+            btn.addEventListener('click', (e) => {
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+                
+                const tabId = e.target.dataset.tab;
+                document.getElementById(tabId).classList.add('active');
+                e.target.classList.add('active');
+            });
+        });
+    </script>
+</body>
+</html>
