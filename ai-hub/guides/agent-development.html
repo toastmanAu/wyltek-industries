@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Development - Wyltek AI Hub</title>
+    <link rel="stylesheet" href="../../css/main.css">
+    <style>
+        .guide-content { max-width: 800px; margin: 2rem auto; padding: 2rem; }
+        .guide-content h1 { color: #6496ff; margin-bottom: 1rem; }
+        .guide-content h2 { margin-top: 2rem; color: #a0d0ff; }
+        .guide-content code { background: rgba(100,150,255,0.1); padding: 0.2rem 0.4rem; border-radius: 3px; }
+        .guide-content pre { background: rgba(0,0,0,0.5); padding: 1rem; border-radius: 6px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="guide-content">
+        <h1>🤖 OpenClaw Agent Development</h1>
+        
+        <h2>Agent Personality</h2>
+        <p>Define agent identity in <code>SOUL.md</code>:</p>
+        <pre><code># My Name
+
+## Core Truths
+
+Be genuinely helpful, not performatively helpful.
+Have opinions. Be resourceful. Earn trust through competence.
+
+## Vibe
+
+Be the assistant you'd actually want to talk to.
+Concise when needed, thorough when it matters.
+</code></pre>
+
+        <h2>Memory System</h2>
+        <ul>
+            <li><strong>Session:</strong> Current conversation context</li>
+            <li><strong>Daily:</strong> memory/YYYY-MM-DD.md (raw logs)</li>
+            <li><strong>Long-term:</strong> MEMORY.md (curated wisdom)</li>
+        </ul>
+
+        <h2>Skills & Tools</h2>
+        <p>Create reusable skills:</p>
+        <pre><code># ~/.openclaw/skills/my-skill/
+├── SKILL.md          # Documentation
+├── index.js          # Implementation
+├── package.json
+└── README.md
+</code></pre>
+
+        <h2>Multi-Agent Coordination</h2>
+        <pre><code># In agent code:
+const subagents = require('@openclaw/subagents');
+
+// Spawn worker agent
+const result = await subagents.spawn({
+  agentId: 'worker-id',
+  task: 'Research Fiber protocol',
+  model: 'local-qwen:7b'
+});
+
+// Wait for result
+console.log(result.output);
+</code></pre>
+
+        <h2>Example: Research Agent Loop</h2>
+        <pre><code>1. Read queue.md for research tasks
+2. Pick PENDING task (HIGH > MEDIUM > LOW)
+3. Fetch seed URLs
+4. Call Gemini with ground truth context
+5. Write findings to research/findings/
+6. Ingest to RAG system
+7. Auto-generate follow-up tasks
+8. Loop (new wave of research)
+</code></pre>
+
+        <h2>Best Practices</h2>
+        <ul>
+            <li>✅ Use RAG for grounded answers</li>
+            <li>✅ Cache frequently-accessed data locally</li>
+            <li>✅ Log decisions (for audit trail)</li>
+            <li>✅ Use local inference when possible</li>
+            <li>✅ Batch API calls (reduce latency)</li>
+            <li>❌ Don't hallucinate (say "I don't know")</li>
+            <li>❌ Don't spam external APIs</li>
+        </ul>
+
+        <p style="margin-top: 3rem; color: #808080; font-size: 0.9rem;">
+            <a href="/ai-hub/">← Back to AI Hub</a>
+        </p>
+    </div>
+</body>
+</html>

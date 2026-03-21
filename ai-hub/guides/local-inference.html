@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Local LLM Inference - Wyltek AI Hub</title>
+    <link rel="stylesheet" href="../../css/main.css">
+    <style>
+        .guide-content { max-width: 800px; margin: 2rem auto; padding: 2rem; }
+        .guide-content h1 { color: #6496ff; margin-bottom: 1rem; }
+        .guide-content h2 { margin-top: 2rem; color: #a0d0ff; }
+        .guide-content code { background: rgba(100,150,255,0.1); padding: 0.2rem 0.4rem; border-radius: 3px; }
+        .guide-content pre { background: rgba(0,0,0,0.5); padding: 1rem; border-radius: 6px; overflow-x: auto; }
+        table { width: 100%; border-collapse: collapse; margin: 1rem 0; }
+        th, td { border: 1px solid rgba(100,150,255,0.2); padding: 0.75rem; text-align: left; }
+        th { background: rgba(100,150,255,0.1); }
+    </style>
+</head>
+<body>
+    <div class="guide-content">
+        <h1>🧠 Local LLM Inference Setup</h1>
+        
+        <h2>Why Local Inference?</h2>
+        <ul>
+            <li>💰 60-80% cost reduction vs API calls</li>
+            <li>🔒 Keep data private (on-device)</li>
+            <li>⚡ Sub-second latency (local network)</li>
+            <li>🚀 Run agents 24/7 affordably</li>
+        </ul>
+
+        <h2>Model Selection by Hardware</h2>
+        <table>
+            <tr>
+                <th>Hardware</th>
+                <th>Recommended Model</th>
+                <th>Speed</th>
+                <th>Quality</th>
+            </tr>
+            <tr>
+                <td>Pi 5 (8GB)</td>
+                <td>qwen2.5:3b-q4</td>
+                <td>~3 tok/s</td>
+                <td>Good</td>
+            </tr>
+            <tr>
+                <td>N100 (15GB)</td>
+                <td>qwen2.5:7b-q4</td>
+                <td>~5 tok/s</td>
+                <td>Better</td>
+            </tr>
+            <tr>
+                <td>x86 + GPU (RTX 3060)</td>
+                <td>qwen3.5:27b</td>
+                <td>~30 tok/s</td>
+                <td>Excellent</td>
+            </tr>
+            <tr>
+                <td>OPi5+ (16GB)</td>
+                <td>qwen2.5:7b-q4</td>
+                <td>~4 tok/s</td>
+                <td>Better</td>
+            </tr>
+        </table>
+
+        <h2>Installation & Running</h2>
+        <pre><code># Install Ollama (all platforms)
+curl https://ollama.ai/install.sh | sh
+ollama serve
+
+# In another terminal:
+# Pull model (one-time download)
+ollama pull qwen2.5:7b
+
+# Test
+ollama run qwen2.5:7b "What is CKB?"
+</code></pre>
+
+        <h2>Quantization: Speed vs Quality</h2>
+        <ul>
+            <li><strong>Q8 (8-bit):</strong> Best quality, ~2x slower, ~2x larger</li>
+            <li><strong>Q4 (4-bit):</strong> Good quality, fast, recommended baseline</li>
+            <li><strong>Q2 (2-bit):</strong> Very fast, lower quality, for simple tasks</li>
+            <li><strong>1.58-bit (BitNet):</strong> Experimental, ~3x faster, specialized training</li>
+        </ul>
+
+        <h2>Cost Analysis</h2>
+        <p>For 1M tokens/month:</p>
+        <ul>
+            <li><strong>Claude API:</strong> ~$10-15</li>
+            <li><strong>Local Ollama (electricity):</strong> ~$1-2</li>
+            <li><strong>Savings:</strong> 85-90%</li>
+        </ul>
+
+        <h2>Production Setup</h2>
+        <pre><code># Systemd service (Linux)
+cat > /etc/systemd/user/ollama.service << 'UNIT'
+[Unit]
+Description=Ollama Service
+After=network.target
+
+[Service]
+ExecStart=/usr/bin/ollama serve
+Restart=on-failure
+RestartSec=10
+
+[Install]
+WantedBy=default.target
+UNIT
+
+systemctl --user enable ollama
+systemctl --user start ollama
+</code></pre>
+
+        <p style="margin-top: 3rem; color: #808080; font-size: 0.9rem;">
+            <a href="/ai-hub/">← Back to AI Hub</a>
+        </p>
+    </div>
+</body>
+</html>

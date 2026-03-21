@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RAG Systems - Wyltek AI Hub</title>
+    <link rel="stylesheet" href="../../css/main.css">
+    <style>
+        .guide-content { max-width: 800px; margin: 2rem auto; padding: 2rem; }
+        .guide-content h1 { color: #6496ff; margin-bottom: 1rem; }
+        .guide-content h2 { margin-top: 2rem; color: #a0d0ff; }
+        .guide-content code { background: rgba(100,150,255,0.1); padding: 0.2rem 0.4rem; border-radius: 3px; }
+        .guide-content pre { background: rgba(0,0,0,0.5); padding: 1rem; border-radius: 6px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="guide-content">
+        <h1>📖 Retrieval-Augmented Generation (RAG)</h1>
+        
+        <h2>What is RAG?</h2>
+        <p>RAG combines knowledge retrieval + LLM generation:</p>
+        <ol>
+            <li>User asks question</li>
+            <li>System retrieves relevant documents (vector search)</li>
+            <li>LLM reads documents + answers based on context</li>
+            <li>Result: accurate, sourced, up-to-date answers</li>
+        </ol>
+
+        <h2>Why RAG?</h2>
+        <ul>
+            <li>✅ Reduces hallucinations (grounded in real data)</li>
+            <li>✅ Keeps knowledge fresh (add new docs anytime)</li>
+            <li>✅ Cheaper than fine-tuning (no retraining)</li>
+            <li>✅ Citable (sources included in response)</li>
+        </ul>
+
+        <h2>Wyltek RAG System Architecture</h2>
+        <pre><code>Documents (research findings, blog posts)
+    ↓
+Chunking (300-token chunks with overlap)
+    ↓
+Embedding (sentence-transformers: all-MiniLM-L6-v2)
+    ↓
+Vector Store (FAISS: fast similarity search)
+    ↓
+Retrieval (top-5 similar chunks)
+    ↓
+LLM Generation (context-aware answering)
+    ↓
+Cited Response
+</code></pre>
+
+        <h2>Deploy Wyltek RAG</h2>
+        <pre><code># Clone from GitHub
+git clone https://github.com/toastmanAu/rag-system.git ~/rag-system
+
+# Setup
+cd ~/rag-system
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Run
+python3 app.py 9990
+
+# Test
+curl http://localhost:9990/health
+# → {"status": "ok", "service": "rag"}
+</code></pre>
+
+        <h2>Ingest Documents</h2>
+        <pre><code>curl -X POST http://localhost:9990/rag/ingest \
+  -H "Content-Type: application/json" \
+  -d '{
+    "url": "https://example.com/doc",
+    "html": "<html>...</html>",
+    "tags": ["research", "fiber"]
+  }'
+</code></pre>
+
+        <h2>Query with RAG</h2>
+        <pre><code># Retrieve context
+curl -X POST http://localhost:9990/rag/retrieve \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "How do I set up Fiber payments?",
+    "agent_id": "kernel"
+  }'
+
+# Ask with LLM
+curl -X POST http://localhost:9990/rag/ask \
+  -H "Content-Type: application/json" \
+  -d '{
+    "query": "How do I set up Fiber payments?",
+    "agent_id": "kernel",
+    "use_llm": true
+  }'
+</code></pre>
+
+        <h2>Multi-Agent Profiles</h2>
+        <p>Configure different agents to interpret same knowledge differently:</p>
+        <pre><code>agents.yaml:
+
+agents:
+  kernel:
+    agent_name: "Kernel"
+    retrieval_config:
+      k_retrieve: 20
+      k_rerank: 5
+    source_weights:
+      docs: 1.0
+      research-findings: 0.8
+
+  shannon:
+    agent_name: "Shannon"
+    retrieval_config:
+      k_retrieve: 20
+      k_rerank: 5
+    source_weights:
+      blog: 1.0
+      research-findings: 0.6
+</code></pre>
+
+        <p style="margin-top: 3rem; color: #808080; font-size: 0.9rem;">
+            <a href="/ai-hub/">← Back to AI Hub</a>
+        </p>
+    </div>
+</body>
+</html>

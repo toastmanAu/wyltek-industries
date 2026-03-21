@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenClaw Setup Guide - Wyltek AI Hub</title>
+    <link rel="stylesheet" href="../../css/main.css">
+    <style>
+        .guide-content { max-width: 800px; margin: 2rem auto; padding: 2rem; }
+        .guide-content h1 { color: #6496ff; margin-bottom: 1rem; }
+        .guide-content h2 { margin-top: 2rem; color: #a0d0ff; }
+        .guide-content code { background: rgba(100,150,255,0.1); padding: 0.2rem 0.4rem; border-radius: 3px; }
+        .guide-content pre { background: rgba(0,0,0,0.5); padding: 1rem; border-radius: 6px; overflow-x: auto; }
+    </style>
+</head>
+<body>
+    <div class="guide-content">
+        <h1>🚀 OpenClaw Agent Setup</h1>
+        
+        <h2>Hardware Requirements</h2>
+        <ul>
+            <li>Raspberry Pi 5 (8GB+ RAM) or equivalent x86</li>
+            <li>8GB+ storage for agent + models</li>
+            <li>Stable internet connection</li>
+        </ul>
+
+        <h2>Installation (Pi 5)</h2>
+        <pre><code># Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install Node.js 22+
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Install OpenClaw
+npm install -g openclaw
+
+# Initialize agent
+openclaw init --non-interactive
+openclaw pairing approve telegram CODE_HERE
+
+# Start
+openclaw agent run
+</code></pre>
+
+        <h2>Configuration</h2>
+        <p>Edit <code>~/.openclaw/openclaw.json</code>:</p>
+        <pre><code>{
+  "agent": {
+    "name": "Kernel",
+    "model": "ckbdev/claude-sonnet-4-6"
+  },
+  "channels": {
+    "telegram": { "enabled": true }
+  },
+  "plugins": {
+    "entries": {
+      "telegram": { "enabled": true }
+    }
+  }
+}
+</code></pre>
+
+        <h2>Local Model Setup</h2>
+        <p>For cost savings, use local Ollama:</p>
+        <pre><code># Install Ollama
+curl https://ollama.ai/install.sh | sh
+
+# Run locally
+ollama run qwen2.5:14b
+
+# Configure OpenClaw to use local inference
+# See: scripts/local-task.py in Wyltek workspace
+</code></pre>
+
+        <h2>Troubleshooting</h2>
+        <ul>
+            <li><strong>Telegram auth fails:</strong> Ensure DM the bot first, then use correct code</li>
+            <li><strong>Model timeouts:</strong> Increase timeout in config, check local inference health</li>
+            <li><strong>Disk full:</strong> Models can be large; use quantized versions (GGUF)</li>
+        </ul>
+
+        <p style="margin-top: 3rem; color: #808080; font-size: 0.9rem;">
+            <a href="/ai-hub/">← Back to AI Hub</a>
+        </p>
+    </div>
+</body>
+</html>
