@@ -420,45 +420,8 @@
         </div>
     </div>
 
+    <script src="/js/nav-toggle.js"></script>
     <script>
-        // Custom hamburger menu for AI Hub (local, doesn't use site-wide nav-toggle.js)
-        (function () {
-            var btn = document.getElementById('navToggle');
-            var nav = document.getElementById('mainNav');
-            if (!btn || !nav) return;
-
-            function openNav() {
-                nav.classList.add('open');
-                document.body.style.overflow = 'hidden';
-            }
-            function closeNav() {
-                nav.classList.remove('open');
-                document.body.style.overflow = '';
-            }
-            function toggleNav() {
-                nav.classList.contains('open') ? closeNav() : openNav();
-            }
-
-            btn.addEventListener('click', function (e) {
-                e.stopPropagation();
-                toggleNav();
-            });
-
-            document.addEventListener('click', function (e) {
-                if (nav.classList.contains('open') && !nav.contains(e.target) && e.target !== btn) {
-                    closeNav();
-                }
-            });
-
-            nav.addEventListener('click', function (e) {
-                if (e.target.tagName === 'A') closeNav();
-            });
-
-            document.addEventListener('keydown', function (e) {
-                if (e.key === 'Escape') closeNav();
-            });
-        })();
-
         // Tab switching
         document.querySelectorAll('.tab-button').forEach(btn => {
             btn.addEventListener('click', (e) => {
