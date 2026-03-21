@@ -1,6 +1,7 @@
 // research-findings.js — auto-generated from research/*.md
-// 178 completed research findings
+// 179 completed research findings
 const RESEARCH_FINDINGS = [
+  {"id": "fiberquest-micropayment-integration-path", "status": "DONE", "priority": "MEDIUM", "goal": "The FiberQuest project aims to integrate Fiber micropayments into a gaming architecture, leveraging the ESP32-P4 as a client. This integration involve...", "tags": ["fiber", "payment-channels"], "date": "2026-03-22"},
   {"id": "agentpay-openclaw-skill-integration", "status": "DONE", "priority": "MEDIUM", "goal": "This research investigates the integration of `agentPay` into an OpenClaw skill, focusing on architecture, OpenClaw framework, integration points, and...", "tags": ["research"], "date": "2026-03-21"},
   {"id": "fiber-nodejs-client-library-mvp", "status": "DONE", "priority": "MEDIUM", "goal": "This research outlines the design and feasibility for an MVP Node.js/TypeScript client library for the Nervos Fiber payment channel network. The libra...", "tags": ["fiber", "payment-channels"], "date": "2026-03-21"},
   {"id": "wyltek-stack-gap-analysis-2026-q1", "status": "DONE", "priority": "MEDIUM", "goal": "Date: 2026-03-21 The Wyltek Industries stack demonstrates exceptional progress, with core Nervos CKB infrastructure, embedded systems, and a productio...", "tags": ["research"], "date": "2026-03-21"},
