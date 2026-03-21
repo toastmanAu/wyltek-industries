@@ -328,7 +328,6 @@
             <button class="tab-button active" data-tab="articles">📰 Articles</button>
             <button class="tab-button" data-tab="guides">📚 Guides</button>
             <button class="tab-button" data-tab="tools">🛠️ Tools</button>
-            <button class="tab-button" data-tab="research">🔬 Research</button>
         </div>
 
         <!-- Articles Tab -->
@@ -373,29 +372,24 @@
             <div class="grid">
                 <a href="https://github.com/toastmanAu/rag-system" target="_blank" class="card">
                     <div class="card-icon">🔍</div>
-                    <div class="card-title">Wyltek RAG System</div>
-                    <div class="card-desc">Multi-agent retrieval-augmented generation</div>
+                    <div class="card-title">RAG System</div>
+                    <div class="card-desc">Multi-agent retrieval-augmented generation with FAISS</div>
+                </a>
+                <a href="https://github.com/toastmanAu/local-task-router" target="_blank" class="card">
+                    <div class="card-icon">⚙️</div>
+                    <div class="card-title">Local Task Router</div>
+                    <div class="card-desc">Route AI tasks to local Ollama machines, save 85% on inference</div>
                 </a>
                 <a href="https://github.com/toastmanAu/ckb-access" target="_blank" class="card">
                     <div class="card-icon">📦</div>
                     <div class="card-title">CKB Access Installers</div>
-                    <div class="card-desc">One-command installers for Fiber, CKB nodes</div>
+                    <div class="card-desc">One-command installers for Fiber, CKB nodes, tools</div>
                 </a>
                 <a href="https://docs.openclaw.ai" target="_blank" class="card">
-                    <div class="card-icon">📚</div>
+                    <div class="card-icon">📖</div>
                     <div class="card-title">OpenClaw Docs</div>
-                    <div class="card-desc">Official OpenClaw documentation and guides</div>
+                    <div class="card-desc">Official OpenClaw agent framework documentation</div>
                 </a>
-            </div>
-        </div>
-
-        <!-- Research Tab -->
-        <div id="research" class="tab-content">
-            <div id="researchFeed" class="feed">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    Loading research findings...
-                </div>
             </div>
         </div>
     </div>
@@ -412,38 +406,6 @@
                 e.target.classList.add('active');
             });
         });
-
-        // Load research findings
-        async function loadResearch() {
-            try {
-                const response = await fetch('https://wyltekindustries.com/api/research/findings');
-                const data = await response.json();
-                
-                const feed = document.getElementById('researchFeed');
-                
-                if (!data.findings || data.findings.length === 0) {
-                    feed.innerHTML = '<div class="empty-state"><p>No research findings yet</p></div>';
-                    return;
-                }
-
-                feed.innerHTML = data.findings.map(f => `
-                    <div class="post">
-                        <div class="post-title">${f.title}</div>
-                        <div class="post-meta">
-                            <span>📅 ${f.date}</span>
-                            <span>🏷️ ${f.tags.join(', ')}</span>
-                        </div>
-                        <div class="post-content">${f.summary || 'Research finding from our knowledge base'}</div>
-                        <a href="https://wyltekindustries.com/api/research/findings/${f.id}" target="_blank" class="post-link">View Full Finding →</a>
-                    </div>
-                `).join('');
-            } catch (error) {
-                document.getElementById('researchFeed').innerHTML = '<div class="empty-state"><p>Error loading research findings</p></div>';
-            }
-        }
-
-        // Load research when tab is clicked
-        document.querySelector('[data-tab="research"]').addEventListener('click', loadResearch);
     </script>
 </body>
 </html>
