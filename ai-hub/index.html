@@ -15,6 +15,7 @@
             --green:    #00e5a0;
             --text:     #e2e8f0;
             --muted:    #64748b;
+            --tag-bg:   #1a2035;
         }
 
         * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -30,7 +31,7 @@
         a { color: var(--accent); text-decoration: none; }
         a:hover { text-decoration: underline; }
 
-        /* Header */
+        /* Header — matching main site */
         header {
             border-bottom: 1px solid var(--border);
             padding: 0 2rem;
@@ -56,6 +57,7 @@
             gap: 10px;
             font-weight: 700;
             font-size: 1.1rem;
+            letter-spacing: 0.02em;
             color: var(--text);
         }
 
@@ -63,6 +65,7 @@
             width: 32px;
             height: 32px;
             border-radius: 8px;
+            object-fit: cover;
         }
 
         nav {
@@ -80,6 +83,28 @@
         nav a.active {
             color: var(--text);
             text-decoration: none;
+        }
+
+        /* Mobile nav toggle */
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            color: var(--text);
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 0.5rem;
+        }
+
+        @media (max-width: 700px) {
+            nav { display: none; flex-direction: column; gap: 0; position: absolute;
+                top: 100%; left: 0; right: 0; background: var(--surface);
+                border-bottom: 1px solid var(--border); padding: 0.5rem 0; z-index: 999; }
+            nav.open { display: flex; }
+            nav a { padding: 0.7rem 1.5rem; font-size: 1rem; border-bottom: 1px solid var(--border); }
+            nav a:last-child { border-bottom: none; }
+            .nav-toggle { display: block; }
+            .header-inner { position: relative; }
         }
 
         /* Main content */
@@ -310,11 +335,12 @@
                 <img src="/wyltek-mark.png" alt="Wyltek">
                 Wyltek Industries
             </a>
-            <nav>
+            <nav id="mainNav">
                 <a href="/">Home</a>
                 <a href="/mint/">DOB Minter</a>
                 <a href="/ai-hub/" class="active">AI Hub</a>
             </nav>
+            <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
         </div>
     </header>
 
@@ -394,6 +420,7 @@
         </div>
     </div>
 
+    <script src="/js/nav-toggle.js"></script>
     <script>
         // Tab switching
         document.querySelectorAll('.tab-button').forEach(btn => {
