@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 179 completed research findings
+// 180 completed research findings
 const RESEARCH_FINDINGS = [
   {"id": "fiberquest-micropayment-integration-path", "status": "DONE", "priority": "MEDIUM", "goal": "The FiberQuest project aims to integrate Fiber micropayments into a gaming architecture, leveraging the ESP32-P4 as a client. This integration involve...", "tags": ["fiber", "payment-channels"], "date": "2026-03-22"},
   {"id": "agentpay-openclaw-skill-integration", "status": "DONE", "priority": "MEDIUM", "goal": "This research investigates the integration of `agentPay` into an OpenClaw skill, focusing on architecture, OpenClaw framework, integration points, and...", "tags": ["research"], "date": "2026-03-21"},
@@ -173,6 +173,7 @@ const RESEARCH_FINDINGS = [
   {"id": "stack-gap-analysis", "status": "DONE", "priority": "MEDIUM", "goal": "Phill's blockchain/embedded systems stack demonstrates significant strengths, particularly his deep involvement in the Nervos ecosystem, hands-on hard...", "tags": ["research"], "date": "unknown"},
   {"id": "synthesis-ckb-scripting-embedded-lightclient-2026-03-10", "status": "DONE", "priority": "MEDIUM", "goal": "Five research threads completed this session represent a coherent arc: **can we write CKB scripts and verify them at the embedded layer, and can we do...", "tags": ["ckb", "nervos"], "date": "unknown"},
   {"id": "synthesis-stack-gap-4", "status": "DONE", "priority": "MEDIUM", "goal": "Fourth synthesis pass across all completed research. Identifies remaining gaps in the Wyltek embedded CKB stack and queues new research tasks.", "tags": ["research"], "date": "unknown"},
+  {"id": "ultra-low-bit-quantized-models-2026", "status": "DONE", "priority": "MEDIUM", "goal": "This research surveys ultra-low-bit quantized LLMs (1-bit, 2-bit, 3-bit) available on HuggingFace in 2026, focusing on models suitable for consumer ha...", "tags": ["\"image-text-to-text\"", "indicating multi-modal capabilities that include vision. Examples include:"], "date": "unknown"},
   {"id": "usb-ncm-composite-esp32s3", "status": "DONE", "priority": "MEDIUM", "goal": "The ESP32-S3 Arduino core (3.x) has TinyUSB's CDC-NCM class compiled in (`CFG_TUD_NCM=1`). This allows the board to present as a USB ethernet adapter ...", "tags": ["research"], "date": "unknown"},
   {"id": "wyltek-membership-ckb-dob-social-layer", "status": "DONE", "priority": "MEDIUM", "goal": "The provided content, primarily the Spore SDK README, describes a TypeScript SDK for interacting with the Spore Protocol on CKB, an asset protocol for...", "tags": ["ckb", "nervos"], "date": "unknown"},
   {"id": "wyrelay-usb-hid-keyboard-esp32", "status": "DONE", "priority": "MEDIUM", "goal": "Minimal ESP32-S3 USB HID keyboard relay. Connect it to any machine via USB \u2014 then type any text or key combo on that machine remotely through Telegram...", "tags": ["research"], "date": "unknown"},
