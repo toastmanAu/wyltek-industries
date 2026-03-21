@@ -1,6 +1,7 @@
 // research-findings.js — auto-generated from research/*.md
-// 147 completed research findings
+// 148 completed research findings
 const RESEARCH_FINDINGS = [
+  {"id": "agentpay-openclaw-skill-integration", "status": "DONE", "priority": "MEDIUM", "goal": "This research investigates the integration of `agentPay` into an OpenClaw skill, focusing on architecture, OpenClaw framework, integration points, and...", "tags": ["research"], "date": "2026-03-21"},
   {"id": "fiber-bolt11-decode", "status": "DONE", "priority": "MEDIUM", "goal": "Fiber invoices, as implemented in `nervosnetwork/fiber-lib`, closely follow the BOLT 11 payment encoding standard, leveraging `bech32` for the overall...", "tags": ["fiber", "payment-channels"], "date": "2026-03-20"},
   {"id": "bitnet-well-trained-models-2026", "status": "DONE", "priority": "HIGH", "goal": "The analysis focuses on 1-bit/1.58-bit language models suitable for local CPU inference via `bitnet.cpp`, prioritizing models trained on a substantial...", "tags": ["bitnet", "quantization"], "date": "2026-03-19"},
   {"id": "efficient-local-inference-models-2026", "status": "DONE", "priority": "HIGH", "goal": "The landscape of efficient local inference models in early 2026 is significantly shaped by 1-bit LLMs like BitNet b1.58, which offer substantial memor...", "tags": ["research"], "date": "2026-03-19"},
