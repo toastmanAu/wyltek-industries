@@ -5,213 +5,185 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Resource Hub - Wyltek Industries</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
+        :root {
+            --bg:       #0a0c0f;
+            --surface:  #111318;
+            --surface2: #181c23;
+            --border:   #1e2430;
+            --accent:   #00c8ff;
+            --accent2:  #7b5cfa;
+            --green:    #00e5a0;
+            --text:     #e2e8f0;
+            --muted:    #64748b;
         }
 
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
         body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
-            background: linear-gradient(135deg, #0f0f1e 0%, #1a1a2e 100%);
-            color: #e0e0e0;
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
             line-height: 1.6;
         }
 
-        /* Header (shared with main site) */
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        /* Header */
         header {
-            background: rgba(20, 20, 35, 0.95);
-            border-bottom: 1px solid rgba(100, 150, 255, 0.3);
-            padding: 1rem 2rem;
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 15, 0.93);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+        }
+
+        .header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            position: sticky;
-            top: 0;
-            z-index: 100;
+            height: 60px;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 0.75rem;
-            text-decoration: none;
-            color: #6496ff;
-            font-weight: 600;
+            gap: 10px;
+            font-weight: 700;
             font-size: 1.1rem;
+            color: var(--text);
         }
 
         .logo img {
-            width: 28px;
-            height: 28px;
-            border-radius: 7px;
-            object-fit: cover;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
         }
 
         nav {
             display: flex;
-            gap: 2rem;
-            align-items: center;
+            gap: 1.5rem;
         }
 
         nav a {
-            color: #a0a0c0;
-            text-decoration: none;
+            color: var(--muted);
+            font-size: 0.9rem;
             transition: color 0.2s;
         }
 
         nav a:hover,
         nav a.active {
-            color: #6496ff;
-        }
-
-        .auth-button {
-            background: linear-gradient(135deg, #6496ff, #5080e8);
-            border: none;
-            color: white;
-            padding: 0.6rem 1.2rem;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            transition: opacity 0.2s;
-        }
-
-        .auth-button:hover {
-            opacity: 0.9;
-        }
-
-        /* Member-only warning */
-        .member-only-notice {
-            background: rgba(100, 150, 255, 0.1);
-            border-left: 4px solid #6496ff;
-            padding: 1rem;
-            margin: 2rem 2rem 0;
-            border-radius: 6px;
-            text-align: center;
-        }
-
-        .member-only-notice p {
-            margin: 0.5rem 0;
-            font-size: 0.95rem;
-        }
-
-        .member-only-notice .login-button {
-            background: #6496ff;
-            color: white;
-            border: none;
-            padding: 0.6rem 1.2rem;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-top: 0.5rem;
-            transition: background 0.2s;
-        }
-
-        .member-only-notice .login-button:hover {
-            background: #5080e8;
+            color: var(--text);
+            text-decoration: none;
         }
 
         /* Main content */
         .container {
-            max-width: 1200px;
+            max-width: 1100px;
             margin: 0 auto;
             padding: 2rem;
         }
 
         .page-header {
             margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
         }
 
         .page-header h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
+            font-weight: 800;
             margin-bottom: 0.5rem;
-            background: linear-gradient(135deg, #6496ff, #a0d0ff);
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
+            background-clip: text;
         }
 
         .page-header p {
-            color: #a0a0c0;
-            font-size: 1.1rem;
+            color: var(--muted);
+            font-size: 1rem;
         }
 
         /* Tabs */
         .tabs {
             display: flex;
-            gap: 1rem;
+            gap: 0.5rem;
             margin-bottom: 2rem;
-            border-bottom: 1px solid rgba(100, 150, 255, 0.2);
+            border-bottom: 1px solid var(--border);
             flex-wrap: wrap;
         }
 
         .tab-button {
             background: none;
             border: none;
-            color: #a0a0c0;
+            color: var(--muted);
             padding: 1rem 1.5rem;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.9rem;
             border-bottom: 2px solid transparent;
             transition: all 0.2s;
         }
 
         .tab-button:hover {
-            color: #6496ff;
+            color: var(--text);
         }
 
         .tab-button.active {
-            color: #6496ff;
-            border-bottom-color: #6496ff;
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        /* Tab content */
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
         }
 
         /* Feed */
         .feed {
             display: grid;
-            gap: 1.5rem;
+            gap: 1.2rem;
         }
 
         .post {
-            background: rgba(30, 30, 50, 0.6);
-            border: 1px solid rgba(100, 150, 255, 0.2);
-            border-radius: 8px;
-            padding: 1.5rem;
-            transition: all 0.2s;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.4rem;
+            transition: border-color 0.2s;
         }
 
         .post:hover {
-            background: rgba(30, 30, 50, 0.9);
-            border-color: rgba(100, 150, 255, 0.4);
-        }
-
-        .post-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: start;
-            margin-bottom: 1rem;
+            border-color: var(--accent);
         }
 
         .post-title {
-            font-size: 1.25rem;
-            font-weight: 600;
-            color: #e0e0e0;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
             margin-bottom: 0.5rem;
         }
 
         .post-meta {
             display: flex;
             gap: 1rem;
-            font-size: 0.9rem;
-            color: #808080;
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 1rem;
             flex-wrap: wrap;
         }
 
-        .post-meta span {
-            display: flex;
-            align-items: center;
-            gap: 0.25rem;
-        }
-
         .post-content {
-            color: #c0c0d0;
+            color: var(--muted);
             margin: 1rem 0;
             line-height: 1.6;
         }
@@ -224,81 +196,91 @@
         }
 
         .tag {
-            background: rgba(100, 150, 255, 0.15);
-            color: #6496ff;
+            background: var(--surface2);
+            color: var(--accent);
             padding: 0.25rem 0.75rem;
             border-radius: 4px;
-            font-size: 0.85rem;
-        }
-
-        .post-action {
-            margin-top: 1rem;
+            font-size: 0.75rem;
+            border: 1px solid var(--border);
         }
 
         .post-link {
             display: inline-block;
-            color: #6496ff;
-            text-decoration: none;
+            color: var(--accent);
             padding: 0.5rem 1rem;
-            border: 1px solid #6496ff;
-            border-radius: 4px;
+            border: 1px solid var(--border);
+            border-radius: 6px;
             transition: all 0.2s;
+            margin-top: 0.5rem;
         }
 
         .post-link:hover {
-            background: rgba(100, 150, 255, 0.1);
+            background: var(--surface2);
+            border-color: var(--accent);
+            text-decoration: none;
         }
 
-        /* Grid for resources */
-        .resources-grid {
+        /* Grid */
+        .grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
+            gap: 1.2rem;
         }
 
-        .resource-card {
-            background: rgba(30, 30, 50, 0.6);
-            border: 1px solid rgba(100, 150, 255, 0.2);
-            border-radius: 8px;
-            padding: 1.5rem;
+        .card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.4rem;
             transition: all 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 0.8rem;
             text-decoration: none;
             color: inherit;
         }
 
-        .resource-card:hover {
-            background: rgba(30, 30, 50, 0.9);
-            border-color: rgba(100, 150, 255, 0.4);
+        .card:hover {
+            border-color: var(--accent);
             transform: translateY(-2px);
         }
 
-        .resource-icon {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
+        .card-icon {
+            font-size: 1.8rem;
         }
 
-        .resource-title {
-            font-size: 1.1rem;
-            font-weight: 600;
-            color: #e0e0e0;
-            margin-bottom: 0.5rem;
+        .card-title {
+            font-weight: 700;
+            color: var(--text);
         }
 
-        .resource-desc {
-            color: #a0a0c0;
-            font-size: 0.95rem;
+        .card-desc {
+            color: var(--muted);
+            font-size: 0.9rem;
         }
 
-        /* Loading state */
-        .loading {
+        /* Empty state */
+        .empty-state {
             text-align: center;
             padding: 3rem;
-            color: #6496ff;
+            color: var(--muted);
+        }
+
+        .empty-state h3 {
+            color: var(--text);
+            margin-bottom: 0.5rem;
+        }
+
+        /* Loading */
+        .loading {
+            text-align: center;
+            padding: 2rem;
+            color: var(--muted);
         }
 
         .spinner {
-            border: 2px solid rgba(100, 150, 255, 0.2);
-            border-top-color: #6496ff;
+            border: 2px solid var(--border);
+            border-top-color: var(--accent);
             border-radius: 50%;
             width: 40px;
             height: 40px;
@@ -310,73 +292,37 @@
             to { transform: rotate(360deg); }
         }
 
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: #a0a0c0;
-        }
-
-        .empty-state h3 {
-            color: #e0e0e0;
-            margin-bottom: 0.5rem;
-        }
-
         /* Responsive */
         @media (max-width: 768px) {
-            .container {
-                padding: 1rem;
-            }
-
-            .page-header h1 {
-                font-size: 1.75rem;
-            }
-
-            nav {
-                gap: 1rem;
-                font-size: 0.9rem;
-            }
-
-            .tabs {
-                flex-direction: column;
-                border-bottom: none;
-                border-left: 2px solid rgba(100, 150, 255, 0.2);
-            }
-
-            .tab-button {
-                border-left: 2px solid transparent;
-                border-bottom: none;
-                padding: 0.75rem 1rem;
-            }
-
-            .tab-button.active {
-                border-left-color: #6496ff;
-                border-bottom-color: transparent;
-            }
+            .container { padding: 1rem; }
+            .page-header h1 { font-size: 1.5rem; }
+            nav { gap: 0.75rem; font-size: 0.8rem; }
+            .tabs { flex-direction: column; border-left: 2px solid var(--border); border-bottom: none; }
+            .tab-button { border-left: 2px solid transparent; border-bottom: none; padding: 0.75rem 1rem; }
+            .tab-button.active { border-left-color: var(--accent); }
         }
     </style>
 </head>
 <body>
     <header>
-        <a href="/" class="logo">
-            <img src="/wyltek-mark.png" alt="Wyltek">
-            Wyltek Industries
-        </a>
-        <nav id="mainNav">
-            <a href="/">Home</a>
-            <a href="/mint/">DOB Minter</a>
-            <a href="/ai-hub/" class="active">AI Hub</a>
-            <button class="auth-button" id="authBtn">Connect Wallet</button>
-        </nav>
+        <div class="header-inner">
+            <a href="/" class="logo">
+                <img src="/wyltek-mark.png" alt="Wyltek">
+                Wyltek Industries
+            </a>
+            <nav>
+                <a href="/">Home</a>
+                <a href="/mint/">DOB Minter</a>
+                <a href="/ai-hub/" class="active">AI Hub</a>
+            </nav>
+        </div>
     </header>
 
     <div class="container">
         <div class="page-header">
             <h1>🤖 AI Resource Hub</h1>
-            <p>Community knowledge base for AI tools, research, and OpenClaw agent development</p>
+            <p>Community knowledge base for AI tools, research, and agent development</p>
         </div>
-
-        <div id="memberCheck"></div>
 
         <div class="tabs">
             <button class="tab-button active" data-tab="articles">📰 Articles</button>
@@ -386,64 +332,65 @@
         </div>
 
         <!-- Articles Tab -->
-        <div id="articles" class="tab-content">
-            <div id="articlesFeed" class="feed">
-                <div class="loading">
-                    <div class="spinner"></div>
-                    Loading articles...
+        <div id="articles" class="tab-content active">
+            <div class="feed">
+                <div class="empty-state">
+                    <h3>Member Content</h3>
+                    <p>Articles and tools shared by the Wyltek AI community</p>
+                    <p style="margin-top: 1rem;">Coming soon — content posted by members</p>
                 </div>
             </div>
         </div>
 
         <!-- Guides Tab -->
-        <div id="guides" class="tab-content" style="display: none;">
-            <div class="resources-grid">
-                <a href="/ai-hub/guides/openclaw-setup.html" class="resource-card">
-                    <div class="resource-icon">⚙️</div>
-                    <div class="resource-title">OpenClaw Setup</div>
-                    <div class="resource-desc">Installing and configuring OpenClaw agents on Pi/x86</div>
+        <div id="guides" class="tab-content">
+            <div class="grid">
+                <a href="guides/openclaw-setup.html" class="card">
+                    <div class="card-icon">⚙️</div>
+                    <div class="card-title">OpenClaw Setup</div>
+                    <div class="card-desc">Installing and configuring OpenClaw agents</div>
                 </a>
-                <a href="/ai-hub/guides/local-inference.html" class="resource-card">
-                    <div class="resource-icon">🧠</div>
-                    <div class="resource-title">Local LLM Inference</div>
-                    <div class="resource-desc">Running Ollama models locally, optimization tips</div>
+                <a href="guides/local-inference.html" class="card">
+                    <div class="card-icon">🧠</div>
+                    <div class="card-title">Local LLM Inference</div>
+                    <div class="card-desc">Running Ollama models locally, optimization tips</div>
                 </a>
-                <a href="/ai-hub/guides/rag-system.html" class="resource-card">
-                    <div class="resource-icon">📖</div>
-                    <div class="resource-title">RAG Systems</div>
-                    <div class="resource-desc">Building retrieval-augmented generation systems</div>
+                <a href="guides/rag-system.html" class="card">
+                    <div class="card-icon">📖</div>
+                    <div class="card-title">RAG Systems</div>
+                    <div class="card-desc">Building retrieval-augmented generation</div>
                 </a>
-                <a href="/ai-hub/guides/agent-development.html" class="resource-card">
-                    <div class="resource-icon">🤖</div>
-                    <div class="resource-title">Agent Development</div>
-                    <div class="resource-desc">Creating and deploying agentic systems</div>
+                <a href="guides/agent-development.html" class="card">
+                    <div class="card-icon">🤖</div>
+                    <div class="card-title">Agent Development</div>
+                    <div class="card-desc">Creating and deploying agentic systems</div>
                 </a>
             </div>
         </div>
 
         <!-- Tools Tab -->
-        <div id="tools" class="tab-content" style="display: none;">
-            <div class="resources-grid">
-                <a href="https://github.com/toastmanAu/rag-system" target="_blank" class="resource-card">
-                    <div class="resource-icon">🔍</div>
-                    <div class="resource-title">Wyltek RAG System</div>
-                    <div class="resource-desc">Multi-agent retrieval-augmented generation on FAISS</div>
+        <div id="tools" class="tab-content">
+            <div class="grid">
+                <a href="https://github.com/toastmanAu/rag-system" target="_blank" class="card">
+                    <div class="card-icon">🔍</div>
+                    <div class="card-title">Wyltek RAG System</div>
+                    <div class="card-desc">Multi-agent retrieval-augmented generation</div>
                 </a>
-                <a href="https://github.com/toastmanAu/local-task.py" target="_blank" class="resource-card">
-                    <div class="resource-icon">⚡</div>
-                    <div class="resource-title">Local Task Router</div>
-                    <div class="resource-desc">Route tasks to local LLM machines, save API costs</div>
+                <a href="https://github.com/toastmanAu/ckb-access" target="_blank" class="card">
+                    <div class="card-icon">📦</div>
+                    <div class="card-title">CKB Access Installers</div>
+                    <div class="card-desc">One-command installers for Fiber, CKB nodes</div>
                 </a>
-                <a href="https://github.com/toastmanAu/ckb-access" target="_blank" class="resource-card">
-                    <div class="resource-icon">📦</div>
-                    <div class="resource-title">CKB Access Installers</div>
-                    <div class="resource-desc">One-command installers for Fiber, CKB, light client</div>
+                <a href="https://docs.openclaw.ai" target="_blank" class="card">
+                    <div class="card-icon">📚</div>
+                    <div class="card-title">OpenClaw Docs</div>
+                    <div class="card-desc">Official OpenClaw documentation and guides</div>
                 </a>
             </div>
         </div>
 
         <!-- Research Tab -->
-        <div id="research" class="tab-content" style="display: none;">
+        <div id="research" class="tab-content">
             <div id="researchFeed" class="feed">
                 <div class="loading">
                     <div class="spinner"></div>
@@ -454,42 +401,22 @@
     </div>
 
     <script>
-        const API_BASE = "https://api.wyltekindustries.com"; // Or localhost for testing
-        
         // Tab switching
         document.querySelectorAll('.tab-button').forEach(btn => {
             btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.tab-content').forEach(tab => tab.style.display = 'none');
+                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
                 document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
                 
                 const tabId = e.target.dataset.tab;
-                document.getElementById(tabId).style.display = 'block';
+                document.getElementById(tabId).classList.add('active');
                 e.target.classList.add('active');
             });
         });
 
-        // Load articles (from Supabase, member-only)
-        async function loadArticles() {
-            try {
-                // In production: fetch from Supabase with member auth
-                // For now, show placeholder
-                const feed = document.getElementById('articlesFeed');
-                feed.innerHTML = `
-                    <div class="empty-state">
-                        <h3>Member Content</h3>
-                        <p>Articles, tools, and guides shared by the Wyltek AI community</p>
-                        <p style="margin-top: 1rem;">Coming soon — content posted by members</p>
-                    </div>
-                `;
-            } catch (error) {
-                console.error('Error loading articles:', error);
-            }
-        }
-
-        // Load research findings (public, from API)
+        // Load research findings
         async function loadResearch() {
             try {
-                const response = await fetch(`${API_BASE}/api/research/findings`);
+                const response = await fetch('https://wyltekindustries.com/api/research/findings');
                 const data = await response.json();
                 
                 const feed = document.getElementById('researchFeed');
@@ -506,31 +433,17 @@
                             <span>📅 ${f.date}</span>
                             <span>🏷️ ${f.tags.join(', ')}</span>
                         </div>
-                        <div class="post-content">${f.summary || 'No summary available'}</div>
-                        <div class="post-action">
-                            <a href="${f.url}" target="_blank" class="post-link">View Full Finding →</a>
-                        </div>
+                        <div class="post-content">${f.summary || 'Research finding from our knowledge base'}</div>
+                        <a href="https://wyltekindustries.com/api/research/findings/${f.id}" target="_blank" class="post-link">View Full Finding →</a>
                     </div>
                 `).join('');
             } catch (error) {
-                console.error('Error loading research:', error);
                 document.getElementById('researchFeed').innerHTML = '<div class="empty-state"><p>Error loading research findings</p></div>';
             }
         }
 
-        // Auth button
-        document.getElementById('authBtn').addEventListener('click', async () => {
-            // In production: implement JoyID wallet connection
-            alert('JoyID wallet connection coming soon');
-        });
-
-        // Load initial content
-        loadArticles();
-        loadResearch();
+        // Load research when tab is clicked
+        document.querySelector('[data-tab="research"]').addEventListener('click', loadResearch);
     </script>
-
-    <!-- Include site's member nav script -->
-    <script src="/js/member-nav.js"></script>
-    <script src="/js/bug-reporter.js"></script>
 </body>
 </html>

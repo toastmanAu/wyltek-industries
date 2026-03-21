@@ -3,28 +3,111 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OpenClaw Setup Guide - Wyltek AI Hub</title>
-    <link rel="stylesheet" href="../../css/main.css">
+    <title>OpenClaw Setup Guide</title>
     <style>
-        .guide-content { max-width: 800px; margin: 2rem auto; padding: 2rem; }
-        .guide-content h1 { color: #6496ff; margin-bottom: 1rem; }
-        .guide-content h2 { margin-top: 2rem; color: #a0d0ff; }
-        .guide-content code { background: rgba(100,150,255,0.1); padding: 0.2rem 0.4rem; border-radius: 3px; }
-        .guide-content pre { background: rgba(0,0,0,0.5); padding: 1rem; border-radius: 6px; overflow-x: auto; }
+        :root {
+            --bg: #0a0c0f;
+            --surface: #111318;
+            --border: #1e2430;
+            --accent: #00c8ff;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 15, 0.93);
+            z-index: 100;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        .logo { color: var(--text); font-weight: 700; font-size: 1.1rem; }
+        .guide-content {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        h1 { color: var(--accent); margin-bottom: 1rem; font-size: 1.8rem; }
+        h2 { margin-top: 2rem; color: #7b5cfa; margin-bottom: 1rem; font-size: 1.2rem; }
+        h3 { margin-top: 1.5rem; color: var(--text); font-size: 1rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.5rem; }
+        code {
+            background: rgba(0, 200, 255, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.2rem 0.4rem;
+            border-radius: 3px;
+            font-family: monospace;
+        }
+        pre {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+        }
+        pre code { background: none; border: none; padding: 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.75rem;
+            text-align: left;
+        }
+        th { background: rgba(123, 92, 250, 0.1); }
+        a {
+            color: var(--accent);
+            text-decoration: none;
+        }
+        a:hover { text-decoration: underline; }
+        .back {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--muted);
+        }
+        .back:hover { color: var(--text); }
     </style>
 </head>
 <body>
+    <header>
+        <div class="logo">Wyltek Industries — AI Hub</div>
+    </header>
+
     <div class="guide-content">
+        <a href="/ai-hub/" class="back">← Back to AI Hub</a>
+
         <h1>🚀 OpenClaw Agent Setup</h1>
-        
-        <h2>Hardware Requirements</h2>
+
+        <h2>System Requirements</h2>
+        <p>OpenClaw runs on Linux (arm64, amd64, armv7) and macOS. Minimum:</p>
         <ul>
-            <li>Raspberry Pi 5 (8GB+ RAM) or equivalent x86</li>
-            <li>8GB+ storage for agent + models</li>
-            <li>Stable internet connection</li>
+            <li><strong>CPU:</strong> Dual-core 1.5+ GHz (single-board computers to servers)</li>
+            <li><strong>RAM:</strong> 2GB minimum, 4GB recommended</li>
+            <li><strong>Disk:</strong> 8GB free (more for models)</li>
+            <li><strong>Network:</strong> Stable internet connection</li>
         </ul>
 
-        <h2>Installation (Pi 5)</h2>
+        <h2>Installation</h2>
+
+        <h3>Linux (ARM64 / Raspberry Pi 5, Orange Pi)</h3>
         <pre><code># Update system
 sudo apt update && sudo apt upgrade -y
 
@@ -43,12 +126,49 @@ openclaw pairing approve telegram CODE_HERE
 openclaw agent run
 </code></pre>
 
+        <h3>Linux (AMD64 / x86 desktop, server)</h3>
+        <pre><code># Update system
+sudo apt update && sudo apt upgrade -y
+
+# Install Node.js 22+
+curl -fsSL https://deb.nodesource.com/setup_22.x | sudo -E bash -
+sudo apt install -y nodejs
+
+# Install OpenClaw
+npm install -g openclaw
+
+# Initialize agent
+openclaw init --non-interactive
+openclaw pairing approve telegram CODE_HERE
+
+# Start
+openclaw agent run
+</code></pre>
+
+        <h3>macOS</h3>
+        <pre><code># Install Homebrew if needed
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+# Install Node.js
+brew install node@22
+
+# Install OpenClaw
+npm install -g openclaw
+
+# Initialize agent
+openclaw init --non-interactive
+openclaw pairing approve telegram CODE_HERE
+
+# Start
+openclaw agent run
+</code></pre>
+
         <h2>Configuration</h2>
         <p>Edit <code>~/.openclaw/openclaw.json</code>:</p>
         <pre><code>{
   "agent": {
-    "name": "Kernel",
-    "model": "ckbdev/claude-sonnet-4-6"
+    "name": "MyAgent",
+    "model": "anthropic/claude-sonnet-4-5"
   },
   "channels": {
     "telegram": { "enabled": true }
@@ -61,26 +181,73 @@ openclaw agent run
 }
 </code></pre>
 
-        <h2>Local Model Setup</h2>
-        <p>For cost savings, use local Ollama:</p>
+        <h2>Model Selection by Hardware</h2>
+        <table>
+            <tr>
+                <th>Hardware Tier</th>
+                <th>CPU/RAM</th>
+                <th>Recommended Local Model</th>
+                <th>Speed (tok/s)</th>
+                <th>Use Case</th>
+            </tr>
+            <tr>
+                <td><strong>Minimal</strong></td>
+                <td>Single-core, 1-2GB</td>
+                <td>phi3:mini (2B)</td>
+                <td>~0.5</td>
+                <td>Embedded, IoT</td>
+            </tr>
+            <tr>
+                <td><strong>Entry</strong></td>
+                <td>Dual-core, 4GB</td>
+                <td>qwen2.5:3b-q4</td>
+                <td>~2</td>
+                <td>Raspberry Pi, SBC</td>
+            </tr>
+            <tr>
+                <td><strong>Mid</strong></td>
+                <td>Quad-core, 8-16GB</td>
+                <td>qwen2.5:7b-q4</td>
+                <td>~5-8</td>
+                <td>Home server, desktop</td>
+            </tr>
+            <tr>
+                <td><strong>High</strong></td>
+                <td>8+ cores, 32GB+</td>
+                <td>qwen3.5:27b or llama3.1:70b-q4</td>
+                <td>~15-30</td>
+                <td>Workstation, server</td>
+            </tr>
+            <tr>
+                <td><strong>GPU</strong></td>
+                <td>8GB+ VRAM (RTX 3060+)</td>
+                <td>qwen3.5:27b (full precision)</td>
+                <td>~30+</td>
+                <td>High-performance AI</td>
+            </tr>
+        </table>
+
+        <h2>Local Model Setup (Optional)</h2>
+        <p>For cost savings, use local Ollama inference:</p>
         <pre><code># Install Ollama
 curl https://ollama.ai/install.sh | sh
 
 # Run locally
-ollama run qwen2.5:14b
+ollama run qwen2.5:7b
 
 # Configure OpenClaw to use local inference
-# See: scripts/local-task.py in Wyltek workspace
+# See: Local LLM Inference guide in AI Hub
 </code></pre>
 
         <h2>Troubleshooting</h2>
         <ul>
-            <li><strong>Telegram auth fails:</strong> Ensure DM the bot first, then use correct code</li>
+            <li><strong>Telegram auth fails:</strong> DM the bot first, then use correct code</li>
             <li><strong>Model timeouts:</strong> Increase timeout in config, check local inference health</li>
             <li><strong>Disk full:</strong> Models can be large; use quantized versions (GGUF)</li>
+            <li><strong>Permission denied:</strong> You may need to add your user to the dialout group: <code>sudo usermod -a -G dialout $USER</code></li>
         </ul>
 
-        <p style="margin-top: 3rem; color: #808080; font-size: 0.9rem;">
+        <p style="margin-top: 3rem; color: var(--muted);">
             <a href="/ai-hub/">← Back to AI Hub</a>
         </p>
     </div>
