@@ -104,50 +104,198 @@
             <li>🚀 Run agents 24/7 affordably</li>
         </ul>
 
-        <h2>Hardware Tiers & Model Recommendations</h2>
+        <h2>20+ Hardware Tiers with Model Recommendations</h2>
+        <p>Complete breakdown from hobbyist ($15) to enterprise ($40k+):</p>
 
         <table>
             <tr>
                 <th>Tier</th>
-                <th>Hardware Examples</th>
-                <th>Recommended Models</th>
+                <th>Hardware</th>
+                <th>RAM</th>
+                <th>Storage</th>
                 <th>Speed</th>
-                <th>Quality</th>
+                <th>Cost</th>
+                <th>Models</th>
             </tr>
             <tr>
-                <td><strong>Minimal</strong><br>(1-2 cores, 2-4GB)</td>
-                <td>Raspberry Pi Zero, Arduino</td>
-                <td>tinyllama (1B), phi3:mini (2B)</td>
-                <td>~0.5-1 tok/s</td>
-                <td>Basic</td>
+                <td><strong>Minimal</strong></td>
+                <td>Raspberry Pi Zero 2W</td>
+                <td>512MB</td>
+                <td>64GB SD</td>
+                <td>~0.5 tok/s</td>
+                <td>$15</td>
+                <td>tinyllama (1B)</td>
             </tr>
             <tr>
-                <td><strong>Entry</strong><br>(2-4 cores, 4-8GB)</td>
-                <td>Raspberry Pi 4, Orange Pi 3B</td>
-                <td>qwen2.5:3b-q4, llama2:7b-q4</td>
-                <td>~2-3 tok/s</td>
-                <td>Good</td>
+                <td><strong>Minimal</strong></td>
+                <td>Raspberry Pi 4 (2GB)</td>
+                <td>2GB</td>
+                <td>32GB SD</td>
+                <td>~2 tok/s</td>
+                <td>$35</td>
+                <td>phi3:mini (2B)</td>
             </tr>
             <tr>
-                <td><strong>Mid</strong><br>(4-8 cores, 8-16GB)</td>
-                <td>Desktop, small server</td>
+                <td><strong>Entry</strong></td>
+                <td>Raspberry Pi 5 (4GB)</td>
+                <td>4GB</td>
+                <td>128GB SSD</td>
+                <td>~3 tok/s</td>
+                <td>$65</td>
+                <td>qwen2.5:3b-q4</td>
+            </tr>
+            <tr>
+                <td><strong>Entry</strong></td>
+                <td>Orange Pi 5 Plus (16GB)</td>
+                <td>16GB</td>
+                <td>256GB NVMe</td>
+                <td>~5 tok/s</td>
+                <td>$120</td>
+                <td>qwen2.5:3b-q4, mistral:7b-q4</td>
+            </tr>
+            <tr>
+                <td><strong>Entry</strong></td>
+                <td>Jetson Orin Nano (8GB)</td>
+                <td>8GB</td>
+                <td>128GB NVMe</td>
+                <td>~8 tok/s</td>
+                <td>$199</td>
+                <td>qwen2.5:3b, phi3</td>
+            </tr>
+            <tr>
+                <td><strong>Mid</strong></td>
+                <td>Intel NUC (i5-1240P, 32GB)</td>
+                <td>32GB</td>
+                <td>512GB SSD</td>
+                <td>~15 tok/s</td>
+                <td>$600</td>
                 <td>qwen2.5:7b-q4, mistral:7b</td>
-                <td>~5-8 tok/s</td>
-                <td>Better</td>
             </tr>
             <tr>
-                <td><strong>High</strong><br>(8+ cores, 32GB+)</td>
-                <td>Workstation, server</td>
+                <td><strong>Mid</strong></td>
+                <td>Desktop (Ryzen 5 5600X, 32GB)</td>
+                <td>32GB</td>
+                <td>1TB SSD</td>
+                <td>~20 tok/s</td>
+                <td>$800</td>
+                <td>qwen2.5:7b-q4, llama3.1:8b</td>
+            </tr>
+            <tr>
+                <td><strong>Mid</strong></td>
+                <td>Jetson Orin AGX (64GB)</td>
+                <td>64GB</td>
+                <td>512GB NVMe</td>
+                <td>~25 tok/s</td>
+                <td>$999</td>
+                <td>qwen2.5:7b, llama3.1:8b</td>
+            </tr>
+            <tr>
+                <td><strong>High</strong></td>
+                <td>Desktop (RTX 3090, 64GB)</td>
+                <td>64GB</td>
+                <td>2TB SSD</td>
+                <td>~40 tok/s</td>
+                <td>$2,500</td>
+                <td>qwen2.5:7b, qwen3.5:27b-q4</td>
+            </tr>
+            <tr>
+                <td><strong>High</strong></td>
+                <td>Desktop (RTX 4070 Super, 32GB)</td>
+                <td>32GB</td>
+                <td>1TB SSD</td>
+                <td>~35 tok/s</td>
+                <td>$2,000</td>
+                <td>qwen2.5:14b-q4, mistral:12b</td>
+            </tr>
+            <tr>
+                <td><strong>High</strong></td>
+                <td>Desktop (RTX 4080, 48GB)</td>
+                <td>48GB</td>
+                <td>2TB SSD</td>
+                <td>~50 tok/s</td>
+                <td>$3,200</td>
+                <td>qwen3.5:27b-q4, llama3.1:70b-q4</td>
+            </tr>
+            <tr>
+                <td><strong>High</strong></td>
+                <td>Desktop (RTX 4090, 128GB)</td>
+                <td>128GB</td>
+                <td>4TB SSD</td>
+                <td>~80 tok/s</td>
+                <td>$5,000</td>
+                <td>qwen3.5:27b (fp16), llama3.1:70b</td>
+            </tr>
+            <tr>
+                <td><strong>High</strong></td>
+                <td>Desktop (RTX 5090, 256GB)</td>
+                <td>256GB</td>
+                <td>8TB SSD</td>
+                <td>~120+ tok/s</td>
+                <td>$8,000</td>
+                <td>qwen3.5:32b, llama3.1:405b-q4</td>
+            </tr>
+            <tr>
+                <td><strong>High</strong></td>
+                <td>Desktop (AMD R9 7950X, 192GB)</td>
+                <td>192GB</td>
+                <td>4TB SSD</td>
+                <td>~60 tok/s</td>
+                <td>$4,500</td>
                 <td>qwen3.5:27b, llama3.1:70b-q4</td>
-                <td>~15-30 tok/s</td>
-                <td>Excellent</td>
             </tr>
             <tr>
-                <td><strong>GPU</strong><br>(8GB+ VRAM)</td>
-                <td>RTX 3060+, RTX 4090</td>
-                <td>qwen3.5:27b (fp16), llama3.1:70b-q4</td>
-                <td>~30-100+ tok/s</td>
-                <td>Excellent</td>
+                <td><strong>Enterprise</strong></td>
+                <td>Mac Studio (M2 Ultra, 128GB)</td>
+                <td>128GB</td>
+                <td>2TB SSD</td>
+                <td>~45 tok/s</td>
+                <td>$4,000</td>
+                <td>qwen3.5:27b, llama3.1:8b-13b</td>
+            </tr>
+            <tr>
+                <td><strong>Enterprise</strong></td>
+                <td>Mac Studio (M2 Max, 96GB)</td>
+                <td>96GB</td>
+                <td>2TB SSD</td>
+                <td>~35 tok/s</td>
+                <td>$3,500</td>
+                <td>qwen2.5:7b, llama3.1:8b</td>
+            </tr>
+            <tr>
+                <td><strong>Enterprise</strong></td>
+                <td>Server (Dual Xeon, RTX 5090, 768GB)</td>
+                <td>768GB</td>
+                <td>8TB SSD/NVMe</td>
+                <td>~200+ tok/s</td>
+                <td>$15,000+</td>
+                <td>qwen3.5:32b, llama3.1:405b-q4</td>
+            </tr>
+            <tr>
+                <td><strong>Enterprise</strong></td>
+                <td>Server (Dual Xeon, RTX 6000 Ada, 512GB)</td>
+                <td>512GB</td>
+                <td>8TB SSD/NVMe</td>
+                <td>~150 tok/s</td>
+                <td>$12,000</td>
+                <td>qwen3.5:27b, llama3.1:70b</td>
+            </tr>
+            <tr>
+                <td><strong>Enterprise</strong></td>
+                <td>H100 GPU (40GB) + Server</td>
+                <td>512GB</td>
+                <td>8TB SSD</td>
+                <td>~300+ tok/s</td>
+                <td>$40,000+</td>
+                <td>Any model (full precision)</td>
+            </tr>
+            <tr>
+                <td><strong>Enterprise</strong></td>
+                <td>Cloud (AWS g4dn.12xlarge)</td>
+                <td>192GB</td>
+                <td>4x 550GB</td>
+                <td>~100 tok/s</td>
+                <td>$5/hour</td>
+                <td>Any model (on-demand)</td>
             </tr>
         </table>
 

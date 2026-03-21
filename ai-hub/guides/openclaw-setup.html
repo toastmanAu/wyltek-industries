@@ -181,51 +181,51 @@ openclaw agent run
 }
 </code></pre>
 
-        <h2>Model Selection by Hardware</h2>
-        <table>
-            <tr>
-                <th>Hardware Tier</th>
-                <th>CPU/RAM</th>
-                <th>Recommended Local Model</th>
-                <th>Speed (tok/s)</th>
-                <th>Use Case</th>
-            </tr>
-            <tr>
-                <td><strong>Minimal</strong></td>
-                <td>Single-core, 1-2GB</td>
-                <td>phi3:mini (2B)</td>
-                <td>~0.5</td>
-                <td>Embedded, IoT</td>
-            </tr>
-            <tr>
-                <td><strong>Entry</strong></td>
-                <td>Dual-core, 4GB</td>
-                <td>qwen2.5:3b-q4</td>
-                <td>~2</td>
-                <td>Raspberry Pi, SBC</td>
-            </tr>
-            <tr>
-                <td><strong>Mid</strong></td>
-                <td>Quad-core, 8-16GB</td>
-                <td>qwen2.5:7b-q4</td>
-                <td>~5-8</td>
-                <td>Home server, desktop</td>
-            </tr>
-            <tr>
-                <td><strong>High</strong></td>
-                <td>8+ cores, 32GB+</td>
-                <td>qwen3.5:27b or llama3.1:70b-q4</td>
-                <td>~15-30</td>
-                <td>Workstation, server</td>
-            </tr>
-            <tr>
-                <td><strong>GPU</strong></td>
-                <td>8GB+ VRAM (RTX 3060+)</td>
-                <td>qwen3.5:27b (full precision)</td>
-                <td>~30+</td>
-                <td>High-performance AI</td>
-            </tr>
-        </table>
+        <h2>Model Selection & Local Inference</h2>
+        <p>OpenClaw can use both cloud APIs (Anthropic Claude, OpenAI) and local models (Ollama, vLLM).</p>
+        
+        <h3>Cloud Models (Default)</h3>
+        <ul>
+            <li><strong>Anthropic Claude Sonnet 4.5:</strong> Primary model, best reasoning</li>
+            <li><strong>CKBDev API:</strong> Free shared tier (fallback)</li>
+            <li><strong>OpenAI GPT-5:</strong> Optional, requires API key</li>
+        </ul>
+
+        <h3>Local Models</h3>
+        <p>For cost savings (85% reduction), run local Ollama inference:</p>
+        <pre><code># Install Ollama
+curl https://ollama.ai/install.sh | sh
+
+# Download a model
+ollama pull qwen2.5:7b
+
+# OpenClaw will auto-detect on localhost:11434
+</code></pre>
+
+        <h3>Hardware & Model Recommendations</h3>
+        <p>See <a href="local-inference.html">Local LLM Inference Guide</a> for 20+ hardware tiers (Raspberry Pi to H100) with:</p>
+        <ul>
+            <li>✅ Complete hardware specs (Jetson, Mac Studio, RTX 3090/4090/5090, etc.)</li>
+            <li>✅ Cost estimates ($15 to $40k+)</li>
+            <li>✅ Throughput benchmarks</li>
+            <li>✅ Model recommendations per tier</li>
+        </ul>
+
+        <h3>Configure Local Inference in OpenClaw</h3>
+        <p>Edit <code>openclaw.json</code>:</p>
+        <pre><code>{
+  "agent": {
+    "name": "MyAgent",
+    "model": "ollama/qwen2.5:7b"  ← Switch to local model
+  },
+  "providers": {
+    "ollama": {
+      "endpoint": "http://localhost:11434",
+      "fallback": "anthropic/claude-sonnet-4-5"  ← Cloud fallback if Ollama down
+    }
+  }
+}
+</code></pre>
 
         <h2>Local Model Setup (Optional)</h2>
         <p>For cost savings, use local Ollama inference:</p>
