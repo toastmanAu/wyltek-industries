@@ -1,7 +1,8 @@
 // research-findings.js — auto-generated from research/*.md
-// 177 completed research findings
+// 178 completed research findings
 const RESEARCH_FINDINGS = [
   {"id": "agentpay-openclaw-skill-integration", "status": "DONE", "priority": "MEDIUM", "goal": "This research investigates the integration of `agentPay` into an OpenClaw skill, focusing on architecture, OpenClaw framework, integration points, and...", "tags": ["research"], "date": "2026-03-21"},
+  {"id": "fiber-nodejs-client-library-mvp", "status": "DONE", "priority": "MEDIUM", "goal": "This research outlines the design and feasibility for an MVP Node.js/TypeScript client library for the Nervos Fiber payment channel network. The libra...", "tags": ["fiber", "payment-channels"], "date": "2026-03-21"},
   {"id": "wyltek-stack-gap-analysis-2026-q1", "status": "DONE", "priority": "MEDIUM", "goal": "Date: 2026-03-21 The Wyltek Industries stack demonstrates exceptional progress, with core Nervos CKB infrastructure, embedded systems, and a productio...", "tags": ["research"], "date": "2026-03-21"},
   {"id": "fiber-bolt11-decode", "status": "DONE", "priority": "MEDIUM", "goal": "Fiber invoices, as implemented in `nervosnetwork/fiber-lib`, closely follow the BOLT 11 payment encoding standard, leveraging `bech32` for the overall...", "tags": ["fiber", "payment-channels"], "date": "2026-03-20"},
   {"id": "bitnet-well-trained-models-2026", "status": "DONE", "priority": "HIGH", "goal": "The analysis focuses on 1-bit/1.58-bit language models suitable for local CPU inference via `bitnet.cpp`, prioritizing models trained on a substantial...", "tags": ["bitnet", "quantization"], "date": "2026-03-19"},
