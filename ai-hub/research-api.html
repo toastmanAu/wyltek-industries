@@ -1,0 +1,966 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Research Findings API — Wyltek Industries</title>
+    <style>
+        :root {
+            --bg:       #0a0c0f;
+            --surface:  #111318;
+            --surface2: #181c23;
+            --border:   #1e2430;
+            --accent:   #00c8ff;
+            --accent2:  #7b5cfa;
+            --green:    #00e5a0;
+            --red:      #ff5f5f;
+            --yellow:   #ffd166;
+            --text:     #e2e8f0;
+            --muted:    #64748b;
+            --tag-bg:   #1a2035;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 15, 0.93);
+            backdrop-filter: blur(12px);
+            z-index: 100;
+        }
+        .header-inner {
+            max-width: 1100px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            height: 60px;
+        }
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 700;
+            font-size: 1.1rem;
+            letter-spacing: 0.02em;
+            color: var(--text);
+        }
+        .logo img { width: 28px; height: 28px; border-radius: 7px; object-fit: cover; }
+        nav { display: flex; gap: 1.5rem; }
+        nav a { color: var(--muted); font-size: 0.9rem; transition: color 0.2s; }
+        nav a:hover, nav a.active { color: var(--text); text-decoration: none; }
+        .nav-toggle {
+            display: none; background: none; border: none;
+            color: var(--text); font-size: 1.5rem; cursor: pointer; padding: 0.5rem;
+        }
+        @media (max-width: 700px) {
+            nav { display: none; flex-direction: column; gap: 0; position: absolute;
+                top: 100%; left: 0; right: 0; background: var(--surface);
+                border-bottom: 1px solid var(--border); padding: 0.5rem 0; z-index: 999; }
+            nav.open { display: flex; }
+            nav a { padding: 0.7rem 1.5rem; font-size: 1rem; border-bottom: 1px solid var(--border); }
+            .nav-toggle { display: block; }
+            .header-inner { position: relative; }
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2.5rem 2rem;
+        }
+
+        /* Page header */
+        .page-header {
+            margin-bottom: 3rem;
+            padding-bottom: 1.5rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .breadcrumb {
+            font-size: 0.8rem;
+            color: var(--muted);
+            margin-bottom: 1rem;
+        }
+        .breadcrumb a { color: var(--muted); }
+        .breadcrumb a:hover { color: var(--accent); }
+        .page-header h1 {
+            font-size: 2rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .page-header .subtitle {
+            color: var(--muted);
+            font-size: 1rem;
+            margin-bottom: 1.2rem;
+        }
+        .base-url-block {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.6rem 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9rem;
+        }
+        .base-url-block .label {
+            color: var(--muted);
+            font-family: inherit;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .base-url-block .url { color: var(--green); }
+        .status-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            background: rgba(0, 229, 160, 0.1);
+            border: 1px solid rgba(0, 229, 160, 0.3);
+            border-radius: 20px;
+            padding: 0.25rem 0.75rem;
+            font-size: 0.75rem;
+            color: var(--green);
+            margin-left: 1rem;
+        }
+        .status-dot {
+            width: 7px; height: 7px;
+            border-radius: 50%;
+            background: var(--green);
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.4; }
+        }
+
+        /* Section headers */
+        h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--text);
+            margin: 2.5rem 0 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.6rem;
+        }
+        h2::after {
+            content: '';
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+        h3 {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text);
+            margin: 1.5rem 0 0.75rem;
+        }
+
+        /* Callout boxes */
+        .callout {
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            margin: 1.25rem 0;
+            border-left: 3px solid;
+            font-size: 0.9rem;
+        }
+        .callout.info {
+            background: rgba(0, 200, 255, 0.06);
+            border-color: var(--accent);
+            color: var(--text);
+        }
+        .callout.tip {
+            background: rgba(0, 229, 160, 0.06);
+            border-color: var(--green);
+            color: var(--text);
+        }
+        .callout.warning {
+            background: rgba(255, 209, 102, 0.06);
+            border-color: var(--yellow);
+            color: var(--text);
+        }
+        .callout strong { display: block; margin-bottom: 0.3rem; }
+
+        /* Endpoint cards */
+        .endpoint {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+        }
+        .endpoint-header {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            padding: 0.85rem 1.25rem;
+            border-bottom: 1px solid var(--border);
+            background: var(--surface2);
+            flex-wrap: wrap;
+            gap: 0.75rem;
+        }
+        .method {
+            font-family: 'Courier New', monospace;
+            font-size: 0.75rem;
+            font-weight: 700;
+            padding: 0.2rem 0.5rem;
+            border-radius: 4px;
+            background: rgba(0, 200, 255, 0.15);
+            color: var(--accent);
+            border: 1px solid rgba(0, 200, 255, 0.3);
+        }
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            font-size: 0.92rem;
+            color: var(--text);
+            flex: 1;
+        }
+        .endpoint-path .param { color: var(--accent2); }
+        .endpoint-desc {
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+        .endpoint-body {
+            padding: 1.25rem;
+        }
+
+        /* Params table */
+        .params-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.85rem;
+            margin: 0.75rem 0;
+        }
+        .params-table th {
+            text-align: left;
+            color: var(--muted);
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            padding: 0.4rem 0.75rem;
+            border-bottom: 1px solid var(--border);
+        }
+        .params-table td {
+            padding: 0.5rem 0.75rem;
+            border-bottom: 1px solid rgba(30, 36, 48, 0.5);
+            vertical-align: top;
+        }
+        .params-table tr:last-child td { border-bottom: none; }
+        .param-name {
+            font-family: 'Courier New', monospace;
+            color: var(--accent2);
+            white-space: nowrap;
+        }
+        .param-type {
+            font-family: 'Courier New', monospace;
+            color: var(--muted);
+            font-size: 0.8rem;
+        }
+        .optional-badge {
+            font-size: 0.7rem;
+            background: var(--tag-bg);
+            color: var(--muted);
+            padding: 0.1rem 0.4rem;
+            border-radius: 3px;
+            margin-left: 0.4rem;
+        }
+
+        /* Code blocks */
+        .code-block {
+            position: relative;
+            margin: 0.75rem 0;
+        }
+        .code-label {
+            font-size: 0.7rem;
+            color: var(--muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.3rem;
+        }
+        pre {
+            background: #0d0f14;
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.82rem;
+            line-height: 1.6;
+        }
+        .copy-btn {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            color: var(--muted);
+            padding: 0.25rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .copy-btn:hover { color: var(--text); border-color: var(--accent); }
+        .copy-btn.copied { color: var(--green); border-color: var(--green); }
+
+        /* JSON syntax highlight */
+        .k { color: var(--accent2); }   /* key */
+        .s { color: var(--green); }     /* string */
+        .n { color: #ff9f7f; }          /* number */
+        .b { color: var(--accent); }    /* bool/null */
+        .c { color: var(--muted); }     /* comment */
+
+        /* Language tabs */
+        .lang-tabs {
+            display: flex;
+            gap: 0.25rem;
+            margin-bottom: 0;
+        }
+        .lang-tab {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-bottom: none;
+            color: var(--muted);
+            padding: 0.35rem 0.85rem;
+            border-radius: 6px 6px 0 0;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.15s;
+        }
+        .lang-tab.active { background: #0d0f14; color: var(--text); border-color: var(--border); }
+        .lang-panel { display: none; }
+        .lang-panel.active { display: block; }
+        .lang-panel pre { border-radius: 0 8px 8px 8px; margin-top: 0; }
+
+        /* Response example */
+        .response-block {
+            margin-top: 0.75rem;
+        }
+        .response-status {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            font-size: 0.8rem;
+            font-family: 'Courier New', monospace;
+            color: var(--green);
+            margin-bottom: 0.4rem;
+        }
+        .response-status.err { color: var(--red); }
+
+        /* Agentic section */
+        .agent-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.4rem;
+            margin-bottom: 1.2rem;
+        }
+        .agent-card h3 {
+            color: var(--accent);
+            margin-top: 0;
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .agent-card p {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+        .use-case-list {
+            list-style: none;
+            padding: 0;
+        }
+        .use-case-list li {
+            padding: 0.3rem 0;
+            color: var(--text);
+            font-size: 0.88rem;
+            display: flex;
+            gap: 0.5rem;
+        }
+        .use-case-list li::before { content: "→"; color: var(--accent); }
+
+        /* Quick ref */
+        .quick-ref {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.25rem;
+            margin-bottom: 2rem;
+        }
+        .quick-ref-grid {
+            display: grid;
+            grid-template-columns: auto 1fr auto;
+            gap: 0.5rem 1.5rem;
+            align-items: center;
+            font-size: 0.85rem;
+        }
+        .qr-method { color: var(--accent); font-family: monospace; font-size: 0.78rem; }
+        .qr-path { font-family: monospace; color: var(--text); }
+        .qr-path .p { color: var(--accent2); }
+        .qr-desc { color: var(--muted); font-size: 0.82rem; }
+        .quick-ref h3 { margin-top: 0; margin-bottom: 1rem; font-size: 0.9rem; color: var(--muted); text-transform: uppercase; letter-spacing: 0.05em; }
+
+        @media (max-width: 600px) {
+            .container { padding: 1.2rem 1rem; }
+            .page-header h1 { font-size: 1.5rem; }
+            .quick-ref-grid { grid-template-columns: auto 1fr; }
+            .qr-desc { display: none; }
+            .endpoint-header { flex-direction: column; align-items: flex-start; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="header-inner">
+        <a href="/index.html" class="logo">
+            <img src="/wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">
+            Wyltek Industries
+        </a>
+        <nav id="mainNav">
+            <a href="/index.html">Home</a>
+            <a href="/mint/">DOB Minter</a>
+            <a href="/ai-hub/" class="active">AI Hub</a>
+        </nav>
+        <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+    </div>
+</header>
+
+<div class="container">
+
+    <div class="page-header">
+        <div class="breadcrumb">
+            <a href="/ai-hub/">AI Hub</a> / Research Findings API
+        </div>
+        <h1>🔬 Research Findings API</h1>
+        <p class="subtitle">Public REST API exposing Wyltek's AI research findings. Zero auth for consumers — designed for agent-to-agent access.</p>
+        <div style="display:flex; align-items:center; flex-wrap:wrap; gap:0.75rem;">
+            <div class="base-url-block">
+                <span class="label">Base URL</span>
+                <span class="url">https://api.wyltekindustries.com</span>
+            </div>
+            <span class="status-badge">
+                <span class="status-dot"></span>
+                Live
+            </span>
+        </div>
+    </div>
+
+    <!-- Quick reference -->
+    <div class="quick-ref">
+        <h3>Quick Reference</h3>
+        <div class="quick-ref-grid">
+            <span class="qr-method">GET</span>
+            <span class="qr-path">/api/research/findings</span>
+            <span class="qr-desc">List all findings</span>
+
+            <span class="qr-method">GET</span>
+            <span class="qr-path">/api/research/findings?tag=<span class="p">&lt;tag&gt;</span>&amp;meta=1&amp;limit=<span class="p">N</span></span>
+            <span class="qr-desc">Filtered list with metadata</span>
+
+            <span class="qr-method">GET</span>
+            <span class="qr-path">/api/research/findings/<span class="p">:id</span></span>
+            <span class="qr-desc">Full finding content</span>
+
+            <span class="qr-method">GET</span>
+            <span class="qr-path">/api/research/findings/<span class="p">:id</span>?format=markdown</span>
+            <span class="qr-desc">Raw markdown</span>
+
+            <span class="qr-method">GET</span>
+            <span class="qr-path">/api/research/tags</span>
+            <span class="qr-desc">All tags with counts</span>
+
+            <span class="qr-method">GET</span>
+            <span class="qr-path">/api/research/health</span>
+            <span class="qr-desc">Health check</span>
+        </div>
+    </div>
+
+    <div class="callout info">
+        <strong>🔓 No authentication required</strong>
+        All endpoints are public and CORS-enabled. Any agent, script, or browser can call them directly. Rate limits apply at Cloudflare edge level.
+    </div>
+
+    <!-- Endpoints -->
+    <h2>Endpoints</h2>
+
+    <!-- Health -->
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method">GET</span>
+            <span class="endpoint-path">/api/research/health</span>
+            <span class="endpoint-desc">Service health and available endpoints</span>
+        </div>
+        <div class="endpoint-body">
+            <div class="response-block">
+                <div class="response-status">200 OK</div>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre>{
+  <span class="k">"status"</span>: <span class="s">"ok"</span>,
+  <span class="k">"service"</span>: <span class="s">"wyltek-research-api"</span>,
+  <span class="k">"version"</span>: <span class="s">"2.0.0"</span>,
+  <span class="k">"source"</span>: <span class="s">"github:toastmanAu/kernel-workspace/research/findings"</span>,
+  <span class="k">"endpoints"</span>: [...]
+}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- List findings -->
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method">GET</span>
+            <span class="endpoint-path">/api/research/findings</span>
+            <span class="endpoint-desc">List findings — with optional filter and metadata</span>
+        </div>
+        <div class="endpoint-body">
+            <h3>Query Parameters</h3>
+            <table class="params-table">
+                <thead>
+                    <tr>
+                        <th>Parameter</th>
+                        <th>Type</th>
+                        <th>Description</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="param-name">tag</span><span class="optional-badge">optional</span></td>
+                        <td><span class="param-type">string</span></td>
+                        <td>Filter by tag (case-insensitive). Requires <code>meta=1</code>.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="param-name">meta</span><span class="optional-badge">optional</span></td>
+                        <td><span class="param-type">0 | 1</span></td>
+                        <td>Include parsed metadata (title, date, tags, summary) per finding. Slower — fetches each file.</td>
+                    </tr>
+                    <tr>
+                        <td><span class="param-name">limit</span><span class="optional-badge">optional</span></td>
+                        <td><span class="param-type">integer</span></td>
+                        <td>Maximum number of results to return. Default: all.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Examples</h3>
+            <div class="lang-tabs">
+                <button class="lang-tab active" onclick="switchLang(this, 'ex1-curl')">curl</button>
+                <button class="lang-tab" onclick="switchLang(this, 'ex1-fetch')">fetch</button>
+                <button class="lang-tab" onclick="switchLang(this, 'ex1-python')">python</button>
+            </div>
+            <div id="ex1-curl" class="lang-panel active code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><span class="c"># All findings (ID + filename only)</span>
+curl https://api.wyltekindustries.com/api/research/findings
+
+<span class="c"># With metadata, filtered by tag</span>
+curl "https://api.wyltekindustries.com/api/research/findings?meta=1&tag=fiber&limit=10"</pre>
+            </div>
+            <div id="ex1-fetch" class="lang-panel code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><span class="c">// All findings</span>
+const res = await fetch('https://api.wyltekindustries.com/api/research/findings');
+const { count, findings } = await res.json();
+
+<span class="c">// With metadata + tag filter</span>
+const res = await fetch(
+  'https://api.wyltekindustries.com/api/research/findings?meta=1&tag=ckb&limit=20'
+);
+const data = await res.json();
+data.findings.forEach(f => console.log(f.title, f.tags));</pre>
+            </div>
+            <div id="ex1-python" class="lang-panel code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>import requests
+
+BASE = "https://api.wyltekindustries.com"
+
+<span class="c"># List with metadata</span>
+r = requests.get(f"{BASE}/api/research/findings", params={"meta": 1, "limit": 20})
+for finding in r.json()["findings"]:
+    print(finding["title"], finding["tags"])</pre>
+            </div>
+
+            <div class="response-block" style="margin-top:1rem;">
+                <div class="response-status">200 OK</div>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre>{
+  <span class="k">"count"</span>: <span class="n">188</span>,
+  <span class="k">"findings"</span>: [
+    {
+      <span class="k">"id"</span>: <span class="s">"fiber-payment-channels"</span>,
+      <span class="k">"filename"</span>: <span class="s">"fiber-payment-channels.md"</span>,
+      <span class="k">"url"</span>: <span class="s">"https://raw.githubusercontent.com/..."</span>,
+      <span class="k">"size"</span>: <span class="n">14230</span>,
+      <span class="c">// with meta=1 also includes:</span>
+      <span class="k">"title"</span>: <span class="s">"Fiber Network Payment Channels"</span>,
+      <span class="k">"date"</span>: <span class="s">"2026-03-18"</span>,
+      <span class="k">"tags"</span>: [<span class="s">"fiber"</span>, <span class="s">"ckb"</span>, <span class="s">"payment-channels"</span>],
+      <span class="k">"summary"</span>: <span class="s">"Overview of Fiber Network's payment channel architecture..."</span>
+    }
+  ]
+}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Get single finding -->
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method">GET</span>
+            <span class="endpoint-path">/api/research/findings/<span class="param">:id</span></span>
+            <span class="endpoint-desc">Fetch a single finding by ID</span>
+        </div>
+        <div class="endpoint-body">
+            <h3>Path Parameters</h3>
+            <table class="params-table">
+                <thead>
+                    <tr><th>Parameter</th><th>Type</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="param-name">id</span></td>
+                        <td><span class="param-type">string</span></td>
+                        <td>Finding ID (filename without <code>.md</code> extension).</td>
+                    </tr>
+                </tbody>
+            </table>
+            <table class="params-table" style="margin-top:0.5rem;">
+                <thead>
+                    <tr><th>Query Parameter</th><th>Type</th><th>Description</th></tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><span class="param-name">format</span><span class="optional-badge">optional</span></td>
+                        <td><span class="param-type">markdown</span></td>
+                        <td>Return raw markdown instead of JSON. Content-Type: <code>text/markdown</code>.</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <h3>Examples</h3>
+            <div class="lang-tabs">
+                <button class="lang-tab active" onclick="switchLang(this, 'ex2-curl')">curl</button>
+                <button class="lang-tab" onclick="switchLang(this, 'ex2-fetch')">fetch</button>
+                <button class="lang-tab" onclick="switchLang(this, 'ex2-python')">python</button>
+            </div>
+            <div id="ex2-curl" class="lang-panel active code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><span class="c"># JSON (metadata + content)</span>
+curl https://api.wyltekindustries.com/api/research/findings/fiber-payment-channels
+
+<span class="c"># Raw markdown</span>
+curl "https://api.wyltekindustries.com/api/research/findings/fiber-payment-channels?format=markdown"</pre>
+            </div>
+            <div id="ex2-fetch" class="lang-panel code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre><span class="c">// JSON response</span>
+const res = await fetch(
+  'https://api.wyltekindustries.com/api/research/findings/fiber-payment-channels'
+);
+const { title, date, tags, content } = await res.json();
+
+<span class="c">// Raw markdown (e.g. to pass directly to an LLM)</span>
+const md = await fetch(
+  'https://api.wyltekindustries.com/api/research/findings/fiber-payment-channels?format=markdown'
+).then(r => r.text());</pre>
+            </div>
+            <div id="ex2-python" class="lang-panel code-block">
+                <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                <pre>import requests
+
+BASE = "https://api.wyltekindustries.com"
+finding_id = "fiber-payment-channels"
+
+<span class="c"># JSON</span>
+data = requests.get(f"{BASE}/api/research/findings/{finding_id}").json()
+print(data["title"], data["tags"])
+
+<span class="c"># Raw markdown (feed directly to LLM context)</span>
+md = requests.get(
+    f"{BASE}/api/research/findings/{finding_id}",
+    params={"format": "markdown"}
+).text</pre>
+            </div>
+
+            <div class="response-block" style="margin-top:1rem;">
+                <div class="response-status">200 OK</div>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre>{
+  <span class="k">"id"</span>:      <span class="s">"fiber-payment-channels"</span>,
+  <span class="k">"title"</span>:   <span class="s">"Fiber Network Payment Channels"</span>,
+  <span class="k">"date"</span>:    <span class="s">"2026-03-18"</span>,
+  <span class="k">"tags"</span>:    [<span class="s">"fiber"</span>, <span class="s">"ckb"</span>, <span class="s">"payment-channels"</span>],
+  <span class="k">"summary"</span>: <span class="s">"Overview of Fiber Network's payment channel architecture..."</span>,
+  <span class="k">"content"</span>: <span class="s">"# Research: Fiber Network Payment Channels\n\n..."</span>
+}</pre>
+                </div>
+                <div class="response-status err" style="margin-top:0.75rem;">404 Not Found</div>
+                <div class="code-block">
+                    <pre>{ <span class="k">"error"</span>: <span class="s">"Not found"</span>, <span class="k">"id"</span>: <span class="s">"bad-id"</span> }</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Tags -->
+    <div class="endpoint">
+        <div class="endpoint-header">
+            <span class="method">GET</span>
+            <span class="endpoint-path">/api/research/tags</span>
+            <span class="endpoint-desc">All tags sorted by usage count</span>
+        </div>
+        <div class="endpoint-body">
+            <div class="callout warning">
+                <strong>⚠️ Slow endpoint</strong>
+                This fetches and parses all ~188 findings to build the tag list. Use sparingly — cache the result in your agent.
+            </div>
+            <div class="response-block">
+                <div class="response-status">200 OK</div>
+                <div class="code-block">
+                    <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+                    <pre>{
+  <span class="k">"count"</span>: <span class="n">47</span>,
+  <span class="k">"tags"</span>: [
+    { <span class="k">"tag"</span>: <span class="s">"ckb"</span>,   <span class="k">"count"</span>: <span class="n">63</span> },
+    { <span class="k">"tag"</span>: <span class="s">"fiber"</span>, <span class="k">"count"</span>: <span class="n">41</span> },
+    { <span class="k">"tag"</span>: <span class="s">"esp32"</span>, <span class="k">"count"</span>: <span class="n">28</span> },
+    ...
+  ]
+}</pre>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Agentic Usage -->
+    <h2>🤖 Agentic Usage</h2>
+
+    <p style="color:var(--muted); margin-bottom:1.5rem; font-size:0.9rem;">
+        This API is designed for agent-to-agent consumption. No API keys, no sessions, no webhooks — just plain HTTP GET. Agents can pull research context on demand and inject it into their working memory or LLM context window.
+    </p>
+
+    <div class="agent-card">
+        <h3>📋 Pre-task Research Injection</h3>
+        <p>Before starting a task, query for relevant findings and inject them as context. Useful for OpenClaw agents, LangChain tools, or any agent framework.</p>
+        <ul class="use-case-list">
+            <li>Fetch findings tagged <code>fiber</code> before working on payment channel tasks</li>
+            <li>Pull the latest <code>ckb</code> findings to inform transaction-building decisions</li>
+            <li>Use <code>meta=1&amp;limit=5</code> for a fast 5-finding summary, then fetch full content on demand</li>
+        </ul>
+        <div class="lang-tabs" style="margin-top:1rem;">
+            <button class="lang-tab active" onclick="switchLang(this, 'agent1-openclaw')">OpenClaw skill</button>
+            <button class="lang-tab" onclick="switchLang(this, 'agent1-python')">Python agent</button>
+        </div>
+        <div id="agent1-openclaw" class="lang-panel active code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre><span class="c"># In an OpenClaw skill or heartbeat task</span>
+BASE = "https://api.wyltekindustries.com"
+
+async def get_research_context(tag, limit=5):
+    r = requests.get(f"{BASE}/api/research/findings",
+                     params={"meta": 1, "tag": tag, "limit": limit})
+    findings = r.json()["findings"]
+    <span class="c"># Build context block for LLM</span>
+    context = "\n\n".join(
+        f"## {f['title']}\n{f.get('summary', '')}"
+        for f in findings
+    )
+    return context</pre>
+        </div>
+        <div id="agent1-python" class="lang-panel code-block">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>import requests
+
+def fetch_research_context(tag: str, limit: int = 5) -> str:
+    """Pull relevant research and format for LLM injection."""
+    BASE = "https://api.wyltekindustries.com"
+    r = requests.get(
+        f"{BASE}/api/research/findings",
+        params={"meta": "1", "tag": tag, "limit": str(limit)}
+    )
+    findings = r.json().get("findings", [])
+    return "\n\n---\n\n".join(
+        f"**{f['title']}** ({f.get('date','?')})\n{f.get('summary','')}"
+        for f in findings
+    )
+
+<span class="c"># Example: inject into LLM prompt</span>
+context = fetch_research_context("fiber", limit=3)
+prompt = f"Use this research context:\n\n{context}\n\nNow answer: ..."</pre>
+        </div>
+    </div>
+
+    <div class="agent-card">
+        <h3>🔍 On-Demand Deep Fetch</h3>
+        <p>List findings first (lightweight), then fetch full content only for the most relevant ones. Minimises token burn on context injection.</p>
+        <ul class="use-case-list">
+            <li>Get the ID list first — cheap, just filenames and sizes</li>
+            <li>Score/rank IDs against your query using your own logic</li>
+            <li>Fetch <code>?format=markdown</code> for the top N hits only</li>
+        </ul>
+        <div class="code-block" style="margin-top:1rem;">
+            <div class="code-label">Pattern</div>
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>import requests, re
+
+BASE = "https://api.wyltekindustries.com"
+
+def smart_fetch(query_keywords: list[str], top_n=3) -> list[str]:
+    <span class="c"># 1. Get cheap listing</span>
+    ids = [f["id"] for f in
+           requests.get(f"{BASE}/api/research/findings").json()["findings"]]
+
+    <span class="c"># 2. Score by keyword match in ID string</span>
+    scored = sorted(
+        ids,
+        key=lambda id: sum(kw.lower() in id for kw in query_keywords),
+        reverse=True
+    )
+
+    <span class="c"># 3. Fetch full markdown for top hits only</span>
+    results = []
+    for finding_id in scored[:top_n]:
+        md = requests.get(
+            f"{BASE}/api/research/findings/{finding_id}",
+            params={"format": "markdown"}
+        ).text
+        results.append(md)
+    return results</pre>
+        </div>
+    </div>
+
+    <div class="agent-card">
+        <h3>🗺️ Discovery — What's Been Researched?</h3>
+        <p>Use the tags endpoint at startup to discover what topics are covered before planning research tasks. Avoids duplicating work that's already been done.</p>
+        <ul class="use-case-list">
+            <li>Cache the tag list at agent boot — it's slow but only needed once</li>
+            <li>Check if a topic has coverage before spawning a new research crawl</li>
+            <li>Cross-reference with your own task queue to find gaps</li>
+        </ul>
+        <div class="code-block" style="margin-top:1rem;">
+            <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+            <pre>import requests
+
+BASE = "https://api.wyltekindustries.com"
+
+<span class="c"># Fetch tag coverage once, cache locally</span>
+tags_data = requests.get(f"{BASE}/api/research/tags").json()
+covered_tags = {t["tag"] for t in tags_data["tags"]}
+
+def already_researched(topic: str) -> bool:
+    keywords = topic.lower().split()
+    return any(kw in covered_tags for kw in keywords)
+
+<span class="c"># Before queuing a new research task:</span>
+if not already_researched("fiber htlc"):
+    queue_research_task("fiber htlc routing")</pre>
+        </div>
+    </div>
+
+    <div class="callout tip">
+        <strong>💡 Recommended agent pattern</strong>
+        Boot: fetch tags → cache. Per-task: query <code>?meta=1&amp;tag=X&amp;limit=5</code> for summaries → inject top 2–3 into LLM context. On demand: fetch individual findings with <code>?format=markdown</code> when full depth is needed. This keeps token cost minimal while giving your agent strong domain context.
+    </div>
+
+    <!-- Infrastructure -->
+    <h2>Infrastructure</h2>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap:1rem; margin-top:1rem;">
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1rem;">
+            <div style="color:var(--muted); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem;">Runtime</div>
+            <div style="font-weight:600;">Cloudflare Workers</div>
+            <div style="color:var(--muted); font-size:0.8rem;">Edge-deployed, global PoPs</div>
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1rem;">
+            <div style="color:var(--muted); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem;">Data Source</div>
+            <div style="font-weight:600;">GitHub (private repo)</div>
+            <div style="color:var(--muted); font-size:0.8rem;">~188 markdown findings</div>
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1rem;">
+            <div style="color:var(--muted); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem;">Auth</div>
+            <div style="font-weight:600;">None (consumers)</div>
+            <div style="color:var(--muted); font-size:0.8rem;">GitHub token stored in Worker secrets</div>
+        </div>
+        <div style="background:var(--surface); border:1px solid var(--border); border-radius:10px; padding:1rem;">
+            <div style="color:var(--muted); font-size:0.75rem; text-transform:uppercase; letter-spacing:0.05em; margin-bottom:0.4rem;">CORS</div>
+            <div style="font-weight:600;">Open (*)</div>
+            <div style="color:var(--muted); font-size:0.8rem;">Browser-accessible</div>
+        </div>
+    </div>
+
+</div>
+
+<script src="/js/member-nav.js"></script>
+<script src="/js/bug-reporter.js"></script>
+<script>
+    // Nav toggle
+    const navToggle = document.getElementById('navToggle');
+    const mainNav = document.getElementById('mainNav');
+    if (navToggle) {
+        navToggle.addEventListener('click', () => mainNav.classList.toggle('open'));
+    }
+
+    // Language tab switcher
+    function switchLang(btn, panelId) {
+        const group = btn.closest('.endpoint-body, .agent-card');
+        group.querySelectorAll('.lang-tab').forEach(t => t.classList.remove('active'));
+        group.querySelectorAll('.lang-panel').forEach(p => p.classList.remove('active'));
+        btn.classList.add('active');
+        document.getElementById(panelId).classList.add('active');
+    }
+
+    // Copy button
+    function copyCode(btn) {
+        const pre = btn.closest('.code-block').querySelector('pre');
+        const text = pre.innerText;
+        navigator.clipboard.writeText(text).then(() => {
+            btn.textContent = 'Copied!';
+            btn.classList.add('copied');
+            setTimeout(() => {
+                btn.textContent = 'Copy';
+                btn.classList.remove('copied');
+            }, 1800);
+        });
+    }
+
+    // Live status check
+    fetch('https://api.wyltekindustries.com/api/research/health')
+        .then(r => r.json())
+        .then(d => {
+            if (d.status !== 'ok') {
+                document.querySelector('.status-badge').style.background = 'rgba(255,95,95,0.1)';
+                document.querySelector('.status-badge').style.borderColor = 'rgba(255,95,95,0.3)';
+                document.querySelector('.status-badge').style.color = '#ff5f5f';
+                document.querySelector('.status-dot').style.background = '#ff5f5f';
+                document.querySelector('.status-badge').lastChild.textContent = ' Degraded';
+            }
+        })
+        .catch(() => {});
+</script>
+</body>
+</html>
