@@ -1474,3 +1474,52 @@ const POSTS = [
   },
 
 ];
+
+  // ────────────────────────────────────────────────────────────────
+  {
+    id:      "2026-03-22-fiberquest-full-flow",
+    date:    "2026-03-22",
+    project: "FiberQuest",
+    title:   "FiberQuest Full Flow Verified — Need-to-End Working, GUI in Progress",
+    tags:    ["FiberQuest", "hackathon", "CKB", "Fiber", "payment-channels", "testnet", "tournament"],
+    body: [
+      "Three days before the Claw & Order hackathon deadline. The full FiberQuest tournament flow — entry, game validation, payout — has been verified end-to-end on testnet. GUI implementation started tonight.",
+      { type: "h3", content: "Full Tournament Flow — Verified End-to-End" },
+      "Tonight's session closed the loop. The complete FiberQuest flow now works autonomously on testnet:",
+      { type: "ul", content: [
+        "FiberQuest Pi generates a payout invoice via <code>new_invoice</code> RPC ✅",
+        "TournamentManager creates a tournament on the N100 agent ✅",
+        "Players registered with <code>addPlayer()</code> — optional payout invoice pre-registered for autonomous settlement ✅",
+        "Entry invoices generated per player ✅",
+        "<code>markPaid()</code> confirms entries → tournament auto-starts ✅",
+        "RAM engine activates and waits for RetroArch UDP game data (port 55355) ✅",
+        "<code>_endTournament()</code> calculates winner, fires payout ✅",
+        "<code>payout_needed</code> event fires gracefully for players without a pre-registered invoice ✅",
+      ]},
+      "The architecture is clean: entry fees accumulate in the agent's Fiber balance, the RAM engine reads live game state from any RetroArch-compatible emulator over UDP, and settlement is sub-second from game-over to payment.",
+      { type: "h3", content: "Fiber RPC — Both Nodes Live" },
+      "N100 fiber node RPC remains on localhost (SSH tunnel required). FiberQuest Pi RPC was opened to LAN (<code>0.0.0.0:8227</code>) — direct access without tunneling. Channel between the two nodes (0xa94a29dd...) remains CHANNEL_READY.",
+      "The channel has been stable for days. Testnet CKB balances holding. Ready for real tournament traffic.",
+      { type: "h3", content: "Inference Router — nrouter on NucBox" },
+      "While the tournament flow was being verified, the NucBox got a significant upgrade: <strong>nrouter</strong>, an OpenAI-compatible HTTP router running on port 11435.",
+      "nrouter unifies the local inference fleet under one endpoint: routes <code>bitnet-*</code> prefixed models to the BitNet llama-cli binary, <code>falcon-e-*</code> to Falcon-E, and everything else to Ollama. Both backends fall back gracefully. 36 models registered — including <code>qwen3-coder:30b</code>, <code>deepseek-r1:32b</code>, <code>qwen3-vl:30b</code> (vision), BitNet 2B (43 tok/s, 1.2GB) and Falcon-E 3B (55 tok/s, 954MB).",
+      { type: "h3", content: "RAG Service Online" },
+      "A vector search service is now running on NucBox (port 9990) — local embeddings over all research findings. NumPy 2 compatibility resolved, FAISS loading cleanly. Initial corpus: 56 research findings indexed. Full ingest of the 177-finding corpus is pending a re-run of the ingest pipeline.",
+      "Goal: agent can query research findings by semantic similarity before fetching the web — reducing redundant crawls and improving context quality for analysis tasks.",
+      { type: "h3", content: "Vision Models — driveThree GPU Inference" },
+      "driveThree (RTX 3060 Ti) got dedicated vision model setup: <code>minicpm-v-tuned</code>, <code>moondream-tuned</code>, and <code>qwen3-vl:8b</code> — all GPU-accelerated, available at <code>192.168.68.88:11434</code>. NucBox has the 30B variant for heavier vision tasks. Local image analysis now has a clear routing path: 8B on driveThree for speed, 30B on NucBox for quality.",
+      { type: "h3", content: "Website Fixes" },
+      "Two bugs fixed on wyltekindustries.com:",
+      { type: "ul", content: [
+        "<strong>Research findings not rendering:</strong> the findings script was loading after the module that consumed it. Fixed by reordering script tags.",
+        "<strong>Member nav not updating on login:</strong> <code>member-nav.js</code> ran once on page load. Added <code>wyltek-auth-changed</code> event dispatch from the login/logout flow, listener in the nav script — now updates immediately and syncs across tabs.",
+      ]},
+      { type: "h3", content: "What's Next" },
+      "GUI implementation on driveThree is underway tonight. Target: a clean tournament UI that non-technical players can use at the demo — join, see status, watch their game, receive payout. Three days to hackathon deadline. The hard part is done.",
+    ],
+    links: [
+      { text: "FiberQuest Agent", href: "https://github.com/toastmanAu/fiberquest-agent" },
+      { text: "nrouter", href: "https://github.com/toastmanAu/nrouter" },
+      { text: "FiberQuest Pi Fiber Node", href: "https://github.com/toastmanAu/fiberquest" },
+    ],
+  },
