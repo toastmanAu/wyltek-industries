@@ -1,17 +1,17 @@
 {
-  "date": "2026-03-22 13:36",
+  "date": "2026-03-22 15:29",
   "commit": "c8fc6b4",
   "platform": "aarch64 Linux (Pi 5)",
   "compiler": "g++ 11.4.0",
   "total_pass": 144,
   "total_fail": 0,
-  "total_time": "7",
+  "total_time": "6",
   "suites": [
     {
       "name": "blake2b",
       "pass": 12,
       "fail": 0,
-      "time": "1s",
+      "time": "0s",
       "tests": []
     },
     {
