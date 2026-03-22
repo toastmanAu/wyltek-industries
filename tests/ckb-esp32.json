@@ -1,5 +1,5 @@
 {
-  "date": "2026-03-22 07:06",
+  "date": "2026-03-22 13:36",
   "commit": "c8fc6b4",
   "platform": "aarch64 Linux (Pi 5)",
   "compiler": "g++ 11.4.0",
@@ -11,28 +11,28 @@
       "name": "blake2b",
       "pass": 12,
       "fail": 0,
-      "time": "0s",
+      "time": "1s",
       "tests": []
     },
     {
       "name": "molecule",
       "pass": 36,
       "fail": 0,
-      "time": "1s",
+      "time": "0s",
       "tests": []
     },
     {
       "name": "bip39",
       "pass": 20,
       "fail": 0,
-      "time": "1s",
+      "time": "2s",
       "tests": []
     },
     {
       "name": "signer",
       "pass": 24,
       "fail": 0,
-      "time": "2s",
+      "time": "1s",
       "tests": []
     },
     {
