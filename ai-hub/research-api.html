@@ -474,7 +474,7 @@
             <span class="qr-desc">List all findings</span>
 
             <span class="qr-method">GET</span>
-            <span class="qr-path">/api/research/findings?tag=<span class="p">&lt;tag&gt;</span>&amp;meta=1&amp;limit=<span class="p">N</span></span>
+            <span class="qr-path">/api/research/findings?tag=<span class="p">&lt;tag&gt;</span>&amp;limit=<span class="p">N</span></span>
             <span class="qr-desc">Filtered list with metadata</span>
 
             <span class="qr-method">GET</span>
@@ -548,12 +548,12 @@
                     <tr>
                         <td><span class="param-name">tag</span><span class="optional-badge">optional</span></td>
                         <td><span class="param-type">string</span></td>
-                        <td>Filter by tag (case-insensitive). Requires <code>meta=1</code>.</td>
+                        <td>Filter by tag (case-insensitive). All results include title, date, tags and summary.</td>
                     </tr>
                     <tr>
-                        <td><span class="param-name">meta</span><span class="optional-badge">optional</span></td>
-                        <td><span class="param-type">0 | 1</span></td>
-                        <td>Include parsed metadata (title, date, tags, summary) per finding. Slower — fetches each file.</td>
+                        <td><span class="param-name">q</span><span class="optional-badge">optional</span></td>
+                        <td><span class="param-type">string</span></td>
+                        <td>Full-text search across id, title, tags and summary fields.</td>
                     </tr>
                     <tr>
                         <td><span class="param-name">limit</span><span class="optional-badge">optional</span></td>
@@ -571,11 +571,14 @@
             </div>
             <div id="ex1-curl" class="lang-panel active code-block">
                 <button class="copy-btn" onclick="copyCode(this)">Copy</button>
-                <pre><span class="c"># All findings (ID + filename only)</span>
+                <pre><span class="c"># All findings (includes title, tags, summary)</span>
 curl https://api.wyltekindustries.com/api/research/findings
 
-<span class="c"># With metadata, filtered by tag</span>
-curl "https://api.wyltekindustries.com/api/research/findings?meta=1&tag=fiber&limit=10"</pre>
+<span class="c"># Filter by tag</span>
+curl "https://api.wyltekindustries.com/api/research/findings?tag=fiber&limit=10"
+
+<span class="c"># Full-text search</span>
+curl "https://api.wyltekindustries.com/api/research/findings?q=payment+channel&limit=5"</pre>
             </div>
             <div id="ex1-fetch" class="lang-panel code-block">
                 <button class="copy-btn" onclick="copyCode(this)">Copy</button>
@@ -585,7 +588,7 @@ const { count, findings } = await res.json();
 
 <span class="c">// With metadata + tag filter</span>
 const res = await fetch(
-  'https://api.wyltekindustries.com/api/research/findings?meta=1&tag=ckb&limit=20'
+  'https://api.wyltekindustries.com/api/research/findings?tag=ckb&limit=20'
 );
 const data = await res.json();
 data.findings.forEach(f => console.log(f.title, f.tags));</pre>
@@ -597,7 +600,7 @@ data.findings.forEach(f => console.log(f.title, f.tags));</pre>
 BASE = "https://api.wyltekindustries.com"
 
 <span class="c"># List with metadata</span>
-r = requests.get(f"{BASE}/api/research/findings", params={"meta": 1, "limit": 20})
+r = requests.get(f"{BASE}/api/research/findings", params={"tag": "fiber", "limit": 20})
 for finding in r.json()["findings"]:
     print(finding["title"], finding["tags"])</pre>
             </div>
@@ -614,7 +617,7 @@ for finding in r.json()["findings"]:
       <span class="k">"filename"</span>: <span class="s">"fiber-payment-channels.md"</span>,
       <span class="k">"url"</span>: <span class="s">"https://raw.githubusercontent.com/..."</span>,
       <span class="k">"size"</span>: <span class="n">14230</span>,
-      <span class="c">// with meta=1 also includes:</span>
+      <span class="c"></span>
       <span class="k">"title"</span>: <span class="s">"Fiber Network Payment Channels"</span>,
       <span class="k">"date"</span>: <span class="s">"2026-03-18"</span>,
       <span class="k">"tags"</span>: [<span class="s">"fiber"</span>, <span class="s">"ckb"</span>, <span class="s">"payment-channels"</span>],
@@ -735,9 +738,9 @@ md = requests.get(
             <span class="endpoint-desc">All tags sorted by usage count</span>
         </div>
         <div class="endpoint-body">
-            <div class="callout warning">
-                <strong>⚠️ Slow endpoint</strong>
-                This fetches and parses all ~188 findings to build the tag list. Use sparingly — cache the result in your agent.
+            <div class="callout tip">
+                <strong>💡 Fast &amp; cheap</strong>
+                Reads the pre-built index in a single request — no per-file fetching. Safe to call freely. Agent tip: cache it at boot, refresh hourly.
             </div>
             <div class="response-block">
                 <div class="response-status">200 OK</div>
@@ -770,7 +773,7 @@ md = requests.get(
         <ul class="use-case-list">
             <li>Fetch findings tagged <code>fiber</code> before working on payment channel tasks</li>
             <li>Pull the latest <code>ckb</code> findings to inform transaction-building decisions</li>
-            <li>Use <code>meta=1&amp;limit=5</code> for a fast 5-finding summary, then fetch full content on demand</li>
+            <li>List includes titles, tags and summaries — fetch individual findings with <code>?format=markdown</code> for full content</li>
         </ul>
         <div class="lang-tabs" style="margin-top:1rem;">
             <button class="lang-tab active" onclick="switchLang(this, 'agent1-openclaw')">OpenClaw skill</button>
@@ -783,7 +786,7 @@ BASE = "https://api.wyltekindustries.com"
 
 async def get_research_context(tag, limit=5):
     r = requests.get(f"{BASE}/api/research/findings",
-                     params={"meta": 1, "tag": tag, "limit": limit})
+                     params={"tag": tag, "limit": limit})
     findings = r.json()["findings"]
     <span class="c"># Build context block for LLM</span>
     context = "\n\n".join(
@@ -801,7 +804,7 @@ def fetch_research_context(tag: str, limit: int = 5) -> str:
     BASE = "https://api.wyltekindustries.com"
     r = requests.get(
         f"{BASE}/api/research/findings",
-        params={"meta": "1", "tag": tag, "limit": str(limit)}
+        params={"tag": tag, "limit": str(limit)}
     )
     findings = r.json().get("findings", [])
     return "\n\n---\n\n".join(
@@ -884,7 +887,7 @@ if not already_researched("fiber htlc"):
 
     <div class="callout tip">
         <strong>💡 Recommended agent pattern</strong>
-        Boot: fetch tags → cache. Per-task: query <code>?meta=1&amp;tag=X&amp;limit=5</code> for summaries → inject top 2–3 into LLM context. On demand: fetch individual findings with <code>?format=markdown</code> when full depth is needed. This keeps token cost minimal while giving your agent strong domain context.
+        Boot: fetch tags → cache. Per-task: query <code>?tag=X&amp;limit=5</code> for tagged summaries → inject top 2–3 into LLM context. On demand: fetch individual findings with <code>?format=markdown</code> when full depth is needed. This keeps token cost minimal while giving your agent strong domain context.
     </div>
 
     <!-- Infrastructure -->
