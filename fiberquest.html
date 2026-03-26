@@ -4,14 +4,13 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
   <title>FiberQuest — Wyltek Industries</title>
-  <script src="/js/member-guard.js"></script>
-  <meta name="description" content="Retro gaming with real-money micropayments on CKB Fiber Network. Submit game RAM maps to the community library.">
+  <meta name="description" content="Autonomous retro gaming tournament platform on CKB Fiber Network. Block-deterministic tournaments, trustless escrow, real CKB stakes.">
   <link rel="icon" type="image/png" href="/favicon-32x32.png">
   <style>
     :root{
       --bg:#0d1018;--surface:#131720;--surface2:#181e2e;--border:#1e2535;
       --accent:#4f8ef7;--green:#34d399;--yellow:#fbbf24;--red:#f87171;
-      --purple:#a78bfa;--muted:#8899aa;--text:#e2e8f0;
+      --purple:#a78bfa;--muted:#8899aa;--text:#e2e8f0;--cyan:#00e5ff;
     }
     *{box-sizing:border-box;margin:0;padding:0;}
     body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
@@ -25,7 +24,7 @@
     .logo img{width:28px;height:28px;border-radius:7px;object-fit:cover;}
     nav{display:flex;gap:1.25rem;margin-left:auto;}
     nav a{font-size:.875rem;color:var(--muted);}
-    nav a:hover,nav a.active{color:var(--text);}
+    nav a:hover,nav a.active{color:var(--text);text-decoration:none;}
     .member-badge{font-size:.75rem;background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.3);color:var(--accent);border-radius:99px;padding:.2rem .65rem;}
     .nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;}
     @media(max-width:768px){
@@ -36,83 +35,66 @@
     }
 
     .hero{padding:3rem 2rem 2rem;max-width:1200px;margin:0 auto;text-align:center;}
-    .hero-icon{font-size:3rem;margin-bottom:1rem;}
-    .hero h1{font-size:2.2rem;font-weight:800;margin-bottom:.75rem;}
+    .hero-logo{width:180px;height:180px;border-radius:24px;margin:0 auto 1.5rem;display:block;object-fit:cover;border:2px solid var(--border);box-shadow:0 0 40px rgba(79,142,247,.15);}
+    .hero h1{font-size:2.4rem;font-weight:800;margin-bottom:.5rem;}
     .hero h1 span{color:var(--accent);}
-    .hero p{color:var(--muted);max-width:640px;margin:0 auto 1.5rem;line-height:1.8;font-size:1rem;}
-    .hero-tags{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:2rem;}
+    .hero .sub{color:var(--muted);font-size:1.1rem;margin-bottom:1.5rem;max-width:700px;margin-left:auto;margin-right:auto;line-height:1.8;}
+    .hero-tags{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;}
     .tag{display:inline-flex;align-items:center;gap:.35rem;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:.3rem .8rem;font-size:.78rem;color:var(--muted);}
     .tag.green{border-color:rgba(52,211,153,.3);color:var(--green);background:rgba(52,211,153,.07);}
     .tag.purple{border-color:rgba(167,139,250,.3);color:var(--purple);background:rgba(167,139,250,.07);}
     .tag.yellow{border-color:rgba(251,191,36,.3);color:var(--yellow);background:rgba(251,191,36,.07);}
+    .tag.cyan{border-color:rgba(0,229,255,.3);color:var(--cyan);background:rgba(0,229,255,.07);}
+    .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+    .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.7rem 1.5rem;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s;text-decoration:none;}
+    .btn-primary{background:var(--accent);color:#000;}
+    .btn-primary:hover{background:#6da5ff;text-decoration:none;}
+    .btn-outline{border:1px solid var(--border);color:var(--text);background:var(--surface);}
+    .btn-outline:hover{border-color:var(--accent);color:var(--accent);text-decoration:none;}
 
-    .main{max-width:1200px;margin:0 auto;padding:0 2rem 5rem;display:grid;grid-template-columns:1fr 380px;gap:2rem;}
-    @media(max-width:900px){.main{grid-template-columns:1fr;}}
+    .content{max-width:1200px;margin:0 auto;padding:0 2rem 4rem;}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;}
+    @media(max-width:768px){.grid-2{grid-template-columns:1fr;}}
 
-    /* How it works */
     .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.75rem;margin-bottom:1.5rem;}
-    .section-title{font-size:1rem;font-weight:700;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem;}
+    .section-title{font-size:1.1rem;font-weight:700;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem;}
+
     .flow{display:flex;flex-direction:column;gap:.75rem;}
     .flow-step{display:flex;align-items:flex-start;gap:.75rem;}
     .flow-num{width:28px;height:28px;border-radius:50%;background:rgba(79,142,247,.15);border:1px solid rgba(79,142,247,.3);color:var(--accent);font-size:.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
     .flow-text strong{display:block;font-size:.9rem;margin-bottom:.15rem;}
     .flow-text span{font-size:.82rem;color:var(--muted);line-height:1.6;}
 
-    /* Game library */
-    #games-loading{color:var(--muted);font-size:.9rem;padding:1rem 0;}
-    .game-table{width:100%;border-collapse:collapse;font-size:.85rem;}
-    .game-table th{text-align:left;padding:.5rem .75rem;font-size:.72rem;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);border-bottom:1px solid var(--border);}
-    .game-table td{padding:.6rem .75rem;border-bottom:1px solid rgba(30,37,53,.6);vertical-align:middle;}
-    .game-table tr:last-child td{border-bottom:none;}
-    .game-table tr:hover td{background:var(--surface2);}
-    .game-name{font-weight:600;color:var(--text);}
-    .game-console{font-size:.78rem;color:var(--muted);}
-    .addr-count{display:inline-flex;align-items:center;gap:.3rem;background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.2);border-radius:99px;padding:.15rem .55rem;font-size:.76rem;color:var(--accent);}
-    .game-table a{color:var(--accent);font-size:.8rem;}
-    .empty-library{color:var(--muted);text-align:center;padding:2rem;font-size:.9rem;}
+    .tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;}
+    .tech-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1.25rem;}
+    .tech-card h4{font-size:.9rem;margin-bottom:.5rem;color:var(--text);}
+    .tech-card p{font-size:.82rem;color:var(--muted);line-height:1.6;}
+    .tech-card code{font-size:.78em;}
 
-    /* Right column */
-    .sidebar-col{display:flex;flex-direction:column;gap:1.5rem;}
+    .stat-row{display:flex;gap:1.5rem;flex-wrap:wrap;margin:1.5rem 0;}
+    .stat{text-align:center;flex:1;min-width:120px;}
+    .stat-num{font-size:2rem;font-weight:800;color:var(--accent);}
+    .stat-label{font-size:.78rem;color:var(--muted);margin-top:.25rem;}
 
-    /* Submit panel */
-    .submit-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.75rem;}
-    .submit-title{font-size:1rem;font-weight:700;margin-bottom:.5rem;}
-    .submit-desc{font-size:.83rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.7;}
-    .form-group{margin-bottom:1rem;}
-    .form-label{display:block;font-size:.8rem;font-weight:600;color:var(--muted);margin-bottom:.4rem;text-transform:uppercase;letter-spacing:.04em;}
-    .form-input{width:100%;padding:.6rem .8rem;background:#0d1018;border:1px solid var(--border);border-radius:7px;color:var(--text);font-size:.88rem;transition:border-color .15s;}
-    .form-input:focus{outline:none;border-color:var(--accent);}
-    .file-zone{border:2px dashed var(--border);border-radius:8px;padding:1.5rem;text-align:center;cursor:pointer;transition:border-color .15s,background .15s;font-size:.85rem;color:var(--muted);}
-    .file-zone:hover,.file-zone.drag{border-color:var(--accent);background:rgba(79,142,247,.05);}
-    .file-zone.has-file{border-color:var(--green);background:rgba(52,211,153,.05);color:var(--green);}
-    #file-input{display:none;}
-    .json-preview{background:#0d1018;border:1px solid var(--border);border-radius:7px;padding:.75rem;font-family:monospace;font-size:.75rem;color:var(--muted);max-height:180px;overflow-y:auto;margin-top:.75rem;display:none;white-space:pre;}
-    .submit-btn{width:100%;padding:.75rem;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:.9rem;font-weight:700;cursor:pointer;transition:opacity .15s;margin-top:.75rem;}
-    .submit-btn:hover{opacity:.85;}
-    .submit-btn:disabled{opacity:.4;cursor:not-allowed;}
-    .submit-status{margin-top:.75rem;font-size:.83rem;padding:.6rem .9rem;border-radius:7px;display:none;}
-    .submit-status.success{background:rgba(52,211,153,.1);border:1px solid rgba(52,211,153,.3);color:var(--green);}
-    .submit-status.error{background:rgba(248,113,113,.1);border:1px solid rgba(248,113,113,.3);color:var(--red);}
-    .submit-status.loading{background:rgba(79,142,247,.1);border:1px solid rgba(79,142,247,.3);color:var(--accent);}
+    .install-box{background:#080b10;border:1px solid var(--border);border-radius:10px;padding:1.25rem;font-family:monospace;font-size:.85rem;line-height:1.8;color:var(--green);overflow-x:auto;}
+    .install-box .comment{color:var(--muted);}
+    .install-box .cmd{color:var(--green);}
 
-    /* Info panel */
-    .info-panel{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.75rem;font-size:.84rem;line-height:1.8;color:var(--muted);}
-    .info-panel h3{font-size:.9rem;font-weight:700;color:var(--text);margin-bottom:.5rem;}
-    .info-panel ul{padding-left:1.25rem;}
-    .info-panel li{margin-bottom:.25rem;}
-    .info-panel a{color:var(--accent);}
-    .info-panel code{font-size:.78em;}
+    .game-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:.75rem;}
+    .game-thumb{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.5rem;text-align:center;font-size:.72rem;color:var(--muted);}
+    .game-thumb img{width:100%;aspect-ratio:3/4;object-fit:contain;border-radius:4px;margin-bottom:.4rem;}
+    .game-thumb .name{font-weight:600;color:var(--text);font-size:.78rem;}
 
-    /* PR list */
-    #pr-list{display:flex;flex-direction:column;gap:.6rem;}
-    .pr-card{background:var(--surface2);border:1px solid var(--border);border-radius:8px;padding:.75rem 1rem;font-size:.83rem;}
-    .pr-card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:.25rem;}
-    .pr-title{font-weight:600;color:var(--text);}
-    .pr-badge{font-size:.7rem;border-radius:99px;padding:.15rem .55rem;font-weight:600;}
-    .pr-badge.validated{background:rgba(52,211,153,.12);color:var(--green);border:1px solid rgba(52,211,153,.3);}
-    .pr-badge.pending{background:rgba(251,191,36,.1);color:var(--yellow);border:1px solid rgba(251,191,36,.3);}
-    .pr-badge.needs-review{background:rgba(248,113,113,.1);color:var(--red);border:1px solid rgba(248,113,113,.3);}
-    .pr-meta{color:var(--muted);font-size:.77rem;}
+    .roadmap{display:flex;flex-direction:column;gap:.5rem;}
+    .rm-item{display:flex;align-items:center;gap:.75rem;font-size:.88rem;}
+    .rm-done{color:var(--green);}
+    .rm-active{color:var(--yellow);}
+    .rm-future{color:var(--muted);}
+
+    hr.divider{border:none;border-top:1px solid var(--border);margin:3rem 0;}
+    footer{border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--muted);font-size:.85rem;}
+    footer a{color:var(--muted);}
+    footer a:hover{color:var(--accent);}
   </style>
 </head>
 <body>
@@ -125,370 +107,211 @@
     <nav id="mainNav">
       <a href="/hardware.html">Hardware</a>
       <a href="/ckb.html">CKB</a>
-      <a href="/research.html">Research</a>
+      <a href="/research.html" class="member-only">Research</a>
       <a href="/fiberquest.html" class="active">FiberQuest</a>
-      <a href="/lounge.html">Lounge</a>
+      <a href="/lounge.html" class="member-only">Lounge</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub</a>
       <span class="member-badge member-only" id="member-addr"></span>
     </nav>
     <button class="nav-toggle" id="navToggle">&#9776;</button>
   </div>
 </header>
 
+<!-- Hero -->
 <div class="hero">
-  <div class="hero-icon">🕹️</div>
+  <img src="/fiberquest-logo.jpeg" alt="FiberQuest" class="hero-logo">
   <h1>Fiber<span>Quest</span></h1>
-  <p>Retro gaming with real-money micropayments on CKB Fiber Network. Every game event — banana collected, life lost, score increased — triggers an instant payment between players.</p>
+  <p class="sub">Autonomous retro gaming tournament platform on CKB Fiber Network. Your agent watches the game, tracks scores from RAM, and handles payments — you just play.</p>
   <div class="hero-tags">
-    <span class="tag green">⚡ Fiber Network</span>
-    <span class="tag purple">🎮 RetroArch</span>
-    <span class="tag yellow">💰 Micropayments</span>
-    <span class="tag">🔓 Open Source</span>
-    <span class="tag">🤝 Community</span>
+    <span class="tag green">Fiber Network</span>
+    <span class="tag purple">RetroArch</span>
+    <span class="tag yellow">Real CKB Stakes</span>
+    <span class="tag cyan">Block-Deterministic</span>
+    <span class="tag">Open Source</span>
+    <span class="tag">Handheld Support</span>
+  </div>
+  <div class="stat-row">
+    <div class="stat"><div class="stat-num">24</div><div class="stat-label">Games Mapped</div></div>
+    <div class="stat"><div class="stat-num">6</div><div class="stat-label">Platforms</div></div>
+    <div class="stat"><div class="stat-num">&lt;2s</div><div class="stat-label">Block Sync</div></div>
+    <div class="stat"><div class="stat-num">60Hz</div><div class="stat-label">RAM Polling</div></div>
+  </div>
+  <div class="hero-btns">
+    <a href="https://github.com/toastmanAu/fiberquest" target="_blank" class="btn btn-primary">View on GitHub</a>
+    <a href="https://github.com/toastmanAu/fiberquest/releases" target="_blank" class="btn btn-outline">Download</a>
+    <a href="https://github.com/toastmanAu/fiberquest/blob/main/docs/tournament-v2-architecture.md" target="_blank" class="btn btn-outline">Architecture</a>
   </div>
 </div>
 
-<div class="main">
-  <!-- Left column -->
-  <div class="left-col">
+<div class="content">
 
-    <!-- How it works -->
-    <div class="section">
-      <div class="section-title">⚙️ How It Works</div>
-      <div class="flow">
-        <div class="flow-step">
-          <div class="flow-num">1</div>
-          <div class="flow-text">
-            <strong>RetroArch polls RAM</strong>
-            <span>The <a href="https://github.com/toastmanAu/ram-viewer" target="_blank">RAM Viewer</a> reads game memory every 200ms via RetroArch's UDP network command interface.</span>
-          </div>
+  <!-- How it works -->
+  <div class="section">
+    <div class="section-title">How It Works</div>
+    <div class="flow">
+      <div class="flow-step">
+        <div class="flow-num">1</div>
+        <div class="flow-text">
+          <strong>Create a tournament</strong>
+          <span>Set the game, entry fee, player count, and block schedule. Your agent creates an on-chain tournament cell that anyone can discover.</span>
         </div>
-        <div class="flow-step">
-          <div class="flow-num">2</div>
-          <div class="flow-text">
-            <strong>Sidecar detects events</strong>
-            <span>A Node.js sidecar daemon watches for meaningful changes — banana collected, life lost, level complete — using verified RAM address maps.</span>
-          </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">2</div>
+        <div class="flow-text">
+          <strong>Players join via intent cells</strong>
+          <span>Each player's agent creates an intent cell on CKB L1 signaling they want to join. The tournament manager discovers and registers them — no central server.</span>
         </div>
-        <div class="flow-step">
-          <div class="flow-num">3</div>
-          <div class="flow-text">
-            <strong>Fiber channel payment</strong>
-            <span>Each event triggers an instant micropayment over a CKB Fiber Network channel. Payments settle in milliseconds, no on-chain fee per transaction.</span>
-          </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">3</div>
+        <div class="flow-text">
+          <strong>Block-deterministic start</strong>
+          <span>All agents monitor the chain. When the start block arrives, every agent starts simultaneously — zero ambiguity, no timestamp drift.</span>
         </div>
-        <div class="flow-step">
-          <div class="flow-num">4</div>
-          <div class="flow-text">
-            <strong>Channel settlement</strong>
-            <span>At game end, the channel closes and the net result settles on-chain. Winner takes the agreed stake.</span>
-          </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">4</div>
+        <div class="flow-text">
+          <strong>Play on any device</strong>
+          <span>RetroArch runs the game. The agent polls RAM at 60Hz via UDP, detecting every score change, KO, banana, and life lost in real time. Works on desktop, Pi, or handheld.</span>
+        </div>
+      </div>
+      <div class="flow-step">
+        <div class="flow-num">5</div>
+        <div class="flow-text">
+          <strong>Autonomous settlement</strong>
+          <span>At end block, each agent submits scores to chain. Winner is deterministic — all agents calculate the same result. Payout via Fiber in under a second.</span>
         </div>
       </div>
     </div>
-
-    <!-- Game library -->
-    <div class="section">
-      <div class="section-title" style="justify-content:space-between">
-        <span>📚 Community Game Library</span>
-        <span style="display:flex;align-items:center;gap:.6rem;">
-          <span id="games-count" style="font-size:.75rem;color:var(--muted);font-weight:400;"></span>
-          <span id="games-live-dot" style="width:7px;height:7px;border-radius:50%;background:var(--muted);display:inline-block;"></span>
-          <span style="font-size:.72rem;color:var(--muted);font-weight:400;">live</span>
-        </span>
-      </div>
-      <div id="games-box" style="
-        background:#080b10;
-        border:1px solid var(--border);
-        border-radius:8px;
-        font-family:monospace;
-        font-size:.8rem;
-        line-height:1.7;
-        padding:.75rem 1rem;
-        height:280px;
-        overflow-y:auto;
-        color:#a0b0c0;
-      ">
-        <span style="color:var(--muted);">Fetching game library…</span>
-      </div>
-    </div>
-
-    <!-- Open PRs -->
-    <div class="section">
-      <div class="section-title">🔍 Pending Submissions</div>
-      <div id="pr-loading" style="color:var(--muted);font-size:.9rem;">Loading…</div>
-      <div id="pr-list"></div>
-      <div id="pr-empty" style="display:none;color:var(--muted);font-size:.85rem;padding:.5rem 0;">No pending submissions.</div>
-    </div>
-
   </div>
 
-  <!-- Right column -->
-  <div class="sidebar-col">
-
-    <!-- Submit panel -->
-    <div class="submit-panel">
-      <div class="submit-title">🎮 Submit a Game Map</div>
-      <div class="submit-desc">
-        Found RAM addresses for a new game? Upload your JSON file and we'll open a PR on the community library. An AI validator will check it automatically.
+  <!-- Tech Stack -->
+  <div class="section">
+    <div class="section-title">Tech Stack</div>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <h4>Fiber Network</h4>
+        <p>CKB's payment channel network. Entry fees flow through Fiber channels — instant micropayments, no on-chain fee per transaction. Hub routing for payouts.</p>
       </div>
-
-      <div class="form-group">
-        <label class="form-label">Your CKB Address</label>
-        <input type="text" class="form-input" id="submitter-addr" readonly>
+      <div class="tech-card">
+        <h4>CKB L1 Cells</h4>
+        <p>Tournament state stored on-chain in cells. Intent cells for registration, score cells for results. Global discovery — any agent can find any tournament.</p>
       </div>
-
-      <div class="form-group">
-        <label class="form-label">Game JSON File</label>
-        <div class="file-zone" id="file-zone" onclick="document.getElementById('file-input').click()">
-          <div id="file-zone-text">📁 Click or drag & drop your game JSON file</div>
-        </div>
-        <input type="file" id="file-input" accept=".json">
-        <pre class="json-preview" id="json-preview"></pre>
+      <div class="tech-card">
+        <h4>RetroArch UDP</h4>
+        <p><code>READ_CORE_MEMORY</code> / <code>READ_CORE_RAM</code> over UDP port 55355. 60Hz polling, 0% packet loss. Auto-detects legacy command format for handhelds.</p>
       </div>
-
-      <div class="form-group">
-        <label class="form-label">Notes (optional)</label>
-        <input type="text" class="form-input" id="submit-notes" placeholder="e.g. tested on snes9x v1.62 with USA ROM">
+      <div class="tech-card">
+        <h4>Block Tracker</h4>
+        <p>Smart chain polling — only scans on new blocks, not blind intervals. Rolling 50-block average for time estimates. WebSocket-ready for local CKB nodes.</p>
       </div>
+      <div class="tech-card">
+        <h4>Electron + Node.js</h4>
+        <p>Cross-platform desktop app. Retro arcade UI (Press Start 2P). First open-source Node.js Fiber client library. No React, no frameworks — pure vanilla.</p>
+      </div>
+      <div class="tech-card">
+        <h4>JoyID Wallet</h4>
+        <p>Passkey-based CKB wallet for player authentication and tournament entry payment. No browser extensions — scan QR from your phone.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Agent Code Attestation</h4>
+        <p>Each agent includes a code hash in its intent cell. Modified agents are rejected at registration — prevents cheating at the protocol level.</p>
+      </div>
+      <div class="tech-card">
+        <h4>ROM Verification</h4>
+        <p>CRC32 hash checking ensures all players run the same ROM version. Different revisions have different RAM layouts — verification prevents scoring errors.</p>
+      </div>
+    </div>
+  </div>
 
-      <button class="submit-btn" id="submit-btn" disabled>Submit to GitHub →</button>
-      <div class="submit-status" id="submit-status"></div>
+  <!-- Supported Platforms -->
+  <div class="grid-2">
+    <div class="section">
+      <div class="section-title">Supported Platforms</div>
+      <div style="display:flex;flex-direction:column;gap:.6rem;font-size:.88rem;">
+        <div style="display:flex;justify-content:space-between"><span>SNES</span><span style="color:var(--green)">9 games</span></div>
+        <div style="display:flex;justify-content:space-between"><span>NES</span><span style="color:var(--green)">5 games</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Mega Drive / Genesis</span><span style="color:var(--green)">5 games</span></div>
+        <div style="display:flex;justify-content:space-between"><span>N64</span><span style="color:var(--green)">3 games</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Master System</span><span style="color:var(--green)">3 games</span></div>
+        <div style="display:flex;justify-content:space-between"><span>Arcade (FBNeo)</span><span style="color:var(--green)">2 games</span></div>
+      </div>
     </div>
 
-    <!-- Info panel -->
-    <div class="info-panel">
-      <h3>📋 JSON Format</h3>
-      <p>Your file should follow this structure:</p>
-      <pre style="background:#0d1018;border:1px solid var(--border);border-radius:6px;padding:.75rem;font-family:monospace;font-size:.74rem;margin-top:.5rem;overflow-x:auto;">{
-  "name": "Game Title (Console)",
-  "console": "SNES",
-  "core": "snes9x",
-  "addresses": [
-    {
-      "address": "0x0529",
-      "label": "Banana Counter",
-      "description": "0–99"
-    }
-  ]
-}</pre>
+    <div class="section">
+      <div class="section-title">Tested Hardware</div>
+      <div style="display:flex;flex-direction:column;gap:.6rem;font-size:.88rem;">
+        <div><span style="color:var(--green)">&#10003;</span> Linux x86_64 (desktop)</div>
+        <div><span style="color:var(--green)">&#10003;</span> Raspberry Pi 5 (aarch64)</div>
+        <div><span style="color:var(--green)">&#10003;</span> RG35XX H (Knulli / handheld)</div>
+        <div><span style="color:var(--green)">&#10003;</span> Any RetroArch with network commands</div>
+        <div style="color:var(--muted);font-size:.8rem;margin-top:.5rem">Handhelds connect via WiFi UDP — play on the couch, agent runs on your desktop.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Installation -->
+  <div class="section">
+    <div class="section-title">Installation</div>
+    <div class="install-box">
+      <div class="comment"># Clone and run</div>
+      <div class="cmd">git clone https://github.com/toastmanAu/fiberquest.git</div>
+      <div class="cmd">cd fiberquest</div>
+      <div class="cmd">npm install</div>
+      <div class="cmd">npm start</div>
       <br>
-      <h3>🔧 Tools</h3>
-      <ul>
-        <li><a href="https://github.com/toastmanAu/ram-viewer" target="_blank">RAM Viewer</a> — browser GUI + UDP polling</li>
-        <li><code>ram-watcher.js --discover</code> — AI-assisted address discovery</li>
-        <li><a href="https://github.com/toastmanAu/ram-viewer/blob/main/GAME-FILE-GUIDE.md" target="_blank">Game File Guide</a> — full walkthrough</li>
-      </ul>
+      <div class="comment"># Or download the AppImage from GitHub Releases</div>
+      <div class="cmd">curl -fsSL https://github.com/toastmanAu/fiberquest/releases/latest/download/install.sh | bash</div>
+      <br>
+      <div class="comment"># Requirements</div>
+      <div class="comment"># - Node.js 18+</div>
+      <div class="comment"># - RetroArch with network_cmd_enable = true</div>
+      <div class="comment"># - CKB testnet agent key (generated in app)</div>
+      <div class="comment"># - Fiber node (auto-detected or configured in settings)</div>
     </div>
-
   </div>
+
+  <!-- Roadmap -->
+  <div class="section">
+    <div class="section-title">Roadmap</div>
+    <div class="roadmap">
+      <div class="rm-item rm-done"><span>&#10003;</span> v0.1 — Hackathon MVP: Fiber payments + RAM polling</div>
+      <div class="rm-item rm-done"><span>&#10003;</span> v0.2 — Distributed tournaments: multi-machine, on-chain coordination</div>
+      <div class="rm-item rm-active"><span>&#9679;</span> v0.3 — Trustless: intent cells, block-deterministic timing, agent attestation</div>
+      <div class="rm-item rm-future"><span>&#9675;</span> v1.0 — Production testnet: full Fiber escrow, wallet UX, polished UI</div>
+      <div class="rm-item rm-future"><span>&#9675;</span> Mainnet — Real money tournaments on CKB mainnet</div>
+      <div class="rm-item rm-future"><span>&#9675;</span> Appchain — Axon L2 with consensus-native tournament rules</div>
+    </div>
+  </div>
+
+  <!-- Links -->
+  <div class="section">
+    <div class="section-title">Links</div>
+    <div style="display:flex;flex-wrap:wrap;gap:1rem;">
+      <a href="https://github.com/toastmanAu/fiberquest" target="_blank" class="btn btn-outline">GitHub Repo</a>
+      <a href="https://github.com/toastmanAu/fiberquest/releases" target="_blank" class="btn btn-outline">Releases</a>
+      <a href="https://github.com/toastmanAu/fiberquest/blob/main/docs/tournament-v2-architecture.md" target="_blank" class="btn btn-outline">v2 Architecture</a>
+      <a href="https://github.com/toastmanAu/ram-viewer" target="_blank" class="btn btn-outline">RAM Viewer</a>
+      <a href="https://github.com/toastmanAu/fiberquest/blob/main/CLAUDE.md" target="_blank" class="btn btn-outline">CLAUDE.md</a>
+    </div>
+  </div>
+
 </div>
 
+<hr class="divider">
+<footer>
+  <p>Built by <a href="https://github.com/toastmanAu" target="_blank">toastmanAu</a> &middot; Nervos CKB ecosystem &middot; <a href="https://nervos.org" target="_blank">nervos.org</a></p>
+  <p style="font-size:.78rem;margin-top:.4rem;opacity:.5">Wyltek Industries &mdash; wouldn't you like to know</p>
+</footer>
+
+<script src="/js/nav-toggle.js"></script>
 <script src="/js/member-nav.js"></script>
-<script src="/js/bug-reporter.js"></script>
 <script>
-  // Show member address
-  document.getElementById('member-addr').textContent =
-    window.MEMBER_ADDRESS ? window.MEMBER_ADDRESS.slice(0,12) + '…' : '';
-  document.getElementById('submitter-addr').value = window.MEMBER_ADDRESS || '';
-
-  // Nav toggle
-  document.getElementById('navToggle').addEventListener('click', () => {
-    document.getElementById('mainNav').classList.toggle('open');
-  });
-
-  const WORKER_URL = 'https://wyltek-fiberquest.toastmanau.workers.dev';
-  const GITHUB_API = 'https://api.github.com/repos/toastmanAu/ram-viewer';
-  const GITHUB_RAW = 'https://raw.githubusercontent.com/toastmanAu/ram-viewer/main/games';
-
-  // ── Load game library (live scrollable box) ─────────────────────────────────
-  const gamesBox  = document.getElementById('games-box');
-  const gamesCount = document.getElementById('games-count');
-  const liveDot   = document.getElementById('games-live-dot');
-  let lastGameList = '';
-  let gameRefreshTimer = null;
-
-  function renderGamesBox(games) {
-    if (games.length === 0) {
-      gamesBox.innerHTML = '<span style="color:var(--muted)">No games yet — be the first to submit one!</span>';
-      gamesCount.textContent = '0 games';
-      return;
-    }
-    const lines = games.map(g => {
-      const addrs = (g.addresses || []).map(a =>
-        `<span style="color:#4f8ef7">${a.address}</span> <span style="color:#8899aa">${a.label}</span>`
-      ).join('  ·  ');
-      const safeName = (g.name||'').toLowerCase().replace(/[^a-z0-9]/g,'-').replace(/-+/g,'-');
-      const ghUrl = `https://github.com/toastmanAu/ram-viewer/blob/main/games/${safeName}.json`;
-      return `<div style="padding:.3rem 0;border-bottom:1px solid #1a2035;display:flex;gap:.75rem;align-items:baseline;flex-wrap:wrap;">
-  <span style="color:#34d399;font-weight:700;min-width:200px">${g.name || '?'}</span>
-  <span style="color:#fbbf24;font-size:.75rem">[${g.console||'?'}/${g.core||'?'}]</span>
-  <span style="font-size:.77rem;flex:1;min-width:120px">${addrs || '<span style="color:var(--muted)">no addresses</span>'}</span>
-  <a href="${ghUrl}" target="_blank" style="color:#4f8ef7;font-size:.73rem;text-decoration:none;white-space:nowrap">JSON ↗</a>
-</div>`;
-    });
-    // Header line
-    const header = `<div style="color:#4f8ef7;border-bottom:1px solid var(--border);padding-bottom:.4rem;margin-bottom:.2rem;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase">
-  NAME${' '.repeat(30)}CONSOLE/CORE${' '.repeat(10)}ADDRESSES</div>`;
-    gamesBox.innerHTML = header + lines.join('');
-    gamesCount.textContent = `${games.length} game${games.length !== 1 ? 's' : ''}`;
+  if (window.MEMBER_ADDRESS) {
+    document.getElementById('member-addr').textContent = window.MEMBER_ADDRESS.slice(0,12) + '...';
   }
-
-  async function loadGames() {
-    // Blink dot
-    liveDot.style.background = '#fbbf24';
-    try {
-      const resp = await fetch(`${GITHUB_API}/contents/games`, {
-        headers: { Accept: 'application/vnd.github.v3+json' },
-        cache: 'no-store'
-      });
-      const files = await resp.json();
-      if (!Array.isArray(files)) throw new Error('bad response');
-      const jsonFiles = files.filter(f => f.name.endsWith('.json') && f.name !== 'INDEX.md');
-
-      const games = (await Promise.all(jsonFiles.map(async f => {
-        try {
-          const r = await fetch(`${GITHUB_RAW}/${f.name}?_=${Date.now()}`, { cache: 'no-store' });
-          return await r.json();
-        } catch { return null; }
-      }))).filter(Boolean);
-
-      // Only re-render if list changed
-      const sig = JSON.stringify(games.map(g => g.name));
-      if (sig !== lastGameList) {
-        lastGameList = sig;
-        renderGamesBox(games);
-      }
-      liveDot.style.background = '#34d399'; // green = live
-    } catch (e) {
-      gamesBox.innerHTML = `<span style="color:#f87171">Failed to load library: ${e.message}</span>`;
-      liveDot.style.background = '#f87171';
-    }
-    // Poll every 30s
-    gameRefreshTimer = setTimeout(loadGames, 30000);
-  }
-
-  // ── Load open PRs ───────────────────────────────────────────────────────────
-  async function loadPRs() {
-    try {
-      const resp = await fetch(`${GITHUB_API}/pulls?state=open&per_page=10`, {
-        headers: { Accept: 'application/vnd.github.v3+json' }
-      });
-      const prs = await resp.json();
-      const list = document.getElementById('pr-list');
-      document.getElementById('pr-loading').style.display = 'none';
-
-      const gamePRs = prs.filter(p => p.title.toLowerCase().includes('game') || p.title.toLowerCase().includes('submission'));
-      if (gamePRs.length === 0) {
-        document.getElementById('pr-empty').style.display = 'block';
-        return;
-      }
-      for (const pr of gamePRs) {
-        const labels = pr.labels.map(l => l.name);
-        const badge = labels.includes('validated') ? 'validated'
-          : labels.includes('needs-review') ? 'needs-review'
-          : 'pending';
-        const badgeText = badge === 'validated' ? '✅ Validated'
-          : badge === 'needs-review' ? '⚠️ Needs Review'
-          : '⏳ Pending';
-        const card = document.createElement('div');
-        card.className = 'pr-card';
-        card.innerHTML = `
-          <div class="pr-card-top">
-            <span class="pr-title">${pr.title}</span>
-            <span class="pr-badge ${badge}">${badgeText}</span>
-          </div>
-          <div class="pr-meta">
-            #${pr.number} · by ${pr.user.login} · <a href="${pr.html_url}" target="_blank">View PR →</a>
-          </div>`;
-        list.appendChild(card);
-      }
-    } catch {
-      document.getElementById('pr-loading').textContent = 'Could not load PRs.';
-    }
-  }
-
-  // ── File upload ─────────────────────────────────────────────────────────────
-  let uploadedJSON = null;
-  const fileInput = document.getElementById('file-input');
-  const fileZone = document.getElementById('file-zone');
-  const fileZoneText = document.getElementById('file-zone-text');
-  const jsonPreview = document.getElementById('json-preview');
-  const submitBtn = document.getElementById('submit-btn');
-
-  function handleFile(file) {
-    if (!file || !file.name.endsWith('.json')) {
-      showStatus('error', 'Please select a .json file');
-      return;
-    }
-    const reader = new FileReader();
-    reader.onload = e => {
-      try {
-        uploadedJSON = JSON.parse(e.target.result);
-        fileZone.classList.add('has-file');
-        fileZoneText.textContent = `✅ ${file.name} (${(file.size/1024).toFixed(1)} KB)`;
-        jsonPreview.textContent = JSON.stringify(uploadedJSON, null, 2);
-        jsonPreview.style.display = 'block';
-        submitBtn.disabled = false;
-      } catch {
-        showStatus('error', 'Invalid JSON file');
-      }
-    };
-    reader.readAsText(file);
-  }
-
-  fileInput.addEventListener('change', e => handleFile(e.target.files[0]));
-  fileZone.addEventListener('dragover', e => { e.preventDefault(); fileZone.classList.add('drag'); });
-  fileZone.addEventListener('dragleave', () => fileZone.classList.remove('drag'));
-  fileZone.addEventListener('drop', e => {
-    e.preventDefault();
-    fileZone.classList.remove('drag');
-    handleFile(e.dataTransfer.files[0]);
-  });
-
-  // ── Submit ──────────────────────────────────────────────────────────────────
-  function showStatus(type, msg) {
-    const el = document.getElementById('submit-status');
-    el.className = `submit-status ${type}`;
-    el.textContent = msg;
-    el.style.display = 'block';
-  }
-
-  document.getElementById('submit-btn').addEventListener('click', async () => {
-    if (!uploadedJSON) return;
-    submitBtn.disabled = true;
-    showStatus('loading', '⏳ Submitting to GitHub…');
-    try {
-      const resp = await fetch(`${WORKER_URL}/submit`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          game: uploadedJSON,
-          submitter: window.MEMBER_ADDRESS,
-          notes: document.getElementById('submit-notes').value.trim()
-        })
-      });
-      const result = await resp.json();
-      if (result.ok) {
-        showStatus('success', `✅ PR opened! ${result.prUrl}`);
-        loadPRs();
-      } else {
-        showStatus('error', `❌ ${result.error || 'Submission failed'}`);
-        submitBtn.disabled = false;
-      }
-    } catch (e) {
-      showStatus('error', `❌ Network error: ${e.message}`);
-      submitBtn.disabled = false;
-    }
-  });
-
-  loadGames();
-  loadPRs();
-</script>
-<script>
-  // Nav toggle
-  document.getElementById('navToggle').addEventListener('click', function(){
-    document.getElementById('mainNav').classList.toggle('open');
-  });
 </script>
 </body>
 </html>
