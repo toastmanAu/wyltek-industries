@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 209 completed research findings
+// 229 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentpay-openclaw-skill-integration",
@@ -14,6 +14,28 @@ const RESEARCH_FINDINGS = [
       "fiberquest"
     ],
     "date": "2026-03-21"
+  },
+  {
+    "id": "asic-design-flow-intro-for-fpga-dev-revisit",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The provided \"Source Content\" section for the research topic \"asic-design-flow-intro-for-fpga-dev-revisit\" is empty. As a technical research assistant, I am constrained to analyze only the provided co",
+    "tags": [
+      "fpga"
+    ],
+    "date": "2026-03-25"
+  },
+  {
+    "id": "asic-design-flow-intro-for-fpga-dev",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The primary source content intended to provide an introduction to the ASIC design flow for FPGA developers was not successfully fetched, resulting in \"FETCH ERROR: HTTP Error 404: Not Found\" for both ",
+    "tags": [
+      "ckb",
+      "esp32",
+      "fpga"
+    ],
+    "date": "2026-03-25"
   },
   {
     "id": "bitchat-ble-transport",
@@ -47,6 +69,27 @@ const RESEARCH_FINDINGS = [
     "date": "2026-03-21"
   },
   {
+    "id": "bitnet-falcon-e-benchmarks-revisit",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The research topic \"bitnet-falcon-e-benchmarks-revisit\" was provided without any accompanying source content. As a result, it is not possible to analyze the core technical details, available APIs, kno",
+    "tags": [
+      "bitnet"
+    ],
+    "date": "2026-03-22"
+  },
+  {
+    "id": "bitnet-falcon-e-benchmarks",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This research focuses on the Falcon-E series of 1.58-bit BitNet models and the broader BitNet b1.58 ecosystem. The Falcon-E models (1B and 3B Instruct versions) are described as pure-transformer, 1.58",
+    "tags": [
+      "bitnet",
+      "quantization"
+    ],
+    "date": "2026-03-22"
+  },
+  {
     "id": "bitnet-qat-training-workflow-revisit",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -60,7 +103,7 @@ const RESEARCH_FINDINGS = [
     "id": "bitnet-qat-training-workflow",
     "status": "DONE",
     "priority": "MEDIUM",
-    "goal": "This research investigates the practical aspects of Quantization-Aware Training (QAT) for BitNet 1.58-bit models, focusing on the BitLinear layer, Straight-Through Estimator (STE), VRAM-limited fine-t",
+    "goal": "This research analyzes the practical workflow for Quantization-Aware Training (QAT) of BitNet 1.58-bit models, focusing on the BitLinear layer, Straight-Through Estimator (STE), VRAM-limited fine-tuni",
     "tags": [
       "bitnet",
       "quantization",
@@ -251,6 +294,19 @@ const RESEARCH_FINDINGS = [
     "date": "2026-03-10"
   },
   {
+    "id": "ckb-light-client-android-feasibility-revisit",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The provided project ground truth details a robust and fully functional CKB light client implementation, `ckb-light-esp`, which operates successfully on ESP32 hardware using C/ESP-IDF. This implementa",
+    "tags": [
+      "ckb",
+      "fiber",
+      "esp32",
+      "fiberquest"
+    ],
+    "date": "2026-03-22"
+  },
+  {
     "id": "ckb-light-client-android-feasibility",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -412,6 +468,41 @@ const RESEARCH_FINDINGS = [
     "date": "2026-03-03"
   },
   {
+    "id": "eaglesong-artix7-rtl-core-design",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The primary goal is to design an ASIC-friendly Eaglesong RTL core for Artix-7 FPGAs. However, the provided source content for the Eaglesong algorithm specification (RFCs, READMEs) resulted in \"FETCH E",
+    "tags": [
+      "ckb",
+      "nervos",
+      "esp32",
+      "fpga"
+    ],
+    "date": "2026-03-25"
+  },
+  {
+    "id": "eaglesong-asic-prototyping-a7-lite",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This research aims to map a practical path for Eaglesong hash algorithm implementation on the MicroPhase A7-Lite Artix-7 FPGA, leading to early-stage ASIC design concepts. However, the provided source",
+    "tags": [
+      "ckb",
+      "nervos",
+      "fpga"
+    ],
+    "date": "2026-03-25"
+  },
+  {
+    "id": "eaglesong-fpga-power-perf-modelling",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The provided links to Xilinx documentation (ug440-xilinx-power-estimator.pdf and ug907-vivado-power-analysis.pdf) display a \"Loading application... Your web browser must have JavaScript enabled\" messa",
+    "tags": [
+      "fpga"
+    ],
+    "date": "2026-03-25"
+  },
+  {
     "id": "efficient-local-inference-models-2026",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -433,6 +524,27 @@ const RESEARCH_FINDINGS = [
       "fiberquest"
     ],
     "date": "2026-03-06"
+  },
+  {
+    "id": "esp32-c6-coprocessor-sdio-wifi-flash-revisit",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The provided prompt includes extensive \"Project Ground Truth\" detailing Wyltek Industries' existing CKB-related projects and infrastructure, including the fact that `ckb-light-esp` targets ESP32-C6. H",
+    "tags": [
+      "ckb",
+      "esp32"
+    ],
+    "date": "2026-03-22"
+  },
+  {
+    "id": "esp32-c6-coprocessor-sdio-wifi-flash",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This research investigates the practical workflow for flashing WiFi firmware on an ESP32-C6 coprocessor via SDIO from an ESP32-P4 host on the Guition JC4880P433C platform. Based on the provided docume",
+    "tags": [
+      "esp32"
+    ],
+    "date": "2026-03-22"
   },
   {
     "id": "esp32-ckb-dob-signing-flow",
@@ -1422,6 +1534,17 @@ const RESEARCH_FINDINGS = [
     "date": "2026-03-05"
   },
   {
+    "id": "helium-anti-gaming-mechanisms-survey",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The provided web content offers a high-level introduction to the Helium network, describing it as a decentralized wireless network powered by community-operated \"Hotspots\" that provide LoRaWAN and cel",
+    "tags": [
+      "lora",
+      "helium"
+    ],
+    "date": "2026-03-25"
+  },
+  {
     "id": "hispo-s8-headunit-specifics",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -1616,6 +1739,32 @@ const RESEARCH_FINDINGS = [
     "date": "2026-03-03"
   },
   {
+    "id": "lora-poc-anti-gaming-design-for-ckb",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This research explores protocol-level design patterns for a CKB-based LoRa Proof-of-Coverage (PoC) network, focusing on anti-gaming mechanisms inspired by lessons from Helium. While specific details o",
+    "tags": [
+      "ckb",
+      "nervos",
+      "fiber",
+      "esp32",
+      "lora",
+      "helium",
+      "fiberquest"
+    ],
+    "date": "2026-03-25"
+  },
+  {
+    "id": "microphase-a7-lite-board-deep-dive",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The provided source content for the MicroPhase A7-Lite Xilinx Artix-7 FPGA Demo Board (XC7A35T/100T/200T variants) is insufficient to answer the detailed research questions regarding its features, pin",
+    "tags": [
+      "fpga"
+    ],
+    "date": "2026-03-25"
+  },
+  {
     "id": "nemoclaw-local-inference-fork-community-followup-1774099111",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -1634,6 +1783,16 @@ const RESEARCH_FINDINGS = [
       "research"
     ],
     "date": "unknown"
+  },
+  {
+    "id": "nemoclaw-openshell-lan-networking-revisit",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This research task aimed to re-investigate \"nemoclaw-openshell-lan-networking\" to gather core technical details, available APIs/protocols, limitations, and reference implementations. However, no sourc",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-03-22"
   },
   {
     "id": "nemoclaw-openshell-lan-networking",
@@ -1655,6 +1814,19 @@ const RESEARCH_FINDINGS = [
       "esp32"
     ],
     "date": "2026-03-06"
+  },
+  {
+    "id": "nervos-blockchain-poker-architecture",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "Designing a blockchain-based online poker system on Nervos CKB presents unique opportunities and challenges. While the provided content does not offer insights into existing blockchain poker architect",
+    "tags": [
+      "ckb",
+      "nervos",
+      "fiber",
+      "esp32"
+    ],
+    "date": "2026-03-24"
   },
   {
     "id": "nervos-ecosystem-deep-dive",
@@ -1731,6 +1903,26 @@ const RESEARCH_FINDINGS = [
     "date": "2026-03-03"
   },
   {
+    "id": "oculink-egpu-fan-control-gmktec-k8-plus-revisit",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "No source content was provided for analysis regarding \"oculink-egpu-fan-control-gmktec-k8-plus\". Therefore, it is not possible to answer the research questions concerning the core technical details, a",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-03-23"
+  },
+  {
+    "id": "oculink-egpu-fan-control-gmktec-k8-plus",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This research investigates the integration of an OCuLink eGPU with the GMKTEC K8 Plus for AI inference, focusing on compute-only configuration, fan control, and Ollama integration. Based on the provid",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-03-23"
+  },
+  {
     "id": "ollama-benchmark-results",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -1803,6 +1995,16 @@ const RESEARCH_FINDINGS = [
       "research"
     ],
     "date": "2026-03-08"
+  },
+  {
+    "id": "opi3b-dual-display-dsi-hdmi-simultaneous",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The provided content, primarily the `dw-hdmi.c` driver, offers insights into the HDMI output capabilities and its integration with the Linux DRM/KMS subsystem, including EDID reading and video mode ma",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-03-22"
   },
   {
     "id": "opi3b-dual-display-dsi-hdmi",
@@ -2261,7 +2463,7 @@ const RESEARCH_FINDINGS = [
     "id": "ultra-low-bit-quantized-models-2026",
     "status": "DONE",
     "priority": "MEDIUM",
-    "goal": "This research surveys ultra-low-bit quantized LLMs (1-bit, 2-bit, 3-bit) available on HuggingFace in 2026, focusing on models suitable for consumer hardware. The Microsoft BitNet b1.58 2B4T stands out",
+    "goal": "This research surveys ultra-low-bit quantized LLMs available on HuggingFace, focusing on 1-bit, 2-bit, and 3-bit models suitable for consumer hardware. Microsoft's BitNet b1.58 2B4T stands out as a na",
     "tags": [
       "bitnet",
       "quantization"
@@ -2308,6 +2510,31 @@ const RESEARCH_FINDINGS = [
       "research"
     ],
     "date": "unknown"
+  },
+  {
+    "id": "wireless-poc-crypto-anti-gaming-patterns",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The requested source content, consisting of Helium HIP documents (HIP-0029, HIP-0049, HIP-0051), could not be fetched due to \"HTTP Error 404: Not Found\" for each URL. Consequently, it is impossible to",
+    "tags": [
+      "lora",
+      "helium"
+    ],
+    "date": "2026-03-25"
+  },
+  {
+    "id": "wydid-esp32-component-secp256k1-signing",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This research focuses on designing an ESP32-native `WyDID.h` component for on-device signing and DID identity on the CKB blockchain. While the ESP32-P4 is confirmed to support secp256k1 signing and a ",
+    "tags": [
+      "ckb",
+      "nervos",
+      "fiber",
+      "esp32",
+      "fiberquest"
+    ],
+    "date": "2026-03-22"
   },
   {
     "id": "wylora-usb-lora-dongle",
