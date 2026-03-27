@@ -21,7 +21,17 @@
     .logo img{width:28px;height:28px;border-radius:7px;object-fit:cover;}
     nav{display:flex;gap:1.25rem;margin-left:auto;}
     nav a{font-size:.875rem;color:var(--muted);}
-    nav a:hover{color:var(--text);}
+    nav a:hover,nav a.active{color:var(--text);text-decoration:none;}
+    .member-only{display:none!important;}
+    #mainNav.member-nav .member-only{display:inline-flex!important;}
+    .nav-join{color:var(--accent)!important;font-weight:600;border:1px solid rgba(79,142,247,.3);border-radius:99px;padding:.15rem .65rem;}
+    .nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;}
+    @media(max-width:768px){
+      .nav-toggle{display:block;}
+      nav#mainNav{display:none;flex-direction:column;gap:0;position:absolute;top:56px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);z-index:99;}
+      nav#mainNav.open{display:flex;}
+      nav#mainNav a{padding:.7rem 1.5rem;border-bottom:1px solid var(--border);}
+    }
 
     .hero{padding:3rem 2rem 2rem;max-width:1200px;margin:0 auto;}
     .hero h1{font-size:1.8rem;font-weight:700;margin-bottom:.5rem;}
@@ -82,11 +92,23 @@
       <img src="/wyltek-mark.png" alt="Wyltek">
       Wyltek Industries
     </a>
-    <nav>
-      <a href="/blog.html">Devlog</a>
-      <a href="https://github.com/toastmanAu/fiberquest" target="_blank">GitHub ↗</a>
-      <a href="/members.html">Members</a>
+    <nav id="mainNav">
+      <a href="/index.html">Home</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/ckb.html">CKB</a>
+      <a href="/ckb-light-esp.html">Light Client</a>
+      <a href="/blackbox.html">BlackBox</a>
+      <a href="/roadmap.html">Roadmap</a>
+      <a href="/fiberquest.html">FiberQuest</a>
+      <a href="/research.html" class="member-only">Research</a>
+      <a href="/blog.html" class="member-only">Devlog</a>
+      <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
+      <a href="/flasher.html" class="member-only">Flasher</a>
+      <a href="/ckb-sync.html" class="member-only">Sync</a>
+      <a href="/members.html" class="nav-join">✦ Join / Sign In</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
     </nav>
+    <button class="nav-toggle" id="navToggle">&#9776;</button>
   </div>
 </header>
 
@@ -252,6 +274,7 @@ async function loadTask(id, el) {
   }
 }
 </script>
-
+<script src="/js/nav-toggle.js"></script>
+<script src="/js/member-nav.js"></script>
 </body>
 </html>

@@ -20,6 +20,19 @@
     .nav-links{display:flex;gap:0.25rem;margin-left:auto;}
     .nav-links a{color:var(--muted);text-decoration:none;padding:0.4rem 0.75rem;border-radius:6px;font-size:0.875rem;transition:color .15s,background .15s;}
     .nav-links a:hover,.nav-links a.active{color:var(--text);background:rgba(255,255,255,.05);}
+    #mainNav{display:flex;gap:1.5rem;align-items:center;max-width:1100px;margin:0 auto;padding:0 1.5rem;height:56px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
+    #mainNav a{color:var(--muted);font-size:.9rem;text-decoration:none;}
+    #mainNav a:hover,#mainNav a.active{color:var(--text);}
+    .member-only{display:none!important;}
+    #mainNav.member-nav .member-only{display:inline-flex!important;}
+    .nav-join{color:var(--accent)!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;}
+    .nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;}
+    @media(max-width:768px){
+      .nav-toggle{display:block;}
+      #mainNav{flex-direction:column;gap:0;height:auto;padding:0;}
+      #mainNav:not(.open) a{display:none;}
+      #mainNav .nav-toggle-wrap{display:flex;align-items:center;justify-content:space-between;width:100%;height:56px;padding:0 1.5rem;}
+    }
     .page{max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
     .page-title{font-size:1.75rem;font-weight:700;margin-bottom:0.5rem;}
     .page-sub{color:var(--muted);font-size:0.9rem;line-height:1.6;margin-bottom:2rem;}
@@ -79,6 +92,7 @@
       <a href="/ckb-light-esp.html">Light Client</a>
       <a href="/blackbox.html">BlackBox</a>
       <a href="/roadmap.html">Roadmap</a>
+      <a href="/fiberquest.html">FiberQuest</a>
       <a href="/research.html" class="member-only active">Research</a>
       <a href="/blog.html" class="member-only">Devlog</a>
       <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
