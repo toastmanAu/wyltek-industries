@@ -23,6 +23,10 @@
     nav { display:flex; gap:1.5rem; }
     nav a { color:var(--muted); font-size:.9rem; transition:color .2s; }
     nav a:hover, nav a.active { color:var(--text); text-decoration:none; }
+    .member-only { display:none !important; }
+    #mainNav.member-nav .member-only { display:inline-flex !important; }
+    .nav-join{color:var(--accent,#00c8ff)!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;transition:background .2s,border-color .2s!important;}
+    .nav-join:hover{background:rgba(0,200,255,.1);border-color:var(--accent,#00c8ff);text-decoration:none!important;}
     .nav-toggle { display:none; background:none; border:none; color:var(--text); font-size:1.4rem; cursor:pointer; }
     @media(max-width:768px){
       .nav-toggle{display:block;}
@@ -124,6 +128,7 @@
       <a href="ckb-light-esp.html">Light Client</a>
       <a href="blackbox.html">BlackBox</a>
       <a href="roadmap.html">Roadmap</a>
+      <a href="fiberquest.html">FiberQuest</a>
       <a href="research.html" class="member-only">Research</a>
       <a href="blog.html" class="member-only">Devlog</a>
       <a href="lounge.html" class="active member-only">💬 Lounge</a>

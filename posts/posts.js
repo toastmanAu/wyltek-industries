@@ -1,7 +1,22 @@
 // posts.js — Wyltek Industries devlog entries
 // To add a new post: add an object to the front of the POSTS array.
+//
+// Fields:
+//   id:      unique slug (used for anchor links)
+//   date:    "YYYY-MM-DD"
+//   title:   string
+//   tags:    array of strings — shown as coloured pills
+//   project: primary project name (shown in header strip)
+//   body:    array of paragraphs — strings or {type, content} objects
+//             plain string   → <p>
+//             {type:"h3"}    → <h3>
+//             {type:"code"}  → <pre><code> block
+//             {type:"ul"}    → <ul> (content = array of strings)
+//             {type:"link", text, href} → inline CTA link
+//   links:   array of {text, href} — footer buttons on the post card
 
 const POSTS = [
+  // ────────────────────────────────────────────────────────────────
   {
     id:      "2026-03-16-fiberquest-agent-hmi-live",
     date:    "2026-03-16",
@@ -56,9 +71,9 @@ const POSTS = [
       ]},
       { type: "h3", content: "What's Next" },
       "1. Fund NucBox wallet to open first settlement channel",
-        "2. End-to-end test: player deposit → game validation → payout",
-        "3. Deploy website components (tournament browse/join)",
-        "4. Stress test: concurrent tournaments, player throughput",
+      "2. End-to-end test: player deposit → game validation → payout",
+      "3. Deploy website components (tournament browse/join)",
+      "4. Stress test: concurrent tournaments, player throughput",
     ],
     links: [
       { text: "FiberQuest Agent", href: "https://github.com/toastmanAu/fiberquest-agent" },
@@ -84,7 +99,7 @@ const POSTS = [
       { type: "h3", content: "Toast Translate Bot — Live in Nervos Communities" },
       "Deployed @WyTranslateBot to Cloudflare Workers. 43 languages, smart input cleaning (strips emoji/URLs to prevent loops), direct commands (/en, /zh, /es, etc.), clean output with flag emoji. Already live and smooth in both Nervos TG and Nervos Nation.",
       { type: "h3", content: "What's Next" },
-      "Build the FiberQuest Agent (~8 hours): escrow monitoring, auto-publisher, Fiber channel manager. Full E2E testing on testnet. Hackathon deadline: March 25. On track. 🎯",
+      "Build the FiberQuest Agent (~8 hours): escrow monitoring, auto-publisher, Fiber channel manager. Full E2E testing on testnet. Hackathon deadline: March 25. On track.",
     ],
     links: [
       { text: "FiberQuest Installer", href: "https://github.com/toastmanAu/fiberquest" },
@@ -92,21 +107,6 @@ const POSTS = [
       { text: "Toast Translate Bot", href: "https://t.me/WyTranslateBot" },
     ],
   },
-// Fields:
-//   id:      unique slug (used for anchor links)
-//   date:    "YYYY-MM-DD"
-//   title:   string
-//   tags:    array of strings — shown as coloured pills
-//   project: primary project name (shown in header strip)
-//   body:    array of paragraphs — strings or {type, content} objects
-//             plain string   → <p>
-//             {type:"h3"}    → <h3>
-//             {type:"code"}  → <pre><code> block
-//             {type:"ul"}    → <ul> (content = array of strings)
-//             {type:"link", text, href} → inline CTA link
-//   links:   array of {text, href} — footer buttons on the post card
-
-const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
     id:      "2026-03-22-ultra-low-bit-quantized-models",
@@ -1473,8 +1473,6 @@ const POSTS = [
     ]
   },
 
-];
-
   // ────────────────────────────────────────────────────────────────
   {
     id:      "2026-03-22-fiberquest-full-flow",
@@ -1523,3 +1521,4 @@ const POSTS = [
       { text: "FiberQuest Pi Fiber Node", href: "https://github.com/toastmanAu/fiberquest" },
     ],
   },
+];

@@ -16,15 +16,34 @@
         nav.classList.remove('member-nav');
       }
     }
-    // Also update Join → Membership label
+    // Also update Join → Membership label + sign-out link
     var join = document.querySelector('a.nav-join');
+    var signout = document.getElementById('nav-signout');
     if (join) {
       if (isMember) {
         join.textContent = '✦ Membership';
         join.title = 'View your membership';
+        // Add sign-out link if not already present
+        if (!signout) {
+          signout = document.createElement('a');
+          signout.id = 'nav-signout';
+          signout.href = '#';
+          signout.textContent = 'Sign Out';
+          signout.style.cssText = 'color:var(--muted,#64748b);font-size:0.85rem;';
+          signout.addEventListener('click', function(e) {
+            e.preventDefault();
+            localStorage.removeItem('wyltek_address');
+            localStorage.removeItem('wyltek_authed');
+            window.dispatchEvent(new Event('wyltek-auth-changed'));
+            location.href = '/index.html';
+          });
+          join.parentNode.insertBefore(signout, join.nextSibling);
+        }
       } else {
         join.textContent = '✦ Join / Sign In';
         join.title = 'Join or sign in';
+        // Remove sign-out link if present
+        if (signout) signout.remove();
       }
     }
   }

@@ -18,22 +18,14 @@ function isMember() {
 }
 
 function injectMemberNav() {
+  // Member-only nav links are now hardcoded in HTML with class="member-only".
+  // Visibility is controlled by member-nav.js toggling the .member-nav class.
+  // This function only adds the green pip badge to the Members link.
   const nav = document.getElementById('mainNav');
   if (!nav) return;
 
   if (isMember()) {
-    // Add member-only links before GitHub link
-    const ghLink = nav.querySelector('a[href*="github"]');
-    MEMBER_NAV_LINKS.forEach(({ href, label }) => {
-      if (nav.querySelector(`a[href="${href}"]`)) return; // already there
-      const a = document.createElement('a');
-      a.href = href;
-      a.textContent = label;
-      if (window.location.pathname.endsWith(href)) a.classList.add('active');
-      nav.insertBefore(a, ghLink);
-    });
-    // Add member badge to Members link
-    const membersLink = nav.querySelector('a[href="members.html"]');
+    const membersLink = nav.querySelector('a[href="members.html"]') || nav.querySelector('a[href="/members.html"]');
     if (membersLink && !membersLink.querySelector('.member-pip')) {
       const pip = document.createElement('span');
       pip.className = 'member-pip';
