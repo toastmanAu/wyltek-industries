@@ -160,6 +160,7 @@
     <span class="tag purple">Handheld-First</span>
     <span class="tag yellow">Offline Install</span>
     <span class="tag cyan">Block Explorer</span>
+    <span class="tag cyan">Screen Recorder</span>
     <span class="tag">Open Source</span>
     <span class="tag">No apt Required</span>
   </div>
@@ -189,23 +190,27 @@
       </div>
       <div class="tech-card">
         <h4>Screen Recorder</h4>
-        <p>Framebuffer capture via <code>ffmpeg</code> — records your handheld screen while playing games or browsing EmulationStation. Runs as a detached background process that survives app exit. Configurable quality (low / medium / high) and FPS (15 / 24 / 30 / 60). Screenshots via <code>fbgrab</code>. Output path selectable through the built-in file manager. Uses mpeg4 encoding with auto-detection of the best available codec.</p>
+        <p>Record your entire handheld screen — games, EmulationStation menus, everything — with h264 video and AAC stereo audio via a custom <code>ffmpeg</code> binary (11 MB). Runs as a detached background process that survives app exit. Configurable quality and FPS (15 / 24 / 30). Output path selectable through the built-in file manager.</p>
       </div>
       <div class="tech-card">
-        <h4>Terminal</h4>
-        <p>Categorised command palette: RPC calls, system diagnostics, network tools, and install helpers. Run <code>ckb-cli</code> commands, check disk space, or ping peers — all from the UI.</p>
-      </div>
-      <div class="tech-card">
-        <h4>On-Screen Keyboard + Config Editor</h4>
-        <p>No physical keyboard needed. The on-screen keyboard lets you edit config files, enter RPC commands, and manage settings using only the handheld controls.</p>
+        <h4>On-Screen Keyboard</h4>
+        <p>5 character sets: abc, ABC, 123, hex, and symbols. Takes 75% of the screen when active, minimisable when not needed. Works with any gamepad — no physical keyboard required. Used by the terminal, config editor, and future modules.</p>
       </div>
       <div class="tech-card">
         <h4>Package Manager</h4>
-        <p>Static binaries — no <code>apt</code>, no package repos, no root filesystem modifications. Packages are defined in <code>packages.json</code> and installed to a local prefix. Works on read-only OS images.</p>
+        <p>JSON registry of static binaries — no <code>apt</code>, <code>pacman</code>, or <code>flatpak</code> needed. Install <code>jq</code>, <code>micro</code>, <code>ffmpeg</code>, and more. Works on any Linux regardless of the system package manager. Defined in <code>packages.json</code>, installed to a local prefix.</p>
       </div>
       <div class="tech-card">
         <h4>File Manager</h4>
-        <p>Browse, inspect, and manage files on the device. Navigate the filesystem, check configs, and verify installed binaries without needing SSH access.</p>
+        <p>Browse directories and select files or folders on the device. Used by the screen recorder for output path selection. Foundation for future wallet key import and other file-based workflows.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Config Editor</h4>
+        <p>Edit <code>config.toml</code> with syntax highlighting for TOML, JSON, and log files. Reset to default downloads a fresh config from GitHub. Line-by-line editing powered by the on-screen keyboard.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Terminal with Keyboard</h4>
+        <p>5 command categories: RPC, Service, System, Network, and Install. Press Start for the on-screen keyboard to type custom commands. User-editable command categories via JSON — add your own commands without touching code.</p>
       </div>
     </div>
   </div>
@@ -304,6 +309,17 @@
       <li>Hardware key storage (e.g. USB security keys) is planned for future releases to enable secure on-device signing.</li>
       <li>Do not store real funds on a handheld device until mainnet support and proper key management are implemented. Handhelds are not hardened security devices.</li>
     </ul>
+  </div>
+
+  <!-- Demo Videos -->
+  <div class="section">
+    <div class="section-title">Demo Videos</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:1rem;line-height:1.6;">
+      See Nervos Launcher in action. The v0.2.0 release includes a demo of the screen recorder capturing gameplay with full stereo audio — recorded entirely on the handheld itself.
+    </p>
+    <div style="display:flex;flex-wrap:wrap;gap:1rem;">
+      <a href="https://github.com/toastmanAu/nervos-launcher/releases/tag/v0.2.0" target="_blank" class="btn btn-outline">v0.2.0 Release — Game Recording with Audio Demo</a>
+    </div>
   </div>
 
   <!-- Links -->
