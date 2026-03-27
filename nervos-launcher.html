@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Nervos Launcher — Wyltek Industries</title>
+  <meta name="description" content="Handheld blockchain app store — install CKB light client, explore blocks, manage dApps, all from your retro gaming handheld.">
+  <link rel="canonical" href="https://wyltekindustries.com/nervos-launcher.html" />
+  <!-- Open Graph -->
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="Wyltek Industries" />
+  <meta property="og:title" content="Nervos Launcher — Wyltek Industries" />
+  <meta property="og:description" content="Handheld blockchain app store — install CKB light client, explore blocks, manage dApps, all from your retro gaming handheld." />
+  <meta property="og:url" content="https://wyltekindustries.com/nervos-launcher.html" />
+  <meta property="og:image" content="https://wyltekindustries.com/nervos-launcher-boxart.png" />
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary" />
+  <meta name="twitter:site" content="@wyltek1" />
+  <meta name="twitter:title" content="Nervos Launcher — Wyltek Industries" />
+  <meta name="twitter:description" content="Handheld blockchain app store — install CKB light client, explore blocks, manage dApps, all from your retro gaming handheld." />
+  <meta name="twitter:image" content="https://wyltekindustries.com/nervos-launcher-boxart.png" />
+  <link rel="icon" type="image/png" href="/favicon-32x32.png">
+  <style>
+    :root{
+      --bg:#0d1018;--surface:#131720;--surface2:#181e2e;--border:#1e2535;
+      --accent:#4f8ef7;--green:#34d399;--yellow:#fbbf24;--red:#f87171;
+      --purple:#a78bfa;--muted:#8899aa;--text:#e2e8f0;--cyan:#00e5ff;
+    }
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,sans-serif;min-height:100vh;}
+    a{color:var(--accent);text-decoration:none;}
+    a:hover{text-decoration:underline;}
+    code{font-family:monospace;background:#1a2035;padding:.1rem .4rem;border-radius:4px;font-size:.85em;}
+
+    header{border-bottom:1px solid var(--border);padding:0 2rem;position:sticky;top:0;background:rgba(13,16,24,.97);backdrop-filter:blur(12px);z-index:100;}
+    .header-inner{max-width:1200px;margin:0 auto;display:flex;align-items:center;height:56px;gap:1.5rem;}
+    .logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1rem;color:var(--text);text-decoration:none;white-space:nowrap;}
+    .logo img{width:28px;height:28px;border-radius:7px;object-fit:cover;}
+    nav{display:flex;gap:1.25rem;margin-left:auto;}
+    nav a{font-size:.875rem;color:var(--muted);}
+    nav a:hover,nav a.active{color:var(--text);text-decoration:none;}
+    .member-badge{font-size:.75rem;background:rgba(79,142,247,.12);border:1px solid rgba(79,142,247,.3);color:var(--accent);border-radius:99px;padding:.2rem .65rem;}
+    .member-only{display:none!important;}
+    #mainNav.member-nav .member-only{display:inline-flex!important;}
+    .nav-join{color:var(--accent)!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;transition:background .2s,border-color .2s!important;}
+    .nav-join:hover{background:rgba(0,200,255,.1);border-color:var(--accent);text-decoration:none!important;}
+    .nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;}
+    @media(max-width:768px){
+      .nav-toggle{display:block;}
+      nav#mainNav{display:none;flex-direction:column;gap:0;position:absolute;top:56px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);z-index:99;}
+      nav#mainNav.open{display:flex;}
+      nav#mainNav a{padding:.7rem 1.5rem;border-bottom:1px solid var(--border);}
+    }
+
+    .hero{padding:3rem 2rem 2rem;max-width:1200px;margin:0 auto;text-align:center;}
+    .hero-logo{width:180px;height:180px;border-radius:24px;margin:0 auto 1.5rem;display:block;object-fit:cover;border:2px solid var(--border);box-shadow:0 0 40px rgba(79,142,247,.15);}
+    .hero h1{font-size:2.4rem;font-weight:800;margin-bottom:.5rem;}
+    .hero h1 span{color:var(--accent);}
+    .hero .sub{color:var(--muted);font-size:1.1rem;margin-bottom:1.5rem;max-width:700px;margin-left:auto;margin-right:auto;line-height:1.8;}
+    .hero-tags{display:flex;gap:.6rem;justify-content:center;flex-wrap:wrap;margin-bottom:1.5rem;}
+    .tag{display:inline-flex;align-items:center;gap:.35rem;background:var(--surface);border:1px solid var(--border);border-radius:99px;padding:.3rem .8rem;font-size:.78rem;color:var(--muted);}
+    .tag.green{border-color:rgba(52,211,153,.3);color:var(--green);background:rgba(52,211,153,.07);}
+    .tag.purple{border-color:rgba(167,139,250,.3);color:var(--purple);background:rgba(167,139,250,.07);}
+    .tag.yellow{border-color:rgba(251,191,36,.3);color:var(--yellow);background:rgba(251,191,36,.07);}
+    .tag.cyan{border-color:rgba(0,229,255,.3);color:var(--cyan);background:rgba(0,229,255,.07);}
+    .hero-btns{display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;}
+    .btn{display:inline-flex;align-items:center;gap:.4rem;padding:.7rem 1.5rem;border-radius:8px;font-size:.9rem;font-weight:600;transition:all .2s;text-decoration:none;}
+    .btn-primary{background:var(--accent);color:#000;}
+    .btn-primary:hover{background:#6da5ff;text-decoration:none;}
+    .btn-outline{border:1px solid var(--border);color:var(--text);background:var(--surface);}
+    .btn-outline:hover{border-color:var(--accent);color:var(--accent);text-decoration:none;}
+
+    .content{max-width:1200px;margin:0 auto;padding:0 2rem 4rem;}
+    .grid-2{display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;margin-bottom:2rem;}
+    @media(max-width:768px){.grid-2{grid-template-columns:1fr;}}
+
+    .section{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:1.75rem;margin-bottom:1.5rem;}
+    .section-title{font-size:1.1rem;font-weight:700;margin-bottom:1.25rem;display:flex;align-items:center;gap:.5rem;}
+
+    .flow{display:flex;flex-direction:column;gap:.75rem;}
+    .flow-step{display:flex;align-items:flex-start;gap:.75rem;}
+    .flow-num{width:28px;height:28px;border-radius:50%;background:rgba(79,142,247,.15);border:1px solid rgba(79,142,247,.3);color:var(--accent);font-size:.8rem;font-weight:700;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;}
+    .flow-text strong{display:block;font-size:.9rem;margin-bottom:.15rem;}
+    .flow-text span{font-size:.82rem;color:var(--muted);line-height:1.6;}
+
+    .tech-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:1rem;}
+    .tech-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:1.25rem;}
+    .tech-card h4{font-size:.9rem;margin-bottom:.5rem;color:var(--text);}
+    .tech-card p{font-size:.82rem;color:var(--muted);line-height:1.6;}
+    .tech-card code{font-size:.78em;}
+
+    .stat-row{display:flex;gap:1.5rem;flex-wrap:wrap;margin:1.5rem 0;}
+    .stat{text-align:center;flex:1;min-width:120px;}
+    .stat-num{font-size:2rem;font-weight:800;color:var(--accent);}
+    .stat-label{font-size:.78rem;color:var(--muted);margin-top:.25rem;}
+
+    .install-box{background:#080b10;border:1px solid var(--border);border-radius:10px;padding:1.25rem;font-family:monospace;font-size:.85rem;line-height:1.8;color:var(--green);overflow-x:auto;}
+    .install-box .comment{color:var(--muted);}
+    .install-box .cmd{color:var(--green);}
+
+    .tier-table{width:100%;border-collapse:collapse;font-size:.85rem;}
+    .tier-table th{text-align:left;padding:.6rem .75rem;background:var(--surface2);border:1px solid var(--border);color:var(--accent);font-weight:600;font-size:.8rem;}
+    .tier-table td{padding:.6rem .75rem;border:1px solid var(--border);color:var(--muted);line-height:1.5;}
+    .tier-table tr:hover td{background:rgba(79,142,247,.03);}
+    .tier-label{font-weight:600;color:var(--text);}
+
+    .notice{background:rgba(251,191,36,.06);border:1px solid rgba(251,191,36,.25);border-radius:10px;padding:1.25rem 1.5rem;}
+    .notice-title{font-size:.95rem;font-weight:700;color:var(--yellow);margin-bottom:.75rem;}
+    .notice ul{list-style:none;padding:0;display:flex;flex-direction:column;gap:.4rem;}
+    .notice li{font-size:.84rem;color:var(--muted);line-height:1.6;padding-left:1.2rem;position:relative;}
+    .notice li::before{content:"";position:absolute;left:0;top:.55em;width:6px;height:6px;border-radius:50%;background:var(--yellow);opacity:.5;}
+
+    .roadmap{display:flex;flex-direction:column;gap:.5rem;}
+    .rm-item{display:flex;align-items:center;gap:.75rem;font-size:.88rem;}
+    .rm-done{color:var(--green);}
+    .rm-active{color:var(--yellow);}
+    .rm-future{color:var(--muted);}
+
+    hr.divider{border:none;border-top:1px solid var(--border);margin:3rem 0;}
+    footer{border-top:1px solid var(--border);padding:2rem;text-align:center;color:var(--muted);font-size:.85rem;}
+    footer a{color:var(--muted);}
+    footer a:hover{color:var(--accent);}
+  </style>
+</head>
+<body>
+<header>
+  <div class="header-inner">
+    <a href="/index.html" class="logo">
+      <img src="/wyltek-mark.png" alt="Wyltek">
+      Wyltek Industries
+    </a>
+    <nav id="mainNav">
+      <a href="/index.html">Home</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/ckb.html">CKB</a>
+      <a href="/ckb-light-esp.html">Light Client</a>
+      <a href="/blackbox.html">BlackBox</a>
+      <a href="/roadmap.html">Roadmap</a>
+      <a href="/fiberquest.html">FiberQuest</a>
+      <a href="/nervos-launcher.html" class="active">Launcher</a>
+      <a href="/research.html" class="member-only">Research</a>
+      <a href="/blog.html" class="member-only">Devlog</a>
+      <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
+      <a href="/flasher.html" class="member-only">Flasher</a>
+      <a href="/ckb-sync.html" class="member-only">Sync</a>
+      <a href="/members.html" class="nav-join">✦ Join / Sign In</a>
+      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
+    </nav>
+    <button class="nav-toggle" id="navToggle">&#9776;</button>
+  </div>
+</header>
+
+<!-- Hero -->
+<div class="hero">
+  <img src="/nervos-launcher-boxart.png" alt="Nervos Launcher" class="hero-logo">
+  <h1>Nervos <span>Launcher</span></h1>
+  <p class="sub">Handheld Blockchain App Store — install CKB light client, explore blocks, manage dApps, all from your retro gaming handheld.</p>
+  <div class="hero-tags">
+    <span class="tag green">CKB Light Client</span>
+    <span class="tag purple">Handheld-First</span>
+    <span class="tag yellow">Offline Install</span>
+    <span class="tag cyan">Block Explorer</span>
+    <span class="tag">Open Source</span>
+    <span class="tag">No apt Required</span>
+  </div>
+  <div class="hero-btns">
+    <a href="https://github.com/toastmanAu/nervos-launcher" target="_blank" class="btn btn-primary">View on GitHub</a>
+    <a href="https://github.com/toastmanAu/nervos-launcher#install" target="_blank" class="btn btn-outline">Install Guide</a>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- What It Does -->
+  <div class="section">
+    <div class="section-title">What It Does</div>
+    <div class="tech-grid">
+      <div class="tech-card">
+        <h4>CKB Light Client Installer</h4>
+        <p>Download and install the CKB light client directly on your handheld. Live progress bar, automatic architecture detection (aarch64/armv7l/x86_64), and background sync once running.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Block Explorer</h4>
+        <p>Browse the chain from your handheld. View tip headers, current epoch, block hashes, and chain status — all rendered in a framebuffer-friendly UI.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Peer Network</h4>
+        <p>See connected nodes at a glance. Drill into peer details — addresses, protocols, sync state. Know exactly who your light client is talking to.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Screen Recorder</h4>
+        <p>Capture your handheld screen directly from the framebuffer. Runs as a detached process so you can record gameplay or demos without leaving the launcher.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Terminal</h4>
+        <p>Categorised command palette: RPC calls, system diagnostics, network tools, and install helpers. Run <code>ckb-cli</code> commands, check disk space, or ping peers — all from the UI.</p>
+      </div>
+      <div class="tech-card">
+        <h4>On-Screen Keyboard + Config Editor</h4>
+        <p>No physical keyboard needed. The on-screen keyboard lets you edit config files, enter RPC commands, and manage settings using only the handheld controls.</p>
+      </div>
+      <div class="tech-card">
+        <h4>Package Manager</h4>
+        <p>Static binaries — no <code>apt</code>, no package repos, no root filesystem modifications. Packages are defined in <code>packages.json</code> and installed to a local prefix. Works on read-only OS images.</p>
+      </div>
+      <div class="tech-card">
+        <h4>File Manager</h4>
+        <p>Browse, inspect, and manage files on the device. Navigate the filesystem, check configs, and verify installed binaries without needing SSH access.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Compatible Devices -->
+  <div class="section">
+    <div class="section-title">Compatible Devices</div>
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:1.25rem;line-height:1.6;">
+      Nervos Launcher targets Linux-based retro gaming handhelds and SBCs. If the device runs a custom Linux firmware with framebuffer access and has WiFi, it can probably run the launcher. Tested primarily on the <strong style="color:var(--text)">Anbernic RG35XX H</strong>.
+    </p>
+    <div style="overflow-x:auto;">
+      <table class="tier-table">
+        <thead>
+          <tr>
+            <th>Tier</th>
+            <th>Devices</th>
+            <th>RAM</th>
+            <th>Notes</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="tier-label" style="color:var(--green);">SBCs</td>
+            <td>Raspberry Pi 4/5, Orange Pi, Rock64</td>
+            <td>4-8 GB</td>
+            <td>Full CKB light client + all tools. Plenty of headroom.</td>
+          </tr>
+          <tr>
+            <td class="tier-label" style="color:var(--green);">High-RAM Handhelds</td>
+            <td>Odin 2, Retroid Pocket 4, Steam Deck</td>
+            <td>4-16 GB</td>
+            <td>Everything runs comfortably. SteamOS needs desktop mode.</td>
+          </tr>
+          <tr>
+            <td class="tier-label" style="color:var(--yellow);">2 GB Handhelds</td>
+            <td>RG556, RG353M, RGB30</td>
+            <td>2 GB</td>
+            <td>Light client runs but memory is tight during initial sync.</td>
+          </tr>
+          <tr>
+            <td class="tier-label" style="color:var(--yellow);">1 GB Handhelds</td>
+            <td>RG35XX H, RG28XX, Miyoo Mini+</td>
+            <td>1 GB</td>
+            <td>Launcher UI works. Light client may need swap or external sync.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:1rem;display:flex;flex-wrap:wrap;gap:.6rem;">
+      <span class="tag green">Knulli</span>
+      <span class="tag green">ROCKNIX</span>
+      <span class="tag green">ArkOS</span>
+      <span class="tag">Batocera</span>
+      <span class="tag">SteamOS</span>
+    </div>
+  </div>
+
+  <!-- Installation -->
+  <div class="section">
+    <div class="section-title">Install</div>
+
+    <p style="font-size:.88rem;color:var(--muted);margin-bottom:1rem;line-height:1.6;">Three ways to get Nervos Launcher onto your device.</p>
+
+    <h4 style="font-size:.9rem;margin-bottom:.5rem;color:var(--text);">1. SD Card (no network needed)</h4>
+    <div class="install-box" style="margin-bottom:1.25rem;">
+      <div class="comment"># On your computer: clone and copy to SD card</div>
+      <div class="cmd">git clone https://github.com/toastmanAu/nervos-launcher.git</div>
+      <div class="cmd">cp -r nervos-launcher /path/to/sdcard/ports/</div>
+      <br>
+      <div class="comment"># On the handheld: navigate to Ports and launch "Nervos Launcher"</div>
+      <div class="comment"># No network required — binaries are bundled</div>
+    </div>
+
+    <h4 style="font-size:.9rem;margin-bottom:.5rem;color:var(--text);">2. SSH (one command)</h4>
+    <div class="install-box" style="margin-bottom:1.25rem;">
+      <div class="comment"># SSH into your handheld and run:</div>
+      <div class="cmd">git clone https://github.com/toastmanAu/nervos-launcher.git ~/ports/nervos-launcher</div>
+      <br>
+      <div class="comment"># Or if git isn't available:</div>
+      <div class="cmd">wget -qO- https://github.com/toastmanAu/nervos-launcher/archive/refs/heads/main.tar.gz | tar xz -C ~/ports/</div>
+    </div>
+
+    <h4 style="font-size:.9rem;margin-bottom:.5rem;color:var(--text);">3. PortMaster (coming soon)</h4>
+    <div class="install-box">
+      <div class="comment"># PortMaster integration is planned.</div>
+      <div class="comment"># Once available, search "Nervos Launcher" in the PortMaster store.</div>
+    </div>
+  </div>
+
+  <!-- Security Notice -->
+  <div class="notice" style="margin-bottom:1.5rem;">
+    <div class="notice-title">Security Notice</div>
+    <ul>
+      <li>Nervos Launcher currently connects to <strong style="color:var(--text)">CKB testnet only</strong>. Mainnet support will come later with proper key management.</li>
+      <li>No private keys are stored on the device by default. The light client syncs headers and verifies blocks — it does not hold funds unless you configure a wallet.</li>
+      <li>Hardware key storage (e.g. USB security keys) is planned for future releases to enable secure on-device signing.</li>
+      <li>Do not store real funds on a handheld device until mainnet support and proper key management are implemented. Handhelds are not hardened security devices.</li>
+    </ul>
+  </div>
+
+  <!-- Links -->
+  <div class="section">
+    <div class="section-title">Links</div>
+    <div style="display:flex;flex-wrap:wrap;gap:1rem;">
+      <a href="https://github.com/toastmanAu/nervos-launcher" target="_blank" class="btn btn-primary">GitHub Repo</a>
+      <a href="https://github.com/toastmanAu/nervos-launcher#install" target="_blank" class="btn btn-outline">Install Guide</a>
+      <a href="https://github.com/nervosnetwork/ckb-light-client" target="_blank" class="btn btn-outline">CKB Light Client</a>
+      <a href="https://nervos.org" target="_blank" class="btn btn-outline">Nervos Network</a>
+    </div>
+  </div>
+
+</div>
+
+<hr class="divider">
+<footer>
+  <p>Built by <a href="https://github.com/toastmanAu" target="_blank">toastmanAu</a> &middot; Nervos CKB ecosystem &middot; <a href="https://nervos.org" target="_blank">nervos.org</a></p>
+  <p style="font-size:.78rem;margin-top:.4rem;opacity:.5">Wyltek Industries &mdash; wouldn't you like to know</p>
+</footer>
+
+<script src="/js/nav-toggle.js"></script>
+<script src="/js/member-nav.js"></script>
+</body>
+</html>
