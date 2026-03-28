@@ -18,6 +18,80 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id:      "2026-03-29-open-palette-light-client-lite",
+    date:    "2026-03-29",
+    project: "Open Palette / CKB Light Client Lite",
+    title:   "Open Palette Ships, CKB Light Client Goes Static, Nervos Launcher Hits Stock Anbernic",
+    tags:    ["Open Palette", "image-gen", "CKB", "light-client", "musl", "Nervos Launcher", "Anbernic", "ComfyUI"],
+    body: [
+      "Three days, three projects. Built an open-source image generation studio from scratch, made the CKB light client run on devices Nervos never intended, and got Nervos Launcher working on stock Anbernic hardware.",
+
+      { type: "h3", content: "Open Palette — Local-First AI Image Studio" },
+      "Started with a question: can we replicate what OpenArt does but locally, without being locked to one model or paying per image? Turns out, yes.",
+      "Open Palette is a web app that wraps multiple image generation backends behind a single clean UI. Enter a prompt, optionally upload reference images, pick a backend, and generate. The key difference from every other image gen UI: it's not locked to one provider.",
+      { type: "ul", content: [
+        "<strong>9 backends:</strong> ComfyUI, Fooocus, A1111 (local GPU), Gemini/Imagen, HuggingFace (cloud free), Stability AI, OpenAI, Replicate (cloud paid)",
+        "<strong>Compare mode:</strong> same prompt across multiple models side-by-side — see which backend produces the best result before committing",
+        "<strong>Auto-model detection:</strong> probes ComfyUI for installed models, shows unavailable ones greyed out with [not installed]",
+        "<strong>Per-model defaults:</strong> SD 1.5 auto-sets to 512×512, SDXL models to 1024×1024 — the #1 cause of bad output is wrong resolution for the model",
+        "<strong>GGUF quantized models:</strong> run SDXL-quality generation on 8GB VRAM via ComfyUI-GGUF",
+        "<strong>Settings page:</strong> manage API keys, enable/disable backends, test connections from the UI",
+        "<strong>PNG metadata:</strong> prompt, model, seed, steps embedded in every generated image",
+      ]},
+      "Running on an RTX 3060 Ti with four local GGUF models (SD 1.5, SDXL Base, Juggernaut XL, RealVisXL) plus Gemini Nano Banana as a cloud comparison backend. Total cloud cost this month: $6.96 AUD.",
+      "Fun discovery during development: Google's image generation model is literally called \"Nano Banana\". That's its official name. <code>gemini-2.5-flash-image</code> = Nano Banana.",
+
+      { type: "h3", content: "CKB Light Client Lite — Static Build, Zero Dependencies" },
+      "The official CKB light client binary requires GLIBC 2.34+. Stock Anbernic handhelds ship GLIBC 2.32. Two versions apart, binary won't run.",
+      "Instead of accepting the limitation, we cross-compiled the light client with two changes: musl libc (static linking, no GLIBC dependency at all) and SQLite instead of RocksDB. Same source code, same P2P protocol, same RPC API. Just a different build target.",
+      "Then we benchmarked it against the standard build. The results were unexpected:",
+      { type: "ul", content: [
+        "<strong>Binary size:</strong> 18MB vs 30MB (-40%)",
+        "<strong>Peak memory:</strong> 44MB vs 54MB RSS (-18%)",
+        "<strong>Disk usage:</strong> 2.4MB vs 132MB after 60s sync (-98%)",
+        "<strong>Startup, CPU, RPC latency:</strong> identical",
+      ]},
+      "The disk number is the headline. RocksDB pre-allocates WAL files and SSTables aggressively — 132MB in the first minute. SQLite uses a compact single-file database: 2.4MB. On a device with 256MB of storage, RocksDB would exhaust the disk before any meaningful sync happens. SQLite just works.",
+      "RocksDB is designed for write-heavy full-node workloads. The light client's access pattern — mostly reads, occasional small writes — is a natural fit for SQLite. The \"lite\" build isn't a compromise. It's a better match for the use case.",
+      "Published as a standalone repo with GitHub Actions CI for automated cross-compilation on new upstream releases. Could become the canonical portable build if Nervos adopts the approach.",
+
+      { type: "h3", content: "Nervos Launcher on Stock Anbernic" },
+      "Nervos Launcher was built for Knulli (custom firmware). Getting it running on stock Anbernic Buildroot firmware meant solving a chain of compatibility issues:",
+      { type: "ul", content: [
+        "<strong>SDL display init:</strong> no X11/Wayland on stock firmware — auto-detect kmsdrm/fbcon/directfb driver at startup",
+        "<strong>Emoji crash:</strong> pygame 2.0.1 crashes on Unicode above U+FFFF — added conditional emoji (use them on 2.1+, ASCII fallback on older)",
+        "<strong>Screen recording:</strong> fbdev captures a stale framebuffer on DRM/KMS devices — switched to kmsgrab for live capture with automatic portrait→landscape rotation",
+        "<strong>BusyBox tar:</strong> no -z flag in BusyBox 1.33 — pipe through gunzip instead",
+        "<strong>ALSA audio:</strong> no PulseAudio means no system audio loopback — disabled mic-only recording gracefully",
+        "<strong>GLIBC 2.32:</strong> official light client binary fails — solved by the musl static build above",
+      ]},
+      "Every fix was made device-agnostic. The RG35XXH (Knulli) still works exactly as before. The same code now runs on both platforms.",
+      "Recorded a demo video of the full light client install directly on the Anbernic using the built-in recorder. 640×480 h264, live DRM capture, correct landscape orientation. The recorder survived app exit and restart — it runs as a detached ffmpeg process.",
+
+      { type: "h3", content: "Infrastructure" },
+      { type: "ul", content: [
+        "<strong>Inference cost tracking:</strong> automated monthly report pulling from GCP billing, OpenRouter API, local Ollama/ComfyUI generation counts. Cron runs 1st of each month, CSV output to Obsidian vault.",
+        "<strong>ComfyUI on driveThree:</strong> RTX 3060 Ti running ComfyUI with 4 GGUF models, IP-Adapter, CLIP vision. Accessible to Open Palette at 192.168.68.102:8188.",
+        "<strong>Model pipeline:</strong> SDXL Q4_0, Juggernaut XL Q4_0, RealVisXL V4 Q4_0 — all under 1.5GB each, all fit in 8GB VRAM with room for IP-Adapter.",
+      ]},
+
+      { type: "h3", content: "What's Next" },
+      { type: "ul", content: [
+        "Submit CKB Light Client Lite as a PR or discussion to nervosnetwork/ckb-light-client",
+        "Fooocus backend for Open Palette (dependency issues on driveThree — needs venv isolation)",
+        "Open Palette: drag-and-drop image editing workflow (inpainting, outpainting)",
+        "Nervos Launcher: test on more handheld devices, build device compatibility matrix",
+        "Long-duration light client sync benchmark on Anbernic (battery life, sync progress over hours)",
+      ]},
+    ],
+    links: [
+      { text: "Open Palette", href: "https://github.com/toastmanAu/open-palette" },
+      { text: "CKB Light Client Lite", href: "https://github.com/toastmanAu/ckb-light-client-lite" },
+      { text: "Nervos Launcher", href: "https://github.com/toastmanAu/nervos-launcher" },
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
+  {
     id:      "2026-03-16-fiberquest-agent-hmi-live",
     date:    "2026-03-16",
     project: "FiberQuest",
