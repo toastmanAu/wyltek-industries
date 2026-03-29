@@ -18,6 +18,89 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id:      "2026-03-30-fiberquest-distributed-open-palette-upgrades",
+    date:    "2026-03-30",
+    project: "FiberQuest / Open Palette",
+    title:   "FiberQuest Distributed Tournaments Working, Open Palette Gets LoRA, Batch Mode, and Flux",
+    tags:    ["FiberQuest", "CKB", "Fiber", "distributed", "tournament", "Open Palette", "LoRA", "Flux", "image-gen", "ComfyUI"],
+    body: [
+      "First successful cross-machine distributed tournament settlement on FiberQuest. Two machines, two players, two games running simultaneously, scores submitted to chain independently, winner resolved by on-chain consensus. Also shipped major Open Palette upgrades: LoRA styles, batch generation, Flux.1 models, IP-Adapter, and mobile UI overhaul.",
+
+      { type: "h3", content: "FiberQuest — Distributed Settlement Actually Works" },
+      "The distributed tournament flow has been the hardest part of FiberQuest since day one. Two machines need to independently play a game, submit scores to chain, discover each other's scores, and agree on a winner — all without a central server.",
+      "Tonight we got it working end-to-end. driveThree (RTX 3060 Ti, organizer) created a Donkey Kong Country tournament. The Pi 5 (participant) browsed the chain, found the tournament, joined via intent cell, and paid the entry fee through JoyID. Both machines detected the startBlock at the same CKB block number and launched their games simultaneously.",
+      "After 5 minutes, both machines hit the endBlock, stopped their games, and submitted score cells to the organizer's address on CKB L1. The organizer scanned the chain, found both scores (player-0: 244, player-1: 247), and correctly declared player-1 (Pi) as the winner via deterministic consensus.",
+      "Getting here required fixing a cascade of bugs discovered through live testing:",
+      { type: "ul", content: [
+        "<strong>Player ID collision:</strong> Both machines used player-0 — scores overwrote each other. Fixed by reserving slot 0 for the organizer and assigning player-1+ from chain state.",
+        "<strong>Cell pagination:</strong> The chain scan was capped at 100 cells, but the organizer's address had 200+. Newer tournament cells were silently dropped. Added cursor-based pagination.",
+        "<strong>startBlock never written:</strong> The organizer registered players but never wrote startBlock/endBlock to the chain cell. The participant had no way to know when to start. Added deferred write (1 block delay to avoid mempool RBF collisions).",
+        "<strong>Payment check blocked start:</strong> The start() function required all players to be marked as paid, but intent-cell-registered players showed as unpaid. Skipped payment check for distributed mode — the intent cell creation IS the proof of payment.",
+        "<strong>Score routing:</strong> The participant's score cell went to its own address instead of the organizer's. Fixed by ensuring _organizerAddress is set from the chain cell at join time.",
+        "<strong>QR not rendering:</strong> The participant's QR code was targeting a DOM element for slot-1 that didn't exist (UI only created slot-0). Added fallback rendering.",
+        "<strong>EPIPE crash:</strong> Electron crashed when terminal stdout pipe broke. Added silent error handlers.",
+      ]},
+      "The architecture is fully trustless: each player submits their own score cell independently, all agents read the same on-chain data, and the winner is resolved with a deterministic formula (highest score, playerId tiebreak). No player can fake another's score because score cells are locked to the submitter's key.",
+
+      { type: "h3", content: "Open Palette — LoRA Styles, Batch Mode, Flux.1, IP-Adapter" },
+      "Major capability upgrade to Open Palette. The image generation studio now supports style transfer via LoRA models, batch generation for creating variations, and the latest Flux.1 models via GGUF quantization.",
+
+      { type: "h3", content: "LoRA Style Models" },
+      "LoRAs are small add-on files (12–871MB) that modify a base model's style without replacing the whole checkpoint. Stack them on any SDXL model to produce consistent styled output — critical for NFT collection generation where every image needs the same aesthetic.",
+      { type: "ul", content: [
+        "<strong>6 LoRAs installed:</strong> Pixel Art XL, Anime Detailer, Watercolor, Crayon/Sketch, Voxel/3D Block, Sticker/Die-Cut",
+        "<strong>Smart compatibility:</strong> LoRA selector shows a star next to compatible models and auto-disables for non-SDXL architectures (Flux, SD3, SD 1.5)",
+        "<strong>Adjustable strength:</strong> 0.3 = subtle influence, 0.8+ = strong style override",
+        "<strong>Workflow injection:</strong> LoraLoader node automatically inserted between model loader and KSampler in ComfyUI workflow",
+      ]},
+
+      { type: "h3", content: "New Models" },
+      "Added next-generation models running on 8GB VRAM via GGUF quantization:",
+      { type: "ul", content: [
+        "<strong>Flux.1 Dev Q4/Q5/Q8:</strong> State-of-the-art quality, excellent text rendering and prompt following. Q4 fits in 6GB VRAM, Q8 uses CPU offloading for near-lossless quality.",
+        "<strong>Flux.1 Schnell Q4:</strong> Distilled for speed — only 4 steps needed. Great for rapid iteration.",
+        "<strong>SD3 Medium Q4:</strong> Stability AI's transformer architecture. Different aesthetic from SDXL.",
+        "<strong>SDXL Lightning:</strong> ByteDance's distilled model — 4 steps, near-instant generation. LoRA compatible.",
+        "<strong>DreamShaper XL Turbo:</strong> 8 steps at CFG 2.0. Versatile style handler.",
+        "<strong>Juggernaut XL v9, RealVisXL V4:</strong> Full safetensor checkpoints for maximum photorealism.",
+      ]},
+      "Every model has optimized defaults (resolution, steps, CFG, sampler) that auto-apply when selected. Tips shown inline explain each model's strengths.",
+
+      { type: "h3", content: "Batch Generation + IP-Adapter" },
+      { type: "ul", content: [
+        "<strong>Batch mode:</strong> Generate 2–20 variations of the same prompt with different seeds. Uses the compare grid layout for side-by-side viewing. Essential for exploring a concept before committing to a style.",
+        "<strong>IP-Adapter:</strong> Upload a reference image to guide generation — the model extracts visual features (composition, colours, subject) and blends them into the output. Strength slider from subtle mood matching to strong style cloning.",
+        "<strong>Client-side downscaling:</strong> Reference images auto-resize to 1024px max edge, JPEG 85% before upload. A 10MB phone photo becomes ~150KB — faster uploads, less VRAM pressure, better results.",
+      ]},
+
+      { type: "h3", content: "Mobile UI Overhaul" },
+      "Open Palette is now properly usable from a phone. All settings visible by default (no hidden collapse), sticky generate buttons, single-column compare grid, responsive modals. Advanced settings and LoRA selector are right there — no hunting through collapsed panels.",
+
+      { type: "h3", content: "Infrastructure" },
+      { type: "ul", content: [
+        "<strong>ComfyUI as systemd service:</strong> persistent, auto-restart on crash, survives reboots",
+        "<strong>Open Palette as systemd service:</strong> same treatment, sources API keys from env file",
+        "<strong>FiberQuest Pi:</strong> dedicated Pi 5 at 192.168.68.80 with local Fiber testnet node, HDMI display, RetroArch flatpak",
+        "<strong>CKB cell reclaim:</strong> added UI button to consume old tournament cells — recovered ~14,000 CKB locked in stale COMPLETE/CANCELLED/ESCROW cells",
+      ]},
+
+      { type: "h3", content: "What's Next" },
+      { type: "ul", content: [
+        "Fix remaining FiberQuest UI issues: 1/2 player count display on participant, results board showing both players' scores",
+        "RetroArch auto-launch on organizer machine",
+        "Custom CKB type script for tournament cells — COMPLETE cells become immutable on-chain records, others reclaimable after grace period",
+        "Fiber channel escrow for entry fees (currently L1 deposits)",
+        "More LoRAs: low poly, line art, neon cyberpunk (blocked by gated HF repos — need alternative sources)",
+        "Open Palette: inpainting/outpainting workflow, drag-and-drop editing",
+      ]},
+    ],
+    links: [
+      { text: "FiberQuest", href: "https://github.com/toastmanAu/fiberquest" },
+      { text: "Open Palette", href: "https://github.com/toastmanAu/open-palette" },
+    ],
+  },
+  // ────────────────────────────────────────────────────────────────
+  {
     id:      "2026-03-29-open-palette-light-client-lite",
     date:    "2026-03-29",
     project: "Open Palette / CKB Light Client Lite",
