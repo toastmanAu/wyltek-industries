@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 209 completed research findings
+// 210 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentpay-openclaw-skill-integration",
@@ -1420,6 +1420,16 @@ const RESEARCH_FINDINGS = [
       "research"
     ],
     "date": "2026-03-05"
+  },
+  {
+    "id": "hermes-agent-skills-overview",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The provided source content for the `NousResearch/hermes-agent` GitHub repository is incomplete, consisting solely of the HTML header and a partial description. A critical \"FETCH ERROR\" truncated the ",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-03-31"
   },
   {
     "id": "hispo-s8-headunit-specifics",
