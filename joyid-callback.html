@@ -18,7 +18,7 @@
   <p id="msg">Completing sign in…</p>
   <script type="module">
     import { isJoyIDCallback, joyidHandleCallback, getJoyIDPending, clearJoyIDPending }
-      from '/js/joyid-connector.js';
+      from '/js/joyid-connector-ios-fix.js';
 
     const msg = document.getElementById('msg');
 
@@ -28,8 +28,8 @@
         const result = await joyidHandleCallback();
         const pending = getJoyIDPending();
         clearJoyIDPending();
-        // Store result for the members page to pick up
-        sessionStorage.setItem('joyid_result', JSON.stringify(result));
+        // Store result in localStorage (works in iOS standalone mode)
+        localStorage.setItem('joyid_result', JSON.stringify(result));
         msg.textContent = '✓ Signed in — returning…';
         const returnTo = pending?.returnTo || '/members.html';
         setTimeout(() => location.replace(returnTo), 300);

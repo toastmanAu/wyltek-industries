@@ -152,7 +152,7 @@ nav a:hover,nav a.active{color:#e2e8f0;text-decoration:none;}
 @media(max-width:768px){
   #navToggle{display:block!important;}
   nav#mainNav{display:none;flex-direction:column;position:fixed;top:60px;left:0;right:0;background:#111318;border-bottom:1px solid #1e2430;z-index:99;padding:.5rem 0;}
-  nav#mainNav.open{display:flex!important;}
+  nav#mainNav.open{display:flex!important; max-height: 80vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
   nav#mainNav a{padding:.6rem 2rem;}
 }
 </style>

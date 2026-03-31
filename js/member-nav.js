@@ -29,7 +29,7 @@
           signout.id = 'nav-signout';
           signout.href = '#';
           signout.textContent = 'Sign Out';
-          signout.style.cssText = 'color:var(--muted,#64748b);font-size:0.85rem;';
+          signout.style.cssText = 'color:var(--muted,#64748b);font-size:0.9rem;padding:.15rem 0;';
           signout.addEventListener('click', function(e) {
             e.preventDefault();
             localStorage.removeItem('wyltek_address');

@@ -31,7 +31,7 @@
     @media(max-width:768px){
       .nav-toggle{display:block;}
       nav#mainNav{display:none;flex-direction:column;gap:0;position:absolute;top:60px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);z-index:99;padding:.5rem 0;}
-      nav#mainNav.open{display:flex;}
+      nav#mainNav.open{display:flex; max-height: 80vh; overflow-y: auto; -webkit-overflow-scrolling: touch; }
       nav#mainNav a{padding:.6rem 2rem;}
       .member-only{display:none;}
     }
