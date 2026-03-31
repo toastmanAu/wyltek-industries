@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 211 completed research findings
+// 212 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentpay-openclaw-skill-integration",
@@ -224,6 +224,17 @@ const RESEARCH_FINDINGS = [
       "esp32"
     ],
     "date": "2026-03-09"
+  },
+  {
+    "id": "ckb-full-node-ibd-profiling-scope",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This document outlines the scoping requirements for profiling CKB full node Initial Block Download (IBD) performance. Due to \"FETCH ERROR\" when attempting to access the provided GitHub source content,",
+    "tags": [
+      "ckb",
+      "nervos"
+    ],
+    "date": "2026-04-01"
   },
   {
     "id": "ckb-gcs-block-filters-js",
