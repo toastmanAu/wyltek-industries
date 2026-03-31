@@ -362,24 +362,95 @@
 
     <div class="container">
         <div class="page-header">
-            <h1>🤖 AI Resource Hub</h1>
-            <p>Community knowledge base for AI tools, research, and agent development</p>
+            <h1>🤖 AI Hub</h1>
+            <p>Multi-agent development environment — coding agents, autonomous research, infrastructure monitoring, creative tools, and shared knowledge bases</p>
         </div>
 
         <div class="tabs">
-            <button class="tab-button active" data-tab="articles">📰 Articles</button>
+            <button class="tab-button active" data-tab="agents">🤖 Agent Team</button>
+            <button class="tab-button" data-tab="tools">🛠️ Tools & APIs</button>
             <button class="tab-button" data-tab="guides">📚 Guides</button>
-            <button class="tab-button" data-tab="tools">🛠️ Tools</button>
+            <button class="tab-button" data-tab="creative">🎨 Creative Studio</button>
+            <button class="tab-button" data-tab="research">🔬 Research</button>
         </div>
 
-        <!-- Articles Tab -->
-        <div id="articles" class="tab-content active">
-            <div class="feed">
-                <div class="empty-state">
-                    <h3>Member Content</h3>
-                    <p>Articles and tools shared by the Wyltek AI community</p>
-                    <p style="margin-top: 1rem;">Coming soon — content posted by members</p>
+        <!-- Agent Team Tab -->
+        <div id="agents" class="tab-content active">
+            <p style="color: var(--muted); margin-bottom: 1.5rem;">Four AI agents working together — coding, monitoring, research, and knowledge retrieval. Each has a distinct role and personality.</p>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-icon">💻</div>
+                    <div class="card-title">Claude Code</div>
+                    <div class="card-desc">Primary coding agent. Architecture, implementation, debugging, code review, git workflow. Runs on Anthropic's Claude Opus. Has 25 language rules, 18 slash commands, 16 specialist sub-agents.</div>
+                    <div style="margin-top:0.5rem"><span class="tag">JS/TS</span> <span class="tag">Rust</span> <span class="tag">C</span> <span class="tag">Python</span> <span class="tag">Go</span> <span class="tag">C++</span></div>
                 </div>
+                <div class="card">
+                    <div class="card-icon">👁️</div>
+                    <div class="card-title">Argus</div>
+                    <div class="card-desc">Infrastructure watchdog and research processor. Runs on <a href="https://github.com/NousResearch/hermes-agent" target="_blank">Hermes Agent</a> with local Ollama inference (cogito:14b, 48% GPU / 52% CPU). Monitors Fiber nodes, processes research tasks, alerts on failures.</div>
+                    <div style="margin-top:0.5rem"><span class="tag">Hermes</span> <span class="tag">Ollama</span> <span class="tag">Cron</span> <span class="tag">Autonomous</span></div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📡</div>
+                    <div class="card-title">Shannon</div>
+                    <div class="card-desc">RAG agent for exploratory research. Named after the smallest unit of CKB (and Claude Shannon). Temperature 0.7 for creative/broad queries. Queries the shared knowledge base of 219+ research findings.</div>
+                    <div style="margin-top:0.5rem"><span class="tag">RAG</span> <span class="tag">Exploratory</span> <span class="tag">0.7T</span></div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🔧</div>
+                    <div class="card-title">Kernel</div>
+                    <div class="card-desc">RAG agent for code-focused queries. Temperature 0.2 for precise, deterministic answers. Same knowledge base as Shannon but optimized for technical accuracy over breadth.</div>
+                    <div style="margin-top:0.5rem"><span class="tag">RAG</span> <span class="tag">Code-focused</span> <span class="tag">0.2T</span></div>
+                </div>
+            </div>
+
+            <h3 style="margin-top: 2rem; color: var(--accent);">How They Work Together</h3>
+            <p style="color: var(--muted); margin-top: 0.5rem;">Claude Code submits research tasks to Argus's inbox via SSH. Argus processes them with Gemini Flash (Ollama fallback), writes findings, and ingests them into the shared RAG. Shannon and Kernel query those findings. All agents share the same knowledge base — what one learns, all can access.</p>
+        </div>
+
+        <!-- Tools & APIs Tab -->
+        <div id="tools" class="tab-content">
+            <div class="grid">
+                <a href="research-api.html" class="card">
+                    <div class="card-icon">🔬</div>
+                    <div class="card-title">Research Findings API</div>
+                    <div class="card-desc">Public REST API exposing 219+ research findings on CKB, embedded systems, AI, and blockchain. Agent-to-agent access, no auth required.</div>
+                </a>
+                <a href="https://github.com/toastmanAu/rag-system" target="_blank" class="card">
+                    <div class="card-icon">🔍</div>
+                    <div class="card-title">RAG System</div>
+                    <div class="card-desc">Multi-agent retrieval-augmented generation with FAISS embeddings. Obsidian vault auto-sync, HTTP ingest API, shared across all agents.</div>
+                </a>
+                <a href="https://github.com/toastmanAu/local-task-router" target="_blank" class="card">
+                    <div class="card-icon">⚙️</div>
+                    <div class="card-title">Local Task Router</div>
+                    <div class="card-desc">Route AI tasks to local Ollama instances across your network. Save 85% on inference costs. Supports GPU scheduling.</div>
+                </a>
+                <a href="https://github.com/NousResearch/hermes-agent" target="_blank" class="card">
+                    <div class="card-icon">⚕️</div>
+                    <div class="card-title">Hermes Agent</div>
+                    <div class="card-desc">Open-source AI agent platform by Nous Research. Local Ollama inference, cron jobs, memory, 75 bundled skills. Powers our Argus agent.</div>
+                </a>
+                <a href="https://github.com/affaan-m/everything-claude-code" target="_blank" class="card">
+                    <div class="card-icon">📋</div>
+                    <div class="card-title">Everything Claude Code</div>
+                    <div class="card-desc">136 skills, 60 commands, 30 agents, language rules. Anthropic hackathon winner. Cherry-pick what you need for your stack.</div>
+                </a>
+                <a href="https://github.com/toastmanAu/ckb-access" target="_blank" class="card">
+                    <div class="card-icon">📦</div>
+                    <div class="card-title">CKB Access Installers</div>
+                    <div class="card-desc">One-command installers for Fiber nodes, CKB nodes, light clients, and dev tools.</div>
+                </a>
+                <a href="https://docs.openclaw.ai" target="_blank" class="card">
+                    <div class="card-icon">📖</div>
+                    <div class="card-title">OpenClaw Docs</div>
+                    <div class="card-desc">Official OpenClaw agent framework documentation. Telegram bots, cron tasks, research pipelines.</div>
+                </a>
+                <a href="https://github.com/toastmanAu/ckb-light-client-lite" target="_blank" class="card">
+                    <div class="card-icon">💾</div>
+                    <div class="card-title">CKB Light Client Lite</div>
+                    <div class="card-desc">SQLite-backed CKB light client. 25% faster sync, 95% less disk, runs on handhelds. Benchmarked against RocksDB on real mainnet addresses.</div>
+                </a>
             </div>
         </div>
 
@@ -394,49 +465,96 @@
                 <a href="guides/local-inference.html" class="card">
                     <div class="card-icon">🧠</div>
                     <div class="card-title">Local LLM Inference</div>
-                    <div class="card-desc">Running Ollama models locally, optimization tips</div>
+                    <div class="card-desc">Running Ollama models locally, GPU offloading, model selection for your hardware</div>
                 </a>
                 <a href="guides/rag-system.html" class="card">
                     <div class="card-icon">📖</div>
                     <div class="card-title">RAG Systems</div>
-                    <div class="card-desc">Building retrieval-augmented generation</div>
+                    <div class="card-desc">Building retrieval-augmented generation with Obsidian vault sync and agent-shared knowledge bases</div>
                 </a>
                 <a href="guides/agent-development.html" class="card">
                     <div class="card-icon">🤖</div>
                     <div class="card-title">Agent Development</div>
-                    <div class="card-desc">Creating and deploying agentic systems</div>
+                    <div class="card-desc">Creating and deploying agentic systems — from single Claude Code agent to multi-agent orchestration</div>
                 </a>
+                <div class="card">
+                    <div class="card-icon">🔒</div>
+                    <div class="card-title">Safety Hooks</div>
+                    <div class="card-desc">Protecting your system from AI mistakes. Pre-tool-use hooks that block destructive commands, .env writes, force pushes. Coming soon.</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📝</div>
+                    <div class="card-title">CLAUDE.md Guide</div>
+                    <div class="card-desc">How to write effective CLAUDE.md files that give your agent project context, build commands, and conventions. Coming soon.</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🧩</div>
+                    <div class="card-title">Multi-Agent Setup</div>
+                    <div class="card-desc">Running Claude Code + Hermes + RAG agents together. Research inboxes, shared knowledge, autonomous monitoring. Coming soon.</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📊</div>
+                    <div class="card-title">Benchmarking with AI</div>
+                    <div class="card-desc">Using AI agents to design, run, and analyse performance benchmarks. Real example: CKB light client RocksDB vs SQLite. Coming soon.</div>
+                </div>
             </div>
         </div>
 
-        <!-- Tools Tab -->
-        <div id="tools" class="tab-content">
+        <!-- Creative Studio Tab -->
+        <div id="creative" class="tab-content">
+            <p style="color: var(--muted); margin-bottom: 1.5rem;">Wyltek Studio — AI-powered creative tools for content creation and promotion.</p>
+            <div class="grid">
+                <div class="card">
+                    <div class="card-icon">🖼️</div>
+                    <div class="card-title">Image Generation</div>
+                    <div class="card-desc">Local Stable Diffusion via ComfyUI. Custom workflows for project artwork, social media, documentation visuals. Models stored on dedicated NVMe.</div>
+                    <div style="margin-top:0.5rem"><span class="tag">ComfyUI</span> <span class="tag">SDXL</span> <span class="tag">LoRA</span></div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🎤</div>
+                    <div class="card-title">Text-to-Speech</div>
+                    <div class="card-desc">Voice synthesis for video narration, tutorials, and announcements. Local inference via Ollama TTS models.</div>
+                    <div style="margin-top:0.5rem"><span class="tag">TTS</span> <span class="tag">Local</span></div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🎵</div>
+                    <div class="card-title">Music Generation</div>
+                    <div class="card-desc">AI-generated background music and sound effects for videos and game demos. AudioCraft integration.</div>
+                    <div style="margin-top:0.5rem"><span class="tag">AudioCraft</span></div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🎬</div>
+                    <div class="card-title">Video Timeline</div>
+                    <div class="card-desc">Compose image, audio, TTS, and music into video timelines for demos, tutorials, and social content. FFmpeg-based pipeline.</div>
+                    <div style="margin-top:0.5rem"><span class="tag">FFmpeg</span> <span class="tag">Pipeline</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Research Tab -->
+        <div id="research" class="tab-content">
+            <p style="color: var(--muted); margin-bottom: 1.5rem;">Automated research pipeline — agents submit topics, Argus processes them, findings feed into the shared knowledge base.</p>
             <div class="grid">
                 <a href="research-api.html" class="card">
-                    <div class="card-icon">🔬</div>
-                    <div class="card-title">Research Findings API</div>
-                    <div class="card-desc">Public REST API exposing 188+ AI research findings. Designed for agent-to-agent access — no auth required.</div>
+                    <div class="card-icon">📊</div>
+                    <div class="card-title">Browse Findings</div>
+                    <div class="card-desc">219+ structured research findings. CKB, embedded systems, AI, quantization, payment channels, wallet architecture. Filterable and searchable.</div>
                 </a>
-                <a href="https://github.com/toastmanAu/rag-system" target="_blank" class="card">
-                    <div class="card-icon">🔍</div>
-                    <div class="card-title">RAG System</div>
-                    <div class="card-desc">Multi-agent retrieval-augmented generation with FAISS</div>
-                </a>
-                <a href="https://github.com/toastmanAu/local-task-router" target="_blank" class="card">
-                    <div class="card-icon">⚙️</div>
-                    <div class="card-title">Local Task Router</div>
-                    <div class="card-desc">Route AI tasks to local Ollama machines, save 85% on inference</div>
-                </a>
-                <a href="https://github.com/toastmanAu/ckb-access" target="_blank" class="card">
-                    <div class="card-icon">📦</div>
-                    <div class="card-title">CKB Access Installers</div>
-                    <div class="card-desc">One-command installers for Fiber, CKB nodes, tools</div>
-                </a>
-                <a href="https://docs.openclaw.ai" target="_blank" class="card">
-                    <div class="card-icon">📖</div>
-                    <div class="card-title">OpenClaw Docs</div>
-                    <div class="card-desc">Official OpenClaw agent framework documentation</div>
-                </a>
+                <div class="card">
+                    <div class="card-icon">🔄</div>
+                    <div class="card-title">Research Pipeline</div>
+                    <div class="card-desc">Any agent submits a task (markdown file) to Argus's inbox. Argus fetches seed URLs, analyses with Gemini Flash (Ollama fallback), writes findings, ingests to RAG. Every 10 minutes.</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">📡</div>
+                    <div class="card-title">Auto-Publish</div>
+                    <div class="card-desc">Findings auto-sync to this website every 6 hours. Also pushed to Obsidian vault for offline access. Git-backed, versioned.</div>
+                </div>
+                <div class="card">
+                    <div class="card-icon">🧪</div>
+                    <div class="card-title">Recent: CKBull Analysis</div>
+                    <div class="card-desc">Performance analysis of CKBull wallet — found 5.6x speedup opportunity by switching from cell enumeration to get_cells_capacity. Benchmarked against their live mainnet endpoint.</div>
+                </div>
             </div>
         </div>
     </div>
