@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 210 completed research findings
+// 211 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentpay-openclaw-skill-integration",
@@ -2133,6 +2133,17 @@ const RESEARCH_FINDINGS = [
       "nervos"
     ],
     "date": "2026-03-04"
+  },
+  {
+    "id": "sqlite-ckb-full-node-ibd",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The CKB light client has successfully implemented a trait-based storage abstraction, allowing it to utilize both RocksDB and SQLite as backend databases. This refactoring, particularly the adoption of",
+    "tags": [
+      "ckb",
+      "nervos"
+    ],
+    "date": "2026-03-31"
   },
   {
     "id": "stack-gap-analysis-2",
