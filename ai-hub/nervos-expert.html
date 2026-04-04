@@ -542,32 +542,68 @@
         // TODO: Replace with custom MLC-compiled Nervos Expert models once conversion is done
         // Currently uses stock MLC models as placeholders to prove the UI works
         const MODELS = [
+            // ── Nervos Expert (fine-tuned) ──────────────────────
             {
                 id: "nervos-expert-qwen3-0.6b",
-                label: "Qwen3 0.6B",
+                label: "Nervos Expert 0.6B",
+                size: "~400MB",
+                // TODO: Replace with custom MLC model URL once uploaded to HF
+                mlcModel: "Qwen2-0.5B-Instruct-q4f16_1-MLC",
+                mlcLib: null,
+                custom: true,
+                category: "expert",
+                notes: "Fine-tuned on CKB docs — smallest, fast load",
+            },
+            {
+                id: "nervos-expert-qwen3-1.7b",
+                label: "Nervos Expert 1.7B",
+                size: "~1GB",
+                mlcModel: "Qwen2-1.5B-Instruct-q4f16_1-MLC",
+                mlcLib: null,
+                custom: true,
+                category: "expert",
+                notes: "Fine-tuned on CKB docs — balanced speed and quality",
+            },
+            {
+                id: "nervos-expert-llama-3.2-3b",
+                label: "Nervos Expert 3B",
+                size: "~1.8GB",
+                mlcModel: "Llama-3.2-3B-Instruct-q4f16_1-MLC",
+                mlcLib: null,
+                custom: true,
+                category: "expert",
+                notes: "Fine-tuned on CKB docs — best eval score, richest answers",
+            },
+            // ── Base models (untrained reference) ───────────────
+            {
+                id: "base-qwen2-0.5b",
+                label: "Base Qwen2 0.5B",
                 size: "~400MB",
                 mlcModel: "Qwen2-0.5B-Instruct-q4f16_1-MLC",
                 mlcLib: null,
                 custom: false,
-                notes: "Smallest — fast load, basic CKB knowledge",
+                category: "base",
+                notes: "Stock model — no CKB training, compare against Expert 0.6B",
             },
             {
-                id: "nervos-expert-qwen3-1.7b",
-                label: "Qwen3 1.7B",
+                id: "base-qwen2-1.5b",
+                label: "Base Qwen2 1.5B",
                 size: "~1GB",
                 mlcModel: "Qwen2-1.5B-Instruct-q4f16_1-MLC",
                 mlcLib: null,
                 custom: false,
-                notes: "Balanced — good answers, moderate download",
+                category: "base",
+                notes: "Stock model — no CKB training, compare against Expert 1.7B",
             },
             {
-                id: "nervos-expert-llama-3.2-3b",
-                label: "Llama 3.2 3B",
+                id: "base-llama-3.2-3b",
+                label: "Base Llama 3.2 3B",
                 size: "~1.8GB",
                 mlcModel: "Llama-3.2-3B-Instruct-q4f16_1-MLC",
                 mlcLib: null,
                 custom: false,
-                notes: "Best eval score — richest answers, larger download",
+                category: "base",
+                notes: "Stock model — no CKB training, compare against Expert 3B",
             },
         ];
 
@@ -624,6 +660,17 @@
             var name = document.createElement("div");
             name.className = "model-card-name";
             name.textContent = m.label;
+            if (m.category === "expert") {
+                var badge = document.createElement("span");
+                badge.textContent = " FINE-TUNED";
+                badge.style.cssText = "font-size:0.65rem;color:var(--green);font-weight:700;letter-spacing:0.05em;margin-left:0.5rem;";
+                name.appendChild(badge);
+            } else {
+                var badge = document.createElement("span");
+                badge.textContent = " BASE";
+                badge.style.cssText = "font-size:0.65rem;color:var(--muted);font-weight:700;letter-spacing:0.05em;margin-left:0.5rem;";
+                name.appendChild(badge);
+            }
 
             var meta = document.createElement("div");
             meta.className = "model-card-meta";
