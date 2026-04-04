@@ -20,23 +20,39 @@
     return currentPath === href;
   }
 
-  // Build nav links
-  var links = [
+  // Navigation structure — top-level links show on desktop, groups collapse on mobile
+  var navItems = [
     { href: '/', label: 'Home' },
-    { href: '/hardware.html', label: 'Hardware' },
-    { href: '/ckb.html', label: 'CKB' },
-    { href: '/ckb-light-esp.html', label: 'Light Client' },
-    { href: '/blackbox.html', label: 'BlackBox' },
-    { href: '/roadmap.html', label: 'Roadmap' },
-    { href: '/fiberquest.html', label: 'FiberQuest' },
-    { href: '/nervos-launcher.html', label: 'Launcher' },
-    { href: '/research.html', label: 'Research', memberOnly: true },
-    { href: '/blog.html', label: 'Devlog', memberOnly: true },
-    { href: '/resources.html', label: 'Resources', memberOnly: true },
-    { href: '/mint/', label: 'Mint', memberOnly: true, external: true },
-    { href: '/flasher.html', label: 'Flasher', memberOnly: true },
-    { href: '/ckb-sync.html', label: 'Sync', memberOnly: true },
+    {
+      label: 'Projects',
+      children: [
+        { href: '/fiberquest.html', label: 'FiberQuest' },
+        { href: '/nervos-launcher.html', label: 'Launcher' },
+        { href: '/blackbox.html', label: 'BlackBox' },
+        { href: '/hardware.html', label: 'Hardware' },
+      ],
+    },
+    {
+      label: 'CKB',
+      children: [
+        { href: '/ckb.html', label: 'CKB Overview' },
+        { href: '/ckb-light-esp.html', label: 'Light Client' },
+        { href: '/ckb-sync.html', label: 'Sync', memberOnly: true },
+        { href: '/flasher.html', label: 'Flasher', memberOnly: true },
+        { href: '/mint/', label: 'Mint', memberOnly: true, external: true },
+      ],
+    },
     { href: '/ai-hub/', label: 'AI Hub' },
+    { href: '/roadmap.html', label: 'Roadmap' },
+    {
+      label: 'Members',
+      memberOnly: true,
+      children: [
+        { href: '/research.html', label: 'Research' },
+        { href: '/blog.html', label: 'Devlog' },
+        { href: '/resources.html', label: 'Resources' },
+      ],
+    },
     { href: '/members.html', label: 'Join / Sign In', className: 'nav-join' },
     { href: 'https://github.com/toastmanAu', label: 'GitHub', external: true },
   ];
@@ -65,7 +81,7 @@
   var nav = document.createElement('nav');
   nav.id = 'mainNav';
 
-  links.forEach(function (link) {
+  function buildLink(link) {
     var a = document.createElement('a');
     a.href = link.href;
     a.textContent = link.label;
@@ -73,7 +89,56 @@
     if (link.memberOnly) a.className = 'member-only';
     if (link.className) a.className = (a.className ? a.className + ' ' : '') + link.className;
     if (isActive(link.href)) a.classList.add('active');
-    nav.appendChild(a);
+    return a;
+  }
+
+  navItems.forEach(function (item) {
+    if (item.children) {
+      // Group with submenu
+      var group = document.createElement('div');
+      group.className = 'nav-group';
+      if (item.memberOnly) group.classList.add('member-only');
+
+      // Check if any child is active
+      var hasActiveChild = item.children.some(function (child) {
+        return isActive(child.href);
+      });
+
+      // Desktop: top-level label that opens dropdown on hover
+      var trigger = document.createElement('button');
+      trigger.className = 'nav-group-trigger';
+      trigger.textContent = item.label;
+      if (hasActiveChild) trigger.classList.add('active');
+
+      var arrow = document.createElement('span');
+      arrow.className = 'nav-arrow';
+      arrow.textContent = '\u25BE'; // ▾
+      trigger.appendChild(arrow);
+
+      var submenu = document.createElement('div');
+      submenu.className = 'nav-submenu';
+
+      item.children.forEach(function (child) {
+        submenu.appendChild(buildLink(child));
+      });
+
+      // Toggle on click (mobile)
+      trigger.addEventListener('click', function (e) {
+        e.stopPropagation();
+        var isOpen = group.classList.contains('sub-open');
+        // Close all other open groups
+        nav.querySelectorAll('.nav-group.sub-open').forEach(function (g) {
+          g.classList.remove('sub-open');
+        });
+        if (!isOpen) group.classList.add('sub-open');
+      });
+
+      group.appendChild(trigger);
+      group.appendChild(submenu);
+      nav.appendChild(group);
+    } else {
+      nav.appendChild(buildLink(item));
+    }
   });
 
   inner.appendChild(nav);
@@ -165,6 +230,39 @@
       '  color: var(--text, #e2e8f0); font-size: 1.5rem;',
       '  cursor: pointer; padding: 0.5rem;',
       '}',
+      /* Nav groups — desktop: dropdown on hover */
+      '#siteHeaderEl .nav-group {',
+      '  position: relative;',
+      '}',
+      '#siteHeaderEl .nav-group-trigger {',
+      '  background: none; border: none; cursor: pointer;',
+      '  color: var(--muted, #64748b); font-size: 0.9rem;',
+      '  font-family: inherit; transition: color 0.2s;',
+      '  display: flex; align-items: center; gap: 0.2rem;',
+      '  padding: 0;',
+      '}',
+      '#siteHeaderEl .nav-group-trigger:hover,',
+      '#siteHeaderEl .nav-group-trigger.active {',
+      '  color: var(--text, #e2e8f0);',
+      '}',
+      '#siteHeaderEl .nav-arrow { font-size: 0.7rem; margin-left: 0.15rem; }',
+      '#siteHeaderEl .nav-submenu {',
+      '  display: none; position: absolute; top: 100%; left: -0.5rem;',
+      '  background: var(--surface, #111318);',
+      '  border: 1px solid var(--border, #1e2430);',
+      '  border-radius: 8px; padding: 0.4rem 0;',
+      '  min-width: 160px; z-index: 200;',
+      '  box-shadow: 0 8px 24px rgba(0,0,0,0.4);',
+      '  margin-top: 0.5rem;',
+      '}',
+      '#siteHeaderEl .nav-group:hover .nav-submenu { display: block; }',
+      '#siteHeaderEl .nav-submenu a {',
+      '  display: block; padding: 0.5rem 1rem; white-space: nowrap;',
+      '}',
+      '#siteHeaderEl .nav-submenu a:hover {',
+      '  background: var(--surface2, #181c23);',
+      '}',
+      /* Mobile */
       '@media (max-width: 700px) {',
       '  #siteHeaderEl nav {',
       '    display: none; flex-direction: column; gap: 0;',
@@ -172,13 +270,37 @@
       '    background: var(--surface, #111318);',
       '    border-bottom: 1px solid var(--border, #1e2430);',
       '    padding: 0.5rem 0; z-index: 999;',
+      '    max-height: 80vh; overflow-y: auto;',
       '  }',
       '  #siteHeaderEl nav.open { display: flex; }',
-      '  #siteHeaderEl nav a {',
-      '    padding: 0.7rem 1.5rem; font-size: 1rem;',
+      '  #siteHeaderEl nav > a,',
+      '  #siteHeaderEl .nav-group-trigger {',
+      '    padding: 0.7rem 1.5rem; font-size: 1rem; width: 100%;',
+      '    border-bottom: 1px solid var(--border, #1e2430);',
+      '    text-align: left;',
+      '  }',
+      '  #siteHeaderEl .nav-group { border-bottom: none; }',
+      '  #siteHeaderEl .nav-group-trigger {',
+      '    justify-content: space-between;',
+      '  }',
+      '  #siteHeaderEl .nav-arrow {',
+      '    transition: transform 0.2s;',
+      '  }',
+      '  #siteHeaderEl .nav-group.sub-open .nav-arrow {',
+      '    transform: rotate(180deg);',
+      '  }',
+      '  #siteHeaderEl .nav-submenu {',
+      '    position: static; border: none; border-radius: 0;',
+      '    box-shadow: none; margin-top: 0; min-width: 0;',
+      '    background: var(--bg, #0a0c0f);',
+      '    display: none;',
+      '  }',
+      '  #siteHeaderEl .nav-group:hover .nav-submenu { display: none; }',
+      '  #siteHeaderEl .nav-group.sub-open .nav-submenu { display: block; }',
+      '  #siteHeaderEl .nav-submenu a {',
+      '    padding: 0.6rem 1.5rem 0.6rem 2.5rem; font-size: 0.95rem;',
       '    border-bottom: 1px solid var(--border, #1e2430);',
       '  }',
-      '  #siteHeaderEl nav a:last-child { border-bottom: none; }',
       '  #siteHeaderEl .nav-toggle { display: block; }',
       '}',
     ].join('\n');
