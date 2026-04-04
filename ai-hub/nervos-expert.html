@@ -487,20 +487,11 @@
         const MODELS = [
             // ── Nervos Expert (fine-tuned on CKB data, Gemma4 teacher) ──
             {
-                id: "nervos-expert-smollm-135m-gemma4",
-                label: "Expert SmolLM 135M",
-                size: "76MB",
-                mlcModel: "https://huggingface.co/ToastmanOne/nervos-expert-smollm-135m-gemma4-q4f16_1-MLC",
-                mlcLib: wlib + "/SmolLM-135M-q4f16_1-ctx2k_cs1k-webgpu.wasm",
-                custom: true, category: "expert",
-                notes: "Tiniest model — 135M params, ultra-fast",
-            },
-            {
                 id: "nervos-expert-qwen2.5-0.5b-gemma4",
                 label: "Expert Qwen2.5 0.5B",
                 size: "277MB",
                 mlcModel: "https://huggingface.co/ToastmanOne/nervos-expert-qwen2.5-0.5b-gemma4-q4f16_1-MLC",
-                mlcLib: wlib + "/Qwen2.5-0.5B-Instruct-q4f16_1-ctx4k_cs1k-webgpu.wasm",
+                mlcLib: wlib + "/Qwen2-0.5B-Instruct-q4f16_1-ctx4k_cs1k-webgpu.wasm",
                 custom: true, category: "expert",
                 notes: "Qwen2.5 0.5B fine-tuned on CKB docs",
             },
@@ -518,7 +509,7 @@
                 label: "Expert Qwen2.5 1.5B",
                 size: "840MB",
                 mlcModel: "https://huggingface.co/ToastmanOne/nervos-expert-qwen2.5-1.5b-gemma4-q4f16_1-MLC",
-                mlcLib: wlib + "/Qwen2.5-1.5B-Instruct-q4f16_1-ctx4k_cs1k-webgpu.wasm",
+                mlcLib: wlib + "/Qwen2-1.5B-Instruct-q4f16_1-ctx4k_cs1k-webgpu.wasm",
                 custom: true, category: "expert",
                 notes: "Qwen2.5 1.5B — second-best eval score (36.7%)",
             },
