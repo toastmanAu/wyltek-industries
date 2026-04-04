@@ -86,7 +86,7 @@
 </head>
 <body>
 <nav id="mainNav">
-      <a href="/index.html">Home</a>
+      <a href="/">Home</a>
       <a href="/hardware.html">Hardware</a>
       <a href="/ckb.html">CKB</a>
       <a href="/ckb-light-esp.html">Light Client</a>
@@ -101,6 +101,7 @@
       <a href="/members.html" class="nav-join">✦ Join / Sign In</a>
       <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
     </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
 <div class="page">
   <h1 class="page-title">Test Results</h1>
   <p class="page-sub">Host test suite results for our embedded libraries. Run on aarch64 Linux (Pi 5), updated automatically. Tests compile and run natively on the build host — no device required — keeping iteration fast and CI simple.</p>
@@ -155,6 +156,7 @@ async function load(){
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 load();
 </script>
+  <script src="/js/nav-toggle.js"></script>
   <script src="/js/member-nav.js"></script>
   <script src="/js/profile-banner.js"></script>
   <script src="/js/bug-reporter.js"></script>

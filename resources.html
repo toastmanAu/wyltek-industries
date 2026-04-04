@@ -116,25 +116,25 @@
 
 <header>
   <div class="header-inner">
-    <a href="/index.html" class="logo">
+    <a href="/" class="logo">
       <img src="/wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">
       Wyltek Industries
     </a>
     <nav id="mainNav">
-      <a href="index.html">Home</a>
-      <a href="hardware.html">Hardware</a>
-      <a href="ckb.html">CKB</a>
-      <a href="ckb-light-esp.html">Light Client</a>
-      <a href="blackbox.html">BlackBox</a>
-      <a href="roadmap.html">Roadmap</a>
-      <a href="fiberquest.html">FiberQuest</a>
-      <a href="research.html" class="member-only">Research</a>
-      <a href="blog.html" class="member-only">Devlog</a>
-      <a href="resources.html" class="member-only active">Resources</a>
+      <a href="/">Home</a>
+      <a href="/hardware.html">Hardware</a>
+      <a href="/ckb.html">CKB</a>
+      <a href="/ckb-light-esp.html">Light Client</a>
+      <a href="/blackbox.html">BlackBox</a>
+      <a href="/roadmap.html">Roadmap</a>
+      <a href="/fiberquest.html">FiberQuest</a>
+      <a href="/research.html" class="member-only">Research</a>
+      <a href="/blog.html" class="member-only">Devlog</a>
+      <a href="/resources.html" class="member-only active">Resources</a>
       <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
-      <a href="flasher.html" class="member-only">Flasher</a>
-      <a href="ckb-sync.html" class="member-only">Sync</a>
-      <a href="members.html" class="nav-join">✦ Join / Sign In</a>
+      <a href="/flasher.html" class="member-only">Flasher</a>
+      <a href="/ckb-sync.html" class="member-only">Sync</a>
+      <a href="/members.html" class="nav-join">✦ Join / Sign In</a>
       <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
     </nav>
     <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
@@ -314,13 +314,7 @@
   }
 })();
 </script>
-<script>
-(function(){
-  var btn=document.getElementById('navToggle');
-  var nav=document.getElementById('mainNav');
-  if(btn&&nav){btn.addEventListener('click',function(){nav.classList.toggle('open');});}
-})();
-</script>
+<script src="/js/nav-toggle.js"></script>
   <script src="/js/pwa.js" defer></script>
 </body>
 </html>
