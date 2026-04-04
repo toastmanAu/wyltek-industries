@@ -39,14 +39,16 @@
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
 
-    header { border-bottom: 1px solid var(--border); padding: 0 2rem; position: sticky; top: 0; background: rgba(10,12,15,0.93); backdrop-filter: blur(12px); z-index: 100; }
-    .header-inner { max-width: 1100px; margin: 0 auto; display: flex; align-items: center; justify-content: space-between; height: 60px; }
-    .logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 1.1rem; color: var(--text); }
-    .logo:hover { text-decoration: none; }
-    nav { display: flex; gap: 1.5rem; }
-    nav a { color: var(--muted); font-size: 0.9rem; font-weight: 500; }
-    nav a:hover, nav a.active { color: var(--text); text-decoration: none; }
-    .nav-toggle { display: none; background: none; border: none; color: var(--text); font-size: 1.4rem; cursor: pointer; }
+    /* Header CSS provided by /js/site-header.js */
+
+    
+    
+    
+    
+    
+    
+    
+    
 
     .hero { max-width: 1100px; margin: 0 auto; padding: 4rem 2rem 2.5rem; border-bottom: 1px solid var(--border); }
     .hero-label { font-size: 0.78rem; font-weight: 600; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent); margin-bottom: 1rem; }
@@ -90,7 +92,7 @@
     .profile-feat li.no::before { content: "— "; color: var(--border); }
 
     .phase { margin-bottom: 2rem; }
-    .phase-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 0.8rem; }
+    .phase-
     .phase-badge { padding: 0.2rem 0.65rem; border-radius: 999px; font-size: 0.75rem; font-weight: 700; }
     .phase-done    { background: rgba(0,229,160,0.12); color: var(--green); border: 1px solid rgba(0,229,160,0.25); }
     .phase-active  { background: rgba(0,200,255,0.12); color: var(--accent); border: 1px solid rgba(0,200,255,0.25); }
@@ -122,19 +124,14 @@
     footer { border-top: 1px solid var(--border); padding: 2rem; text-align: center; color: var(--muted); font-size: 0.82rem; }
 
     @media (max-width: 640px) {
-      nav { display: none; }
+      
       nav.open { display: flex; flex-direction: column; position: absolute; top: 60px; left: 0; right: 0; background: var(--bg); padding: 1rem 2rem; border-bottom: 1px solid var(--border); }
-      .nav-toggle { display: block; }
+      
       .stack-name { min-width: unset; }
     }
   </style>
-  <style>.nav-join{color:var(--accent,#00c8ff)!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;transition:background .2s,border-color .2s!important;}.nav-join:hover{background:rgba(0,200,255,.1);border-color:var(--accent,#00c8ff);text-decoration:none!important;}</style>
-  <style>
-    /* Member-only nav links: hidden until .member-nav class is added by JS */
-    .member-only { display: none !important; }
-    #mainNav.member-nav .member-only,
-    .nav-links.member-nav .member-only { display: inline-flex !important; }
-  </style>
+  
+  
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Wyltek">
@@ -145,31 +142,8 @@
 </head>
 <body>
 
-<header>
-  <div class="header-inner">
-    <a href="/" class="logo">
-      <img src="/wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">
-      Wyltek Industries
-    </a>
-    <nav id="mainNav">
-      <a href="/">Home</a>
-      <a href="/hardware.html">Hardware</a>
-      <a href="/ckb.html">CKB</a>
-      <a href="/ckb-light-esp.html" class="active">Light Client</a>
-      <a href="/blackbox.html">BlackBox</a>
-      <a href="/roadmap.html">Roadmap</a>
-      <a href="/fiberquest.html">FiberQuest</a>
-      <a href="/research.html" class="member-only">Research</a>
-      <a href="/blog.html" class="member-only">Devlog</a>
-      <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
-      <a href="/flasher.html" class="member-only">Flasher</a>
-      <a href="/ckb-sync.html" class="member-only">Sync</a>
-      <a href="/members.html" class="nav-join">✦ Join / Sign In</a>
-      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
-    </nav>
-    <button class="nav-toggle" id="navToggle">&#9776;</button>
-  </div>
-</header>
+<div id="site-header"></div>
+<script src="/js/site-header.js"></script>
 
 <div class="hero">
   <div class="hero-label">Open Source · ESP32 · Nervos CKB</div>
@@ -457,7 +431,6 @@ void loop() {
   <script>(function(){var a=localStorage.getItem("wyltek_address");if(a){var el=document.querySelector("a.nav-join");if(el){el.textContent="✦ Membership";el.title="View your membership";}}})();</script>
   <script src="/js/member-nav.js"></script>
   <script src="/js/bug-reporter.js"></script>
-  <script src="/js/nav-toggle.js"></script>
-  <script src="/js/pwa.js" defer></script>
+<script src="/js/pwa.js" defer></script>
 </body>
 </html>

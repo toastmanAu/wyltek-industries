@@ -26,24 +26,25 @@
   body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;line-height:1.6}
   a{color:var(--accent);text-decoration:none}
   a:hover{text-decoration:underline}
+
+    /* Header CSS provided by /js/site-header.js */
   code{font-family:'Consolas','Monaco',monospace;font-size:.88em;background:var(--surface2);padding:.1rem .4rem;border-radius:4px;border:1px solid var(--border)}
-  header{border-bottom:1px solid var(--border);background:rgba(7,9,15,.95);backdrop-filter:blur(8px);position:sticky;top:0;z-index:100}
-  .header-inner{max-width:1200px;margin:0 auto;padding:0 1.5rem;height:56px;display:flex;align-items:center;justify-content:space-between}
-  .logo{display:flex;align-items:center;gap:.6rem;font-weight:700;font-size:1rem;color:var(--text);text-decoration:none}
-  nav#mainNav{display:flex;gap:1.5rem}
-  nav#mainNav a{color:var(--muted);font-size:.9rem;transition:color .2s}
+  
+  
+  
+  nav
+  nav
   nav#mainNav a:hover,nav#mainNav a.active{color:var(--text)}
-  .nav-join{color:var(--accent)!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;transition:background .2s,border-color .2s!important;}
-  .nav-join:hover{background:rgba(0,200,255,.1);border-color:var(--accent);text-decoration:none!important;}
-  .nav-toggle{display:none;background:none;border:none;cursor:pointer;font-size:1.4rem;color:var(--text);padding:.2rem .4rem}
-  .member-only{display:none!important}
-  #mainNav.member-nav .member-only{display:inline-flex!important}
-  @media(max-width:700px){
-    nav#mainNav{display:none;flex-direction:column;gap:0;position:absolute;top:100%;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);padding:.5rem 0;z-index:999}
+  
+  
+  
+  
+  {
+    nav
     nav#mainNav.open{display:flex}
-    nav#mainNav a{padding:.7rem 1.5rem;font-size:1rem;border-bottom:1px solid var(--border)}
-    .nav-toggle{display:block}
-    .header-inner{position:relative}
+    nav
+    
+    
   }
   .page-hero{max-width:900px;margin:0 auto;padding:3rem 1.5rem 2rem}
   .eyebrow{font-size:.75rem;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--accent);margin-bottom:.6rem}
@@ -84,28 +85,8 @@
 </head>
 <body>
 
-<header>
-  <div class="header-inner">
-    <a class="logo" href="/"><img src="/wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">Wyltek Industries</a>
-    <nav id="mainNav">
-      <a href="/">Home</a>
-      <a href="/hardware.html">Hardware</a>
-      <a href="/ckb.html">CKB</a>
-      <a href="/ckb-light-esp.html">Light Client</a>
-      <a href="/blackbox.html">BlackBox</a>
-      <a href="/roadmap.html">Roadmap</a>
-      <a href="/fiberquest.html">FiberQuest</a>
-      <a href="/research.html" class="member-only">Research</a>
-      <a href="/blog.html" class="member-only">Devlog</a>
-      <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
-      <a href="/flasher.html" class="member-only">Flasher</a>
-      <a href="/ckb-sync.html" class="member-only">Sync</a>
-      <a href="/members.html" class="nav-join">✦ Join / Sign In</a>
-      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
-    </nav>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
-  </div>
-</header>
+<div id="site-header"></div>
+<script src="/js/site-header.js"></script>
 
 <div class="page-hero">
   <div class="eyebrow">Standing on shoulders</div>
@@ -491,8 +472,7 @@
     <div style="margin-top:.8rem;font-size:.78rem;opacity:.7">Built in the Nervos CKB ecosystem · <a href="https://nervos.org" target="_blank">nervos.org</a></div>
   </div>
 </footer>
-  <script src="/js/nav-toggle.js"></script>
-  <script src="/js/member-nav.js"></script>
+<script src="/js/member-nav.js"></script>
   <script>(function(){var a=localStorage.getItem("wyltek_address");if(a){var el=document.querySelector("a.nav-join");if(el){el.textContent="✦ Membership";el.title="View your membership";}}})();</script>
   <script src="/js/bug-reporter.js"></script>
 </body>

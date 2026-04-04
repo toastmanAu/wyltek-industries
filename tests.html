@@ -10,30 +10,23 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <script>(function(){const s=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',s);})();</script>
   <style>
+    /* Header CSS provided by /js/site-header.js */
+
     :root { --bg:#0d1018;--surface:#131720;--border:#1e2430;--text:#e2e8f0;--muted:#64748b;--accent:#00c8ff;--green:#00e5a0;--red:#f43f5e; }
     *{box-sizing:border-box;margin:0;padding:0;}
     body{background:var(--bg);color:var(--text);font-family:system-ui,-apple-system,sans-serif;font-size:15px;}
-    nav{background:var(--surface);border-bottom:1px solid var(--border);padding:0 1.5rem;display:flex;align-items:center;gap:1rem;height:56px;position:sticky;top:0;z-index:50;}
-    .nav-logo{display:flex;align-items:center;gap:0.6rem;text-decoration:none;}
-    .nav-logo img{height:28px;width:auto;}
-    .nav-logo span{font-weight:700;color:var(--text);font-size:1rem;}
-    .nav-links{display:flex;gap:0.25rem;margin-left:auto;}
-    .nav-links a{color:var(--muted);text-decoration:none;padding:0.4rem 0.75rem;border-radius:6px;font-size:0.875rem;transition:color .15s,background .15s;}
-    .nav-links a:hover,.nav-links a.active{color:var(--text);background:rgba(255,255,255,.05);}
-    #mainNav{display:flex;gap:1.5rem;align-items:center;max-width:1100px;margin:0 auto;padding:0 1.5rem;height:56px;background:var(--surface);border-bottom:1px solid var(--border);position:sticky;top:0;z-index:50;}
-    #mainNav a{color:var(--muted);font-size:.9rem;text-decoration:none;}
-    #mainNav a:hover,#mainNav a.active{color:var(--text);}
-    .member-only{display:none!important;}
-    #mainNav.member-nav .member-only{display:inline-flex!important;}
-    .nav-join{color:var(--accent)!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;}
-    .nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;}
-    @media(max-width:768px){
-      .nav-toggle{display:block;}
-      #mainNav{flex-direction:column;gap:0;height:auto;padding:0;}
-      #mainNav:not(.open) a{display:none;}
-      #mainNav .nav-toggle-wrap{display:flex;align-items:center;justify-content:space-between;width:100%;height:56px;padding:0 1.5rem;}
-    }
-    .page{max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    {max-width:900px;margin:0 auto;padding:2.5rem 1.5rem 4rem;}
     .page-title{font-size:1.75rem;font-weight:700;margin-bottom:0.5rem;}
     .page-sub{color:var(--muted);font-size:0.9rem;line-height:1.6;margin-bottom:2rem;}
     .overall{display:flex;gap:1rem;flex-wrap:wrap;margin-bottom:2rem;}
@@ -44,7 +37,7 @@
     .overall-num.fail{color:var(--red);}
     .overall-label{color:var(--muted);font-size:0.78rem;margin-top:0.25rem;text-transform:uppercase;letter-spacing:.05em;}
     .repo-section{margin-bottom:2.5rem;}
-    .repo-header{display:flex;align-items:flex-start;gap:0.75rem;margin-bottom:1rem;padding-bottom:0.75rem;border-bottom:1px solid var(--border);}
+    .repo-
     .repo-title{font-size:1.1rem;font-weight:700;}
     .repo-meta{color:var(--muted);font-size:0.8rem;margin-top:0.2rem;}
     .repo-link{margin-left:auto;color:var(--accent);font-size:0.82rem;text-decoration:none;white-space:nowrap;}
@@ -68,14 +61,9 @@
     .test-list{padding:0.5rem 1rem 0.75rem;font-family:monospace;font-size:0.78rem;line-height:1.9;color:var(--muted);}
     .test-list .p{color:var(--green);}
     .test-list .f{color:var(--red);}
-    @media(max-width:600px){.page{padding:1.5rem 1rem 3rem;}.repo-header{flex-wrap:wrap;}.repo-link{margin-left:0;}}
+    @media(max-width:600px){.page{padding:1.5rem 1rem 3rem;}.repo-.repo-link{margin-left:0;}}
   </style>
-  <style>
-    /* Member-only nav links: hidden until .member-nav class is added by JS */
-    .member-only { display: none !important; }
-    #mainNav.member-nav .member-only,
-    .nav-links.member-nav .member-only { display: inline-flex !important; }
-  </style>
+  
   <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <meta name="apple-mobile-web-app-title" content="Wyltek">
@@ -85,23 +73,8 @@
   <link rel="apple-touch-icon" href="/apple-touch-icon.png">
 </head>
 <body>
-<nav id="mainNav">
-      <a href="/">Home</a>
-      <a href="/hardware.html">Hardware</a>
-      <a href="/ckb.html">CKB</a>
-      <a href="/ckb-light-esp.html">Light Client</a>
-      <a href="/blackbox.html">BlackBox</a>
-      <a href="/roadmap.html">Roadmap</a>
-      <a href="/fiberquest.html">FiberQuest</a>
-      <a href="/research.html" class="member-only active">Research</a>
-      <a href="/blog.html" class="member-only">Devlog</a>
-      <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
-      <a href="/flasher.html" class="member-only">Flasher</a>
-      <a href="/ckb-sync.html" class="member-only">Sync</a>
-      <a href="/members.html" class="nav-join">✦ Join / Sign In</a>
-      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
-    </nav>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button>
+<div id="site-header"></div>
+<script src="/js/site-header.js"></script>
 <div class="page">
   <h1 class="page-title">Test Results</h1>
   <p class="page-sub">Host test suite results for our embedded libraries. Run on aarch64 Linux (Pi 5), updated automatically. Tests compile and run natively on the build host — no device required — keeping iteration fast and CI simple.</p>
@@ -156,8 +129,7 @@ async function load(){
 function esc(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
 load();
 </script>
-  <script src="/js/nav-toggle.js"></script>
-  <script src="/js/member-nav.js"></script>
+<script src="/js/member-nav.js"></script>
   <script src="/js/profile-banner.js"></script>
   <script src="/js/bug-reporter.js"></script>
   <script src="/js/pwa.js" defer></script>

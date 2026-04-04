@@ -19,25 +19,27 @@
     body{background:var(--bg);color:var(--text);font-family:'Segoe UI',system-ui,-apple-system,sans-serif;font-size:15px;line-height:1.6;}
     a{color:var(--accent);text-decoration:none;}a:hover{text-decoration:underline;}
 
-    header{border-bottom:1px solid var(--border);padding:0 2rem;position:sticky;top:0;background:rgba(10,12,15,.95);backdrop-filter:blur(12px);z-index:100;}
-    .header-inner{max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;}
-    .logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.1rem;color:var(--text);text-decoration:none;}
+    /* Header CSS provided by /js/site-header.js */
+
+    
+    
+    
     .logo img{width:28px;height:28px;}
-    nav{display:flex;gap:1.5rem;}
-    nav a{color:var(--muted);font-size:.9rem;transition:color .2s;}
-    nav a:hover,nav a.active{color:var(--text);text-decoration:none;}
-    .nav-join{background:var(--accent);color:#000!important;padding:.3rem .9rem;border-radius:99px;font-size:.82rem!important;font-weight:600;}
-    .nav-toggle{display:none;background:none;border:none;color:var(--text);font-size:1.4rem;cursor:pointer;}
+    
+    
+    
+    
+    
     @media(max-width:768px){
-      .nav-toggle{display:block;}
-      nav#mainNav{display:none;flex-direction:column;gap:0;position:absolute;top:60px;left:0;right:0;background:var(--surface);border-bottom:1px solid var(--border);z-index:99;padding:.5rem 0;}
+      
+      nav
       nav#mainNav.open{display:flex;}
-      nav#mainNav a{padding:.6rem 2rem;}
-      .member-only{display:none;}
+      nav
+      
     }
 
     main{max-width:1100px;margin:0 auto;padding:2rem 1.5rem;}
-    .page-header{margin-bottom:1.5rem;}
+    .page-
     .page-header h1{font-size:1.6rem;font-weight:700;}
     .page-header p{color:var(--muted);font-size:.9rem;margin-top:.3rem;}
 
@@ -83,7 +85,7 @@
       .detail-panel{width:100vw;border-left:none;border-top:1px solid var(--border);top:auto;height:85vh;transform:translateY(100%);}
       .detail-panel.open{transform:translateY(0);}
     }
-    .detail-header{display:flex;align-items:center;justify-content:space-between;padding:1rem 1.25rem;border-bottom:1px solid var(--border);flex-shrink:0;}
+    .detail-
     .detail-header h3{font-size:1rem;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:340px;}
     .btn-close{background:none;border:none;color:var(--muted);font-size:1.5rem;cursor:pointer;padding:.1rem .3rem;line-height:1;}
     .btn-close:hover{color:var(--text);}
@@ -113,31 +115,8 @@
 </head>
 <body>
 
-<header>
-  <div class="header-inner">
-    <a href="/" class="logo">
-      <img src="/wyltek-mark.png" alt="W" />
-      Wyltek Industries
-    </a>
-    <nav id="mainNav">
-      <a href="/">Home</a>
-      <a href="/hardware.html">Hardware</a>
-      <a href="/ckb.html">CKB</a>
-      <a href="/ckb-light-esp.html">Light Client</a>
-      <a href="/blackbox.html">BlackBox</a>
-      <a href="/roadmap.html">Roadmap</a>
-      <a href="/fiberquest.html">FiberQuest</a>
-      <a href="/research.html" class="member-only active">Research</a>
-      <a href="/blog.html" class="member-only">Devlog</a>
-      <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
-      <a href="/flasher.html" class="member-only">Flasher</a>
-      <a href="/ckb-sync.html" class="member-only">Sync</a>
-      <a href="/members.html" class="nav-join">✦ Join / Sign In</a>
-      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
-    </nav>
-    <button class="nav-toggle" id="navToggle" aria-label="Menu">&#9776;</button>
-  </div>
-</header>
+<div id="site-header"></div>
+<script src="/js/site-header.js"></script>
 
 <main>
   <div class="page-header">
@@ -556,6 +535,5 @@ function sniffMime(bytes) {
 <script src="/js/member-nav.js"></script>
 <script src="/js/profile-banner.js"></script>
   <script src="/js/bug-reporter.js"></script>
-  <script src="/js/nav-toggle.js"></script>
 </body>
 </html>

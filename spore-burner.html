@@ -32,7 +32,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { background: var(--bg); color: var(--text); font-family: 'Segoe UI', system-ui, sans-serif; font-size: 14px; min-height: 100vh; }
 
-    header { background: var(--surface); border-bottom: 1px solid var(--border); padding: 1rem 1.5rem; display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; }
+    
     header h1 { font-size: 1.1rem; font-weight: 700; }
     header h1 span { color: var(--accent); }
     .badge { font-size: .7rem; padding: .2rem .5rem; border-radius: 4px; font-weight: 700; }
@@ -112,48 +112,23 @@
     footer { text-align: center; padding: 2rem 1rem 3rem; font-size: .73rem; color: var(--muted); }
     footer a { color: var(--muted); text-decoration: none; }
     footer a:hover { color: var(--text); }
+
+    /* Header CSS provided by /js/site-header.js */
   </style>
 </head>
 <body>
 <script>document.addEventListener('submit', e => e.preventDefault());</script>
 
-<header style="background:rgba(10,12,15,.95);backdrop-filter:blur(12px);border-bottom:1px solid #1e2430;padding:0 2rem;position:sticky;top:0;z-index:100;">
-  <div style="max-width:1100px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:60px;">
-    <a href="/" style="display:flex;align-items:center;gap:10px;font-weight:700;font-size:1.05rem;color:#e2e8f0;text-decoration:none;">
-      <img src="/wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;">
-      Wyltek Industries
-    </a>
-    <nav id="mainNav" style="display:flex;gap:1.5rem;">
-      <a href="/">Home</a>
-      <a href="/hardware.html">Hardware</a>
-      <a href="/ckb.html">CKB</a>
-      <a href="/ckb-light-esp.html">Light Client</a>
-      <a href="/blackbox.html">BlackBox</a>
-      <a href="/roadmap.html">Roadmap</a>
-      <a href="/fiberquest.html">FiberQuest</a>
-      <a href="/research.html" class="member-only">Research</a>
-      <a href="/blog.html" class="member-only">Devlog</a>
-      <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
-      <a href="/flasher.html" class="member-only">Flasher</a>
-      <a href="/spore-burner.html" class="member-only active">🔥 Burner</a>
-      <a href="/ckb-sync.html" class="member-only">Sync</a>
-      <a href="/members.html" class="nav-join">✦ Join / Sign In</a>
-      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
-    </nav>
-    <button id="navToggle" style="display:none;background:none;border:none;color:#e2e8f0;font-size:1.4rem;cursor:pointer;">&#9776;</button>
-  </div>
-</header>
+<div id="site-header"></div>
+<script src="/js/site-header.js"></script>
 <style>
-.member-only{display:none!important;}
-#mainNav.member-nav .member-only{display:inline-flex!important;}
-nav a{color:#64748b;font-size:.9rem;text-decoration:none;}
-nav a:hover,nav a.active{color:#e2e8f0;text-decoration:none;}
-.nav-join{color:#00c8ff!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;}
-@media(max-width:768px){
+    
+
+{
   #navToggle{display:block!important;}
-  nav#mainNav{display:none;flex-direction:column;position:fixed;top:60px;left:0;right:0;background:#111318;border-bottom:1px solid #1e2430;z-index:99;padding:.5rem 0;}
+  nav
   nav#mainNav.open{display:flex!important;}
-  nav#mainNav a{padding:.6rem 2rem;}
+  nav
 }
 </style>
 
@@ -613,6 +588,5 @@ switchNetwork('testnet');
 <script src="/js/member-nav.js"></script>
 <script src="/js/profile-banner.js"></script>
 <script src="/js/bug-reporter.js"></script>
-  <script src="/js/nav-toggle.js"></script>
 </body>
 </html>

@@ -40,6 +40,8 @@
     }
     a { color: var(--accent); text-decoration: none; }
     a:hover { text-decoration: underline; }
+
+    /* Header CSS provided by /js/site-header.js */
     code {
       font-family: 'Consolas', 'Monaco', monospace;
       background: var(--surf2);
@@ -49,34 +51,14 @@
       color: var(--green);
     }
 
-    /* ── Header ── */
-    header {
-      border-bottom: 1px solid var(--border);
-      padding: 0 2rem;
-      position: sticky; top: 0;
-      background: rgba(10,12,15,0.93);
-      backdrop-filter: blur(12px);
-      z-index: 100;
-    }
-    .header-inner {
-      max-width: 1100px; margin: 0 auto;
-      display: flex; align-items: center; justify-content: space-between;
-      height: 60px;
-    }
-    .logo {
-      display: flex; align-items: center; gap: 10px;
-      font-weight: 700; font-size: 1.1rem; color: var(--text);
-    }
-    .logo-icon {
-      width: 32px; height: 32px;
-      background: linear-gradient(135deg, var(--accent), var(--accent2));
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center; font-size: 17px;
-    }
-    nav { display: flex; gap: 1.5rem; }
-    nav a { color: var(--muted); font-size: 0.9rem; transition: color 0.2s; }
-    nav a:hover, nav a.active { color: var(--text); text-decoration: none; }
-    nav a.active { color: var(--accent); }
+    
+    
+    
+    
+    
+    
+    
+    
 
     /* ── Hero ── */
     .hero {
@@ -280,24 +262,17 @@
 
     hr.div { max-width: 1100px; margin: 0 auto; border: none; border-top: 1px solid var(--border); }
 
-    @media (max-width: 600px) { }
+    
   
     /* ── Nav toggle (mobile) ── */
-    .nav-toggle {
-      display: none;
-      background: none; border: none; cursor: pointer;
-      font-size: 1.4rem; color: var(--text, #e2e8f0);
-      padding: 0.2rem 0.4rem; line-height: 1;
-    }
+    
     @media (max-width: 700px) {
-      nav#mainNav { display: none; flex-direction: column; gap: 0; position: absolute;
-        top: 100%; left: 0; right: 0; background: var(--surface, #0f1117);
-        border-bottom: 1px solid var(--border, #1e2430); padding: 0.5rem 0; z-index: 999; }
+      nav
       nav#mainNav.open { display: flex; }
-      nav#mainNav a { padding: 0.7rem 1.5rem; font-size: 1rem; border-bottom: 1px solid var(--border, #1e2430); }
+      nav
       nav#mainNav a:last-child { border-bottom: none; }
-      .nav-toggle { display: block; }
-      .header-inner { position: relative; }
+      
+      
     }
   </style>
   <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
@@ -305,41 +280,13 @@
   <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
   <link rel="manifest" href="/site.webmanifest">
   <meta name="theme-color" content="#07090f">
-  <style>.nav-join{color:var(--accent,#00c8ff)!important;font-weight:600;border:1px solid rgba(0,200,255,.3);border-radius:99px;padding:.15rem .65rem;transition:background .2s,border-color .2s!important;}.nav-join:hover{background:rgba(0,200,255,.1);border-color:var(--accent,#00c8ff);text-decoration:none!important;}</style>
-  <style>
-    /* Member-only nav links: hidden until .member-nav class is added by JS */
-    .member-only { display: none !important; }
-    #mainNav.member-nav .member-only,
-    .nav-links.member-nav .member-only { display: inline-flex !important; }
-  </style>
+  
+  
 </head>
 <body>
 
-<!-- HEADER -->
-<header>
-  <div class="header-inner">
-    <a class="logo" href="/">
-      <img src="/wyltek-mark.png" alt="Wyltek" style="width:28px;height:28px;border-radius:7px;object-fit:cover;">
-      Wyltek Industries
-    </a>
-        <nav id="mainNav">
-      <a href="/">Home</a>
-      <a href="/hardware.html">Hardware</a>
-      <a href="/ckb.html">CKB</a>
-      <a href="/ckb-light-esp.html">Light Client</a>
-      <a href="/blackbox.html">BlackBox</a>
-      <a href="/roadmap.html">Roadmap</a>
-      <a href="/fiberquest.html">FiberQuest</a>
-      <a href="/research.html" class="member-only">Research</a>
-      <a href="/blog.html" class="member-only">Devlog</a>
-      <a href="/mint/" target="_blank" class="member-only">Mint ↗</a>
-      <a href="/flasher.html" class="member-only active">Flasher</a>
-      <a href="/ckb-sync.html" class="member-only">Sync</a>
-      <a href="/members.html" class="nav-join">✦ Join / Sign In</a>
-      <a href="https://github.com/toastmanAu" target="_blank">GitHub ↗</a>
-    </nav>
-    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu">&#9776;</button></div>
-</header>
+<div id="site-header"></div>
+<script src="/js/site-header.js"></script>
 
 <!-- HERO -->
 <div class="hero">
@@ -577,7 +524,6 @@
       });
   });
 </script>
-  <script src="/js/nav-toggle.js"></script>
 <script src="js/browser-compat.js"></script>
 <script>new BrowserCompat(document.querySelector(".compat-wrap") || (() => { const d=document.createElement("div"); document.querySelector("main,footer").before(d); return d; })(), "web-serial");</script>
   <script>(function(){var a=localStorage.getItem("wyltek_address");if(a){var el=document.querySelector("a.nav-join");if(el){el.textContent="✦ Membership";el.title="View your membership";}}})();</script>
