@@ -540,15 +540,7 @@
                 custom: true, category: "expert",
                 notes: "Google Gemma2 2B — low eval score (5%), included for comparison",
             },
-            {
-                id: "nervos-expert-deepseek-r1-1.5b-gemma4",
-                label: "Expert DeepSeek-R1 1.5B",
-                size: "965MB",
-                mlcModel: "https://huggingface.co/ToastmanOne/nervos-expert-deepseek-r1-1.5b-gemma4-q4f16_1-MLC",
-                mlcLib: wlib + "/DeepSeek-R1-Distill-Qwen-1.5B-q4f16_1-ctx4k_cs1k-webgpu.wasm",
-                custom: true, category: "expert",
-                notes: "DeepSeek R1 distill 1.5B — reasoning-tuned base",
-            },
+            // DeepSeek-R1 1.5B removed — MLC has disabled its WASM due to correctness issues
             {
                 id: "nervos-expert-llama-3.2-3b-gemma4",
                 label: "Expert Llama 3.2 3B",
@@ -573,7 +565,7 @@
             { id: "base-qwen2.5-1.5b", label: "Base Qwen2.5 1.5B", size: "840MB", mlcModel: "Qwen2.5-1.5B-Instruct-q4f16_1-MLC", mlcLib: null, custom: false, category: "base", notes: "Stock Qwen2.5 1.5B — compare against Expert Qwen2.5 1.5B" },
             { id: "base-qwen3-1.7b", label: "Base Qwen3 1.7B", size: "935MB", mlcModel: "Qwen3-1.7B-q4f16_1-MLC", mlcLib: null, custom: false, category: "base", notes: "Stock Qwen3 1.7B — compare against Expert Qwen3 1.7B" },
             { id: "base-smollm2-1.7b", label: "Base SmolLM2 1.7B", size: "922MB", mlcModel: "SmolLM2-1.7B-Instruct-q4f16_1-MLC", mlcLib: null, custom: false, category: "base", notes: "Stock SmolLM2 1.7B — compare against Expert SmolLM2 1.7B" },
-            { id: "base-deepseek-r1-1.5b", label: "Base DeepSeek-R1 1.5B", size: "965MB", mlcModel: "DeepSeek-R1-Distill-Qwen-1.5B-q4f16_1-MLC", mlcLib: null, custom: false, category: "base", notes: "Stock DeepSeek R1 1.5B — compare against Expert DeepSeek-R1 1.5B" },
+            // DeepSeek-R1 1.5B base removed — MLC WASM disabled
             { id: "base-gemma-2-2b", label: "Base Gemma2 2B", size: "1.4GB", mlcModel: "gemma-2-2b-it-q4f16_1-MLC", mlcLib: null, custom: false, category: "base", notes: "Stock Gemma2 2B — compare against Expert Gemma2 2B" },
             { id: "base-llama-3.2-3b", label: "Base Llama 3.2 3B", size: "1.7GB", mlcModel: "Llama-3.2-3B-Instruct-q4f16_1-MLC", mlcLib: null, custom: false, category: "base", notes: "Stock Llama 3.2 3B — compare against Expert Llama 3.2 3B" },
             { id: "base-qwen3-4b", label: "Base Qwen3 4B", size: "2.3GB", mlcModel: "Qwen3-4B-q4f16_1-MLC", mlcLib: null, custom: false, category: "base", notes: "Stock Qwen3 4B — compare against Expert Qwen3 4B" },
