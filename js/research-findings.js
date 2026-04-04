@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 212 completed research findings
+// 228 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentpay-openclaw-skill-integration",
@@ -25,6 +25,17 @@ const RESEARCH_FINDINGS = [
       "esp32"
     ],
     "date": "2026-03-03"
+  },
+  {
+    "id": "bitcoin-spv-light-client-on-ckb",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This report analyses the **summa-tx/bitcoin-spv** repository as a basis for a Bitcoin SPV light client on CKB. We inventory the repository (multi-language SPV toolkit, archived June 2024【47†L213-L222】",
+    "tags": [
+      "ckb",
+      "nervos"
+    ],
+    "date": "unknown"
   },
   {
     "id": "bitnet-cpp-rk3588-optimization-revisit",
@@ -190,6 +201,19 @@ const RESEARCH_FINDINGS = [
     "date": "2026-03-03"
   },
   {
+    "id": "ckb-community-training---apple-silicon-research",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "1. [MLX Framework Capabilities](#1-mlx-framework-capabilities)",
+    "tags": [
+      "ckb",
+      "nervos",
+      "quantization",
+      "lora"
+    ],
+    "date": "2026-04-03"
+  },
+  {
     "id": "ckb-custom-lang-feasibility",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -212,6 +236,19 @@ const RESEARCH_FINDINGS = [
       "esp32"
     ],
     "date": "2026-03-03"
+  },
+  {
+    "id": "ckb-expert---community-training-proposal",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "We're building **CKB Expert** — the first AI model that truly understands Nervos CKB. Not a ChatGPT wrapper with docs stuffed in the prompt. A model with CKB protocol knowledge baked into its weights,",
+    "tags": [
+      "ckb",
+      "nervos",
+      "fiber",
+      "lora"
+    ],
+    "date": "April 2026"
   },
   {
     "id": "ckb-flyclient-mmr-rpc-proposal",
@@ -246,6 +283,20 @@ const RESEARCH_FINDINGS = [
       "nervos"
     ],
     "date": "2026-03-09"
+  },
+  {
+    "id": "ckb-inference-platform-report",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This report evaluates the feasibility of building a dedicated CKB (Common Knowledge Base) AI inference platform — a fine-tuned large language model trained exclusively on the Nervos CKB protocol, ecos",
+    "tags": [
+      "ckb",
+      "nervos",
+      "fiber",
+      "quantization",
+      "lora"
+    ],
+    "date": "unknown"
   },
   {
     "id": "ckb-lang-embedded-implementation",
@@ -286,6 +337,20 @@ const RESEARCH_FINDINGS = [
       "esp32"
     ],
     "date": "2026-03-06"
+  },
+  {
+    "id": "ckb-light-client-sqlite-findings",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "> **Project:** [ckb-light-client-lite](https://github.com/toastmanAu/ckb-light-client-lite)",
+    "tags": [
+      "ckb",
+      "nervos",
+      "fiber",
+      "esp32",
+      "fiberquest"
+    ],
+    "date": "2026-04-01"
   },
   {
     "id": "ckb-light-esp-ckbfs-integration",
@@ -1331,6 +1396,19 @@ const RESEARCH_FINDINGS = [
     "date": "2026-03-06"
   },
   {
+    "id": "fiberquest-v3-immutable-cells-architecture",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The current architecture treats the Tournament Cell as a mutable database row, rewriting it on every state change. This causes OutPointAlreadySpent errors, retry loops, and serialized operations. ~20+",
+    "tags": [
+      "ckb",
+      "fiber",
+      "retroarch",
+      "fiberquest"
+    ],
+    "date": "unknown"
+  },
+  {
     "id": "fiberquest-web-client",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -1343,6 +1421,19 @@ const RESEARCH_FINDINGS = [
       "fiberquest"
     ],
     "date": "2026-03-05"
+  },
+  {
+    "id": "fiberquestaxondeepdive",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "Axon is a **ready-to-use L2 appchain framework** for Nervos (see Axon docs【30†L411-L419】【21†L321-L329】), but it has not yet powered any major live network. The framework is deployable – one can **buil",
+    "tags": [
+      "ckb",
+      "nervos",
+      "fiber",
+      "fiberquest"
+    ],
+    "date": "unknown"
   },
   {
     "id": "gameboy-hardware-wallet",
@@ -1579,6 +1670,42 @@ const RESEARCH_FINDINGS = [
     "date": "2026-03-08"
   },
   {
+    "id": "intel-arc-gpu-local-ai-inference-optimisation",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "Intel’s Arc discrete GPUs (Alchemist and Battlemage generations) offer competitive compute density (e.g. up to 367 INT8 TOPS on Arc Pro B70【28†L218-L228】) and large VRAM capacities (up to 32 GB), but ",
+    "tags": [
+      "bitnet",
+      "quantization",
+      "lora"
+    ],
+    "date": "unknown"
+  },
+  {
+    "id": "joyid-redirect-signing-guide",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The JoyID SDK is designed for browser popup flows — the dapp opens JoyID in a popup, JoyID signs, and returns the result via `window.opener.postMessage`. This works when the dapp and JoyID run in the ",
+    "tags": [
+      "ckb",
+      "nervos"
+    ],
+    "date": "March 2026"
+  },
+  {
+    "id": "joyid-signing-fix-2026-03-25",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "Players needed to sign a CKB deposit transaction via JoyID (WebAuthn passkey wallet) on their phone by scanning a QR code. The agent builds the transaction, the player signs it, and the signed tx is s",
+    "tags": [
+      "ckb",
+      "fiber",
+      "retroarch",
+      "fiberquest"
+    ],
+    "date": "2026-03-25"
+  },
+  {
     "id": "llm-cost-optimisation-pricing-update-revisit",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -1637,6 +1764,26 @@ const RESEARCH_FINDINGS = [
     "date": "2026-03-03"
   },
   {
+    "id": "low-capital-automated-crypto-trading-bot",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "A near “set-and-forget” automated crypto bot that starts with **~$100** is feasible to build, but it must be designed around the reality that **transaction costs (fees + spread + slippage) and minimum",
+    "tags": [
+      "research"
+    ],
+    "date": "unknown"
+  },
+  {
+    "id": "mcp-services-claude-code-skills-scaffolding",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This report specifies a deployable, reusable scaffolding approach for four MCP server components—**node-ops**, **blockchain**, **workspace**, and **RAG**—and a set of **Claude Code skills** (plus Clau",
+    "tags": [
+      "research"
+    ],
+    "date": "unknown"
+  },
+  {
     "id": "nemoclaw-local-inference-fork-community-followup-1774099111",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -1691,6 +1838,17 @@ const RESEARCH_FINDINGS = [
       "fiberquest"
     ],
     "date": "2026-03-06"
+  },
+  {
+    "id": "nervos-ecosystem-optimisation-opportunities",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This report identifies performance and portability optimisation opportunities across the Nervos ecosystem, focusing on **CKB full nodes**, **CKB-VM execution**, **Molecule serialization**, **SMT/Merkl",
+    "tags": [
+      "ckb",
+      "nervos"
+    ],
+    "date": "unknown"
   },
   {
     "id": "nervos-missing-ingredients-analysis",
@@ -1878,6 +2036,29 @@ const RESEARCH_FINDINGS = [
     "date": "2026-03-05"
   },
   {
+    "id": "quantum-resistant-chains-comparison",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "CoinMarketCap currently lists 17 **“Quantum-Resistant”** blockchain projects (e.g. Zcash, Starknet, Nervos, etc.)【1†L22-L30】【92†L339-L347】.  These include well-known L1s (Zcash, Nervos, QRL, Minima, N",
+    "tags": [
+      "ckb",
+      "nervos"
+    ],
+    "date": "unknown"
+  },
+  {
+    "id": "research-decentralised-dns-on-ckb",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "{\"parentUuid\":null,\"isSidechain\":true,\"promptId\":\"305bc745-1881-4594-ba94-f0da5c569ecf\",\"agentId\":\"a011257a823bc560f\",\"type\":\"user\",\"message\":{\"role\":\"user\",\"content\":\"Deep research task: Decentralise",
+    "tags": [
+      "ckb",
+      "nervos",
+      "lora"
+    ],
+    "date": "unknown"
+  },
+  {
     "id": "retro-achievements-ckb-bridge",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -1956,6 +2137,18 @@ const RESEARCH_FINDINGS = [
       "fiberquest"
     ],
     "date": "2026-03-05"
+  },
+  {
+    "id": "retroarch-udp-polling-complete-technical-guide-1774170352663",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "Initial Node.js UDP client attempts failed with 100% packet loss. Root cause: **missing SIZE parameter in command**.",
+    "tags": [
+      "fiber",
+      "retroarch",
+      "fiberquest"
+    ],
+    "date": "2026-03-22"
   },
   {
     "id": "retrofit-economy-design-patterns",
