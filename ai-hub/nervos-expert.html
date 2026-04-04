@@ -467,8 +467,20 @@
         </div>
 
         <div class="webgpu-warning" id="webgpuWarning">
-            Your browser does not support WebGPU. Nervos Expert requires Chrome 113+, Edge 113+, or a recent Firefox Nightly with WebGPU enabled.
+            Your browser does not support WebGPU. See browser setup below.
         </div>
+
+        <details style="margin-bottom:1.5rem;">
+            <summary style="cursor:pointer;color:var(--accent);font-size:0.9rem;">Browser Setup Guide (WebGPU required)</summary>
+            <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:1.25rem;margin-top:0.5rem;font-size:0.85rem;color:var(--muted);line-height:1.7;">
+                <p><strong style="color:var(--text);">Chrome / Edge 113+</strong> — Works out of the box. If not, enable at <code>chrome://flags/#enable-unsafe-webgpu</code></p>
+                <p style="margin-top:0.75rem;"><strong style="color:var(--text);">Brave</strong> — Enable <code>brave://flags/#enable-unsafe-webgpu</code> and <code>brave://flags/#enable-vulkan</code>. Install <code>vulkan-tools</code> on Linux. Restart after enabling flags.</p>
+                <p style="margin-top:0.75rem;"><strong style="color:var(--text);">Safari 17+ (macOS / iOS)</strong> — WebGPU is enabled by default. Must be served over HTTPS (not http:// or file://). Private Browsing mode disables the Cache API which prevents model downloads.</p>
+                <p style="margin-top:0.75rem;"><strong style="color:var(--text);">Firefox</strong> — WebGPU is behind a flag. Enable <code>dom.webgpu.enabled</code> in <code>about:config</code>. Nightly builds recommended.</p>
+                <p style="margin-top:0.75rem;"><strong style="color:var(--text);">iOS Chrome / iOS Firefox</strong> — These use Safari's WebKit engine under the hood. WebGPU availability depends on iOS Safari support, not the browser app itself.</p>
+                <p style="margin-top:0.75rem;"><strong style="color:var(--text);">Linux (NVIDIA)</strong> — Ensure <code>vulkan-tools</code> is installed: <code>sudo apt install vulkan-tools</code>. Verify with <code>vulkaninfo --summary</code>.</p>
+            </div>
+        </details>
 
         <div class="status-banner" id="statusBanner">
             <div class="dot dot-muted" id="statusDot"></div>
@@ -538,72 +550,71 @@
     </div>
 
     <script type="module">
+        import * as webllmRef from "https://esm.run/@mlc-ai/web-llm";
+
         // ── Model registry ──────────────────────────────────────
-        // TODO: Replace with custom MLC-compiled Nervos Expert models once conversion is done
-        // Currently uses stock MLC models as placeholders to prove the UI works
         const MODELS = [
-            // ── Nervos Expert (fine-tuned) ──────────────────────
+            // ── Nervos Expert (fine-tuned on CKB data, Gemma4 teacher) ──
             {
-                id: "nervos-expert-qwen3-0.6b",
+                id: "nervos-expert-qwen3-0.6b-gemma4",
                 label: "Nervos Expert 0.6B",
-                size: "~400MB",
-                // TODO: Replace with custom MLC model URL once uploaded to HF
-                mlcModel: "Qwen2-0.5B-Instruct-q4f16_1-MLC",
-                mlcLib: null,
+                size: "~330MB",
+                mlcModel: "https://huggingface.co/ToastmanOne/nervos-expert-qwen3-0.6b-gemma4-q4f16_1-MLC",
+                mlcLib: webllmRef.modelLibURLPrefix + webllmRef.modelVersion + "/Qwen3-0.6B-q4f16_1-ctx4k_cs1k-webgpu.wasm",
                 custom: true,
                 category: "expert",
-                notes: "Fine-tuned on CKB docs — smallest, fast load",
+                notes: "Fine-tuned on CKB docs (Gemma4 teacher) — smallest, fast load",
             },
             {
-                id: "nervos-expert-qwen3-1.7b",
+                id: "nervos-expert-qwen3-1.7b-gemma4",
                 label: "Nervos Expert 1.7B",
-                size: "~1GB",
-                mlcModel: "Qwen2-1.5B-Instruct-q4f16_1-MLC",
-                mlcLib: null,
+                size: "~935MB",
+                mlcModel: "https://huggingface.co/ToastmanOne/nervos-expert-qwen3-1.7b-gemma4-q4f16_1-MLC",
+                mlcLib: webllmRef.modelLibURLPrefix + webllmRef.modelVersion + "/Qwen3-1.7B-q4f16_1-ctx4k_cs1k-webgpu.wasm",
                 custom: true,
                 category: "expert",
-                notes: "Fine-tuned on CKB docs — balanced speed and quality",
+                notes: "Fine-tuned on CKB docs (Gemma4 teacher) — balanced speed and quality",
             },
             {
-                id: "nervos-expert-llama-3.2-3b",
+                id: "nervos-expert-llama-3.2-3b-gemma4",
                 label: "Nervos Expert 3B",
-                size: "~1.8GB",
-                mlcModel: "Llama-3.2-3B-Instruct-q4f16_1-MLC",
-                mlcLib: null,
+                size: "~1.7GB",
+                mlcModel: "https://huggingface.co/ToastmanOne/nervos-expert-llama-3.2-3b-gemma4-q4f16_1-MLC",
+                mlcLib: webllmRef.modelLibURLPrefix + webllmRef.modelVersion + "/Llama-3.2-3B-Instruct-q4f16_1-ctx4k_cs1k-webgpu.wasm",
                 custom: true,
                 category: "expert",
-                notes: "Fine-tuned on CKB docs — best eval score, richest answers",
+                notes: "Fine-tuned on CKB docs (Gemma4 teacher) — best eval score, richest answers",
             },
-            // ── Base models (untrained reference) ───────────────
+            // ── Base models (untrained, same architecture for comparison) ──
             {
-                id: "base-qwen2-0.5b",
-                label: "Base Qwen2 0.5B",
-                size: "~400MB",
-                mlcModel: "Qwen2-0.5B-Instruct-q4f16_1-MLC",
+                id: "base-qwen3-0.6b",
+                label: "Base Qwen3 0.6B",
+                size: "~330MB",
+                mlcModel: "Qwen3-0.6B-q4f16_1-MLC",
                 mlcLib: null,
                 custom: false,
                 category: "base",
-                notes: "Stock model — no CKB training, compare against Expert 0.6B",
+                notes: "Stock Qwen3 0.6B — no CKB training, compare against Expert 0.6B",
             },
             {
-                id: "base-qwen2-1.5b",
-                label: "Base Qwen2 1.5B",
-                size: "~1GB",
-                mlcModel: "Qwen2-1.5B-Instruct-q4f16_1-MLC",
+                id: "base-qwen3-1.7b",
+                label: "Base Qwen3 1.7B",
+                size: "~935MB",
+                mlcModel: "Qwen3-1.7B-q4f16_1-MLC",
                 mlcLib: null,
                 custom: false,
                 category: "base",
-                notes: "Stock model — no CKB training, compare against Expert 1.7B",
+                notes: "Stock Qwen3 1.7B — no CKB training, compare against Expert 1.7B",
             },
             {
                 id: "base-llama-3.2-3b",
                 label: "Base Llama 3.2 3B",
-                size: "~1.8GB",
+                size: "~1.7GB",
                 mlcModel: "Llama-3.2-3B-Instruct-q4f16_1-MLC",
                 mlcLib: null,
                 custom: false,
                 category: "base",
-                notes: "Stock model — no CKB training, compare against Expert 3B",
+                notes: "Stock Llama 3.2 3B — no CKB training, compare against Expert 3B",
             },
         ];
 
@@ -753,7 +764,7 @@
             progressBar.style.width = "0%";
 
             try {
-                var webllm = await import("https://esm.run/@mlc-ai/web-llm");
+                var webllm = webllmRef;
 
                 var initProgressCallback = function(report) {
                     var pct = Math.round(report.progress * 100);
@@ -767,9 +778,20 @@
                     currentModel = null;
                 }
 
-                engine = await webllm.CreateMLCEngine(model.mlcModel, {
-                    initProgressCallback: initProgressCallback,
-                });
+                var engineConfig = { initProgressCallback: initProgressCallback };
+                if (model.mlcLib) {
+                    engineConfig.appConfig = {
+                        model_list: [{
+                            model: model.mlcModel,
+                            model_id: model.id,
+                            model_lib: model.mlcLib,
+                            overrides: { context_window_size: 4096 },
+                        }],
+                    };
+                    engine = await webllm.CreateMLCEngine(model.id, engineConfig);
+                } else {
+                    engine = await webllm.CreateMLCEngine(model.mlcModel, engineConfig);
+                }
 
                 downloadedModels.add(model.id);
                 currentModel = model;
@@ -830,17 +852,30 @@
             chatSend.disabled = true;
 
             try {
-                var webllm = await import("https://esm.run/@mlc-ai/web-llm");
+                var webllm = webllmRef;
 
                 if (engine) {
                     await engine.unload();
                 }
 
-                engine = await webllm.CreateMLCEngine(model.mlcModel, {
+                var switchConfig = {
                     initProgressCallback: function(report) {
                         statusText.textContent = report.text;
                     },
-                });
+                };
+                if (model.mlcLib) {
+                    switchConfig.appConfig = {
+                        model_list: [{
+                            model: model.mlcModel,
+                            model_id: model.id,
+                            model_lib: model.mlcLib,
+                            overrides: { context_window_size: 4096 },
+                        }],
+                    };
+                    engine = await webllm.CreateMLCEngine(model.id, switchConfig);
+                } else {
+                    engine = await webllm.CreateMLCEngine(model.mlcModel, switchConfig);
+                }
 
                 currentModel = model;
                 statusDot.className = "dot dot-green";
