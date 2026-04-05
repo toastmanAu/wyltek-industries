@@ -18,6 +18,103 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id:      "2026-04-05-nervos-expert-site-nav-moe-research",
+    date:    "2026-04-05",
+    project: "Nervos Expert / Wyltek Industries",
+    title:   "Nervos Expert Runs in Your Browser, Site Nav Unified, MoE Architecture Decided",
+    tags:    ["Nervos Expert", "WebLLM", "WebGPU", "MoE", "fine-tuning", "CKB", "AI Hub", "Wyltek Studio", "site"],
+    body: [
+      "Two days of work across three areas: a browser-native CKB expert LLM you can chat with right now on the site, a complete site navigation overhaul (28 pages migrated to a shared component), and key architecture decisions for the Nervos MoE project.",
+
+      { type: "h3", content: "Nervos Expert — Fine-Tuned CKB Models in Your Browser" },
+      "The AI Hub now has a Nervos Expert chat page. You pick a model, it downloads once to your browser cache, and all inference runs locally via WebGPU. Nothing goes to a server.",
+      "The models are fine-tuned specifically on CKB knowledge: RFCs, official docs, Fiber protocol specs, JoyID documentation, community posts, and open-source CKB codebases. They know things that base models don't — cell model semantics, CoBuild patterns, Fiber channel lifecycle, light client protocol, Spore/DOB minting.",
+      { type: "ul", content: [
+        "<strong>10 expert models</strong> available in the library, from Qwen2.5-0.5B (runs on phones and old laptops) up through 3B (browser via WebGPU) to 7B (local inference)",
+        "<strong>4 base model comparisons</strong> — same architecture, no fine-tuning — so you can see exactly what the domain training adds",
+        "<strong>Expert vs base badges</strong> on every model card so the comparison is obvious",
+        "<strong>GPT-5.4 teacher models</strong> used for knowledge distillation — best eval 56.7% on qwen2.5-1.5b, a meaningful jump over the base",
+        "<strong>Browser setup guide</strong> covering WebGPU requirements: Chrome 113+, Safari 17+, and why Private Browsing mode blocks model downloads (Cache API disabled)",
+        "DeepSeek-R1 1.5B removed — MLC WASM correctness issues found during testing. SmolLM-135M removed — no MLC support at all. Only models verified to actually work are listed.",
+      ]},
+      "The pipeline: fine-tune with QLoRA on Qwen2.5-7B → evaluate against CKB questions → distill to 3B/1.5B → package for WebLLM via MLC-LLM → publish to HuggingFace. Models and training scripts are open source.",
+
+      { type: "h3", content: "CKB Knowledge Base — 7,008 Sources" },
+      "The training data corpus is now at 7,008 source files across 95+ sources covering the entire CKB ecosystem:",
+      { type: "ul", content: [
+        "~1,850 Rust files (CKB core, ckb-std, lock scripts, Fiber, Axon)",
+        "~1,650 Markdown files (RFCs, docs, forum posts, Phill's research findings)",
+        "~690 TypeScript + ~455 TSX (all 5 language SDKs, JoyID, Spore, CCC, Mobit)",
+        "~340 C/H files (CKB-ESP32, ckb-light-esp)",
+        "~90 Go + ~60 Molecule files",
+        "Sources include Jordan Mack's CKB curriculum, Cryptape tooling, core dev repos, iCKB, Quantum Purse — everything publicly available that demonstrates correct CKB usage",
+      ]},
+      "11 structured KB entries and 42 Q&A pairs processed so far (first source only — the rest get GPT-5.4 teacher treatment next). Full provenance manifest at 449 lines.",
+
+      { type: "h3", content: "MoE Architecture — Brainstacks + StarCoder Discovery" },
+      "Made two key architecture decisions for the Nervos MoE project:",
+      "Primary architecture: <strong>Brainstacks</strong> (arxiv 2604.01152, April 2026). Frozen MoE-LoRA stacks with null-space projection — you can add new expert LoRAs without retraining existing ones. Critical property for an incrementally-built MoE where we're adding one domain at a time. Base model locked to Qwen2.5-3B-Instruct so all experts share the same backbone. Hardware target: NucBox 42GB RAM with MoE expert offload to CPU (GPU handles active expert, CPU holds the rest).",
+      "StarCoder discovery: StarCoder (7B/15B) is a completion model, not an instruction-following model. Comparing it directly against fine-tuned Qwen on CKB questions is an apples-to-oranges test. Better use: two-stage pipeline where the CKB expert generates ~80% correct domain-specific code, StarCoder does a completion pass for syntax quality and boilerplate. Expert handles correctness, StarCoder handles code polish. Worth testing as a separate track.",
+
+      { type: "h3", content: "Site Nav — 28 Pages, One Component" },
+      "The site nav was duplicated in every HTML file. Fixing a menu item meant editing 28 files. That's fixed now.",
+      "Extracted everything into <code>/js/site-header.js</code> — a single shared component that injects the full header, nav links, hamburger menu, and auth state into any page. All 28 pages migrated. Collapsible submenu groups added: Projects, CKB, Members. Mobile nav got a full audit pass — toggle buttons, scripts, absolute paths all verified across every page.",
+      "Wyltek Studio is now correctly listed in the nav by its actual name (previously still showing as Open Palette in some places).",
+
+      { type: "h3", content: "AI Hub Expansion" },
+      "The AI Hub guide was previously OpenClaw-only. Expanded to cover the full multi-agent stack: Claude Code as primary coding agent, Argus (Hermes) for infra monitoring on NucBox, Shannon and Kernel as RAG agents, and the research inbox pipeline. Useful reference for anyone building a similar local AI stack on consumer hardware.",
+    ],
+    links: [
+      { text: "Nervos Expert", href: "/ai-hub/nervos-expert.html" },
+      { text: "AI Hub", href: "/ai-hub/index.html" },
+      { text: "nervos-expert on GitHub", href: "https://github.com/toastmanAu/nervos-expert" },
+    ],
+  },
+
+  // ────────────────────────────────────────────────────────────────
+  {
+    id:      "2026-03-31-fiberquest-tx-logger-wyltek-studio-fixes",
+    date:    "2026-03-31",
+    project: "FiberQuest / Wyltek Studio",
+    title:   "FiberQuest TX Logger Uncovers Two Root Causes, Wyltek Studio Music Fixes",
+    tags:    ["FiberQuest", "CKB", "distributed", "debugging", "Wyltek Studio", "MusicGen", "tournament"],
+    body: [
+      "Dedicated debugging session on FiberQuest distributed tournaments — added a transaction audit log, ran 5 live tests, and used the evidence to isolate two specific root causes. Also fixed two bugs in Wyltek Studio's Music Studio that were causing memory explosions and broken audio in continuation mode.",
+
+      { type: "h3", content: "FiberQuest — TX Logger and 5 Live Test Runs" },
+      "After the March 30 session showed distributed tournament settlement was still unreliable, we added a transaction audit logger (<code>~/.fiberquest-logs/tx-log-*.jsonl</code>) that records every chain write, every state transition, every score scan decision with timestamps. Then ran 5 cross-machine tests.",
+      "The pattern across all 5 runs was identical: Pi shows 1/2 players registered, DriveThree shows 2/2, and the winner is always DriveThree regardless of scores. TX log gave us the proof needed to explain why:",
+      { type: "ul", content: [
+        "<strong>UTXO pre-splitting on login:</strong> added cell count display in UI, automatic UTXO split on agent wallet login to prevent chain write failures from insufficient live cells",
+        "<strong>Score routing fix:</strong> participant's score cell was going to its own address instead of the organiser's. The <code>_organizerAddress</code> was not being set from the chain cell at join time",
+        "<strong>Organiser-only chain writes:</strong> participants were attempting to write to the tournament cell. Locked all TC mutations to organiser only",
+        "<strong>UTXO split dep type fix:</strong> WitnessArgs format error in agent-wallet.js causing split transactions to fail",
+        "<strong>Settlement status in UI:</strong> added progress indicators during score confirmation and collection so it's visible what's happening on both machines",
+        "<strong>Wait for own score confirmation:</strong> organiser was resolving winner before its own score cell was confirmed on chain",
+        "<strong>Default tournament type:</strong> was defaulting to Local mode, causing the organiser to skip on-chain settlement entirely. Switched default to Distributed",
+      ]},
+
+      { type: "h3", content: "Two Root Causes Isolated" },
+      "After all the above fixes, the TX log still showed the core problem. The evidence is definitive:",
+      "Root cause 1 — <strong>Batch-register never fires.</strong> TX log shows tournament cell data at settlement: <code>registeredPlayers: 1, players: [player-0]</code>. The Pi's intent cell is on chain but was never consumed. The intent scan in <code>startDistributedPolling</code> is gated by <code>state === CREATED || WAITING_PLAYERS</code> — but the organiser's local state advances past those values before the Pi's intent cell gets indexed (~16 second confirmation). By the time the intent appears, the scan condition is false and it never runs again. Fix: scan for intents as long as the chain cell state is OPEN, regardless of local state.",
+      "Root cause 2 — <strong>60-second settlement window is always skipped.</strong> TX log timestamps: score submit T+0s, scan T+2s, resolve T+2s. No confirmation wait logged. The wait is gated by <code>if (submitResult?.txHash && this._wallet)</code> — but on the organiser, <code>this._wallet</code> is null. The organiser accesses the wallet through <code>this._chainStore.wallet</code>. So the entire 60-second collection window is bypassed and the organiser resolves with only its own score after 2 seconds. Fix: <code>const wallet = this._wallet || this._chainStore?.wallet</code>.",
+      "Both fixes are documented with exact file and line references. Next session: implement and retest.",
+
+      { type: "h3", content: "Wyltek Studio — Music Studio Bug Fixes" },
+      "Two bugs fixed in Wyltek Studio's Music Studio (formerly Open Palette):",
+      { type: "ul", content: [
+        "<strong>Continuation mode chunk concatenation:</strong> the extend-audio flow was replacing the existing audio instead of appending the new chunk. Fixed in the server-side generation handler — now correctly concatenates previous audio + new continuation before returning.",
+        "<strong>Memory explosion in loop mode:</strong> <code>Unable to allocate 68.7 GiB for array shape (96000, 96000)</code>. Root cause: <code>_wav_to_numpy</code> was returning a 2D array (channels × samples) instead of 1D mono. The <code>_crossfade</code> method then broadcast-multiplied two 2D vectors, producing an outer product (96000 × 96000) instead of an element-wise multiply. Fixed by squeezing the audio array to 1D immediately after decode. The memory explosion made loop mode completely unusable — it's now working correctly.",
+      ]},
+    ],
+    links: [
+      { text: "FiberQuest", href: "https://github.com/toastmanAu/fiberquest" },
+      { text: "Wyltek Studio", href: "https://github.com/toastmanAu/wyltek-studio" },
+    ],
+  },
+
+  // ────────────────────────────────────────────────────────────────
+  {
     id:      "2026-03-30-fiberquest-distributed-open-palette-upgrades",
     date:    "2026-03-30",
     project: "FiberQuest / Open Palette",
