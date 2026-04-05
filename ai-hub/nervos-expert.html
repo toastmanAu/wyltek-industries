@@ -485,7 +485,53 @@
         var wlib = webllmRef.modelLibURLPrefix + webllmRef.modelVersion;
 
         const MODELS = [
-            // ── Nervos Expert (fine-tuned on CKB data, Gemma4 teacher) ──
+            // ── Nervos Expert — GPT-5.4 teacher (wave 2, better quality) ──
+            {
+                id: "nervos-expert-qwen2.5-0.5b-gpt54",
+                label: "Expert Qwen2.5 0.5B (GPT-5.4)",
+                size: "277MB",
+                mlcModel: "https://huggingface.co/ToastmanOne/nervos-expert-qwen2.5-0.5b-gpt54-q4f16_1-MLC",
+                mlcLib: wlib + "/Qwen2-0.5B-Instruct-q4f16_1-ctx4k_cs1k-webgpu.wasm",
+                custom: true, category: "expert",
+                notes: "GPT-5.4 teacher — eval 35.0%",
+            },
+            {
+                id: "nervos-expert-qwen3-0.6b-gpt54",
+                label: "Expert Qwen3 0.6B (GPT-5.4)",
+                size: "330MB",
+                mlcModel: "https://huggingface.co/ToastmanOne/nervos-expert-qwen3-0.6b-gpt54-q4f16_1-MLC",
+                mlcLib: wlib + "/Qwen3-0.6B-q4f16_1-ctx4k_cs1k-webgpu.wasm",
+                custom: true, category: "expert",
+                notes: "GPT-5.4 teacher — eval 28.3%",
+            },
+            {
+                id: "nervos-expert-smollm2-1.7b-gpt54",
+                label: "Expert SmolLM2 1.7B (GPT-5.4)",
+                size: "922MB",
+                mlcModel: "https://huggingface.co/ToastmanOne/nervos-expert-smollm2-1.7b-gpt54-q4f16_1-MLC",
+                mlcLib: wlib + "/SmolLM2-1.7B-Instruct-q4f16_1-ctx4k_cs1k-webgpu.wasm",
+                custom: true, category: "expert",
+                notes: "GPT-5.4 teacher — eval 32.5%",
+            },
+            {
+                id: "nervos-expert-qwen3-1.7b-gpt54",
+                label: "Expert Qwen3 1.7B (GPT-5.4)",
+                size: "935MB",
+                mlcModel: "https://huggingface.co/ToastmanOne/nervos-expert-qwen3-1.7b-gpt54-q4f16_1-MLC",
+                mlcLib: wlib + "/Qwen3-1.7B-q4f16_1-ctx4k_cs1k-webgpu.wasm",
+                custom: true, category: "expert",
+                notes: "GPT-5.4 teacher — eval 35.0%",
+            },
+            {
+                id: "nervos-expert-qwen2.5-1.5b-gpt54",
+                label: "Expert Qwen2.5 1.5B (GPT-5.4)",
+                size: "840MB",
+                mlcModel: "https://huggingface.co/ToastmanOne/nervos-expert-qwen2.5-1.5b-gpt54-q4f16_1-MLC",
+                mlcLib: wlib + "/Qwen2-1.5B-Instruct-q4f16_1-ctx4k_cs1k-webgpu.wasm",
+                custom: true, category: "expert",
+                notes: "GPT-5.4 teacher — BEST eval 56.7%",
+            },
+            // ── Nervos Expert — Gemma4 teacher (wave 1) ──
             {
                 id: "nervos-expert-qwen2.5-0.5b-gemma4",
                 label: "Expert Qwen2.5 0.5B",
