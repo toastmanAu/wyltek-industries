@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 228 completed research findings
+// 229 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentpay-openclaw-skill-integration",
@@ -474,6 +474,16 @@ const RESEARCH_FINDINGS = [
       "research"
     ],
     "date": "2026-03-05"
+  },
+  {
+    "id": "dilithium-falcon-rv64imc-optimisation",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This research task aimed to extract specific technical details regarding the optimization of CRYSTALS-Dilithium and Falcon on RV64IMC architectures from the paper identified by DOI 10.1145/3579092. Th",
+    "tags": [
+      "ckb"
+    ],
+    "date": "2026-04-07"
   },
   {
     "id": "dob-hardware-provenance",
