@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Knowledge Graphs for AI Agents — Wyltek AI Hub</title>
+    <style>
+        :root {
+            --bg: #0a0c0f;
+            --surface: #111318;
+            --surface2: #181c23;
+            --border: #1e2430;
+            --accent: #00c8ff;
+            --accent2: #7b5cfa;
+            --green: #00e5a0;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 15, 0.93);
+            z-index: 100;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        .logo { color: var(--text); font-weight: 700; font-size: 1.1rem; }
+        .logo span { color: var(--muted); font-weight: 400; font-size: 0.9rem; margin-left: 0.5rem; }
+        .guide-content {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+        .breadcrumb a { color: var(--accent); text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { margin: 0 0.4rem; }
+        .page-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .page-header .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.5rem; }
+        h1 { font-size: 2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .read-time { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .lead { color: #a0b0c8; font-size: 1.05rem; margin-top: 0.75rem; line-height: 1.7; }
+        h2 {
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            background: linear-gradient(90deg, var(--accent2), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--text); font-size: 1rem; font-weight: 600; }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.4rem; }
+        code {
+            background: rgba(0, 200, 255, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+        }
+        pre {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+            line-height: 1.5;
+        }
+        pre code { background: none; border: none; padding: 0; font-size: inherit; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.92em;
+        }
+        th, td { border: 1px solid var(--border); padding: 0.75rem 1rem; text-align: left; }
+        th { background: rgba(123, 92, 250, 0.1); color: var(--accent2); font-weight: 600; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .back { display: inline-block; margin-bottom: 1.5rem; color: var(--muted); font-size: 0.9rem; }
+        .back:hover { color: var(--text); }
+        .callout {
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.25rem 0;
+        }
+        .callout.tip {
+            border-left: 3px solid var(--green);
+            background: rgba(0, 229, 160, 0.07);
+        }
+        .callout.warn {
+            border-left: 3px solid #f59e0b;
+            background: rgba(245, 158, 11, 0.07);
+        }
+        .callout strong { display: block; margin-bottom: 0.4rem; }
+        .callout.tip strong { color: var(--green); }
+        .callout.warn strong { color: #f59e0b; }
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
+        }
+        @media (max-width: 650px) { .stat-grid { grid-template-columns: 1fr; } }
+        .stat-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.2rem;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            margin-bottom: 0.3rem;
+        }
+        .stat-label { color: var(--muted); font-size: 0.82em; }
+        .pipeline-step {
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+        .step-num {
+            background: linear-gradient(135deg, var(--accent2), var(--accent));
+            color: #fff;
+            border-radius: 50%;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 0.85em;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+        .step-content strong { display: block; margin-bottom: 0.2rem; }
+        .step-content p { margin: 0; color: var(--muted); font-size: 0.9em; }
+        .flag-table td:first-child { font-family: 'Courier New', monospace; color: var(--accent); font-size: 0.88em; white-space: nowrap; }
+        .section-divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .output-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 0.75rem;
+        }
+        .output-card .output-name { color: var(--accent); font-family: 'Courier New', monospace; font-size: 0.88em; font-weight: 700; margin-bottom: 0.25rem; }
+        .output-card p { margin: 0; color: var(--muted); font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<div id="site-header"></div>
+<script src="/js/site-header.js"></script>
+
+<header>
+    <div class="logo">Wyltek Industries <span>— AI Hub</span></div>
+</header>
+
+<div class="guide-content">
+    <nav class="breadcrumb">
+        <a href="/ai-hub/">AI Hub</a>
+        <span>/</span>
+        <a href="/ai-hub/">Guides</a>
+        <span>/</span>
+        Knowledge Graphs for AI Agents
+    </nav>
+
+    <a href="/ai-hub/" class="back">← Back to AI Hub</a>
+
+    <div class="page-header">
+        <div class="subtitle">Wyltek Industries — AI Hub</div>
+        <h1>Knowledge Graphs for AI Agents — Build, Query, Route</h1>
+        <div class="read-time">Estimated read time: 16 minutes</div>
+        <p class="lead">Naive RAG throws chunks of text at a language model and hopes context sticks. Knowledge graphs do the opposite: they model relationships between entities, detect communities, and return only the subgraph that's relevant to your question — typically 100× fewer tokens with better accuracy on cross-layer questions.</p>
+    </div>
+
+    <h2>Real-World Numbers</h2>
+
+    <p>These figures come from the CKB ecosystem knowledge graph built from 36 repos using graphify:</p>
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-value">~60k</div>
+            <div class="stat-label">Nodes in the CKB graph</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">~120k</div>
+            <div class="stat-label">Edges (relationships)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">~1,000</div>
+            <div class="stat-label">Communities detected</div>
+        </div>
+    </div>
+
+    <div class="stat-grid">
+        <div class="stat-card">
+            <div class="stat-value">115×</div>
+            <div class="stat-label">Average token reduction vs naive RAG</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">5,375×</div>
+            <div class="stat-label">Best case (cross-layer questions)</div>
+        </div>
+        <div class="stat-card">
+            <div class="stat-value">38×</div>
+            <div class="stat-label">Floor (simple lookups)</div>
+        </div>
+    </div>
+
+    <div class="callout tip">
+        <strong>What does 115× mean in practice?</strong>
+        A naive RAG answer to "how does the light client sync protocol interact with Nervos' CKB-VM execution model?" might require 80,000 tokens of context across 36 repos. The graph returns the relevant subgraph in ~700 tokens. Same answer, 1% of the token budget.
+    </div>
+
+    <h2>Why Knowledge Graphs Beat Naive RAG on Large Codebases</h2>
+
+    <p>Naive vector RAG has a structural problem: it retrieves chunks based on semantic similarity to the query, but codebases aren't structured by semantic similarity — they're structured by call graphs, dependency trees, and architectural layers. A question about how Component A affects Component B requires traversing a relationship graph, not finding similar text.</p>
+
+    <table>
+        <tr>
+            <th>Dimension</th>
+            <th>Naive RAG</th>
+            <th>Knowledge Graph</th>
+        </tr>
+        <tr>
+            <td>Retrieval unit</td>
+            <td>Text chunk (arbitrary boundary)</td>
+            <td>Entity + relationships (semantic boundary)</td>
+        </tr>
+        <tr>
+            <td>Cross-file questions</td>
+            <td>Poor — chunks don't know about each other</td>
+            <td>Strong — edges encode dependencies explicitly</td>
+        </tr>
+        <tr>
+            <td>Token cost</td>
+            <td>High — must retrieve many chunks to cover a topic</td>
+            <td>Low — BFS traversal returns minimal relevant subgraph</td>
+        </tr>
+        <tr>
+            <td>Community awareness</td>
+            <td>None</td>
+            <td>Built-in — Louvain community detection groups related entities</td>
+        </tr>
+        <tr>
+            <td>Incremental updates</td>
+            <td>Re-embed all changed chunks</td>
+            <td><code>--update</code> flag, only changed nodes re-extracted</td>
+        </tr>
+        <tr>
+            <td>Explainability</td>
+            <td>Black box similarity score</td>
+            <td>Explicit path: A → calls → B → imports → C</td>
+        </tr>
+    </table>
+
+    <hr class="section-divider">
+
+    <h2>graphify Overview</h2>
+
+    <p>graphify is a Python tool that takes a codebase (or any collection of text/code) and produces a queryable knowledge graph. It uses entity extraction, relationship mapping, and community detection to build a graph that AI agents can navigate via BFS traversal.</p>
+
+    <h3>Installation</h3>
+
+<pre><code>pip install graphifyy   # note: two y's
+</code></pre>
+
+    <div class="callout tip">
+        <strong>Two y's in the package name</strong>
+        The PyPI package is <code>graphifyy</code> (double-y) due to namespace availability. The CLI command after installation is <code>graphify</code>.
+    </div>
+
+    <h3>The four-stage pipeline</h3>
+
+    <div class="pipeline-step">
+        <div class="step-num">1</div>
+        <div class="step-content">
+            <strong>Entity Extraction</strong>
+            <p>Files are parsed and named entities are extracted: functions, classes, modules, types, constants, API endpoints, CKB scripts, CLI commands — whatever is meaningful in your corpus. Language-aware parsers handle Rust, TypeScript, C, Python, Go, and plain markdown.</p>
+        </div>
+    </div>
+    <div class="pipeline-step">
+        <div class="step-num">2</div>
+        <div class="step-content">
+            <strong>Relationship Mapping</strong>
+            <p>Entities are connected: <code>calls</code>, <code>imports</code>, <code>implements</code>, <code>extends</code>, <code>depends_on</code>, <code>defined_in</code>, <code>referenced_by</code>. Cross-file and cross-repo relationships are resolved.</p>
+        </div>
+    </div>
+    <div class="pipeline-step">
+        <div class="step-num">3</div>
+        <div class="step-content">
+            <strong>Community Detection</strong>
+            <p>The Louvain algorithm runs on the graph to detect clusters of tightly related entities — these become the "communities" that appear in the report and power community-level queries.</p>
+        </div>
+    </div>
+    <div class="pipeline-step">
+        <div class="step-num">4</div>
+        <div class="step-content">
+            <strong>Output Generation</strong>
+            <p>Three outputs: interactive HTML viewer, GraphRAG-ready JSON, and GRAPH_REPORT.md summarizing communities and key entities. Optional Neo4j export for production graph databases.</p>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Basic Workflow</h2>
+
+    <h3>Build a graph from a directory</h3>
+
+<pre><code># Build graph from current directory
+graphify .
+
+# Build from a specific path
+graphify ~/projects/ckb-light-client
+
+# Deep mode — more thorough extraction, slower
+graphify ~/projects/ckb-light-client --mode deep
+
+# Multi-repo corpus
+graphify ~/projects/ckb-light-client ~/projects/ckb-scripts ~/projects/ckb-node
+</code></pre>
+
+    <h3>Outputs</h3>
+
+    <div class="output-card">
+        <div class="output-name">graph.json</div>
+        <p>GraphRAG-ready JSON: nodes, edges, communities, entity metadata. This is what AI agents query programmatically. Feed it to the MCP server or query it directly.</p>
+    </div>
+    <div class="output-card">
+        <div class="output-name">graph.html</div>
+        <p>Interactive HTML viewer — force-directed graph, searchable, filterable by community or entity type. Serve it locally or open directly in a browser. No server required.</p>
+    </div>
+    <div class="output-card">
+        <div class="output-name">GRAPH_REPORT.md</div>
+        <p>Markdown summary: top communities by size, most-connected entities, key relationships. Useful as a CLAUDE.md appendix or for humans to orient quickly to an unfamiliar codebase.</p>
+    </div>
+
+    <h2>Key Flags</h2>
+
+    <table class="flag-table">
+        <tr>
+            <th>Flag</th>
+            <th>Purpose</th>
+        </tr>
+        <tr>
+            <td>--mode deep</td>
+            <td>More thorough extraction — follows imports, resolves type aliases, extracts doc comments. Slower but better graph quality. Use for the initial build.</td>
+        </tr>
+        <tr>
+            <td>--update</td>
+            <td>Incremental rebuild — only re-processes files changed since last run. Use after code changes to keep the graph current without full rebuild.</td>
+        </tr>
+        <tr>
+            <td>--watch</td>
+            <td>File watcher mode — automatically runs --update whenever files change. Run in a terminal alongside your editor for a live graph.</td>
+        </tr>
+        <tr>
+            <td>--mcp</td>
+            <td>Start an MCP (Model Context Protocol) server that Claude Code can connect to directly. Claude queries the graph natively without any shell commands.</td>
+        </tr>
+        <tr>
+            <td>--output &lt;dir&gt;</td>
+            <td>Write outputs to a specific directory instead of the current dir.</td>
+        </tr>
+        <tr>
+            <td>--exclude &lt;patterns&gt;</td>
+            <td>Glob patterns to exclude: <code>--exclude "*.lock,node_modules/**,target/**"</code></td>
+        </tr>
+        <tr>
+            <td>--neo4j &lt;uri&gt;</td>
+            <td>Export to a running Neo4j instance for production graph database usage.</td>
+        </tr>
+    </table>
+
+    <hr class="section-divider">
+
+    <h2>Querying the Graph</h2>
+
+    <h3>From the Claude Code skill</h3>
+    <p>The graphify skill handles querying via natural language through Claude Code:</p>
+
+<pre><code># In Claude Code:
+/graphify query "how does the sync protocol interact with the merkle proof verifier?"
+
+# Build and immediately enter query mode:
+/graphify ~/projects/ckb-light-client --mode deep
+</code></pre>
+
+    <h3>Direct CLI query</h3>
+<pre><code>graphify query "how does X work" --graph ./graph.json
+
+# Limit BFS depth (default 3)
+graphify query "what calls the signing function" --depth 4
+
+# Return raw JSON subgraph instead of formatted text
+graphify query "transaction builder dependencies" --json
+</code></pre>
+
+    <h3>What the query returns</h3>
+    <p>Queries run BFS traversal from entities that match the query semantics. The returned subgraph contains:</p>
+    <ul>
+        <li>The seed entities (directly matching your query)</li>
+        <li>Their neighbors up to <code>--depth</code> hops away</li>
+        <li>The edges connecting them (with relationship type labels)</li>
+        <li>The communities those entities belong to (for context)</li>
+    </ul>
+
+    <div class="callout tip">
+        <strong>BFS depth trade-off</strong>
+        Depth 2 is fast and precise for focused questions. Depth 4+ can return thousands of nodes on highly connected graphs — use it for architecture overviews, not specific lookups. The default of 3 covers 95% of use cases well.
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>The graph-routing Skill</h2>
+
+    <p>graph-routing is a Claude Code skill that sits in front of every cross-repo or architecture question. When triggered, it:</p>
+
+    <ol>
+        <li>Detects the question shape (cross-repo lookup, dependency trace, architecture question, debug-with-symptoms)</li>
+        <li>Routes to the appropriate graph in <code>~/.claude/graphs.json</code></li>
+        <li>Runs a targeted BFS query against that graph</li>
+        <li>Returns the relevant subgraph as context before gathering any other evidence</li>
+        <li>Proceeds to answer using the graph result instead of grep/glob</li>
+    </ol>
+
+    <p>This means Claude Code navigates a 60k-node multi-repo codebase with a single graph query instead of dozens of grep calls — dramatically faster and with better cross-file awareness.</p>
+
+    <div class="callout warn">
+        <strong>When graph-routing does NOT trigger</strong>
+        Single-file edits, typo fixes, simple renames, and questions already answered in the current conversation do not trigger graph-routing. The skill is tuned to trigger on task <em>shape</em> (cross-repo, architecture, dependency-tracing) not on topic keywords.
+    </div>
+
+    <h2>The Graphs Registry</h2>
+
+    <p>Multiple graphs for different domains are registered in <code>~/.claude/graphs.json</code>:</p>
+
+<pre><code>{
+  "graphs": [
+    {
+      "id": "my-platform",
+      "description": "Core platform — 12 repos, API, SDK, node, CLI tooling",
+      "path": "~/.claude/graphs/my-platform/graph.json",
+      "viewer": "http://localhost:8765",
+      "triggers": ["platform", "api", "sdk", "light client", "core"]
+    },
+    {
+      "id": "my-rust-lib",
+      "description": "Rust library — crypto primitives and deployment task graph",
+      "path": "~/.claude/graphs/my-rust-lib/graph.json",
+      "triggers": ["signing", "crypto", "verifier", "lock script"]
+    },
+    {
+      "id": "my-webapp",
+      "description": "Web application — frontend, backend, image gen, TTS, media",
+      "path": "~/.claude/graphs/my-webapp/graph.json",
+      "triggers": ["webapp", "frontend", "comfyui", "tts", "media"]
+    }
+  ]
+}
+</code></pre>
+
+    <div class="callout tip">
+        <strong>Domain isolation</strong>
+        Separate graphs for separate domains keeps queries fast and prevents cross-contamination — a question about CKB scripts shouldn't pull in Wyltek Studio nodes. The registry lets the routing skill pick the right graph without you specifying it.
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Real Example: Building a Graph from a Rust Blockchain Project</h2>
+
+<pre><code># Step 1: Install
+pip install graphifyy
+
+# Step 2: Initial deep build (takes 2-10 minutes for large repos)
+cd ~/projects/ckb-light-client
+graphify . --mode deep --output ~/.claude/graphs/ckb-light-client/
+
+# Step 3: Verify outputs
+ls ~/.claude/graphs/ckb-light-client/
+# graph.json  graph.html  GRAPH_REPORT.md
+
+# Step 4: Open the viewer
+xdg-open ~/.claude/graphs/ckb-light-client/graph.html
+
+# Step 5: Test a query
+graphify query "how does the header sync protocol work" \
+  --graph ~/.claude/graphs/ckb-light-client/graph.json
+
+# Step 6: Register in graphs.json
+# Add an entry to ~/.claude/graphs.json pointing to graph.json
+
+# Step 7: Start the watcher (background process, keeps graph current)
+graphify ~/.claude/graphs/ckb-light-client/ --watch &
+</code></pre>
+
+    <h3>What a graph query looks like for a Rust project</h3>
+
+<pre><code>Query: "what calls the verify_merkle_proof function?"
+
+Result (condensed subgraph):
+  verify_merkle_proof [src/verifier.rs:142] (community: merkle-verification)
+    ← calls: verify_transaction [src/tx_verifier.rs:89]
+    ← calls: verify_block_header [src/header_verifier.rs:234]
+    → imports: MerkleProof [ckb-types::packed]
+    → imports: H256 [ckb-types::H256]
+    → uses: ProofNode [src/verifier.rs:28]
+
+Community summary (merkle-verification):
+  23 entities, core of block validation pipeline
+  Key boundary: interfaces with ckb-types for external type compatibility
+</code></pre>
+
+    <hr class="section-divider">
+
+    <h2>Building a Corpus: What Goes In, What to Exclude</h2>
+
+    <table>
+        <tr>
+            <th>Include</th>
+            <th>Exclude</th>
+        </tr>
+        <tr>
+            <td>Source files (.rs, .ts, .js, .py, .go, .c, .cpp, .h)</td>
+            <td>Binary files (.so, .a, .wasm compiled output)</td>
+        </tr>
+        <tr>
+            <td>Configuration files that define architecture (.toml, .yaml)</td>
+            <td>Lock files (Cargo.lock, package-lock.json, yarn.lock)</td>
+        </tr>
+        <tr>
+            <td>Markdown docs that describe protocols and APIs</td>
+            <td>Generated code (proto-generated, build artifacts)</td>
+        </tr>
+        <tr>
+            <td>Test files — they reveal usage patterns and edge cases</td>
+            <td>node_modules, target/, dist/, .git/</td>
+        </tr>
+        <tr>
+            <td>Script files that encode workflows</td>
+            <td>Large binary assets (images, models)</td>
+        </tr>
+    </table>
+
+<pre><code># Recommended exclude pattern for Rust projects:
+graphify . --mode deep \
+  --exclude "target/**,*.lock,**/*.pb.rs,**/generated/**"
+
+# For TypeScript/Node projects:
+graphify . --mode deep \
+  --exclude "node_modules/**,dist/**,*.lock,**/*.d.ts"
+</code></pre>
+
+    <h2>The Interactive Viewer</h2>
+
+    <p>The <code>graph.html</code> output is a fully self-contained, zero-dependency HTML file. Open it in any browser:</p>
+
+    <ul>
+        <li><strong>Force-directed layout</strong> — nodes repel, edges attract, communities cluster naturally</li>
+        <li><strong>Search</strong> — type any entity name to highlight and center it in the graph</li>
+        <li><strong>Filter by community</strong> — click a community label to isolate that cluster</li>
+        <li><strong>Filter by entity type</strong> — show only functions, or only types, or only modules</li>
+        <li><strong>Click a node</strong> — shows entity details: file path, line number, docstring, relationship count</li>
+        <li><strong>Serve for team access</strong> — <code>python3 -m http.server 8765 --directory ~/.claude/graphs/</code></li>
+    </ul>
+
+    <div class="callout tip">
+        <strong>The viewer is a great onboarding tool</strong>
+        Drop a new developer into the graph.html viewer for a codebase and they can understand the architecture in 10 minutes. Community clusters immediately reveal the major subsystems. This works for humans too, not just AI agents.
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>When NOT to Use Knowledge Graphs</h2>
+
+    <div class="callout warn">
+        <strong>Don't reach for the graph for these tasks</strong>
+        <ul style="margin: 0.5rem 0 0; padding-left: 1.2rem;">
+            <li>Single-file edits — just open the file</li>
+            <li>Typo fixes or simple renames</li>
+            <li>Questions already answered in the current conversation</li>
+            <li>Simple "what does this function do?" lookups — just read the function</li>
+            <li>Projects with fewer than ~10 files — overhead outweighs benefit</li>
+        </ul>
+        The graph shines on cross-file, cross-repo, architecture, and "how does X relate to Y" questions. Use it for those.
+    </div>
+
+    <h2>MCP Server Mode</h2>
+
+    <p>For the tightest integration with Claude Code, run graphify as an MCP server:</p>
+
+<pre><code># Start the MCP server (exposes the graph as Claude Code tools)
+graphify --mcp --graph ~/.claude/graphs/ckb-ecosystem/graph.json --port 3100
+
+# Add to your MCP config:
+# ~/.claude/mcp_servers.json
+{
+  "graphify": {
+    "url": "http://localhost:3100",
+    "description": "CKB ecosystem knowledge graph"
+  }
+}
+</code></pre>
+
+    <p>In MCP mode, Claude Code gets native tools: <code>graph_query</code>, <code>graph_neighbors</code>, <code>graph_community</code>, <code>graph_path</code>. No shell commands required — Claude navigates the graph as naturally as reading a file.</p>
+
+    <p style="margin-top: 2rem; color: var(--muted); font-size: 0.9rem;">See also: <a href="/ai-hub/guides/claude-md-guide.html">CLAUDE.md Guide</a> · <a href="/ai-hub/guides/skills-guide.html">Writing Skills</a> · <a href="/ai-hub/guides/hooks-safety.html">Hooks &amp; Safety</a></p>
+
+    <p style="margin-top: 1.5rem;">
+        <a href="/ai-hub/" class="back">← Back to AI Hub</a>
+    </p>
+</div>
+
+<script src="/js/member-nav.js"></script>
+</body>
+</html>

@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Writing Claude Code Skills — Wyltek AI Hub</title>
+    <style>
+        :root {
+            --bg: #0a0c0f;
+            --surface: #111318;
+            --surface2: #181c23;
+            --border: #1e2430;
+            --accent: #00c8ff;
+            --accent2: #7b5cfa;
+            --green: #00e5a0;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 15, 0.93);
+            z-index: 100;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        .logo { color: var(--text); font-weight: 700; font-size: 1.1rem; }
+        .logo span { color: var(--muted); font-weight: 400; font-size: 0.9rem; margin-left: 0.5rem; }
+        .guide-content {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+        .breadcrumb a { color: var(--accent); text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { margin: 0 0.4rem; }
+        .page-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .page-header .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.5rem; }
+        h1 { font-size: 2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .read-time { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .lead { color: #a0b0c8; font-size: 1.05rem; margin-top: 0.75rem; line-height: 1.7; }
+        h2 {
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            background: linear-gradient(90deg, var(--accent2), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--text); font-size: 1rem; font-weight: 600; }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.4rem; }
+        code {
+            background: rgba(0, 200, 255, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+        }
+        pre {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+            line-height: 1.5;
+        }
+        pre code { background: none; border: none; padding: 0; font-size: inherit; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.92em;
+        }
+        th, td { border: 1px solid var(--border); padding: 0.75rem 1rem; text-align: left; }
+        th { background: rgba(123, 92, 250, 0.1); color: var(--accent2); font-weight: 600; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .back { display: inline-block; margin-bottom: 1.5rem; color: var(--muted); font-size: 0.9rem; }
+        .back:hover { color: var(--text); }
+        .callout {
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.25rem 0;
+        }
+        .callout.tip {
+            border-left: 3px solid var(--green);
+            background: rgba(0, 229, 160, 0.07);
+        }
+        .callout.warn {
+            border-left: 3px solid #f59e0b;
+            background: rgba(245, 158, 11, 0.07);
+        }
+        .callout strong { display: block; margin-bottom: 0.4rem; }
+        .callout.tip strong { color: var(--green); }
+        .callout.warn strong { color: #f59e0b; }
+        .skill-card-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 0.75rem;
+            margin: 1.25rem 0;
+        }
+        @media (max-width: 650px) { .skill-card-grid { grid-template-columns: 1fr; } }
+        .skill-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+        }
+        .skill-card .skill-trigger {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+        .skill-card p { margin: 0; color: var(--muted); font-size: 0.88em; }
+        .dir-tree {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.2rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+            line-height: 1.8;
+            margin: 1.25rem 0;
+        }
+        .dir-tree .dir { color: var(--accent2); }
+        .dir-tree .file { color: var(--text); }
+        .dir-tree .comment { color: var(--muted); }
+        .section-block {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .section-label {
+            background: rgba(123,92,250,0.12);
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: var(--accent2);
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .section-block pre {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            background: transparent;
+        }
+        .section-divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .anatomy-section {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            margin-bottom: 0.75rem;
+        }
+        .anatomy-section .section-name { color: var(--green); font-weight: 700; font-size: 0.9em; margin-bottom: 0.3rem; }
+        .anatomy-section p { margin: 0; color: var(--muted); font-size: 0.9em; }
+    </style>
+</head>
+<body>
+
+<div id="site-header"></div>
+<script src="/js/site-header.js"></script>
+
+<header>
+    <div class="logo">Wyltek Industries <span>— AI Hub</span></div>
+</header>
+
+<div class="guide-content">
+    <nav class="breadcrumb">
+        <a href="/ai-hub/">AI Hub</a>
+        <span>/</span>
+        <a href="/ai-hub/">Guides</a>
+        <span>/</span>
+        Writing Claude Code Skills
+    </nav>
+
+    <a href="/ai-hub/" class="back">← Back to AI Hub</a>
+
+    <div class="page-header">
+        <div class="subtitle">Wyltek Industries — AI Hub</div>
+        <h1>Writing Claude Code Skills</h1>
+        <div class="read-time">Estimated read time: 15 minutes</div>
+        <p class="lead">Skills are reusable, invokable instruction sets for Claude Code. They're how you package a multi-step workflow — with its context, examples, scripts, and edge cases — into a single slash command that works the same way every time. A well-written skill is better than a macro: it's instructions to an intelligent agent, not a fixed script.</p>
+    </div>
+
+    <h2>What Are Skills?</h2>
+
+    <p>A skill is a markdown file with frontmatter that Claude Code loads on demand via the <code>Skill</code> tool. When you invoke <code>/graphify</code> or <code>/cut-subject</code>, Claude Code finds the corresponding SKILL.md file, reads it into context, and follows its instructions exactly as written.</p>
+
+    <p>Skills are:</p>
+    <ul>
+        <li><strong>Instructions to the AI</strong>, not scripts for the shell. Write them in clear, imperative human language.</li>
+        <li><strong>Reusable across projects</strong> — a skill lives in <code>~/.claude/skills/</code> and is available in every repo you open.</li>
+        <li><strong>Composable</strong> — skills can invoke other skills, spawn sub-agents, and call hooks.</li>
+        <li><strong>Versioned with your dotfiles</strong> — store your skills directory in a git repo alongside your CLAUDE.md and rules.</li>
+    </ul>
+
+    <h2>Real Skills in the Wild</h2>
+
+    <p>These skills are in active use and cover a range of complexity levels — from simple single-tool wrappers to multi-step pipelines with sub-agents:</p>
+
+    <div class="skill-card-grid">
+        <div class="skill-card">
+            <div class="skill-trigger">/graphify</div>
+            <p>Build knowledge graphs from any codebase or corpus. Runs entity extraction, relationship mapping, community detection, and produces an interactive HTML viewer + GraphRAG-ready JSON.</p>
+        </div>
+        <div class="skill-card">
+            <div class="skill-trigger">/cut-subject</div>
+            <p>Background removal via rembg. Accepts image paths, handles batch processing, selects the right model for the subject type (person, object, product), and saves outputs with naming conventions.</p>
+        </div>
+        <div class="skill-card">
+            <div class="skill-trigger">/graph-routing</div>
+            <p>Six-step pipeline for routing cross-repo and architecture questions through knowledge graphs. Intercepts before grep/glob, queries the appropriate graph registry entry, and returns a relevant subgraph.</p>
+        </div>
+        <div class="skill-card">
+            <div class="skill-trigger">/quote-meme</div>
+            <p>Generates AI-themed quote memes. Takes a quote (or generates one), selects a background, styles the typography, and outputs a web-shareable image. Uses ComfyUI pipelines.</p>
+        </div>
+        <div class="skill-card">
+            <div class="skill-trigger">/wyltek-test-log</div>
+            <p>Captures embedded hardware test sessions as structured, graph-ingestible markdown logs. Auto-invokes after any bring-up or debug session concludes with a fix. Populates the hardware test graph.</p>
+        </div>
+        <div class="skill-card">
+            <div class="skill-trigger">/release-deps-check</div>
+            <p>Generates a non-destructive check-deps.sh audit script for any project being prepared for public release. Checks for all required system dependencies, prints friendly install instructions.</p>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Directory Structure</h2>
+
+    <p>All skills live under <code>~/.claude/skills/</code>, one subdirectory per skill:</p>
+
+    <div class="dir-tree">
+        <span class="dir">~/.claude/</span><br>
+        &nbsp;&nbsp;<span class="dir">skills/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">graphify/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">SKILL.md</span> &nbsp;<span class="comment"># Required — the skill instructions</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">scripts/</span> &nbsp;&nbsp;&nbsp;<span class="comment"># Optional — helper scripts</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">build-graph.sh</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">query-graph.py</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">cut-subject/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">SKILL.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">scripts/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">remove-bg.py</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">wyltek-test-log/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">SKILL.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">release-deps-check/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">SKILL.md</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="dir">scripts/</span><br>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="file">check-deps-template.sh</span>
+    </div>
+
+    <div class="callout tip">
+        <strong>Only SKILL.md is required</strong>
+        The scripts/ subdirectory is optional. Many skills are pure instruction sets — no scripts at all. Add scripts only when a task genuinely needs a helper that's too complex to describe in instructions, or when you want to encapsulate a repeatable shell operation.
+    </div>
+
+    <h2>Anatomy of a Good SKILL.md</h2>
+
+    <p>A well-structured SKILL.md has six sections. Each serves a different purpose for the agent executing the skill.</p>
+
+    <div class="anatomy-section">
+        <div class="section-name">1. Frontmatter (name, description, triggers)</div>
+        <p>YAML block at the top. Declares what the skill is called, what it does in one sentence, and the trigger conditions — both explicit slash commands and proactive invocation patterns.</p>
+    </div>
+    <div class="anatomy-section">
+        <div class="section-name">2. When to Use (and when NOT to use)</div>
+        <p>Explicit trigger conditions and anti-patterns. This is what prevents false positives — the skill firing when you didn't ask for it. Be specific about the exact conditions that should trigger vs. similar-looking conditions that should not.</p>
+    </div>
+    <div class="anatomy-section">
+        <div class="section-name">3. Step-by-step instructions</div>
+        <p>Numbered steps in imperative voice: "Run X", "Check Y", "If Z, do W". These are what Claude executes. Each step should be unambiguous — the agent shouldn't have to guess what you meant.</p>
+    </div>
+    <div class="anatomy-section">
+        <div class="section-name">4. Examples</div>
+        <p>At least one end-to-end example showing typical usage. For complex skills, add examples for edge cases too. Examples are the most reliable way to encode expected behavior.</p>
+    </div>
+    <div class="anatomy-section">
+        <div class="section-name">5. What NOT to do</div>
+        <p>Explicit anti-patterns. What mistakes does a naive agent make without guidance? List them here. For the cut-subject skill, this might be "do not use the anime model on product photos."</p>
+    </div>
+    <div class="anatomy-section">
+        <div class="section-name">6. Output format / success criteria</div>
+        <p>What does done look like? What files should exist, what should be printed, what should the agent report back to the user? Explicit success criteria prevent the agent from stopping too early or doing extra work.</p>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Complete Example: cut-subject Skill</h2>
+
+    <p>Walk through a real skill — background removal via rembg — from frontmatter to output format:</p>
+
+    <div class="section-block">
+        <div class="section-label">~/.claude/skills/cut-subject/SKILL.md</div>
+<pre><code>---
+name: cut-subject
+description: Remove backgrounds from images using rembg. Handles single files, batches, and model selection.
+triggers:
+  - slash: /cut-subject
+  - proactive: when user asks to "remove background", "cut out subject", "make transparent"
+---
+
+# cut-subject — Background Removal Skill
+
+## When to Use
+
+Invoke when:
+- User types `/cut-subject [path or paths]`
+- User asks to "remove the background from this image"
+- User asks to "cut out the subject" or "make the background transparent"
+- User pastes an image path and mentions transparency, cutout, or compositing
+
+Do NOT invoke when:
+- User is asking about image generation (that's a different pipeline)
+- User mentions "background" in a non-image context (e.g., "run this in the background")
+- The file is not an image format (.jpg, .jpeg, .png, .webp, .heic)
+
+## Models Available
+
+| Model | Flag | Best for |
+|-------|------|---------|
+| u2net (default) | (none) | General subjects, objects |
+| isnet-general-use | --model isnet | High-detail subjects, fine edges |
+| u2net_human_seg | --model human | Portraits, people — much better for faces |
+| silueta | --model silueta | Silhouettes, fashion/product shots |
+
+## Steps
+
+1. Identify the input file(s) from the user's message or arguments.
+   - If a directory is given, process all .jpg, .jpeg, .png, .webp files in it.
+   - If no path is given, ask the user for the image path.
+
+2. Select the appropriate model:
+   - If the image contains a person or face → use u2net_human_seg
+   - If it's a product photo → use silueta
+   - Otherwise → use default (u2net)
+   - User can override with --model flag
+
+3. Run rembg. Output file naming:
+   - Single file: same name + "_cutout" suffix, PNG format
+   - Batch: same directory, "_cutout" suffix on each, PNG format
+
+4. Run the helper script:
+   ```bash
+   python3 ~/.claude/skills/cut-subject/scripts/remove-bg.py \
+     --input [path] \
+     --output [output_path] \
+     --model [selected_model]
+   ```
+
+5. Verify output:
+   - Confirm output file exists
+   - Report file path and size to user
+
+## Example
+
+User: `/cut-subject ~/photos/product-shot.jpg`
+
+Steps:
+1. Input: ~/photos/product-shot.jpg
+2. Model: silueta (product photo)
+3. Output: ~/photos/product-shot_cutout.png
+4. Run: python3 remove-bg.py --input ~/photos/product-shot.jpg --output ~/photos/product-shot_cutout.png --model silueta
+5. Report: "Done. Saved to ~/photos/product-shot_cutout.png (1.2MB)"
+
+## What NOT to Do
+
+- Do not use the anime model on real-world photos — it produces poor edges
+- Do not overwrite the original file — always add the _cutout suffix
+- Do not process .gif files — rembg does not handle animated images
+- Do not skip model selection — picking the right model matters significantly for quality
+
+## Success Criteria
+
+- Output PNG file exists at the expected path
+- Output file size is non-zero
+- User is told the exact output path
+</code></pre>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Registering Skills in CLAUDE.md</h2>
+
+    <p>Claude Code discovers skills via the Skill tool, but you should also list them in your <code>~/.claude/CLAUDE.md</code> so the agent knows they exist and when to invoke them proactively:</p>
+
+<pre><code># ~/.claude/CLAUDE.md (excerpt)
+
+# Skills
+
+- **graphify** (`~/.claude/skills/graphify/SKILL.md`) — any input to knowledge graph. Trigger: `/graphify`
+  When the user types `/graphify`, invoke the Skill tool with `skill: "graphify"` before doing anything else.
+
+- **cut-subject** (`~/.claude/skills/cut-subject/SKILL.md`) — background removal via rembg. Trigger: `/cut-subject`
+  Also invoke proactively when user asks to remove background from an image.
+
+- **wyltek-test-log** (`~/.claude/skills/wyltek-test-log/SKILL.md`) — hardware test session logging.
+  Trigger: `/wyltek-log` or "log this test". Also invoke proactively after any wyltek-embedded-builder
+  bring-up/debug session concludes with a fix.
+
+- **release-deps-check** (`~/.claude/skills/release-deps-check/SKILL.md`) — dep audit script generator.
+  Trigger: `/check-deps`. Also invoke proactively when prepping any project for public release.
+</code></pre>
+
+    <div class="callout tip">
+        <strong>Proactive vs explicit triggers</strong>
+        Explicit triggers (/cut-subject) fire when the user types the command. Proactive triggers fire when the agent recognizes a situation that calls for the skill without an explicit command. Both belong in CLAUDE.md. Be specific about proactive triggers — vague conditions cause false positives.
+    </div>
+
+    <h2>Skills With Helper Scripts</h2>
+
+    <p>When a skill needs to run a non-trivial shell operation repeatedly, put that operation in <code>scripts/</code> and reference it from SKILL.md. The script does the mechanical work; the SKILL.md provides the decision-making context.</p>
+
+    <h3>Example: release-deps-check</h3>
+
+    <div class="section-block">
+        <div class="section-label">~/.claude/skills/release-deps-check/scripts/check-deps-template.sh</div>
+<pre><code>#!/usr/bin/env bash
+# Generated by release-deps-check skill
+# Non-destructive dependency audit — reads only, never installs
+
+set -euo pipefail
+
+REQUIRED_TOOLS=("PLACEHOLDER_TOOLS")
+OPTIONAL_TOOLS=("PLACEHOLDER_OPTIONAL")
+MIN_NODE="PLACEHOLDER_NODE_VERSION"
+MIN_PYTHON="PLACEHOLDER_PYTHON_VERSION"
+
+echo "=== Dependency Check ==="
+echo ""
+
+ALL_OK=true
+
+for tool in "${REQUIRED_TOOLS[@]}"; do
+    if command -v "$tool" &>/dev/null; then
+        VERSION=$("$tool" --version 2>&1 | head -1)
+        echo "  [OK] $tool — $VERSION"
+    else
+        echo "  [MISSING] $tool — required. Install: PLACEHOLDER_INSTALL_$tool"
+        ALL_OK=false
+    fi
+done
+
+if [ "$ALL_OK" = true ]; then
+    echo ""
+    echo "All required dependencies found. Ready to run."
+else
+    echo ""
+    echo "Missing dependencies detected. See above for install commands."
+    exit 1
+fi
+</code></pre>
+    </div>
+
+    <p>The SKILL.md for release-deps-check tells Claude to:</p>
+    <ol>
+        <li>Analyse the project's package files (package.json, Cargo.toml, requirements.txt, etc.)</li>
+        <li>Extract all required tools and minimum versions</li>
+        <li>Copy the template script and fill in the placeholders</li>
+        <li>Write the customised check-deps.sh to the project root</li>
+        <li>Make it executable</li>
+        <li>Test it by running it once and showing the output</li>
+    </ol>
+
+    <div class="callout tip">
+        <strong>Scripts are the mechanical layer</strong>
+        The skill provides judgment (which tools to check for, which versions to require, what install commands to use for different platforms). The script provides repeatability (a consistent structure that works the same way every time). Split these responsibilities clearly.
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Design Principles</h2>
+
+    <h3>Write instructions, not scripts</h3>
+    <p>SKILL.md is read by an AI agent with judgment, not executed by bash. Write it the way you'd brief a competent developer on a new task: explain the goal, the constraints, the decisions they need to make, and what success looks like. The agent handles the rest.</p>
+
+    <h3>Be specific about triggers to avoid false positives</h3>
+
+    <div class="callout warn">
+        <strong>Vague trigger conditions cause false positives</strong>
+        "Invoke when user mentions background" will trigger /cut-subject during conversations about background processes, background knowledge, or CSS backgrounds. Write triggers that match the specific user intent, not just topic keywords.
+    </div>
+
+    <table>
+        <tr>
+            <th>Vague (bad)</th>
+            <th>Specific (good)</th>
+        </tr>
+        <tr>
+            <td>When user mentions background</td>
+            <td>When user asks to remove image background or mentions "transparent PNG" with an image file</td>
+        </tr>
+        <tr>
+            <td>When user asks about graphs</td>
+            <td>When user types /graphify, OR when user asks to "build a knowledge graph from" a path</td>
+        </tr>
+        <tr>
+            <td>When user mentions testing</td>
+            <td>When user types /wyltek-log or when an embedded hardware debug session concludes with "fixed" or a confirmed flash</td>
+        </tr>
+    </table>
+
+    <h3>Include the NOT-to-do section</h3>
+    <p>Every skill should explicitly list what mistakes a naive agent would make. This is the highest-leverage section for preventing quality issues. If you've run the skill and seen it do something wrong once, document it here.</p>
+
+    <h3>One skill, one job</h3>
+    <p>Don't build a skill that does background removal AND image resizing AND format conversion. Build three skills. Composability is more valuable than completeness — users can chain skills, but they can't split a monolithic skill.</p>
+
+    <hr class="section-divider">
+
+    <h2>Advanced: Skills That Spawn Sub-Agents</h2>
+
+    <p>Skills can instruct Claude to spawn sub-agents for parallel workloads. The graph-routing skill does this: it spawns a query agent against the graph while the main agent continues preparing context. The wyltek-test-log skill spawns a formatting agent to structure the log while the main agent ingests it into the RAG system.</p>
+
+<pre><code>## Steps (excerpt from a parallelised skill)
+
+3. Spawn two sub-agents in parallel:
+   - Agent A: Query the CKB ecosystem graph for entities related to the failing component
+   - Agent B: Search the session logs from the past 7 days for similar symptoms
+
+4. Wait for both agents to complete, then merge their findings before proceeding.
+
+Note: Use the Agent tool with separate tasks. Do not wait for Agent A before launching Agent B.
+</code></pre>
+
+    <h2>Advanced: Skills With Memory</h2>
+
+    <p>Some skills maintain state between invocations via files in <code>~/.claude/</code>. The wyltek-test-log skill appends to a structured log file that accumulates hardware test results across sessions. The save-session skill writes session summaries to <code>~/.claude/session-logs/</code>.</p>
+
+<pre><code>## State management (from wyltek-test-log)
+
+After writing the log entry:
+1. Append to ~/.claude/shared/hardware-test-log.md (create if missing)
+2. Ingest the new entry to the RAG system:
+   curl -X POST http://your-rag-server:9990/ingest \
+     -d '{"source": "hardware-test", "text": "CONTENT", "title": "TITLE"}'
+3. Update ~/.claude/session-logs/last-hardware-session.txt with today's date
+</code></pre>
+
+    <h2>Advanced: Skills That Integrate With Hooks</h2>
+
+    <p>Skills and hooks are complementary. A hook can proactively trigger a skill (by writing to stdout on UserPromptSubmit), and a skill can configure hooks (by editing settings.json during setup). The release-deps-check skill, for example, can optionally install a PostToolUse hook that runs the check-deps.sh after every CI config change.</p>
+
+    <hr class="section-divider">
+
+    <h2>Template: Minimal SKILL.md</h2>
+
+<pre><code>---
+name: my-skill
+description: One sentence: what this skill does.
+triggers:
+  - slash: /my-skill
+  - proactive: when [specific condition]
+---
+
+# my-skill
+
+## When to Use
+
+Invoke when:
+- User types `/my-skill [args]`
+- [Specific proactive condition]
+
+Do NOT invoke when:
+- [Common false positive scenario 1]
+- [Common false positive scenario 2]
+
+## Steps
+
+1. [First action — imperative voice]
+2. [Second action]
+3. If [condition], do [A], otherwise do [B].
+4. [Final action]
+
+## Example
+
+User: `/my-skill some-argument`
+
+Expected behavior:
+- [What happens step by step]
+- [What gets output]
+- [What gets reported to user]
+
+## What NOT to Do
+
+- [Anti-pattern 1]
+- [Anti-pattern 2]
+
+## Success Criteria
+
+- [What done looks like]
+- [Specific file or output that must exist]
+</code></pre>
+
+    <h2>Packaging Skills as Plugins</h2>
+
+    <p>Skills can be packaged as Claude Code plugins for sharing with the ecosystem. A plugin is a directory with a <code>plugin.json</code> manifest, one or more SKILL.md files, and optional scripts. Users install plugins via the Claude Code plugin system and all skills in the plugin become immediately available.</p>
+
+<pre><code># Plugin structure
+my-plugin/
+  plugin.json          # Manifest: name, version, description, author
+  skills/
+    skill-one/
+      SKILL.md
+      scripts/
+        helper.sh
+    skill-two/
+      SKILL.md
+  README.md
+
+# plugin.json
+{
+  "name": "wyltek-creative-skills",
+  "version": "1.0.0",
+  "description": "Image gen, TTS, and video skills for Wyltek Studio",
+  "author": "your-username",
+  "skills": ["cut-subject", "quote-meme", "tts-generate"]
+}
+</code></pre>
+
+    <div class="callout tip">
+        <strong>The plugin system multiplies skill value</strong>
+        A skill you write once and package as a plugin can be installed by anyone in the Claude Code ecosystem. Domain-specific skills — blockchain development, embedded systems, creative media — are especially valuable because they encode specialist knowledge that general-purpose agents lack.
+    </div>
+
+    <h2>Skill Development Checklist</h2>
+
+    <table>
+        <tr>
+            <th>Check</th>
+            <th>Why</th>
+        </tr>
+        <tr>
+            <td>Frontmatter complete (name, description, triggers)</td>
+            <td>Required for discovery and proactive invocation</td>
+        </tr>
+        <tr>
+            <td>When to use section has explicit NOT-to-use cases</td>
+            <td>Prevents false positives</td>
+        </tr>
+        <tr>
+            <td>Steps are numbered and in imperative voice</td>
+            <td>Unambiguous for agent execution</td>
+        </tr>
+        <tr>
+            <td>At least one end-to-end example</td>
+            <td>Most reliable way to encode expected behavior</td>
+        </tr>
+        <tr>
+            <td>Success criteria defined</td>
+            <td>Agent knows when to stop</td>
+        </tr>
+        <tr>
+            <td>Registered in CLAUDE.md</td>
+            <td>Agent knows the skill exists and when to use it</td>
+        </tr>
+        <tr>
+            <td>Tested with an edge case</td>
+            <td>Edge cases reveal missing instructions</td>
+        </tr>
+        <tr>
+            <td>Anti-patterns documented from real failures</td>
+            <td>Prevents repeating mistakes</td>
+        </tr>
+    </table>
+
+    <p style="margin-top: 2rem; color: var(--muted); font-size: 0.9rem;">See also: <a href="/ai-hub/guides/claude-md-guide.html">CLAUDE.md Guide</a> · <a href="/ai-hub/guides/hooks-safety.html">Hooks &amp; Safety</a> · <a href="/ai-hub/guides/knowledge-graphs.html">Knowledge Graphs</a></p>
+
+    <p style="margin-top: 1.5rem;">
+        <a href="/ai-hub/" class="back">← Back to AI Hub</a>
+    </p>
+</div>
+
+<script src="/js/member-nav.js"></script>
+</body>
+</html>

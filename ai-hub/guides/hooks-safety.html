@@ -1,0 +1,769 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Claude Code Hooks — Wyltek AI Hub</title>
+    <style>
+        :root {
+            --bg: #0a0c0f;
+            --surface: #111318;
+            --surface2: #181c23;
+            --border: #1e2430;
+            --accent: #00c8ff;
+            --accent2: #7b5cfa;
+            --green: #00e5a0;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 15, 0.93);
+            z-index: 100;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        .logo { color: var(--text); font-weight: 700; font-size: 1.1rem; }
+        .logo span { color: var(--muted); font-weight: 400; font-size: 0.9rem; margin-left: 0.5rem; }
+        .guide-content {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+        .breadcrumb a { color: var(--accent); text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { margin: 0 0.4rem; }
+        .page-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .page-header .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.5rem; }
+        h1 { font-size: 2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .read-time { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .lead { color: #a0b0c8; font-size: 1.05rem; margin-top: 0.75rem; line-height: 1.7; }
+        h2 {
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            background: linear-gradient(90deg, var(--accent2), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--text); font-size: 1rem; font-weight: 600; }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.4rem; }
+        code {
+            background: rgba(0, 200, 255, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+        }
+        pre {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+            line-height: 1.5;
+        }
+        pre code { background: none; border: none; padding: 0; font-size: inherit; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.92em;
+        }
+        th, td { border: 1px solid var(--border); padding: 0.75rem 1rem; text-align: left; }
+        th { background: rgba(123, 92, 250, 0.1); color: var(--accent2); font-weight: 600; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .back { display: inline-block; margin-bottom: 1.5rem; color: var(--muted); font-size: 0.9rem; }
+        .back:hover { color: var(--text); }
+        .callout {
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.25rem 0;
+        }
+        .callout.tip {
+            border-left: 3px solid var(--green);
+            background: rgba(0, 229, 160, 0.07);
+        }
+        .callout.warn {
+            border-left: 3px solid #f59e0b;
+            background: rgba(245, 158, 11, 0.07);
+        }
+        .callout strong { display: block; margin-bottom: 0.4rem; }
+        .callout.tip strong { color: var(--green); }
+        .callout.warn strong { color: #f59e0b; }
+        .event-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin: 1.25rem 0;
+        }
+        @media (max-width: 650px) { .event-grid { grid-template-columns: 1fr; } }
+        .event-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+        }
+        .event-card .event-name {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.4rem;
+        }
+        .event-card p { color: var(--muted); font-size: 0.88em; margin: 0; }
+        .exit-code {
+            display: inline-block;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 4px;
+            padding: 0.2rem 0.55rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            font-weight: 700;
+            margin-right: 0.5rem;
+        }
+        .exit-code.allow { color: var(--green); border-color: var(--green); }
+        .exit-code.block { color: #f87171; border-color: #f87171; }
+        .exit-code.warn { color: #f59e0b; border-color: #f59e0b; }
+        .hook-example {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .hook-label {
+            background: rgba(123,92,250,0.12);
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: var(--accent2);
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .hook-label .hook-event { color: var(--accent); }
+        .hook-example pre {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            background: transparent;
+        }
+        .section-divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+    </style>
+</head>
+<body>
+
+<div id="site-header"></div>
+<script src="/js/site-header.js"></script>
+
+<header>
+    <div class="logo">Wyltek Industries <span>— AI Hub</span></div>
+</header>
+
+<div class="guide-content">
+    <nav class="breadcrumb">
+        <a href="/ai-hub/">AI Hub</a>
+        <span>/</span>
+        <a href="/ai-hub/">Guides</a>
+        <span>/</span>
+        Claude Code Hooks — Automation &amp; Safety
+    </nav>
+
+    <a href="/ai-hub/" class="back">← Back to AI Hub</a>
+
+    <div class="page-header">
+        <div class="subtitle">Wyltek Industries — AI Hub</div>
+        <h1>Claude Code Hooks — Automation &amp; Safety</h1>
+        <div class="read-time">Estimated read time: 14 minutes</div>
+        <p class="lead">Hooks are shell commands that Claude Code fires automatically in response to its own actions. They're how you enforce formatting, inject external context, block dangerous operations, and build session-level automation — without interrupting your workflow to ask the agent to do it manually.</p>
+    </div>
+
+    <h2>What Are Hooks?</h2>
+
+    <p>A hook is a shell command (or script path) that Claude Code runs at specific points in its execution lifecycle. Hooks run in your local shell environment, have access to the same environment variables as your terminal session, and can read information about the tool call that triggered them via stdin.</p>
+
+    <p>Hooks are configured in <code>~/.claude/settings.json</code> — your global Claude Code configuration file. They apply to every project you work in, unless you override them at the project level.</p>
+
+    <div class="callout tip">
+        <strong>Hooks run as you, not as Claude</strong>
+        Claude Code is the orchestrator — hooks are your code running in your environment. Claude cannot bypass a blocking hook. If your PreToolUse hook exits with code 1, the tool call does not happen, period.
+    </div>
+
+    <h2>Hook Events</h2>
+
+    <p>There are four hook event types, each firing at a different point in Claude's execution:</p>
+
+    <div class="event-grid">
+        <div class="event-card">
+            <div class="event-name">PreToolUse</div>
+            <p>Fires before Claude executes any tool call. Can inspect and block the call. Use for safety checks, validation, and semgrep-style pre-flight analysis.</p>
+        </div>
+        <div class="event-card">
+            <div class="event-name">PostToolUse</div>
+            <p>Fires after a tool call completes. Cannot block (the action already happened), but can trigger follow-up automation: formatting, linting, logging.</p>
+        </div>
+        <div class="event-card">
+            <div class="event-name">UserPromptSubmit</div>
+            <p>Fires when you submit a prompt, before Claude processes it. Use to inject additional context — RAG results, environment state, session memory.</p>
+        </div>
+        <div class="event-card">
+            <div class="event-name">Stop</div>
+            <p>Fires when the session ends or Claude finishes responding. Use for session memory persistence, cleanup, final state saves.</p>
+        </div>
+    </div>
+
+    <h2>Hook Configuration Anatomy</h2>
+
+    <p>Hooks live in the <code>hooks</code> array inside <code>~/.claude/settings.json</code>. Each hook object has these fields:</p>
+
+    <table>
+        <tr>
+            <th>Field</th>
+            <th>Type</th>
+            <th>Purpose</th>
+        </tr>
+        <tr>
+            <td><code>hookEvent</code></td>
+            <td>string</td>
+            <td>Which event triggers this hook: <code>PreToolUse</code>, <code>PostToolUse</code>, <code>UserPromptSubmit</code>, <code>Stop</code></td>
+        </tr>
+        <tr>
+            <td><code>matcher</code></td>
+            <td>string (optional)</td>
+            <td>Tool name filter. If set, hook only fires for matching tool calls (e.g., <code>"Write"</code>, <code>"Bash"</code>). Omit to match all tools.</td>
+        </tr>
+        <tr>
+            <td><code>command</code></td>
+            <td>string</td>
+            <td>The shell command to run. Can be inline or a path to a script.</td>
+        </tr>
+        <tr>
+            <td><code>timeout</code></td>
+            <td>number (optional)</td>
+            <td>Milliseconds before the hook is killed. Default is 30000 (30s). Set lower for fast checks, higher for RAG queries.</td>
+        </tr>
+    </table>
+
+    <h3>Minimal settings.json structure</h3>
+
+    <div class="hook-example">
+        <div class="hook-label">~/.claude/settings.json</div>
+<pre><code>{
+  "hooks": [
+    {
+      "hookEvent": "PostToolUse",
+      "matcher": "Write",
+      "command": "~/.claude/hooks/auto-format.sh",
+      "timeout": 10000
+    },
+    {
+      "hookEvent": "PreToolUse",
+      "matcher": "Bash",
+      "command": "python3 ~/.claude/hooks/security_reminder_hook.py",
+      "timeout": 5000
+    }
+  ]
+}
+</code></pre>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Exit Codes: The Control Mechanism</h2>
+
+    <p>A hook's exit code determines what Claude Code does next. This is how you enforce rules without building complex middleware:</p>
+
+    <table>
+        <tr>
+            <th>Exit Code</th>
+            <th>Meaning</th>
+            <th>Effect</th>
+        </tr>
+        <tr>
+            <td><span class="exit-code allow">0</span></td>
+            <td>Allow / OK</td>
+            <td>Proceed normally. For PreToolUse, the tool call executes.</td>
+        </tr>
+        <tr>
+            <td><span class="exit-code block">1</span></td>
+            <td>Block / Error</td>
+            <td>For PreToolUse: block the tool call entirely. Claude is informed and can try a different approach. For PostToolUse: logged as an error but cannot undo the action.</td>
+        </tr>
+        <tr>
+            <td><span class="exit-code warn">2</span></td>
+            <td>Non-blocking warn</td>
+            <td>Proceed but surface a warning to Claude and the user. Useful for "this looks risky but I won't stop it" scenarios.</td>
+        </tr>
+    </table>
+
+    <div class="callout tip">
+        <strong>stdin/stdout protocol</strong>
+        Claude Code passes the tool call parameters to the hook via stdin as JSON. Your hook can write to stdout to pass information back — for example, a PreToolUse hook can write a modified version of the command, and PostToolUse hooks can write notes that Claude will see. Read the JSON from stdin with <code>import sys, json; data = json.load(sys.stdin)</code>.
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Real Hook Examples</h2>
+
+    <h3>Auto-format Python files after write</h3>
+    <p>Fires every time Claude writes a <code>.py</code> file, runs ruff then black automatically. No more "please format this" prompts.</p>
+
+    <div class="hook-example">
+        <div class="hook-label">
+            <span>PostToolUse : Write → .py files</span>
+            <span class="hook-event">auto-format.sh</span>
+        </div>
+<pre><code>#!/usr/bin/env bash
+# ~/.claude/hooks/auto-format.sh
+# Reads the written file path from stdin JSON, formats if .py
+
+FILE=$(python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+print(data.get('file_path', ''))
+")
+
+if [[ "$FILE" == *.py ]]; then
+    ruff check --fix "$FILE" 2>/dev/null
+    black --quiet "$FILE" 2>/dev/null
+fi
+
+exit 0  # always allow — this is post-write, nothing to block
+</code></pre>
+    </div>
+
+    <p>Settings entry:</p>
+<pre><code>{
+  "hookEvent": "PostToolUse",
+  "matcher": "Write",
+  "command": "~/.claude/hooks/auto-format.sh",
+  "timeout": 15000
+}
+</code></pre>
+
+    <h3>Security reminder on Bash execution</h3>
+    <p>Fires before every Bash tool call. Checks for patterns that should trigger a pause — destructive commands, production targets, force pushes.</p>
+
+    <div class="hook-example">
+        <div class="hook-label">
+            <span>PreToolUse : Bash → security check</span>
+            <span class="hook-event">security_reminder_hook.py</span>
+        </div>
+<pre><code>#!/usr/bin/env python3
+# ~/.claude/hooks/security_reminder_hook.py
+
+import sys, json, re
+
+data = json.load(sys.stdin)
+command = data.get("command", "")
+
+DANGER_PATTERNS = [
+    (r"rm\s+-rf\s+/", "rm -rf from root is extremely dangerous"),
+    (r"git push.*--force.*main", "force push to main is blocked"),
+    (r"git push.*--force.*master", "force push to master is blocked"),
+    (r"drop\s+table", "SQL DROP TABLE — confirm this is intentional"),
+    (r":\s*>\s*/etc/", "overwriting system files"),
+]
+
+for pattern, message in DANGER_PATTERNS:
+    if re.search(pattern, command, re.IGNORECASE):
+        print(f"BLOCKED: {message}", flush=True)
+        sys.exit(1)  # block the command
+
+# Warn (but allow) on staging/prod keywords
+WARN_PATTERNS = ["production", "prod-", "staging", "--force"]
+for p in WARN_PATTERNS:
+    if p in command.lower():
+        print(f"WARNING: command targets a sensitive environment: {p}")
+        sys.exit(2)  # warn but allow
+
+sys.exit(0)
+</code></pre>
+    </div>
+
+    <h3>RAG context injection on prompt submit</h3>
+    <p>Before Claude sees your prompt, this hook queries the local RAG system and prepends relevant knowledge chunks. Claude gets grounded context without you having to paste it manually.</p>
+
+    <div class="hook-example">
+        <div class="hook-label">
+            <span>UserPromptSubmit → RAG injection</span>
+            <span class="hook-event">rag-inject.sh</span>
+        </div>
+<pre><code>#!/usr/bin/env bash
+# ~/.claude/hooks/rag-inject.sh
+# Queries RAG and prepends results to the prompt via stdout
+
+PROMPT=$(python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+print(data.get('prompt', ''))
+")
+
+# Query the local RAG system (Kernel agent — code-focused, 0.2 temp)
+RAG_RESULT=$(curl -s -X POST http://your-rag-server:9990/query \
+  -H "Content-Type: application/json" \
+  -d "{\"query\": \"$PROMPT\", \"agent\": \"kernel\", \"k\": 3}" \
+  --max-time 5 2>/dev/null)
+
+if [ -n "$RAG_RESULT" ]; then
+    CONTEXT=$(echo "$RAG_RESULT" | python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+chunks = data.get('chunks', [])
+print('\n'.join(f'- {c[\"text\"]}' for c in chunks[:3]))
+")
+    # Write augmented prompt to stdout — Claude Code reads this
+    echo "=== RAG Context (auto-injected) ===
+$CONTEXT
+=== End RAG Context ===
+
+$PROMPT"
+fi
+
+exit 0
+</code></pre>
+    </div>
+
+    <div class="callout tip">
+        <strong>UserPromptSubmit stdout becomes the prompt</strong>
+        When a UserPromptSubmit hook writes to stdout and exits 0, Claude Code uses that stdout as the actual prompt content. This is how context injection works — you're literally rewriting the user's message before Claude sees it.
+    </div>
+
+    <h3>Save session on Stop</h3>
+    <p>When the session ends, write a timestamped summary of what happened to a session log file. Useful for building long-term memory outside the context window.</p>
+
+    <div class="hook-example">
+        <div class="hook-label">
+            <span>Stop → session persistence</span>
+            <span class="hook-event">save-session.sh</span>
+        </div>
+<pre><code>#!/usr/bin/env bash
+# ~/.claude/hooks/save-session.sh
+
+TIMESTAMP=$(date +%Y-%m-%d_%H-%M)
+LOG_DIR=~/.claude/session-logs
+mkdir -p "$LOG_DIR"
+
+# The Stop event passes session summary data via stdin
+python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+summary = data.get('summary', 'No summary available')
+print(summary)
+" >> "$LOG_DIR/session-$TIMESTAMP.md"
+
+exit 0
+</code></pre>
+    </div>
+
+    <h3>Semgrep static analysis before file writes</h3>
+    <p>Run semgrep rules against code before Claude writes it to disk. Catches security patterns at the point of creation, not after.</p>
+
+    <div class="hook-example">
+        <div class="hook-label">
+            <span>PreToolUse : Write → semgrep</span>
+            <span class="hook-event">semgrep-check.sh</span>
+        </div>
+<pre><code>#!/usr/bin/env bash
+# ~/.claude/hooks/semgrep-check.sh
+# Runs semgrep on content before it's written
+
+FILE=$(python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+print(data.get('file_path', ''))
+")
+
+CONTENT=$(python3 -c "
+import sys, json
+data = json.load(sys.stdin)
+print(data.get('content', ''))
+")
+
+# Only check source files, skip lockfiles and generated code
+if [[ "$FILE" =~ \.(js|ts|py|rs|go)$ ]]; then
+    TMPFILE=$(mktemp --suffix="${FILE##*.}")
+    echo "$CONTENT" > "$TMPFILE"
+
+    semgrep --config=auto "$TMPFILE" --quiet 2>/dev/null
+    EXIT=$?
+
+    rm -f "$TMPFILE"
+
+    if [ $EXIT -ne 0 ]; then
+        echo "Semgrep found issues in $FILE — review before writing"
+        exit 2  # warn but allow (change to 1 to block)
+    fi
+fi
+
+exit 0
+</code></pre>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Full settings.json with All Hooks</h2>
+
+    <div class="hook-example">
+        <div class="hook-label">~/.claude/settings.json — complete hooks section</div>
+<pre><code>{
+  "hooks": [
+    {
+      "hookEvent": "PostToolUse",
+      "matcher": "Write",
+      "command": "~/.claude/hooks/auto-format.sh",
+      "timeout": 15000
+    },
+    {
+      "hookEvent": "PreToolUse",
+      "matcher": "Bash",
+      "command": "python3 ~/.claude/hooks/security_reminder_hook.py",
+      "timeout": 5000
+    },
+    {
+      "hookEvent": "UserPromptSubmit",
+      "command": "~/.claude/hooks/rag-inject.sh",
+      "timeout": 8000
+    },
+    {
+      "hookEvent": "Stop",
+      "command": "~/.claude/hooks/save-session.sh",
+      "timeout": 10000
+    },
+    {
+      "hookEvent": "PreToolUse",
+      "matcher": "Write",
+      "command": "~/.claude/hooks/semgrep-check.sh",
+      "timeout": 20000
+    }
+  ]
+}
+</code></pre>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Safety Patterns</h2>
+
+    <h3>Blocking dangerous commands</h3>
+    <p>Use PreToolUse on <code>Bash</code> to intercept destructive operations before they execute:</p>
+
+    <table>
+        <tr>
+            <th>Pattern to block</th>
+            <th>Why</th>
+            <th>Exit code</th>
+        </tr>
+        <tr>
+            <td><code>rm -rf /</code>, <code>rm -rf ~</code></td>
+            <td>Data destruction</td>
+            <td>1 (hard block)</td>
+        </tr>
+        <tr>
+            <td><code>git push --force main/master</code></td>
+            <td>Rewrites shared history</td>
+            <td>1 (hard block)</td>
+        </tr>
+        <tr>
+            <td><code>DROP TABLE</code> without WHERE</td>
+            <td>Database destruction</td>
+            <td>1 (hard block)</td>
+        </tr>
+        <tr>
+            <td><code>curl ... | bash</code></td>
+            <td>Arbitrary remote code execution</td>
+            <td>2 (warn and allow with audit)</td>
+        </tr>
+        <tr>
+            <td>Commands containing <code>production</code></td>
+            <td>Live environment — extra caution</td>
+            <td>2 (warn)</td>
+        </tr>
+    </table>
+
+    <h3>Preventing secret leaks</h3>
+    <p>A PreToolUse:Write hook can scan file content before writing for patterns that look like API keys, tokens, or credentials:</p>
+
+<pre><code>#!/usr/bin/env python3
+import sys, json, re
+
+data = json.load(sys.stdin)
+content = data.get("content", "")
+file_path = data.get("file_path", "")
+
+SECRET_PATTERNS = [
+    r"sk-[a-zA-Z0-9]{48}",              # OpenAI key
+    r"ghp_[a-zA-Z0-9]{36}",             # GitHub PAT
+    r"AKIA[0-9A-Z]{16}",                # AWS access key
+    r"-----BEGIN (RSA|EC) PRIVATE KEY", # Private key
+]
+
+for pattern in SECRET_PATTERNS:
+    if re.search(pattern, content):
+        print(f"BLOCKED: Possible secret detected in {file_path}")
+        sys.exit(1)
+
+sys.exit(0)
+</code></pre>
+
+    <hr class="section-divider">
+
+    <h2>Automation Patterns</h2>
+
+    <h3>Auto-commit on session end</h3>
+    <p>If you're doing a focused work session, a Stop hook can automatically create a WIP commit so nothing gets lost:</p>
+
+<pre><code>#!/usr/bin/env bash
+# Only auto-commit if there are staged or modified files
+if ! git diff --quiet || ! git diff --staged --quiet; then
+    git add -p  # interactive staging is better, but for automation:
+    git add $(git diff --name-only)
+    git commit -m "wip: auto-commit at session end $(date +%Y-%m-%d_%H:%M)"
+fi
+exit 0
+</code></pre>
+
+    <h3>Notify on task completion</h3>
+    <p>A Stop hook can send a desktop notification or message when Claude finishes a long-running task:</p>
+
+<pre><code>#!/usr/bin/env bash
+# Send desktop notification
+notify-send "Claude Code" "Session complete" --icon=claude 2>/dev/null
+
+# Or send to Telegram
+# curl -s "https://api.telegram.org/bot$TELEGRAM_TOKEN/sendMessage" \
+#      -d "chat_id=$CHAT_ID&text=Claude Code session complete"
+exit 0
+</code></pre>
+
+    <hr class="section-divider">
+
+    <h2>Gotchas and Pitfalls</h2>
+
+    <div class="callout warn">
+        <strong>Hooks run in a subshell — shell state doesn't persist</strong>
+        Each hook invocation is a fresh process. Shell functions, aliases, and variables set in one hook are not available in the next. Source your profile explicitly if you need environment setup: <code>source ~/.bashrc</code> or <code>source ~/.zshrc</code>.
+    </div>
+
+    <div class="callout warn">
+        <strong>PATH may differ from your interactive shell</strong>
+        Claude Code may not have your full <code>PATH</code>. Use absolute paths for commands in hooks (<code>/usr/bin/python3</code>, <code>/home/youruser/.local/bin/ruff</code>) or explicitly set <code>PATH</code> at the top of your hook script.
+    </div>
+
+    <div class="callout warn">
+        <strong>Timeout kills silently</strong>
+        If your hook exceeds its timeout, it's killed and Claude proceeds as if the hook exited 0 (for PostToolUse) or 1 (for PreToolUse blocking hooks). Set your timeout generously for anything involving network calls, and test it before relying on it for safety.
+    </div>
+
+    <div class="callout tip">
+        <strong>Test hooks in isolation first</strong>
+        Before wiring a hook into settings.json, test the script directly: pipe in sample JSON from stdin and check the exit code and output. This is far faster than iterating through Claude Code sessions.
+    </div>
+
+    <h2>Hook Development Workflow</h2>
+
+    <ol>
+        <li>Write and test the script standalone: <code>echo '{"command": "rm -rf /"}' | python3 ~/.claude/hooks/security_reminder_hook.py; echo "Exit: $?"</code></li>
+        <li>Add to <code>settings.json</code> with a generous timeout</li>
+        <li>Test in a safe Claude Code session — trigger the hook deliberately</li>
+        <li>Tighten the timeout once you know the typical runtime</li>
+        <li>For blocking hooks: test the block path explicitly before trusting it in production</li>
+    </ol>
+
+    <h2>Summary Table</h2>
+
+    <table>
+        <tr>
+            <th>Use case</th>
+            <th>Event</th>
+            <th>Matcher</th>
+            <th>Exit for block</th>
+        </tr>
+        <tr>
+            <td>Auto-format code</td>
+            <td>PostToolUse</td>
+            <td>Write</td>
+            <td>N/A (post-write)</td>
+        </tr>
+        <tr>
+            <td>Block dangerous shell commands</td>
+            <td>PreToolUse</td>
+            <td>Bash</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>Inject RAG context</td>
+            <td>UserPromptSubmit</td>
+            <td>(none)</td>
+            <td>N/A</td>
+        </tr>
+        <tr>
+            <td>Save session memory</td>
+            <td>Stop</td>
+            <td>(none)</td>
+            <td>N/A</td>
+        </tr>
+        <tr>
+            <td>Semgrep pre-flight</td>
+            <td>PreToolUse</td>
+            <td>Write</td>
+            <td>1 or 2</td>
+        </tr>
+        <tr>
+            <td>Prevent secret commits</td>
+            <td>PreToolUse</td>
+            <td>Write</td>
+            <td>1</td>
+        </tr>
+        <tr>
+            <td>Warn on prod operations</td>
+            <td>PreToolUse</td>
+            <td>Bash</td>
+            <td>2</td>
+        </tr>
+    </table>
+
+    <p style="margin-top: 2rem; color: var(--muted); font-size: 0.9rem;">See also: <a href="/ai-hub/guides/claude-md-guide.html">CLAUDE.md Guide</a> · <a href="/ai-hub/guides/skills-guide.html">Writing Skills</a> · <a href="/ai-hub/guides/knowledge-graphs.html">Knowledge Graphs</a></p>
+
+    <p style="margin-top: 1.5rem;">
+        <a href="/ai-hub/" class="back">← Back to AI Hub</a>
+    </p>
+</div>
+
+<script src="/js/member-nav.js"></script>
+</body>
+</html>

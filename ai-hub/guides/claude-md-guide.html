@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CLAUDE.md Guide — Wyltek AI Hub</title>
+    <style>
+        :root {
+            --bg: #0a0c0f;
+            --surface: #111318;
+            --surface2: #181c23;
+            --border: #1e2430;
+            --accent: #00c8ff;
+            --accent2: #7b5cfa;
+            --green: #00e5a0;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 15, 0.93);
+            z-index: 100;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .logo { color: var(--text); font-weight: 700; font-size: 1.1rem; }
+        .logo span { color: var(--muted); font-weight: 400; font-size: 0.9rem; margin-left: 0.5rem; }
+        .guide-content {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        .breadcrumb {
+            font-size: 0.85rem;
+            color: var(--muted);
+            margin-bottom: 1.5rem;
+        }
+        .breadcrumb a { color: var(--accent); text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { margin: 0 0.4rem; }
+        .page-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .page-header .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.5rem; }
+        h1 { font-size: 2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .read-time { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .lead { color: #a0b0c8; font-size: 1.05rem; margin-top: 0.75rem; line-height: 1.7; }
+        h2 {
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            background: linear-gradient(90deg, var(--accent2), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--text); font-size: 1rem; font-weight: 600; }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.4rem; }
+        code {
+            background: rgba(0, 200, 255, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+        }
+        pre {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+            line-height: 1.5;
+        }
+        pre code { background: none; border: none; padding: 0; font-size: inherit; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.92em;
+        }
+        th, td { border: 1px solid var(--border); padding: 0.75rem 1rem; text-align: left; }
+        th { background: rgba(123, 92, 250, 0.1); color: var(--accent2); font-weight: 600; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .back { display: inline-block; margin-bottom: 1.5rem; color: var(--muted); font-size: 0.9rem; }
+        .back:hover { color: var(--text); }
+        .callout {
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.25rem 0;
+        }
+        .callout.tip {
+            border-left: 3px solid var(--green);
+            background: rgba(0, 229, 160, 0.07);
+        }
+        .callout.warn {
+            border-left: 3px solid #f59e0b;
+            background: rgba(245, 158, 11, 0.07);
+        }
+        .callout strong { display: block; margin-bottom: 0.4rem; }
+        .callout.tip strong { color: var(--green); }
+        .callout.warn strong { color: #f59e0b; }
+        .layer-diagram {
+            display: grid;
+            gap: 0.75rem;
+            margin: 1.25rem 0;
+        }
+        .layer {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+        }
+        .layer-badge {
+            background: rgba(123, 92, 250, 0.15);
+            border: 1px solid var(--accent2);
+            color: var(--accent2);
+            border-radius: 4px;
+            padding: 0.2rem 0.6rem;
+            font-size: 0.75rem;
+            font-weight: 700;
+            white-space: nowrap;
+            margin-top: 0.15rem;
+        }
+        .layer-badge.global { background: rgba(0,229,160,0.1); border-color: var(--green); color: var(--green); }
+        .layer-badge.local { background: rgba(0,200,255,0.1); border-color: var(--accent); color: var(--accent); }
+        .layer-content .path { font-family: 'Courier New', monospace; font-size: 0.85em; color: var(--muted); }
+        .layer-content strong { display: block; margin-bottom: 0.2rem; }
+        .section-divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .template-block {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 1.5rem;
+        }
+        .template-label {
+            background: rgba(123,92,250,0.12);
+            border-bottom: 1px solid var(--border);
+            padding: 0.5rem 1rem;
+            font-size: 0.8rem;
+            color: var(--accent2);
+            font-weight: 600;
+            letter-spacing: 0.04em;
+            text-transform: uppercase;
+        }
+        .template-block pre {
+            margin: 0;
+            border: none;
+            border-radius: 0;
+            background: transparent;
+        }
+    </style>
+</head>
+<body>
+
+<div id="site-header"></div>
+<script src="/js/site-header.js"></script>
+
+<header>
+    <div class="logo">Wyltek Industries <span>— AI Hub</span></div>
+</header>
+
+<div class="guide-content">
+    <nav class="breadcrumb">
+        <a href="/ai-hub/">AI Hub</a>
+        <span>/</span>
+        <a href="/ai-hub/">Guides</a>
+        <span>/</span>
+        CLAUDE.md — Instructing Your AI Agent
+    </nav>
+
+    <a href="/ai-hub/" class="back">← Back to AI Hub</a>
+
+    <div class="page-header">
+        <div class="subtitle">Wyltek Industries — AI Hub</div>
+        <h1>CLAUDE.md — Instructing Your AI Agent</h1>
+        <div class="read-time">Estimated read time: 12 minutes</div>
+        <p class="lead">CLAUDE.md is the primary mechanism for shaping how Claude Code behaves in your projects. Write it well and your agent works like a senior team member who already knows the codebase. Write it poorly and you'll spend every session re-explaining the same context.</p>
+    </div>
+
+    <h2>What Is CLAUDE.md?</h2>
+
+    <p>CLAUDE.md is a markdown file that Claude Code reads automatically at the start of every conversation. It's injected directly into the context window — think of it as a permanent briefing document that the agent has already read before you type a single word.</p>
+
+    <p>Unlike a system prompt that you'd configure via API, CLAUDE.md is a plain file you commit alongside your code. It travels with the repo, gets updated as the project evolves, and is immediately visible to anyone (human or AI) who opens the project.</p>
+
+    <div class="callout tip">
+        <strong>Why this matters</strong>
+        Every token in CLAUDE.md costs context space in every conversation. Keep it dense and specific — 200–400 lines is the practical ceiling before you start crowding out room for actual code and discussion.
+    </div>
+
+    <h2>The Three Layers</h2>
+
+    <p>Claude Code reads CLAUDE.md from multiple locations, merging them in order from broadest to most specific:</p>
+
+    <div class="layer-diagram">
+        <div class="layer">
+            <div class="layer-badge global">GLOBAL</div>
+            <div class="layer-content">
+                <strong>~/.claude/CLAUDE.md</strong>
+                <span class="path">~/.claude/CLAUDE.md</span>
+                <p style="margin:0.4rem 0 0; color: var(--muted); font-size:0.9em;">Your personal defaults — model preferences, coding style, agent team, infrastructure facts. Applies to every project you open.</p>
+            </div>
+        </div>
+        <div class="layer">
+            <div class="layer-badge">PROJECT</div>
+            <div class="layer-content">
+                <strong>Project root</strong>
+                <span class="path">/your-repo/CLAUDE.md</span>
+                <p style="margin:0.4rem 0 0; color: var(--muted); font-size:0.9em;">Project-specific conventions, build commands, active tasks, security notes. Commit this to the repo — it's documentation for the AI and for humans.</p>
+            </div>
+        </div>
+        <div class="layer">
+            <div class="layer-badge local">LOCAL</div>
+            <div class="layer-content">
+                <strong>Subdirectory overrides</strong>
+                <span class="path">/your-repo/src/CLAUDE.md, /your-repo/firmware/CLAUDE.md, etc.</span>
+                <p style="margin:0.4rem 0 0; color: var(--muted); font-size:0.9em;">Narrow-scope instructions for a specific module. When Claude is working inside that directory, these take precedence over the root file.</p>
+            </div>
+        </div>
+    </div>
+
+    <div class="callout tip">
+        <strong>Layer precedence</strong>
+        More specific files win. A subdirectory CLAUDE.md can safely override or extend the root file without touching it. This is useful for repos with multiple languages or radically different sub-projects (e.g., a monorepo with a Rust firmware dir and a TypeScript frontend dir).
+    </div>
+
+    <h2>Anatomy of a Great CLAUDE.md</h2>
+
+    <p>A well-structured project CLAUDE.md has six sections. Each serves a different purpose for the agent's cognition.</p>
+
+    <h3>1. Developer Profile (global only)</h3>
+    <p>Who you are, what languages you work in, your skill level. Claude adapts its explanations and suggestions based on this. Put this in <code>~/.claude/CLAUDE.md</code> — it doesn't belong in individual repos.</p>
+
+    <h3>2. Active Projects Table</h3>
+    <p>A quick-reference table of repos the agent might need to navigate across. Path on disk, primary language, and a one-liner of purpose. This is critical for multi-repo work — Claude can cross-reference without you explaining the layout every time.</p>
+
+    <h3>3. Conventions (the non-obvious ones)</h3>
+    <p>This is the highest-value section. Capture things that are true of your project that Claude wouldn't guess from the code alone:</p>
+    <ul>
+        <li>Naming conventions that differ from community standards</li>
+        <li>Currency / token names that are project-specific (e.g., testnet vs mainnet symbols)</li>
+        <li>Authentication patterns your infrastructure uses</li>
+        <li>File locations that are non-standard</li>
+        <li>Which APIs require which parameters that aren't obvious</li>
+    </ul>
+
+    <h3>4. Build &amp; Test Commands</h3>
+    <p>Exact commands to build, test, and run the project. Not documentation — these are the literal commands Claude will run. Include flags that are required, not just the happy path.</p>
+
+    <h3>5. Agent Team (global)</h3>
+    <p>If you run multiple AI agents (a research agent, a monitoring agent, etc.), describe them in the global CLAUDE.md so the primary agent knows what resources exist and how to reach them.</p>
+
+    <h3>6. Security Notes</h3>
+    <p>What must never be committed. What gets security review before merge. What's real-money code. This is the section you'll be glad you wrote when Claude is about to do something irreversible.</p>
+
+    <hr class="section-divider">
+
+    <h2>Real Example: Blockchain + Embedded Project</h2>
+
+    <p>Here's a condensed but realistic CLAUDE.md for a project spanning embedded C, Rust, and blockchain tooling:</p>
+
+    <div class="template-block">
+        <div class="template-label">Example — /your-repo/CLAUDE.md</div>
+<pre><code># CLAUDE.md
+
+## Project: chain-light-esp
+
+ESP32-based blockchain light client. C/ESP-IDF for firmware,
+Rust for the host-side sync tooling.
+
+## Active Repos
+
+| Repo | Path | Language | Purpose |
+|------|------|----------|---------|
+| chain-light-esp | ~/projects/chain-light-esp | C/ESP-IDF | ESP32 firmware |
+| chain-sync-host | ~/projects/chain-sync-host | Rust | Host-side header sync |
+| chain-scripts | ~/projects/chain-scripts | TypeScript | On-chain scripts |
+
+## Conventions
+
+- Testnet token is `tTKN`, NOT `TKN` (common mistake — mainnet only)
+- Node RPC on local runs at 127.0.0.1:8114 (not 8545)
+- Node API requires bearer auth token in every request header
+  Token file: ~/.node-testnet/.secrets/api-token.txt
+- ESP32 flash target: esp32s3 (not generic esp32)
+- IDF version pinned to v5.2.1 — do not upgrade without full regression
+
+## Build & Test
+
+```bash
+# Firmware (requires IDF environment active)
+cd ~/projects/chain-light-esp
+idf.py build
+idf.py -p /dev/ttyUSB0 flash monitor
+
+# Host sync tool
+cd ~/projects/chain-sync-host
+cargo build --release --features sqlite
+cargo test
+
+# Scripts (TypeScript)
+cd ~/projects/chain-scripts
+npm run build && npm test
+```
+
+## Security Notes
+
+- On-chain scripts handle real value — treat as financial software
+- Never commit .env files, private keys, or auth tokens
+- Any signing code gets security review before merge
+- Mainnet addresses have a distinct prefix — double-check before sending tx
+</code></pre>
+    </div>
+
+    <div class="callout tip">
+        <strong>The testnet/mainnet convention trap</strong>
+        The single most common mistake in blockchain projects: Claude guesses a symbol name from context and gets the wrong one. Testnet tokens often share a visual similarity with mainnet tokens (e.g., <code>tTKN</code> vs <code>TKN</code>, or environment-specific RPC URLs). Explicitly spelling out "testnet currency is X, NOT Y" in CLAUDE.md prevents real bugs. Spell out your non-obvious constants.
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>What Goes in the Global File</h2>
+
+    <p>Your <code>~/.claude/CLAUDE.md</code> should hold things that are true regardless of which project you're in:</p>
+
+    <table>
+        <tr>
+            <th>Category</th>
+            <th>Examples</th>
+            <th>Why Global</th>
+        </tr>
+        <tr>
+            <td>Developer profile</td>
+            <td>Languages, skill level, background</td>
+            <td>Applies to every project</td>
+        </tr>
+        <tr>
+            <td>Agent team</td>
+            <td>RAG agents, monitoring agents, their IPs/ports</td>
+            <td>Infrastructure is shared across projects</td>
+        </tr>
+        <tr>
+            <td>Infrastructure facts</td>
+            <td>Server IPs, Ollama model paths, SSH aliases</td>
+            <td>Physical setup doesn't change per-project</td>
+        </tr>
+        <tr>
+            <td>Skill/plugin registry</td>
+            <td>What skills exist and when to invoke them</td>
+            <td>Skills work across all projects</td>
+        </tr>
+        <tr>
+            <td>Personal conventions</td>
+            <td>Preferred code style, immutability rules</td>
+            <td>Your preferences are project-agnostic</td>
+        </tr>
+    </table>
+
+    <h2>Pitfalls to Avoid</h2>
+
+    <div class="callout warn">
+        <strong>Don't duplicate what's in the code</strong>
+        Don't document your function signatures, explain your file structure in detail, or describe what each module does. Claude can read the code. CLAUDE.md is for things Claude can't infer from the code — conventions, external facts, non-obvious constraints.
+    </div>
+
+    <div class="callout warn">
+        <strong>Don't over-specify obvious things</strong>
+        "Use descriptive variable names" and "write tests" are noise. Claude already knows these. Use the space for things specific to your project and team that differ from community defaults.
+    </div>
+
+    <div class="callout warn">
+        <strong>Don't let it get stale</strong>
+        An outdated CLAUDE.md is worse than no CLAUDE.md — it actively misleads the agent. Treat it like a Makefile or requirements.txt: update it when the project changes, and review it when you start a new major feature.
+    </div>
+
+    <div class="callout tip">
+        <strong>Token budget awareness</strong>
+        Every line in CLAUDE.md occupies context space in every conversation, forever, until you remove it. If you're hitting context limits on large tasks, your CLAUDE.md is the first place to trim. Aim for information density over completeness.
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Template: Project CLAUDE.md Starter</h2>
+
+    <p>Copy and adapt this for any new project:</p>
+
+    <div class="template-block">
+        <div class="template-label">Template — Copy-paste starter</div>
+<pre><code># CLAUDE.md
+
+## Project: [Name]
+
+[One sentence: what this project does and why it exists.]
+
+## Active Repos
+
+| Repo | Path | Language | Purpose |
+|------|------|----------|---------|
+| [repo-name] | ~/path/to/repo | Lang | Description |
+
+## Conventions
+
+- [Convention 1 — non-obvious rule specific to this project]
+- [Convention 2 — naming/symbol/auth quirk]
+- [Convention 3 — external API or tool constraint]
+
+## Build & Test
+
+```bash
+# Build
+[exact build command with required flags]
+
+# Test
+[exact test command]
+
+# Run / dev server
+[exact run command]
+```
+
+## Security Notes
+
+- [What must never be committed]
+- [What requires security review]
+- [Any real-money or sensitive data considerations]
+</code></pre>
+    </div>
+
+    <h2>Template: Subdirectory Override</h2>
+
+    <p>Place this in a subdirectory that has different rules from the project root:</p>
+
+    <div class="template-block">
+        <div class="template-label">Template — /your-repo/firmware/CLAUDE.md</div>
+<pre><code># Firmware Module — CLAUDE.md override
+
+This directory is ESP-IDF C. Different rules apply here.
+
+## Language: C (ESP-IDF v5.2.1)
+## Target: esp32s3
+
+## Key constraints
+- No dynamic allocation in interrupt handlers
+- Stack size for main task: 8192 bytes
+- Use idf_component.yml for external dependencies, not git submodules
+- UART0 is reserved for debug log — do not redirect it
+
+## Build (from this directory)
+idf.py build
+idf.py -p /dev/ttyUSB0 flash monitor
+</code></pre>
+    </div>
+
+    <h2>Rules Files: Beyond CLAUDE.md</h2>
+
+    <p>For cross-project standards (coding style, testing requirements, security policies), Claude Code also reads from <code>~/.claude/rules/</code>. These are separate markdown files — one per topic — and are a cleaner way to manage long-form standards that would bloat your CLAUDE.md.</p>
+
+    <table>
+        <tr>
+            <th>File</th>
+            <th>Purpose</th>
+        </tr>
+        <tr>
+            <td><code>~/.claude/rules/coding-style.md</code></td>
+            <td>Immutability, file size limits, error handling patterns</td>
+        </tr>
+        <tr>
+            <td><code>~/.claude/rules/security.md</code></td>
+            <td>Pre-commit security checklist, secret management rules</td>
+        </tr>
+        <tr>
+            <td><code>~/.claude/rules/testing.md</code></td>
+            <td>TDD workflow, 80% coverage minimum, test types required</td>
+        </tr>
+        <tr>
+            <td><code>~/.claude/rules/git-workflow.md</code></td>
+            <td>Commit message format, PR workflow, branch conventions</td>
+        </tr>
+    </table>
+
+    <div class="callout tip">
+        <strong>Rules files vs CLAUDE.md</strong>
+        Use CLAUDE.md for project-specific facts (what this project is, how to build it, its conventions). Use rules files for cross-project standards (how you always write code, always handle security, always commit). The split keeps both files focused and maintainable.
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>How Agents Actually Read It</h2>
+
+    <p>CLAUDE.md content is injected at the top of the context window before any user message. This means:</p>
+
+    <ul>
+        <li><strong>It's always present.</strong> Claude doesn't "check" it — it has already read it. You don't need to say "refer to CLAUDE.md" in your prompts.</li>
+        <li><strong>It competes with everything else</strong> for the context budget. A 600-line CLAUDE.md plus a large codebase can leave very little room for multi-file edits.</li>
+        <li><strong>Order matters.</strong> Information near the top of the file is more reliably attended to than information buried at the bottom.</li>
+        <li><strong>It's not secret.</strong> Anyone reading the repo can see it. Don't put sensitive information in the project-level CLAUDE.md.</li>
+    </ul>
+
+    <div class="callout tip">
+        <strong>Put your most critical conventions at the top</strong>
+        If "testnet uses tTKN, not TKN" is the one thing Claude must never get wrong, put it in the first 20 lines. Context attention isn't uniform — the beginning and end of the context window get more weight than the middle.
+    </div>
+
+    <h2>Checklist: Is Your CLAUDE.md Good?</h2>
+
+    <table>
+        <tr>
+            <th>Check</th>
+            <th>Why</th>
+        </tr>
+        <tr>
+            <td>Every build command works copy-paste</td>
+            <td>Claude will run them verbatim</td>
+        </tr>
+        <tr>
+            <td>Non-obvious conventions are spelled out</td>
+            <td>Obvious ones waste space</td>
+        </tr>
+        <tr>
+            <td>No secrets or tokens in the file</td>
+            <td>It's committed to version control</td>
+        </tr>
+        <tr>
+            <td>Under 400 lines</td>
+            <td>Context budget</td>
+        </tr>
+        <tr>
+            <td>Updated in last 30 days (active project)</td>
+            <td>Stale info is worse than no info</td>
+        </tr>
+        <tr>
+            <td>Security-sensitive areas flagged</td>
+            <td>Prevents silent mistakes on real-money code</td>
+        </tr>
+    </table>
+
+    <p style="margin-top: 2rem; color: var(--muted); font-size: 0.9rem;">See also: <a href="/ai-hub/guides/hooks-safety.html">Hooks &amp; Safety</a> · <a href="/ai-hub/guides/skills-guide.html">Writing Skills</a> · <a href="/ai-hub/guides/knowledge-graphs.html">Knowledge Graphs</a></p>
+
+    <p style="margin-top: 1.5rem;">
+        <a href="/ai-hub/" class="back">← Back to AI Hub</a>
+    </p>
+</div>
+
+<script src="/js/member-nav.js"></script>
+</body>
+</html>

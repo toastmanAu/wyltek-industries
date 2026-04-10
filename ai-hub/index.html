@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Resource Hub - Wyltek Industries</title>
+    <title>AI Hub — Wyltek Industries</title>
     <style>
         :root {
             --bg:       #0a0c0f;
@@ -31,38 +31,6 @@
         a { color: var(--accent); text-decoration: none; }
         a:hover { text-decoration: underline; }
 
-    /* Header CSS provided by /js/site-header.js */
-
-        /* Header — matching main site */
-        
-
-        
-
-        
-
-        .logo img {
-            width: 32px;
-            height: 32px;
-            border-radius: 8px;
-            object-fit: cover;
-        }
-
-        
-
-        
-
-        
-
-        
-        {
-            
-            nav.open { display: flex; }
-            
-            nav a:last-child { border-bottom: none; }
-            
-            
-        }
-
         /* Main content */
         .container {
             max-width: 1100px;
@@ -70,7 +38,9 @@
             padding: 2rem;
         }
 
-        .page-
+        .page-header {
+            margin-bottom: 2rem;
+        }
 
         .page-header h1 {
             font-size: 2rem;
@@ -85,12 +55,13 @@
         .page-header p {
             color: var(--muted);
             font-size: 1rem;
+            max-width: 700px;
         }
 
         /* Tabs */
         .tabs {
             display: flex;
-            gap: 0.5rem;
+            gap: 0.25rem;
             margin-bottom: 2rem;
             border-bottom: 1px solid var(--border);
             flex-wrap: wrap;
@@ -100,16 +71,15 @@
             background: none;
             border: none;
             color: var(--muted);
-            padding: 1rem 1.5rem;
+            padding: 0.9rem 1.3rem;
             cursor: pointer;
-            font-size: 0.9rem;
+            font-size: 0.88rem;
             border-bottom: 2px solid transparent;
             transition: all 0.2s;
+            white-space: nowrap;
         }
 
-        .tab-button:hover {
-            color: var(--text);
-        }
+        .tab-button:hover { color: var(--text); }
 
         .tab-button.active {
             color: var(--accent);
@@ -117,85 +87,8 @@
         }
 
         /* Tab content */
-        .tab-content {
-            display: none;
-        }
-
-        .tab-content.active {
-            display: block;
-        }
-
-        /* Feed */
-        .feed {
-            display: grid;
-            gap: 1.2rem;
-        }
-
-        .post {
-            background: var(--surface);
-            border: 1px solid var(--border);
-            border-radius: 12px;
-            padding: 1.4rem;
-            transition: border-color 0.2s;
-        }
-
-        .post:hover {
-            border-color: var(--accent);
-        }
-
-        .post-title {
-            font-size: 1.1rem;
-            font-weight: 700;
-            color: var(--text);
-            margin-bottom: 0.5rem;
-        }
-
-        .post-meta {
-            display: flex;
-            gap: 1rem;
-            font-size: 0.8rem;
-            color: var(--muted);
-            margin-bottom: 1rem;
-            flex-wrap: wrap;
-        }
-
-        .post-content {
-            color: var(--muted);
-            margin: 1rem 0;
-            line-height: 1.6;
-        }
-
-        .post-tags {
-            display: flex;
-            gap: 0.5rem;
-            flex-wrap: wrap;
-            margin-top: 1rem;
-        }
-
-        .tag {
-            background: var(--surface2);
-            color: var(--accent);
-            padding: 0.25rem 0.75rem;
-            border-radius: 4px;
-            font-size: 0.75rem;
-            border: 1px solid var(--border);
-        }
-
-        .post-link {
-            display: inline-block;
-            color: var(--accent);
-            padding: 0.5rem 1rem;
-            border: 1px solid var(--border);
-            border-radius: 6px;
-            transition: all 0.2s;
-            margin-top: 0.5rem;
-        }
-
-        .post-link:hover {
-            background: var(--surface2);
-            border-color: var(--accent);
-            text-decoration: none;
-        }
+        .tab-content { display: none; }
+        .tab-content.active { display: block; }
 
         /* Grid */
         .grid {
@@ -204,6 +97,13 @@
             gap: 1.2rem;
         }
 
+        .grid-2 {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+            gap: 1rem;
+        }
+
+        /* Cards */
         .card {
             background: var(--surface);
             border: 1px solid var(--border);
@@ -212,289 +112,1046 @@
             transition: all 0.2s;
             display: flex;
             flex-direction: column;
-            gap: 0.8rem;
-            text-decoration: none;
+            gap: 0.6rem;
             color: inherit;
+            text-decoration: none;
         }
 
         .card:hover {
             border-color: var(--accent);
             transform: translateY(-2px);
+            text-decoration: none;
         }
 
-        .card-icon {
-            font-size: 1.8rem;
-        }
+        .card-icon { font-size: 1.8rem; }
 
         .card-title {
             font-weight: 700;
             color: var(--text);
+            font-size: 1rem;
         }
 
         .card-desc {
             color: var(--muted);
-            font-size: 0.9rem;
+            font-size: 0.88rem;
+            line-height: 1.55;
+            flex: 1;
         }
 
-        /* Empty state */
-        .empty-state {
-            text-align: center;
-            padding: 3rem;
-            color: var(--muted);
+        .card-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            margin-top: 0.2rem;
         }
 
-        .empty-state h3 {
+        .tag {
+            background: var(--surface2);
+            color: var(--accent);
+            padding: 0.2rem 0.6rem;
+            border-radius: 4px;
+            font-size: 0.72rem;
+            border: 1px solid var(--border);
+        }
+
+        .tag.green { color: var(--green); }
+        .tag.purple { color: var(--accent2); }
+
+        /* Feature card — wider, more prominent */
+        .feature-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.6rem;
+            transition: all 0.2s;
+        }
+
+        .feature-card:hover { border-color: var(--accent2); }
+
+        .feature-card h3 {
+            font-size: 1.05rem;
+            font-weight: 700;
             color: var(--text);
             margin-bottom: 0.5rem;
         }
 
-        /* Loading */
-        .loading {
-            text-align: center;
-            padding: 2rem;
+        .feature-card p {
             color: var(--muted);
+            font-size: 0.9rem;
+            line-height: 1.55;
         }
 
-        .spinner {
-            border: 2px solid var(--border);
-            border-top-color: var(--accent);
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 0 auto 1rem;
+        /* Stat grid */
+        .stat-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 1rem;
+            margin: 1.5rem 0;
         }
 
-        @keyframes spin {
-            to { transform: rotate(360deg); }
+        .stat-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.2rem;
+            text-align: center;
+        }
+
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            line-height: 1.2;
+            margin-bottom: 0.3rem;
+        }
+
+        .stat-label { color: var(--muted); font-size: 0.82em; }
+
+        /* Section headers */
+        .section-header {
+            margin: 2rem 0 1rem;
+            display: flex;
+            align-items: baseline;
+            gap: 1rem;
+        }
+
+        .section-header h2 {
+            font-size: 1.15rem;
+            font-weight: 700;
+            background: linear-gradient(90deg, var(--accent2), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .section-header .section-desc {
+            color: var(--muted);
+            font-size: 0.85rem;
+        }
+
+        /* Overview hero */
+        .overview-hero {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .overview-hero h2 {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 0.75rem;
+            background: linear-gradient(90deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .overview-hero p {
+            color: #a0b0c8;
+            line-height: 1.7;
+            margin-bottom: 1rem;
+            max-width: 800px;
+        }
+
+        .overview-links {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .overview-link {
+            display: inline-block;
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 0.5rem 1rem;
+            font-size: 0.88rem;
+            color: var(--accent);
+            transition: all 0.2s;
+        }
+
+        .overview-link:hover {
+            border-color: var(--accent);
+            background: rgba(0,200,255,0.06);
+            text-decoration: none;
+        }
+
+        /* Code inline */
+        code {
+            background: rgba(0, 200, 255, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.1rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+        }
+
+        pre {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            line-height: 1.5;
+            margin: 0.75rem 0;
+        }
+
+        pre code { background: none; border: none; padding: 0; }
+
+        /* Skill list */
+        .skill-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 0.75rem;
+            margin-top: 1rem;
+        }
+
+        .skill-item {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.9rem 1.1rem;
+        }
+
+        .skill-item .skill-cmd {
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: var(--accent);
+            font-weight: 700;
+            margin-bottom: 0.3rem;
+        }
+
+        .skill-item p {
+            color: var(--muted);
+            font-size: 0.85em;
+            margin: 0;
+        }
+
+        /* Guide cards */
+        .guide-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 1rem;
+        }
+
+        .guide-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.25rem;
+            transition: all 0.2s;
+            color: inherit;
+            text-decoration: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .guide-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            text-decoration: none;
+        }
+
+        .guide-card .guide-label {
+            font-size: 0.72rem;
+            color: var(--accent2);
+            font-weight: 700;
+            letter-spacing: 0.06em;
+            text-transform: uppercase;
+        }
+
+        .guide-card .guide-title {
+            font-weight: 700;
+            color: var(--text);
+            font-size: 0.95rem;
+        }
+
+        .guide-card .guide-desc {
+            color: var(--muted);
+            font-size: 0.85rem;
+            line-height: 1.5;
+            flex: 1;
+        }
+
+        .guide-card .guide-time {
+            color: var(--muted);
+            font-size: 0.75rem;
+        }
+
+        /* Two-col layout */
+        .two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1.5rem;
+        }
+
+        @media (max-width: 680px) {
+            .two-col { grid-template-columns: 1fr; }
+            .stat-grid { grid-template-columns: 1fr 1fr; }
+        }
+
+        /* Callout */
+        .callout {
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.25rem 0;
+        }
+
+        .callout.tip {
+            border-left: 3px solid var(--green);
+            background: rgba(0, 229, 160, 0.07);
+        }
+
+        .callout strong { display: block; margin-bottom: 0.4rem; color: var(--green); }
+
+        /* Divider */
+        .divider {
+            border: none;
+            border-top: 1px solid var(--border);
+            margin: 2rem 0;
+        }
+
+        /* Graph viewer card */
+        .graph-hero {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .graph-hero h3 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.6rem;
+        }
+
+        .graph-hero p {
+            color: var(--muted);
+            font-size: 0.9rem;
+            margin-bottom: 0.75rem;
+        }
+
+        /* Studio feature grid */
+        .studio-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+            gap: 1rem;
+        }
+
+        .studio-card {
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.3rem;
+            transition: all 0.2s;
+        }
+
+        .studio-card:hover { border-color: var(--accent2); }
+
+        .studio-card h3 {
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 0.4rem;
+        }
+
+        .studio-card p {
+            color: var(--muted);
+            font-size: 0.85rem;
+            line-height: 1.55;
+            margin-bottom: 0.5rem;
         }
 
         /* Responsive */
         @media (max-width: 768px) {
             .container { padding: 1rem; }
             .page-header h1 { font-size: 1.5rem; }
-            
-            .tabs { flex-direction: column; border-left: 2px solid var(--border); border-bottom: none; }
+            .tabs { border-left: 2px solid var(--border); border-bottom: none; flex-direction: column; }
             .tab-button { border-left: 2px solid transparent; border-bottom: none; padding: 0.75rem 1rem; }
             .tab-button.active { border-left-color: var(--accent); }
+            .stat-grid { grid-template-columns: 1fr; }
         }
     </style>
 </head>
 <body>
-    <div id="site-header"></div>
+
+<div id="site-header"></div>
 <script src="/js/site-header.js"></script>
 
-    <div class="container">
-        <div class="page-header">
-            <h1>🤖 AI Hub</h1>
-            <p>Multi-agent development environment — coding agents, autonomous research, infrastructure monitoring, creative tools, and shared knowledge bases</p>
-        </div>
-
-        <div class="tabs">
-            <button class="tab-button active" data-tab="agents">🤖 Agent Team</button>
-            <button class="tab-button" data-tab="tools">🛠️ Tools & APIs</button>
-            <button class="tab-button" data-tab="guides">📚 Guides</button>
-            <button class="tab-button" data-tab="creative">🎨 Creative Studio</button>
-            <button class="tab-button" data-tab="research">🔬 Research</button>
-        </div>
-
-        <!-- Agent Team Tab -->
-        <div id="agents" class="tab-content active">
-            <p style="color: var(--muted); margin-bottom: 1.5rem;">Four AI agents working together — coding, monitoring, research, and knowledge retrieval. Each has a distinct role and personality.</p>
-            <div class="grid">
-                <div class="card">
-                    <div class="card-icon">💻</div>
-                    <div class="card-title">Claude Code</div>
-                    <div class="card-desc">Primary coding agent. Architecture, implementation, debugging, code review, git workflow. Runs on Anthropic's Claude Opus. Has 25 language rules, 18 slash commands, 16 specialist sub-agents.</div>
-                    <div style="margin-top:0.5rem"><span class="tag">JS/TS</span> <span class="tag">Rust</span> <span class="tag">C</span> <span class="tag">Python</span> <span class="tag">Go</span> <span class="tag">C++</span></div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">👁️</div>
-                    <div class="card-title">Argus</div>
-                    <div class="card-desc">Infrastructure watchdog and research processor. Runs on <a href="https://github.com/NousResearch/hermes-agent" target="_blank">Hermes Agent</a> with local Ollama inference (cogito:14b, 48% GPU / 52% CPU). Monitors Fiber nodes, processes research tasks, alerts on failures.</div>
-                    <div style="margin-top:0.5rem"><span class="tag">Hermes</span> <span class="tag">Ollama</span> <span class="tag">Cron</span> <span class="tag">Autonomous</span></div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">📡</div>
-                    <div class="card-title">Shannon</div>
-                    <div class="card-desc">RAG agent for exploratory research. Named after the smallest unit of CKB (and Claude Shannon). Temperature 0.7 for creative/broad queries. Queries the shared knowledge base of 219+ research findings.</div>
-                    <div style="margin-top:0.5rem"><span class="tag">RAG</span> <span class="tag">Exploratory</span> <span class="tag">0.7T</span></div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">🔧</div>
-                    <div class="card-title">Kernel</div>
-                    <div class="card-desc">RAG agent for code-focused queries. Temperature 0.2 for precise, deterministic answers. Same knowledge base as Shannon but optimized for technical accuracy over breadth.</div>
-                    <div style="margin-top:0.5rem"><span class="tag">RAG</span> <span class="tag">Code-focused</span> <span class="tag">0.2T</span></div>
-                </div>
-            </div>
-
-            <h3 style="margin-top: 2rem; color: var(--accent);">How They Work Together</h3>
-            <p style="color: var(--muted); margin-top: 0.5rem;">Claude Code submits research tasks to Argus's inbox via SSH. Argus processes them with Gemini Flash (Ollama fallback), writes findings, and ingests them into the shared RAG. Shannon and Kernel query those findings. All agents share the same knowledge base — what one learns, all can access.</p>
-        </div>
-
-        <!-- Tools & APIs Tab -->
-        <div id="tools" class="tab-content">
-            <div class="grid">
-                <a href="research-api.html" class="card">
-                    <div class="card-icon">🔬</div>
-                    <div class="card-title">Research Findings API</div>
-                    <div class="card-desc">Public REST API exposing 219+ research findings on CKB, embedded systems, AI, and blockchain. Agent-to-agent access, no auth required.</div>
-                </a>
-                <a href="https://github.com/toastmanAu/rag-system" target="_blank" class="card">
-                    <div class="card-icon">🔍</div>
-                    <div class="card-title">RAG System</div>
-                    <div class="card-desc">Multi-agent retrieval-augmented generation with FAISS embeddings. Obsidian vault auto-sync, HTTP ingest API, shared across all agents.</div>
-                </a>
-                <a href="https://github.com/toastmanAu/local-task-router" target="_blank" class="card">
-                    <div class="card-icon">⚙️</div>
-                    <div class="card-title">Local Task Router</div>
-                    <div class="card-desc">Route AI tasks to local Ollama instances across your network. Save 85% on inference costs. Supports GPU scheduling.</div>
-                </a>
-                <a href="https://github.com/NousResearch/hermes-agent" target="_blank" class="card">
-                    <div class="card-icon">⚕️</div>
-                    <div class="card-title">Hermes Agent</div>
-                    <div class="card-desc">Open-source AI agent platform by Nous Research. Local Ollama inference, cron jobs, memory, 75 bundled skills. Powers our Argus agent.</div>
-                </a>
-                <a href="https://github.com/affaan-m/everything-claude-code" target="_blank" class="card">
-                    <div class="card-icon">📋</div>
-                    <div class="card-title">Everything Claude Code</div>
-                    <div class="card-desc">136 skills, 60 commands, 30 agents, language rules. Anthropic hackathon winner. Cherry-pick what you need for your stack.</div>
-                </a>
-                <a href="https://github.com/toastmanAu/ckb-access" target="_blank" class="card">
-                    <div class="card-icon">📦</div>
-                    <div class="card-title">CKB Access Installers</div>
-                    <div class="card-desc">One-command installers for Fiber nodes, CKB nodes, light clients, and dev tools.</div>
-                </a>
-                <a href="https://docs.openclaw.ai" target="_blank" class="card">
-                    <div class="card-icon">📖</div>
-                    <div class="card-title">OpenClaw Docs</div>
-                    <div class="card-desc">Official OpenClaw agent framework documentation. Telegram bots, cron tasks, research pipelines.</div>
-                </a>
-                <a href="https://github.com/toastmanAu/ckb-light-client-lite" target="_blank" class="card">
-                    <div class="card-icon">💾</div>
-                    <div class="card-title">CKB Light Client Lite</div>
-                    <div class="card-desc">SQLite-backed CKB light client. 25% faster sync, 95% less disk, runs on handhelds. Benchmarked against RocksDB on real mainnet addresses.</div>
-                </a>
-            </div>
-        </div>
-
-        <!-- Guides Tab -->
-        <div id="guides" class="tab-content">
-            <div class="grid">
-                <a href="guides/openclaw-setup.html" class="card">
-                    <div class="card-icon">⚙️</div>
-                    <div class="card-title">OpenClaw Setup</div>
-                    <div class="card-desc">Installing and configuring OpenClaw agents</div>
-                </a>
-                <a href="guides/local-inference.html" class="card">
-                    <div class="card-icon">🧠</div>
-                    <div class="card-title">Local LLM Inference</div>
-                    <div class="card-desc">Running Ollama models locally, GPU offloading, model selection for your hardware</div>
-                </a>
-                <a href="guides/rag-system.html" class="card">
-                    <div class="card-icon">📖</div>
-                    <div class="card-title">RAG Systems</div>
-                    <div class="card-desc">Building retrieval-augmented generation with Obsidian vault sync and agent-shared knowledge bases</div>
-                </a>
-                <a href="guides/agent-development.html" class="card">
-                    <div class="card-icon">🤖</div>
-                    <div class="card-title">Agent Development</div>
-                    <div class="card-desc">Creating and deploying agentic systems — from single Claude Code agent to multi-agent orchestration</div>
-                </a>
-                <div class="card">
-                    <div class="card-icon">🔒</div>
-                    <div class="card-title">Safety Hooks</div>
-                    <div class="card-desc">Protecting your system from AI mistakes. Pre-tool-use hooks that block destructive commands, .env writes, force pushes. Coming soon.</div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">📝</div>
-                    <div class="card-title">CLAUDE.md Guide</div>
-                    <div class="card-desc">How to write effective CLAUDE.md files that give your agent project context, build commands, and conventions. Coming soon.</div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">🧩</div>
-                    <div class="card-title">Multi-Agent Setup</div>
-                    <div class="card-desc">Running Claude Code + Hermes + RAG agents together. Research inboxes, shared knowledge, autonomous monitoring. Coming soon.</div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">📊</div>
-                    <div class="card-title">Benchmarking with AI</div>
-                    <div class="card-desc">Using AI agents to design, run, and analyse performance benchmarks. Real example: CKB light client RocksDB vs SQLite. Coming soon.</div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Creative Studio Tab -->
-        <div id="creative" class="tab-content">
-            <p style="color: var(--muted); margin-bottom: 1.5rem;">Wyltek Studio — AI-powered creative tools for content creation and promotion.</p>
-            <div class="grid">
-                <div class="card">
-                    <div class="card-icon">🖼️</div>
-                    <div class="card-title">Image Generation</div>
-                    <div class="card-desc">Local Stable Diffusion via ComfyUI. Custom workflows for project artwork, social media, documentation visuals. Models stored on dedicated NVMe.</div>
-                    <div style="margin-top:0.5rem"><span class="tag">ComfyUI</span> <span class="tag">SDXL</span> <span class="tag">LoRA</span></div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">🎤</div>
-                    <div class="card-title">Text-to-Speech</div>
-                    <div class="card-desc">Voice synthesis for video narration, tutorials, and announcements. Local inference via Ollama TTS models.</div>
-                    <div style="margin-top:0.5rem"><span class="tag">TTS</span> <span class="tag">Local</span></div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">🎵</div>
-                    <div class="card-title">Music Generation</div>
-                    <div class="card-desc">AI-generated background music and sound effects for videos and game demos. AudioCraft integration.</div>
-                    <div style="margin-top:0.5rem"><span class="tag">AudioCraft</span></div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">🎬</div>
-                    <div class="card-title">Video Timeline</div>
-                    <div class="card-desc">Compose image, audio, TTS, and music into video timelines for demos, tutorials, and social content. FFmpeg-based pipeline.</div>
-                    <div style="margin-top:0.5rem"><span class="tag">FFmpeg</span> <span class="tag">Pipeline</span></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Research Tab -->
-        <div id="research" class="tab-content">
-            <p style="color: var(--muted); margin-bottom: 1.5rem;">Automated research pipeline — agents submit topics, Argus processes them, findings feed into the shared knowledge base.</p>
-            <div class="grid">
-                <a href="research-api.html" class="card">
-                    <div class="card-icon">📊</div>
-                    <div class="card-title">Browse Findings</div>
-                    <div class="card-desc">219+ structured research findings. CKB, embedded systems, AI, quantization, payment channels, wallet architecture. Filterable and searchable.</div>
-                </a>
-                <div class="card">
-                    <div class="card-icon">🔄</div>
-                    <div class="card-title">Research Pipeline</div>
-                    <div class="card-desc">Any agent submits a task (markdown file) to Argus's inbox. Argus fetches seed URLs, analyses with Gemini Flash (Ollama fallback), writes findings, ingests to RAG. Every 10 minutes.</div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">📡</div>
-                    <div class="card-title">Auto-Publish</div>
-                    <div class="card-desc">Findings auto-sync to this website every 6 hours. Also pushed to Obsidian vault for offline access. Git-backed, versioned.</div>
-                </div>
-                <div class="card">
-                    <div class="card-icon">🧪</div>
-                    <div class="card-title">Recent: CKBull Analysis</div>
-                    <div class="card-desc">Performance analysis of CKBull wallet — found 5.6x speedup opportunity by switching from cell enumeration to get_cells_capacity. Benchmarked against their live mainnet endpoint.</div>
-                </div>
-            </div>
-        </div>
+<div class="container">
+    <div class="page-header">
+        <h1>AI Hub</h1>
+        <p>Tools, guides, and knowledge infrastructure for AI-assisted development — knowledge graphs, creative studio, Claude Code skills, RAG systems, and more.</p>
     </div>
+
+    <div class="tabs">
+        <button class="tab-button active" data-tab="overview">Overview</button>
+        <button class="tab-button" data-tab="tools">Tools</button>
+        <button class="tab-button" data-tab="guides">Guides</button>
+        <button class="tab-button" data-tab="graphs">Knowledge Graphs</button>
+        <button class="tab-button" data-tab="creative">Creative Studio</button>
+        <button class="tab-button" data-tab="research">Research</button>
+    </div>
+
+    <!-- ==================== OVERVIEW TAB ==================== -->
+    <div id="overview" class="tab-content active">
+
+        <div class="overview-hero">
+            <h2>What is the Wyltek AI Hub?</h2>
+            <p>The AI Hub is a collection of tools, documentation, and infrastructure for building serious AI-assisted development workflows. It covers the full stack: from how to instruct your coding agent effectively (CLAUDE.md), to building knowledge graphs that let agents navigate million-line codebases at 115x token efficiency, to a local-first creative studio for generating images, audio, and video.</p>
+            <p>Everything here is oriented around practical, local-first tooling. The knowledge graphs are real open-source benchmarks. The skills run in Claude Code today. Wyltek Studio runs on your own GPU.</p>
+
+            <div class="overview-links">
+                <a href="https://github.com/toastmanAu/wyltek-studio" target="_blank" class="overview-link">Wyltek Studio on GitHub</a>
+                <a href="https://github.com/toastmanAu/ckb-knowledge-graph" target="_blank" class="overview-link">CKB Knowledge Graph (47k nodes)</a>
+                <a href="/ai-hub/nervos-expert.html" class="overview-link">Nervos Expert (browser LLM)</a>
+                <a href="/ai-hub/research-api.html" class="overview-link">Research Findings API</a>
+                <a href="/ai-hub/guides/" class="overview-link">All Guides</a>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>Highlights</h2>
+        </div>
+
+        <div class="grid">
+            <div class="card">
+                <div class="card-icon">🗺️</div>
+                <div class="card-title">Knowledge Graphs</div>
+                <div class="card-desc">Build queryable knowledge graphs from any codebase with <code>graphify</code>. Entity extraction, relationship mapping, community detection. Real benchmark: 47k nodes from 36 CKB repos, 115x token reduction vs naive RAG.</div>
+                <div class="card-tags">
+                    <span class="tag">graphify</span>
+                    <span class="tag">GraphRAG</span>
+                    <span class="tag">MCP</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🎨</div>
+                <div class="card-title">Wyltek Studio</div>
+                <div class="card-desc">Local-first AI creative studio. 15+ image generation models, frame cutter, background removal with SAM click-to-segment, TTS with voice cloning, MusicGen, AnimateDiff video, and a timeline compositor.</div>
+                <div class="card-tags">
+                    <span class="tag">ComfyUI</span>
+                    <span class="tag">SDXL</span>
+                    <span class="tag">XTTS</span>
+                    <span class="tag">MusicGen</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🧩</div>
+                <div class="card-title">Claude Code Skills</div>
+                <div class="card-desc">Reusable slash-command workflows for Claude Code: <code>/graphify</code>, <code>/cut-subject</code>, <code>/graph-routing</code>, <code>/quote-meme</code>, and more. Package specialist knowledge as portable, shareable skills.</div>
+                <div class="card-tags">
+                    <span class="tag">/graphify</span>
+                    <span class="tag">/cut-subject</span>
+                    <span class="tag">/graph-routing</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">🔗</div>
+                <div class="card-title">Nervos Expert</div>
+                <div class="card-desc">Browser-based CKB LLM that runs entirely in your browser via WebGPU. Fine-tuned on CKB ecosystem documentation. No server required — model downloads once, runs locally forever.</div>
+                <div class="card-tags">
+                    <span class="tag">WebGPU</span>
+                    <span class="tag">In-browser</span>
+                    <span class="tag">CKB</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">📡</div>
+                <div class="card-title">RAG System</div>
+                <div class="card-desc">Multi-agent retrieval-augmented generation with REST ingest API. Dual agent profiles — exploratory (0.7 temp) and code-focused (0.2 temp). Hook integration for automatic context injection into Claude Code.</div>
+                <div class="card-tags">
+                    <span class="tag">FAISS</span>
+                    <span class="tag">REST API</span>
+                    <span class="tag">Hooks</span>
+                </div>
+            </div>
+
+            <div class="card">
+                <div class="card-icon">📚</div>
+                <div class="card-title">Agent Guides</div>
+                <div class="card-desc">Deep technical guides: writing effective CLAUDE.md files, building Claude Code hooks for safety and automation, creating reusable skills, and architecting knowledge graph workflows.</div>
+                <div class="card-tags">
+                    <span class="tag">CLAUDE.md</span>
+                    <span class="tag">Hooks</span>
+                    <span class="tag">Skills</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== TOOLS TAB ==================== -->
+    <div id="tools" class="tab-content">
+
+        <div class="section-header">
+            <h2>Wyltek Studio</h2>
+            <span class="section-desc">Local-first AI creative suite — <a href="https://github.com/toastmanAu/wyltek-studio" target="_blank">github.com/toastmanAu/wyltek-studio</a></span>
+        </div>
+
+        <div class="studio-grid">
+            <div class="studio-card">
+                <h3>Image Generator</h3>
+                <p>15+ models including SDXL, Flux, SD 1.5, Gemini image models, and more. Side-by-side compare mode for A/B model testing. LoRA support. Auto-scoring with CLIP aesthetic scoring. Prompt history with favourites.</p>
+                <div class="card-tags">
+                    <span class="tag">SDXL</span><span class="tag">Flux</span><span class="tag">LoRA</span><span class="tag">Compare</span>
+                </div>
+            </div>
+            <div class="studio-card">
+                <h3>Frame Cutter</h3>
+                <p>Load any video file, scrub frame-by-frame with a timeline slider, and grab individual frames as PNG. Send directly to Image Tools for background removal or masking. Great for dataset creation and reference frames.</p>
+                <div class="card-tags">
+                    <span class="tag">Video</span><span class="tag">PNG extract</span>
+                </div>
+            </div>
+            <div class="studio-card">
+                <h3>Image Tools</h3>
+                <p>Background removal via rembg (5 models: u2net, isnet, u2net_human_seg, silueta, SAM). Mask tools: brush, rectangle, ellipse, lasso, and SAM click-to-segment for AI-assisted object selection. Object removal coming soon.</p>
+                <div class="card-tags">
+                    <span class="tag">rembg</span><span class="tag">SAM</span><span class="tag">Masking</span>
+                </div>
+            </div>
+            <div class="studio-card">
+                <h3>TTS Studio</h3>
+                <p>Four TTS engines: Piper (fast, offline), Kokoro (natural prosody), XTTS v2 (voice cloning — provide 6 seconds of audio to clone any voice), and Bark (expressive, multilingual). Export WAV or MP3.</p>
+                <div class="card-tags">
+                    <span class="tag">Piper</span><span class="tag">Kokoro</span><span class="tag">XTTS v2</span><span class="tag">Bark</span>
+                </div>
+            </div>
+            <div class="studio-card">
+                <h3>Music Studio</h3>
+                <p>MusicGen (Meta) for text-to-music generation. Continuation mode builds on an existing audio clip. Loop mode generates seamlessly tiling background tracks. Output as WAV.</p>
+                <div class="card-tags">
+                    <span class="tag">MusicGen</span><span class="tag">Continuation</span><span class="tag">Loop</span>
+                </div>
+            </div>
+            <div class="studio-card">
+                <h3>Video Studio + Projects</h3>
+                <p>AnimateDiff via ComfyUI for image-to-video animation. Projects module: timeline compositor for assembling image sequences, generated audio, TTS narration, and music into final video exports via FFmpeg.</p>
+                <div class="card-tags">
+                    <span class="tag">AnimateDiff</span><span class="tag">Timeline</span><span class="tag">FFmpeg</span>
+                </div>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>graphify — Knowledge Graph Builder</h2>
+            <span class="section-desc">pip install graphifyy &nbsp;·&nbsp; CLI: <code>graphify</code></span>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 0.75rem;">Build queryable knowledge graphs from codebases, documentation, or any text corpus. Produces an interactive HTML viewer, GraphRAG-ready JSON, and a GRAPH_REPORT.md — in a single command.</p>
+                <pre><code>pip install graphifyy    # two y's — PyPI namespace
+graphify .               # build from current directory
+graphify . --mode deep   # thorough extraction
+graphify --mcp           # start MCP server mode</code></pre>
+            </div>
+            <div class="feature-card">
+                <h3>What graphify produces</h3>
+                <p style="margin-bottom: 0.75rem;"><strong style="color: var(--accent);">graph.json</strong> — GraphRAG-ready: nodes, edges, communities, metadata. Query it directly or via MCP.</p>
+                <p style="margin-bottom: 0.75rem;"><strong style="color: var(--accent);">graph.html</strong> — Self-contained interactive viewer. Force-directed layout, search, filter by community or type, click to inspect.</p>
+                <p><strong style="color: var(--accent);">GRAPH_REPORT.md</strong> — Top communities by size, key entities, notable relationships. Use as a CLAUDE.md appendix.</p>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>Claude Code Skills</h2>
+        </div>
+
+        <div class="skill-list">
+            <div class="skill-item">
+                <div class="skill-cmd">/graphify</div>
+                <p>Any input to knowledge graph — entity extraction, relationship mapping, community detection, interactive viewer + GraphRAG JSON.</p>
+            </div>
+            <div class="skill-item">
+                <div class="skill-cmd">/cut-subject</div>
+                <p>Background removal via rembg. Auto-selects model by subject type (portrait, product, object). Batch capable.</p>
+            </div>
+            <div class="skill-item">
+                <div class="skill-cmd">/graph-routing</div>
+                <p>Six-step pipeline: intercepts cross-repo and architecture questions, routes to the right graph registry entry, returns relevant subgraph before any grep/glob.</p>
+            </div>
+            <div class="skill-item">
+                <div class="skill-cmd">/quote-meme</div>
+                <p>AI quote meme generator — takes a quote (or generates one), selects background, styles typography, outputs a web-shareable image via ComfyUI.</p>
+            </div>
+            <div class="skill-item">
+                <div class="skill-cmd">/wyltek-test-log</div>
+                <p>Captures embedded hardware test sessions as structured, graph-ingestible markdown. Auto-invokes after bring-up or debug sessions that conclude with a fix.</p>
+            </div>
+            <div class="skill-item">
+                <div class="skill-cmd">/release-deps-check</div>
+                <p>Generates a non-destructive check-deps.sh audit script for any project being prepared for public release. Reads package files, fills in tool requirements.</p>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>RAG System</h2>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">REST Ingest API</div>
+                <div class="card-desc">POST to <code>/ingest</code> with source, text, and title. Findings are embedded with FAISS and immediately queryable. Any agent or script can ingest research findings.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Dual Agent Profiles</div>
+                <div class="card-desc">Exploratory profile (0.7 temp) for broad creative queries. Code-focused profile (0.2 temp) for precise technical lookups. Same knowledge base, different reasoning styles.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Hook Integration</div>
+                <div class="card-desc">UserPromptSubmit hook queries RAG before Claude sees your prompt. Results are prepended as context automatically — no manual pasting. See the <a href="/ai-hub/guides/hooks-safety.html">Hooks guide</a> for the pattern.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Obsidian Vault Sync</div>
+                <div class="card-desc">Research findings auto-sync to an Obsidian vault every 6 hours. Git-backed, versioned. Human-readable offline access to the full knowledge base.</div>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>Nervos Expert</h2>
+        </div>
+
+        <div class="feature-card">
+            <h3>Browser-based CKB LLM — runs entirely in your browser via WebGPU</h3>
+            <p style="margin: 0.5rem 0; color: var(--muted);">Fine-tuned on CKB ecosystem documentation: the protocol, CKB-VM, Nervos SDK, transaction format, scripts, and related tooling. The model downloads once to your browser's cache and runs locally — no API keys, no rate limits, no server.</p>
+            <div class="overview-links" style="margin-top: 0.75rem;">
+                <a href="/ai-hub/nervos-expert.html" class="overview-link">Open Nervos Expert</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== GUIDES TAB ==================== -->
+    <div id="guides" class="tab-content">
+
+        <p style="color: var(--muted); margin-bottom: 1.5rem;">Technical guides for building effective AI agent workflows — from writing your first CLAUDE.md to architecting multi-graph knowledge routing systems.</p>
+
+        <div class="section-header">
+            <h2>Core Agent Guides</h2>
+        </div>
+
+        <div class="guide-grid">
+            <a href="/ai-hub/guides/claude-md-guide.html" class="guide-card">
+                <div class="guide-label">Foundations</div>
+                <div class="guide-title">CLAUDE.md — Instructing Your AI Agent</div>
+                <div class="guide-desc">How to write CLAUDE.md files that actually work. The three-layer system (global / project / subdirectory), what to put where, token budget awareness, and a full project template.</div>
+                <div class="guide-time">12 min read</div>
+            </a>
+
+            <a href="/ai-hub/guides/hooks-safety.html" class="guide-card">
+                <div class="guide-label">Automation &amp; Safety</div>
+                <div class="guide-title">Claude Code Hooks</div>
+                <div class="guide-desc">Shell commands that Claude Code fires automatically. Auto-format after writes, block dangerous Bash commands, inject RAG context before prompts, persist session memory on stop. Real working examples.</div>
+                <div class="guide-time">14 min read</div>
+            </a>
+
+            <a href="/ai-hub/guides/skills-guide.html" class="guide-card">
+                <div class="guide-label">Extensibility</div>
+                <div class="guide-title">Writing Claude Code Skills</div>
+                <div class="guide-desc">Package multi-step workflows as slash commands. Anatomy of a SKILL.md, trigger design, sub-agent patterns, skills with helper scripts, and the plugin packaging format for sharing.</div>
+                <div class="guide-time">15 min read</div>
+            </a>
+
+            <a href="/ai-hub/guides/knowledge-graphs.html" class="guide-card">
+                <div class="guide-label">Knowledge Graphs</div>
+                <div class="guide-title">Knowledge Graphs for AI Agents</div>
+                <div class="guide-desc">Build, query, and route through knowledge graphs. How graphify works, real benchmarks (115x token reduction), the graph-routing skill, graphs.json registry, and MCP server mode.</div>
+                <div class="guide-time">16 min read</div>
+            </a>
+        </div>
+
+        <div class="section-header">
+            <h2>More Guides</h2>
+        </div>
+
+        <div class="guide-grid">
+            <a href="/ai-hub/guides/local-inference.html" class="guide-card">
+                <div class="guide-label">Infrastructure</div>
+                <div class="guide-title">Local LLM Inference</div>
+                <div class="guide-desc">Running Ollama models locally, GPU offloading, model selection for your hardware spec.</div>
+                <div class="guide-time">~10 min read</div>
+            </a>
+
+            <a href="/ai-hub/guides/rag-system.html" class="guide-card">
+                <div class="guide-label">Knowledge</div>
+                <div class="guide-title">RAG Systems</div>
+                <div class="guide-desc">Building retrieval-augmented generation with Obsidian vault sync and agent-shared knowledge bases.</div>
+                <div class="guide-time">~12 min read</div>
+            </a>
+
+            <a href="/ai-hub/guides/agent-development.html" class="guide-card">
+                <div class="guide-label">Architecture</div>
+                <div class="guide-title">Agent Development</div>
+                <div class="guide-desc">Creating and deploying agentic systems — from single Claude Code agent to multi-agent orchestration.</div>
+                <div class="guide-time">~14 min read</div>
+            </a>
+
+            <a href="/ai-hub/research-api.html" class="guide-card">
+                <div class="guide-label">API Reference</div>
+                <div class="guide-title">Research Findings API</div>
+                <div class="guide-desc">REST API for browsing and ingesting structured research findings. No auth required for reads.</div>
+                <div class="guide-time">API reference</div>
+            </a>
+        </div>
+
+    </div>
+
+    <!-- ==================== KNOWLEDGE GRAPHS TAB ==================== -->
+    <div id="graphs" class="tab-content">
+
+        <div class="overview-hero">
+            <h2>Knowledge Graphs — Build Once, Query Forever</h2>
+            <p>Naive RAG retrieves text chunks by semantic similarity. Knowledge graphs model the actual relationships between entities — calls, imports, dependencies, implementations — and return the minimal relevant subgraph for any question. The result is dramatically fewer tokens with better cross-file accuracy.</p>
+            <div class="overview-links">
+                <a href="https://github.com/toastmanAu/ckb-knowledge-graph" target="_blank" class="overview-link">CKB Knowledge Graph on GitHub</a>
+                <a href="/ai-hub/guides/knowledge-graphs.html" class="overview-link">Full Guide</a>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>Real Benchmark: CKB Ecosystem Graph</h2>
+            <span class="section-desc">Built from 36 open-source CKB repositories using graphify</span>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-value">~60k</div>
+                <div class="stat-label">Nodes in the graph</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">~120k</div>
+                <div class="stat-label">Edges (relationships)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">~1,000</div>
+                <div class="stat-label">Communities detected</div>
+            </div>
+        </div>
+
+        <div class="stat-grid">
+            <div class="stat-card">
+                <div class="stat-value">115×</div>
+                <div class="stat-label">Average token reduction vs naive RAG</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">5,375×</div>
+                <div class="stat-label">Best case (cross-layer questions)</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-value">38×</div>
+                <div class="stat-label">Floor (simple lookups)</div>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>How It Works</h2>
+        </div>
+
+        <div class="two-col">
+            <div class="feature-card">
+                <h3>Four-stage pipeline</h3>
+                <p style="margin-bottom: 0.5rem;"><strong style="color: var(--accent);">1. Entity Extraction</strong> — Language-aware parsers (Rust, TypeScript, C, Python, Go, Markdown) extract functions, classes, modules, types, CLI commands, and API endpoints.</p>
+                <p style="margin-bottom: 0.5rem;"><strong style="color: var(--accent);">2. Relationship Mapping</strong> — Entities are connected: <code>calls</code>, <code>imports</code>, <code>implements</code>, <code>extends</code>, <code>depends_on</code>. Cross-file and cross-repo edges are resolved.</p>
+                <p style="margin-bottom: 0.5rem;"><strong style="color: var(--accent);">3. Community Detection</strong> — The Louvain algorithm groups tightly related entities into communities — these map naturally to architectural subsystems.</p>
+                <p><strong style="color: var(--accent);">4. Output Generation</strong> — Interactive HTML viewer, GraphRAG JSON, GRAPH_REPORT.md. Optional Neo4j export.</p>
+            </div>
+            <div class="feature-card">
+                <h3>graph-routing skill</h3>
+                <p style="margin-bottom: 0.75rem;">A Claude Code skill that sits in front of every cross-repo and architecture question. When triggered, it:</p>
+                <ol style="color: var(--muted); font-size: 0.88rem; padding-left: 1.25rem; line-height: 1.8;">
+                    <li>Detects the question shape (cross-repo, dependency trace, architecture, debug-with-symptoms)</li>
+                    <li>Routes to the appropriate graph in <code>~/.claude/graphs.json</code></li>
+                    <li>Runs a targeted BFS query against that graph</li>
+                    <li>Returns the relevant subgraph as context</li>
+                    <li>Proceeds to answer — no grep/glob needed</li>
+                </ol>
+                <p style="margin-top: 0.75rem; color: var(--muted); font-size: 0.88rem;">Separate graphs for separate domains keeps queries fast and prevents cross-contamination. The registry lets the routing skill pick the right graph automatically.</p>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>Quick Start</h2>
+        </div>
+
+        <pre><code># Install (note: two y's in the package name)
+pip install graphifyy
+
+# Build a graph from your project
+graphify ~/projects/my-project --mode deep
+
+# Outputs:
+#   graph.json      — GraphRAG-ready, for AI agents
+#   graph.html      — Interactive viewer, open in any browser
+#   GRAPH_REPORT.md — Community summary, key entities
+
+# Start the MCP server (Claude Code native integration)
+graphify --mcp --graph ./graph.json --port 3100
+
+# Watch mode — auto-updates as files change
+graphify . --watch</code></pre>
+
+        <div class="section-header">
+            <h2>The Interactive Viewer</h2>
+        </div>
+
+        <div class="graph-hero">
+            <h3>graph.html — Zero-dependency, self-contained</h3>
+            <p>Open <code>graph.html</code> in any browser. No server required. Force-directed layout, community clustering, full-text search, filter by entity type, click any node to see file path, line number, docstring, and relationship count.</p>
+            <p>Serve it for team access: <code>python3 -m http.server 8765 --directory ~/.claude/graphs/</code></p>
+            <div class="overview-links">
+                <a href="https://github.com/toastmanAu/ckb-knowledge-graph" target="_blank" class="overview-link">View the live CKB graph on GitHub</a>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== CREATIVE STUDIO TAB ==================== -->
+    <div id="creative" class="tab-content">
+
+        <div class="overview-hero">
+            <h2>Wyltek Studio — Local-First AI Creative Suite</h2>
+            <p>All generative AI, running on your own GPU. No API keys required for generation. Everything from text-to-image to voice cloning to music generation to video animation, in one interface with a shared Projects system for assembling outputs into timelines.</p>
+            <div class="overview-links">
+                <a href="https://github.com/toastmanAu/wyltek-studio" target="_blank" class="overview-link">GitHub — toastmanAu/wyltek-studio</a>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>Image Generator</h2>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p style="color: var(--muted); margin-bottom: 1rem; font-size: 0.9rem;">15+ models available, routed through ComfyUI. SDXL, Flux (dev/schnell), Stable Diffusion 1.5, Gemini image API, and more. Compare mode renders the same prompt across two models side-by-side for quality comparison. LoRA support for custom fine-tuned models.</p>
+                <div class="card-tags" style="margin-bottom: 1rem;">
+                    <span class="tag">SDXL</span>
+                    <span class="tag">Flux dev</span>
+                    <span class="tag">Flux schnell</span>
+                    <span class="tag">SD 1.5</span>
+                    <span class="tag">Gemini</span>
+                    <span class="tag">LoRA</span>
+                    <span class="tag">Compare mode</span>
+                    <span class="tag">Auto-score</span>
+                </div>
+                <p style="color: var(--muted); font-size: 0.88rem;">CLIP aesthetic scoring runs automatically on outputs, so you can sort and filter generations by quality. Prompt history with favourites for building repeatable prompt libraries.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Frame Cutter</h3>
+                <p>Load any video file and extract individual frames as PNG. Scrub with a frame-by-frame timeline slider. Send frames directly to Image Tools for background removal, masking, or compositing. Built for dataset creation, reference extraction, and motion study.</p>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>Image Tools — Background Removal &amp; Masking</h2>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">rembg Background Removal</div>
+                <div class="card-desc">Five models for different subject types: <strong>u2net</strong> (general), <strong>isnet-general-use</strong> (fine edges), <strong>u2net_human_seg</strong> (portraits), <strong>silueta</strong> (fashion/product), <strong>SAM</strong> (click-to-segment). Auto-model selection or manual override.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Mask Tools</div>
+                <div class="card-desc">Manual masking with brush, rectangle, ellipse, and lasso tools. SAM (Segment Anything Model) click-to-segment: click any object and SAM generates a precise mask automatically. Object removal pipeline coming soon.</div>
+            </div>
+        </div>
+
+        <div class="callout tip" style="margin-top: 1.5rem;">
+            <strong>Claude Code integration</strong>
+            The <code>/cut-subject</code> skill wraps rembg and is available directly in Claude Code. Run <code>/cut-subject ~/photos/image.jpg</code> and Claude handles model selection, output naming, and verification automatically.
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>TTS Studio</h2>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Piper</div>
+                <div class="card-desc">Fast, fully offline TTS. Low latency, runs on CPU. 30+ voice models across multiple languages. Best for batch narration and systems with limited GPU headroom.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Kokoro</div>
+                <div class="card-desc">Natural prosody, expressive reading. Better for long-form content where rhythm and pacing matter. Multiple voice styles per language.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">XTTS v2</div>
+                <div class="card-desc">Voice cloning: provide 6 seconds of reference audio and XTTS v2 synthesizes text in that voice. Multilingual. Requires GPU for reasonable performance.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Bark</div>
+                <div class="card-desc">Expressive, emotionally varied synthesis. Supports non-speech sounds (laughter, gasps). Slower than Piper but with much higher expressiveness ceiling.</div>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>Music Studio &amp; Video</h2>
+        </div>
+
+        <div class="two-col">
+            <div class="studio-card">
+                <h3>MusicGen</h3>
+                <p>Meta's MusicGen for text-to-music generation. Describe a mood, genre, and instrumentation in natural language and get a full audio track. Continuation mode extends an existing clip. Loop mode generates seamlessly tiling background tracks for videos.</p>
+                <div class="card-tags" style="margin-top: 0.5rem;">
+                    <span class="tag">MusicGen</span><span class="tag">Continuation</span><span class="tag">Loop mode</span>
+                </div>
+            </div>
+            <div class="studio-card">
+                <h3>Video Studio + Projects</h3>
+                <p>AnimateDiff via ComfyUI animates still images into short video clips. The Projects module provides a timeline compositor: drop in generated images, AnimateDiff clips, TTS narration, and MusicGen tracks, then export via FFmpeg to MP4.</p>
+                <div class="card-tags" style="margin-top: 0.5rem;">
+                    <span class="tag">AnimateDiff</span><span class="tag">Timeline</span><span class="tag">FFmpeg</span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== RESEARCH TAB ==================== -->
+    <div id="research" class="tab-content">
+
+        <div class="overview-hero">
+            <h2>Research Pipeline &amp; Findings API</h2>
+            <p>An automated research pipeline where AI agents submit topics, a processor fetches source material and generates structured findings, and results are immediately available via REST API — and injected into Claude Code sessions via the RAG hook.</p>
+            <div class="overview-links">
+                <a href="/ai-hub/research-api.html" class="overview-link">Browse Research Findings</a>
+                <a href="/ai-hub/research-api.html#api" class="overview-link">API Reference</a>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>How the Pipeline Works</h2>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">1. Submit a Research Task</div>
+                <div class="card-desc">Any agent (or a shell script) writes a markdown task file to the research inbox. The task specifies a goal, seed URLs, priority, and requester. Claude Code can submit tasks mid-session without interrupting work.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">2. Autonomous Processing</div>
+                <div class="card-desc">The research processor fetches seed URLs, extracts content, and analyses it with an LLM (cloud or local Ollama fallback). Findings are written as structured markdown within minutes.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">3. RAG Ingest</div>
+                <div class="card-desc">Findings are automatically ingested into the RAG system via the REST ingest endpoint. They become immediately queryable by Shannon and Kernel — and auto-injected into Claude Code sessions via the UserPromptSubmit hook.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">4. Website Sync</div>
+                <div class="card-desc">Findings sync to this site every 6 hours. Also pushed to an Obsidian vault for human-readable offline access. Git-backed, versioned, linkable.</div>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>REST API</h2>
+        </div>
+
+        <pre><code># List recent findings
+GET /api/findings?limit=20&topic=blockchain
+
+# Get a specific finding
+GET /api/findings/:id
+
+# Ingest a new finding (from agents or scripts)
+POST /api/ingest
+Content-Type: application/json
+{
+  "source": "research-task-id",
+  "text": "Finding content...",
+  "title": "Title of the finding"
+}
+
+# Query the knowledge base
+POST /api/query
+Content-Type: application/json
+{
+  "query": "CKB transaction fee estimation",
+  "agent": "kernel",
+  "k": 3
+}</code></pre>
+
+        <div class="callout tip">
+            <strong>No auth required for read endpoints</strong>
+            GET endpoints are open — any agent, browser, or script can browse and query findings. Ingest requires the API to be running on your local network (it is not a public write endpoint).
+        </div>
+
+        <div class="section-header">
+            <h2>Topics Covered</h2>
+        </div>
+
+        <div class="card-tags" style="gap: 0.5rem; flex-wrap: wrap;">
+            <span class="tag">CKB / Nervos</span>
+            <span class="tag">Fiber Network</span>
+            <span class="tag">Light clients</span>
+            <span class="tag">CKB-VM</span>
+            <span class="tag">Post-quantum crypto</span>
+            <span class="tag">Embedded systems</span>
+            <span class="tag">ESP32 / ESP-IDF</span>
+            <span class="tag">Local LLM inference</span>
+            <span class="tag">Knowledge graphs</span>
+            <span class="tag">AI agents</span>
+            <span class="tag">RAG architecture</span>
+            <span class="tag">Payment channels</span>
+            <span class="tag">Wallet architecture</span>
+            <span class="tag">Quantization</span>
+            <span class="tag">WebGPU</span>
+            <span class="tag">On-chain storage</span>
+        </div>
+
+    </div>
+
+</div>
+
 <script src="/js/member-nav.js"></script>
-    <script>
-        // Tab switching
-        document.querySelectorAll('.tab-button').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
-                document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-                
-                const tabId = e.target.dataset.tab;
-                document.getElementById(tabId).classList.add('active');
-                e.target.classList.add('active');
-            });
+<script>
+    // Tab switching
+    document.querySelectorAll('.tab-button').forEach(btn => {
+        btn.addEventListener('click', (e) => {
+            document.querySelectorAll('.tab-content').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+
+            const tabId = e.currentTarget.dataset.tab;
+            document.getElementById(tabId).classList.add('active');
+            e.currentTarget.classList.add('active');
         });
-    </script>
+    });
+</script>
 </body>
 </html>
