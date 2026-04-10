@@ -1,0 +1,610 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Obsidian as an AI Context Bridge — Wyltek AI Hub</title>
+    <style>
+        :root {
+            --bg: #0a0c0f;
+            --surface: #111318;
+            --surface2: #181c23;
+            --border: #1e2430;
+            --accent: #00c8ff;
+            --accent2: #7b5cfa;
+            --green: #00e5a0;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 15, 0.93);
+            z-index: 100;
+            height: 60px;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+        .logo { color: var(--text); font-weight: 700; font-size: 1.1rem; }
+        .logo span { color: var(--muted); font-weight: 400; font-size: 0.9rem; margin-left: 0.5rem; }
+        .guide-content {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        .breadcrumb { font-size: 0.85rem; color: var(--muted); margin-bottom: 1.5rem; }
+        .breadcrumb a { color: var(--accent); text-decoration: none; }
+        .breadcrumb a:hover { text-decoration: underline; }
+        .breadcrumb span { margin: 0 0.4rem; }
+        .page-header { margin-bottom: 2rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--border); }
+        .page-header .subtitle { color: var(--muted); font-size: 0.85rem; margin-bottom: 0.5rem; }
+        h1 { font-size: 2rem; margin-bottom: 0.5rem; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+        .read-time { color: var(--muted); font-size: 0.85rem; margin-top: 0.5rem; }
+        .lead { color: #a0b0c8; font-size: 1.05rem; margin-top: 0.75rem; line-height: 1.7; }
+        h2 {
+            margin-top: 2.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            background: linear-gradient(90deg, var(--accent2), var(--accent));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        h3 { margin-top: 1.5rem; margin-bottom: 0.75rem; color: var(--text); font-size: 1rem; font-weight: 600; }
+        p { margin-bottom: 1rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.4rem; }
+        code {
+            background: rgba(0, 200, 255, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+        }
+        pre {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            font-family: 'Courier New', monospace;
+            font-size: 0.88em;
+            line-height: 1.5;
+        }
+        pre code { background: none; border: none; padding: 0; font-size: inherit; }
+        table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.92em; }
+        th, td { border: 1px solid var(--border); padding: 0.75rem 1rem; text-align: left; }
+        th { background: rgba(123, 92, 250, 0.1); color: var(--accent2); font-weight: 600; }
+        tr:hover td { background: rgba(255,255,255,0.02); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .back { display: inline-block; margin-bottom: 1.5rem; color: var(--muted); font-size: 0.9rem; }
+        .back:hover { color: var(--text); }
+        .callout {
+            padding: 1rem 1.2rem;
+            border-radius: 0 8px 8px 0;
+            margin: 1.25rem 0;
+        }
+        .callout.tip { border-left: 3px solid var(--green); background: rgba(0, 229, 160, 0.07); }
+        .callout.warn { border-left: 3px solid #f59e0b; background: rgba(245, 158, 11, 0.07); }
+        .callout.info { border-left: 3px solid var(--accent); background: rgba(0, 200, 255, 0.07); }
+        .callout strong { display: block; margin-bottom: 0.4rem; }
+        .callout.tip strong { color: var(--green); }
+        .callout.warn strong { color: #f59e0b; }
+        .callout.info strong { color: var(--accent); }
+        .section-divider { border: none; border-top: 1px solid var(--border); margin: 2.5rem 0; }
+        .flow-diagram {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 1.5rem;
+            margin: 1.25rem 0;
+            text-align: center;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            line-height: 2;
+        }
+        .flow-diagram .node {
+            display: inline-block;
+            background: rgba(123, 92, 250, 0.12);
+            border: 1px solid var(--accent2);
+            border-radius: 6px;
+            padding: 0.3rem 0.9rem;
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+        .flow-diagram .node.green {
+            background: rgba(0, 229, 160, 0.1);
+            border-color: var(--green);
+        }
+        .flow-diagram .node.blue {
+            background: rgba(0, 200, 255, 0.1);
+            border-color: var(--accent);
+        }
+        .flow-diagram .arrow { color: var(--muted); margin: 0 0.5rem; }
+        .note-example {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1.25rem;
+            margin: 1rem 0;
+        }
+        .note-example .note-title {
+            font-size: 0.8rem;
+            color: var(--accent2);
+            font-weight: 600;
+            margin-bottom: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+        .note-example p { margin-bottom: 0.5rem; }
+        .note-example p:last-child { margin-bottom: 0; }
+        .step-list { counter-reset: steps; list-style: none; margin-left: 0; }
+        .step-list li {
+            counter-increment: steps;
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.25rem;
+            align-items: flex-start;
+        }
+        .step-list li::before {
+            content: counter(steps);
+            background: rgba(0,200,255,0.12);
+            border: 1px solid var(--accent);
+            color: var(--accent);
+            border-radius: 50%;
+            min-width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.82rem;
+            font-weight: 700;
+            flex-shrink: 0;
+            margin-top: 0.1rem;
+        }
+        .plugin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+            gap: 1rem;
+            margin: 1rem 0;
+        }
+        .plugin-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.1rem;
+        }
+        .plugin-card .plugin-name {
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 0.3rem;
+        }
+        .plugin-card .plugin-role {
+            font-size: 0.8rem;
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+        }
+        .plugin-card p { font-size: 0.9rem; color: var(--muted); margin: 0; }
+        @media (max-width: 640px) {
+            .guide-content { margin: 1rem; padding: 1.25rem; }
+            h1 { font-size: 1.5rem; }
+        }
+    </style>
+    <div id="site-header"></div>
+    <script src="/js/site-header.js"></script>
+</head>
+<body>
+<header>
+    <a href="/" class="logo">Wyltek Industries <span>AI Hub</span></a>
+</header>
+
+<div class="guide-content">
+    <div class="breadcrumb">
+        <a href="/ai-hub/">AI Hub</a>
+        <span>›</span>
+        Guides
+        <span>›</span>
+        Obsidian as an AI Context Bridge
+    </div>
+
+    <div class="page-header">
+        <div class="subtitle">Context &amp; Memory</div>
+        <h1>Obsidian as an AI Context Bridge</h1>
+        <div class="read-time">12 min read</div>
+        <p class="lead">Your phone knows things your dev machine doesn't. Obsidian synced vaults let you drop context from anywhere — a meeting, a commute, a conversation — and have it waiting when you sit down to code. Here's how to wire it up so your AI agent inherits that context automatically.</p>
+    </div>
+
+    <h2>The Problem This Solves</h2>
+    <p>AI agents like Claude Code are powerful but session-scoped. Every time you open a new terminal, the agent starts fresh. It doesn't know what you decided in that meeting yesterday, what the client said on the phone, or what you figured out on the train.</p>
+    <p>You could paste things manually every session. Or you can build a bridge: notes you write anywhere flow into your vault, your vault feeds your agent, and your agent arrives at the keyboard already knowing the things you've told it.</p>
+
+    <div class="flow-diagram">
+        <span class="node green">Phone / tablet</span>
+        <span class="arrow">→</span>
+        <span class="node">Obsidian Sync</span>
+        <span class="arrow">→</span>
+        <span class="node blue">Vault on dev machine</span>
+        <span class="arrow">→</span>
+        <span class="node green">Agent reads context</span>
+    </div>
+
+    <p>The vault is the shared state between your brain (on whatever device) and your agent (in the terminal).</p>
+
+    <hr class="section-divider">
+
+    <h2>Why Obsidian Specifically</h2>
+    <p>Obsidian stores everything as plain markdown files. This is the key property. Your agent can read markdown files directly — no API, no integration layer, no export step. The vault is just a folder of text files that Claude Code can <code>cat</code>, search, and reason over directly.</p>
+
+    <table>
+        <thead><tr><th>Property</th><th>Why it matters for AI</th></tr></thead>
+        <tbody>
+            <tr><td>Plain markdown files</td><td>Agent reads them natively — no conversion needed</td></tr>
+            <tr><td>Local-first storage</td><td>Files live on disk, agent can grep/read the whole vault</td></tr>
+            <tr><td>Sync across devices</td><td>Notes written on phone appear on dev machine automatically</td></tr>
+            <tr><td>Bidirectional links</td><td>Agent can navigate the knowledge graph with plain text <code>[[links]]</code></td></tr>
+            <tr><td>Folder structure</td><td>You control the taxonomy — agent can be pointed at specific folders</td></tr>
+        </tbody>
+    </table>
+
+    <hr class="section-divider">
+
+    <h2>Sync Options</h2>
+    <p>Obsidian doesn't sync by default — you need to pick a sync method. Three practical options:</p>
+
+    <h3>Obsidian Sync (official, paid)</h3>
+    <p>The easiest path. End-to-end encrypted, works on iOS, Android, desktop. ~$10/month. Worth it if you're already paying for Obsidian and want zero configuration.</p>
+
+    <h3>iCloud / Google Drive folder</h3>
+    <p>Point Obsidian at a folder inside your cloud drive. Free, works across Apple or Google ecosystems. Sync latency is a few seconds to a minute — fine for context notes, not great for real-time collaboration.</p>
+
+    <h3>Self-hosted: Syncthing or Remotely Save</h3>
+    <p>Syncthing is a peer-to-peer sync daemon — your phone and dev machine sync directly when on the same network, or via a relay server when remote. Zero cloud dependency. The <strong>Remotely Save</strong> Obsidian plugin adds S3, Dropbox, or WebDAV as sync targets. Good choice if you want full data sovereignty.</p>
+
+    <div class="callout tip">
+        <strong>Tip</strong>
+        Whichever sync method you use, set your vault path explicitly in Obsidian settings. The agent will need the absolute path to read from it reliably.
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Structuring the Vault for Agent Use</h2>
+    <p>A flat dump of notes is readable but noisy. A little folder structure makes it much easier to point the agent at the right thing without it having to read everything.</p>
+
+    <h3>Suggested layout</h3>
+    <pre>vault/
+├── Inbox/              ← mobile quick-drops, unsorted thoughts
+├── Daily/              ← daily notes (YYYY-MM-DD.md)
+├── Projects/           ← one folder per project
+│   ├── MyApp/
+│   │   ├── decisions.md
+│   │   ├── todo.md
+│   │   └── meeting-notes/
+├── Context/            ← persistent facts the agent should know
+│   ├── people.md       ← who's who on projects
+│   ├── constraints.md  ← hard requirements, deadlines, non-negotiables
+│   └── stack.md        ← current tech decisions
+└── Research/           ← reference material</pre>
+
+    <p>The <code>Context/</code> folder is the most important for agent use. These are the facts you want available every session — not ephemeral notes, but stable knowledge.</p>
+
+    <h3>The Inbox pattern</h3>
+    <p>On mobile, friction is the enemy. Make the Inbox the zero-thought drop zone. Voice transcription, quick bullets, half-formed thoughts — all goes here. You process it into the right place later, or point the agent at the Inbox to help you process it.</p>
+
+    <div class="note-example">
+        <div class="note-title">Example Inbox drop (written on phone)</div>
+        <p>talked to client today — they want the dashboard to support CSV export by end of month. deadline is hard. also mentioned they're moving to annual billing which affects the subscription module. check with Tom about the data model before we touch that.</p>
+    </div>
+
+    <p>That note, once synced, is immediately available to the agent. No copy-paste needed.</p>
+
+    <hr class="section-divider">
+
+    <h2>Connecting the Vault to Your Agent</h2>
+
+    <h3>Option 1 — Manual: just tell Claude where to look</h3>
+    <p>The simplest integration. At the start of a session, tell the agent:</p>
+
+    <pre>"Check ~/Documents/my-vault/Inbox/ and ~/Documents/my-vault/Projects/MyApp/ for recent context before we start."</pre>
+
+    <p>Claude Code will read the relevant files and incorporate them. Simple, zero setup, works today.</p>
+
+    <h3>Option 2 — CLAUDE.md pointer</h3>
+    <p>Add a block to your project's <code>CLAUDE.md</code> that tells the agent where to look for vault context:</p>
+
+    <pre># Context Sources
+
+Check these vault paths for relevant context at session start:
+- ~/Documents/my-vault/Projects/MyApp/decisions.md
+- ~/Documents/my-vault/Projects/MyApp/todo.md
+- ~/Documents/my-vault/Inbox/ (recent mobile drops — check timestamps)
+
+If a note is in Inbox and clearly relates to this project, incorporate it and flag it for filing.</pre>
+
+    <p>Now every Claude Code session in that project directory automatically picks up vault context without you having to ask.</p>
+
+    <h3>Option 3 — Hook-based auto-injection</h3>
+    <p>The most seamless approach. A <code>UserPromptSubmit</code> hook reads your vault's Daily note and Inbox, extracts anything recent, and prepends it to every prompt automatically.</p>
+
+    <pre>// ~/.claude/settings.json
+{
+  "hooks": {
+    "UserPromptSubmit": [
+      {
+        "matcher": "",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "~/.local/bin/vault-context-inject.sh"
+          }
+        ]
+      }
+    ]
+  }
+}</pre>
+
+    <pre>#!/bin/bash
+# vault-context-inject.sh
+# Injects today's vault context as a system hint
+
+VAULT="$HOME/Documents/my-vault"
+TODAY=$(date +%Y-%m-%d)
+DAILY="$VAULT/Daily/$TODAY.md"
+INBOX="$VAULT/Inbox"
+
+echo "=== Vault Context ==="
+
+if [ -f "$DAILY" ]; then
+    echo "--- Today's notes ($TODAY) ---"
+    cat "$DAILY"
+fi
+
+# Any inbox files modified in the last 24 hours
+RECENT=$(find "$INBOX" -name "*.md" -newer "$VAULT/.last-inject" 2>/dev/null)
+if [ -n "$RECENT" ]; then
+    echo "--- Recent Inbox drops ---"
+    echo "$RECENT" | xargs cat
+fi
+
+touch "$VAULT/.last-inject"</pre>
+
+    <div class="callout warn">
+        <strong>Watch the token budget</strong>
+        Injecting large vault sections into every prompt adds up fast. Be selective — inject daily notes and recent Inbox, not your entire research folder. Keep injected context under ~500 tokens for routine sessions.
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Useful Obsidian Plugins for This Workflow</h2>
+
+    <div class="plugin-grid">
+        <div class="plugin-card">
+            <div class="plugin-name">Daily Notes (core)</div>
+            <div class="plugin-role">Built-in</div>
+            <p>Auto-creates a dated note each day. Your mobile app opens straight to it. Good home for stream-of-consciousness context.</p>
+        </div>
+        <div class="plugin-card">
+            <div class="plugin-name">Remotely Save</div>
+            <div class="plugin-role">Community plugin</div>
+            <p>Sync vault to S3, Dropbox, or WebDAV. Good if you want sync without paying for Obsidian Sync.</p>
+        </div>
+        <div class="plugin-card">
+            <div class="plugin-name">Templater</div>
+            <div class="plugin-role">Community plugin</div>
+            <p>Auto-populates new notes with frontmatter tags. Useful for tagging notes by project so they're easier to filter for the agent.</p>
+        </div>
+        <div class="plugin-card">
+            <div class="plugin-name">Dataview</div>
+            <div class="plugin-role">Community plugin</div>
+            <p>Query your notes like a database. Less relevant for agent use, but good for building your own dashboards across projects.</p>
+        </div>
+        <div class="plugin-card">
+            <div class="plugin-name">Voice Memo (mobile)</div>
+            <div class="plugin-role">Community plugin</div>
+            <p>Record voice, transcribe to text in the Inbox. Fastest possible context drop — speak a thought, it lands as text in the vault.</p>
+        </div>
+        <div class="plugin-card">
+            <div class="plugin-name">Periodic Notes</div>
+            <div class="plugin-role">Community plugin</div>
+            <p>Extends daily notes to weekly and monthly. Useful for capturing longer-term project state that the agent should inherit.</p>
+        </div>
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Mobile-to-Agent Workflow in Practice</h2>
+
+    <p>Here's the end-to-end flow once this is set up:</p>
+
+    <ol class="step-list">
+        <li>
+            <div>
+                <strong>On the go — capture anything relevant</strong><br>
+                Open Obsidian mobile, tap new note or Daily note. Write what you know: a decision made, a requirement clarified, a constraint discovered, a problem you thought of. Takes 30 seconds. Don't organise it — that's later.
+            </div>
+        </li>
+        <li>
+            <div>
+                <strong>Sync happens automatically</strong><br>
+                Obsidian Sync / Syncthing / your chosen method pushes the note to your dev machine within seconds to a minute. You don't do anything.
+            </div>
+        </li>
+        <li>
+            <div>
+                <strong>Sit down at the dev machine</strong><br>
+                Open Claude Code. Either the hook has already injected today's vault context, or you say "check the vault Inbox — I dropped some notes earlier."
+            </div>
+        </li>
+        <li>
+            <div>
+                <strong>Agent reads and incorporates</strong><br>
+                Claude reads the notes and factors them in immediately. No re-explaining. No forgetting what the client said. The context travels with you.
+            </div>
+        </li>
+        <li>
+            <div>
+                <strong>Agent can also write back to the vault</strong><br>
+                If a session produces something worth keeping — a decision, a design choice, a discovered constraint — ask the agent to write it to the vault. It becomes part of persistent memory, available on mobile tomorrow.
+            </div>
+        </li>
+    </ol>
+
+    <hr class="section-divider">
+
+    <h2>The Vault as Long-Term Agent Memory</h2>
+
+    <p>Beyond daily context, the vault can serve as your agent's long-term memory — things that remain true across projects and time:</p>
+
+    <ul>
+        <li><strong>Architecture decisions</strong> — why you chose technology X over Y, so the agent doesn't relitigate it</li>
+        <li><strong>People and roles</strong> — who's who on each project, what they care about</li>
+        <li><strong>Hard constraints</strong> — deadlines, compliance requirements, things that can't change</li>
+        <li><strong>Lessons learned</strong> — mistakes made, fixes that worked, approaches that failed</li>
+        <li><strong>Ongoing research</strong> — what you've already investigated, so the agent doesn't repeat it</li>
+    </ul>
+
+    <p>This is different from <a href="/ai-hub/guides/claude-md-guide.html">CLAUDE.md</a>, which is code-adjacent instructions. The vault holds the human context behind the work — the why, not the how.</p>
+
+    <div class="callout info">
+        <strong>Vault vs CLAUDE.md</strong>
+        CLAUDE.md tells the agent how to behave and what conventions to follow. The vault tells the agent what you know about the world and the project. Both matter. The vault is richer and more dynamic — it changes daily. CLAUDE.md is more stable — it changes when your workflow changes.
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Feeding the Vault into RAG</h2>
+
+    <p>If you run a RAG system (see the <a href="/ai-hub/guides/knowledge-graphs.html">Knowledge Graphs guide</a>), your Obsidian vault is an excellent corpus to ingest. A simple cron job can watch the vault for changes and push new/modified notes to your RAG endpoint:</p>
+
+    <pre>#!/bin/bash
+# watch-vault-rag.sh — ingest new vault notes into RAG
+
+VAULT="$HOME/Documents/my-vault"
+RAG_ENDPOINT="http://your-rag-server:9990/ingest"
+LAST_RUN="$VAULT/.last-rag-ingest"
+
+find "$VAULT" -name "*.md" -newer "$LAST_RUN" | while read -r file; do
+    title=$(head -1 "$file" | sed 's/^# //')
+    text=$(cat "$file")
+    curl -s -X POST "$RAG_ENDPOINT" \
+        -H "Content-Type: application/json" \
+        -d "{\"source\": \"obsidian\", \"title\": \"$title\", \"text\": $(echo "$text" | python3 -c 'import json,sys; print(json.dumps(sys.stdin.read()))')}" \
+        > /dev/null
+done
+
+touch "$LAST_RUN"</pre>
+
+    <p>Run this on a cron schedule (every 15 minutes is fine). New vault notes become queryable by your RAG agent almost immediately. Combined with the hooks pattern, this means notes written on your phone are searchable by AI within minutes.</p>
+
+    <hr class="section-divider">
+
+    <h2>Going Further: Full Remote Dev from Your Phone</h2>
+
+    <p>Obsidian handles context notes. But you can go further — running actual Claude Code sessions, editing code, and managing your entire local dev environment from your phone. The stack for this is Tailscale + a terminal app.</p>
+
+    <h3>Tailscale — Your Private Network Overlay</h3>
+    <p><a href="https://tailscale.com" target="_blank" rel="noopener">Tailscale</a> creates a private WireGuard mesh between all your devices. Install it on your dev machine and your phone, and they're on the same private network regardless of where either is physically — home, office, cellular, coffee shop. No port forwarding, no dynamic DNS, no VPN server to manage.</p>
+
+    <p>Once Tailscale is running, every service on your dev machine is reachable from your phone by its Tailscale IP or hostname:</p>
+
+    <pre>ssh youruser@your-machine-hostname.tailnet-name.ts.net
+# or by IP
+ssh youruser@100.x.x.x</pre>
+
+    <p>This also makes local services — your dev server on port 3000, your AI tool on port 7860, your local dashboard — accessible from anywhere without exposing them to the internet.</p>
+
+    <h3>Terminus (iOS) — SSH Client for Real Work</h3>
+    <p><a href="https://apps.apple.com/app/terminus-ssh-shell-client/id1176074088" target="_blank" rel="noopener">Terminus</a> is an SSH client for iOS with a proper terminal emulator — split views, keyboard shortcuts, persistent sessions, custom key bars, and mosh support for spotty connections. It's the practical choice for doing real work from an iPhone.</p>
+
+    <p>Paired with Tailscale:</p>
+    <ol>
+        <li>Terminus connects to your dev machine via Tailscale (no public IP needed)</li>
+        <li>You land in your normal shell, on your actual machine, with your full environment</li>
+        <li>Claude Code runs exactly as it does on desktop</li>
+        <li>Files you edit are real files on your machine — no sync lag, no cloud relay</li>
+    </ol>
+
+    <div class="callout tip">
+        <strong>Mosh for unreliable connections</strong>
+        If you're on mobile data or switching between WiFi and cellular, SSH sessions can drop mid-session. Mosh (mobile shell) keeps the session alive across network changes and reconnects automatically. Install <code>mosh</code> on the server side and use Terminus's built-in mosh support for uninterrupted sessions.
+    </div>
+
+    <h3>What This Stack Looks Like in Practice</h3>
+
+    <div class="flow-diagram">
+        <span class="node green">iPhone / Terminus</span>
+        <span class="arrow">→ SSH over Tailscale →</span>
+        <span class="node blue">Dev machine shell</span>
+        <span class="arrow">→</span>
+        <span class="node green">Claude Code session</span>
+    </div>
+
+    <p>You're not using a cloud IDE, a remote container, or a stripped-down mobile editor. You're in your actual terminal, on your actual machine, running your actual tools. The phone is just the input/output device.</p>
+
+    <p>Combine this with the Obsidian workflow: drop a context note in Obsidian on your phone, switch to Terminus, open Claude Code, and say "check the vault Inbox." The note you wrote 30 seconds ago is already there.</p>
+
+    <h3>Tailscale for Local Services</h3>
+    <p>Beyond SSH, Tailscale exposes all your local services to your phone without punching holes in your firewall. If you run:</p>
+
+    <ul>
+        <li>A local AI image generator on port 7860</li>
+        <li>A local LLM frontend on port 3000</li>
+        <li>A home automation dashboard on port 8123</li>
+        <li>A self-hosted Obsidian sync server</li>
+        <li>Dev servers for projects you're actively building</li>
+    </ul>
+
+    <p>...all of those are reachable on your phone via <code>http://your-machine.ts.net:PORT</code>. No cloud deployment needed to test something from your phone.</p>
+
+    <div class="callout info">
+        <strong>Tailscale is free for personal use</strong>
+        The free tier covers up to 3 users and 100 devices, which is more than enough for a personal dev setup. Subnet routing (to access other machines on your LAN via Tailscale) is also available on the free tier.
+    </div>
+
+    <hr class="section-divider">
+
+    <h2>Quick Start Checklist</h2>
+
+    <ul>
+        <li>&#9744; Install Obsidian on phone and dev machine</li>
+        <li>&#9744; Choose a sync method and configure it</li>
+        <li>&#9744; Create <code>Inbox/</code>, <code>Daily/</code>, and <code>Context/</code> folders</li>
+        <li>&#9744; Enable Daily Notes (core plugin) — set template if you want structure</li>
+        <li>&#9744; Add vault pointer to your project's CLAUDE.md</li>
+        <li>&#9744; Install Tailscale on dev machine and phone</li>
+        <li>&#9744; Install Terminus (iOS) or similar SSH client, add your machine as a host</li>
+        <li>&#9744; Test: SSH from phone → run <code>claude</code> → confirm full session works</li>
+        <li>&#9744; (Optional) Enable mosh on server for resilient mobile connections</li>
+        <li>&#9744; (Optional) Write the vault-context-inject hook and add to settings.json</li>
+        <li>&#9744; (Optional) Set up vault-to-RAG cron if you run a RAG system</li>
+        <li>&#9744; Drop a test note on Obsidian mobile, SSH in via Terminus, confirm the agent sees it</li>
+    </ul>
+
+    <hr class="section-divider">
+
+    <p style="margin-top:2rem;">
+        <a href="/ai-hub/guides/hooks-safety.html">← Claude Code Hooks</a>
+        &nbsp;&nbsp;·&nbsp;&nbsp;
+        <a href="/ai-hub/">← Back to AI Hub</a>
+    </p>
+</div>
+
+<script src="/js/member-nav.js"></script>
+</body>
+</html>
