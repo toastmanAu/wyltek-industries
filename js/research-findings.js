@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 229 completed research findings
+// 230 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentpay-openclaw-skill-integration",
@@ -272,6 +272,17 @@ const RESEARCH_FINDINGS = [
       "nervos"
     ],
     "date": "2026-04-01"
+  },
+  {
+    "id": "ckb-game-instant-betting-patterns",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "In most chains, a \"session key\" lives entirely off-chain — a delegated key is handed to the backend, and the chain doesn't care. On CKB this approach leaks all security to the backend. If the backend ",
+    "tags": [
+      "ckb",
+      "fiber"
+    ],
+    "date": "unknown"
   },
   {
     "id": "ckb-gcs-block-filters-js",
