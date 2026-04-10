@@ -703,6 +703,35 @@ graphify --mcp           # start MCP server mode</code></pre>
                 <div class="skill-cmd">/release-deps-check</div>
                 <p>Generates a non-destructive check-deps.sh audit script for any project being prepared for public release. Reads package files, fills in tool requirements.</p>
             </div>
+            <div class="skill-item">
+                <div class="skill-cmd">/ckb-bench</div>
+                <p>CKB-VM cycle benchmark tool. Reads <code>ckb-bench.toml</code> or auto-discovers contracts. Builds, measures via ckb-debugger, emits timestamped markdown reports with cycle counts, binary sizes, and comparison tables. Also available as a standalone <a href="https://github.com/toastmanAu/ckb-bench-plugin" target="_blank">Claude Code plugin</a>.</p>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>CKB-VM Hash Benchmark</h2>
+            <span class="section-desc"><a href="https://github.com/toastmanAu/poseidon-ckb-bench" target="_blank">github.com/toastmanAu/poseidon-ckb-bench</a></span>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p style="color: var(--muted); font-size: 0.9rem; margin-bottom: 0.75rem;">Cycle-accurate benchmarks of SNARK-friendly and conventional hash functions on the CKB Virtual Machine (RISC-V rv64imc). First published Poseidon2 cycle counts on CKB-VM — answers "can CKB run a zkVM?" with real numbers.</p>
+                <div class="card-tags" style="margin-bottom: 0.75rem;">
+                    <span class="tag">Poseidon2</span><span class="tag">Blake2b</span><span class="tag">Keccak</span><span class="tag">Goldilocks</span><span class="tag">BN254</span><span class="tag">BLS12-381</span>
+                </div>
+                <p style="color: var(--muted); font-size: 0.85rem;"><strong style="color: var(--green);">Key finding:</strong> Poseidon2 over Goldilocks costs just 30K cycles per permutation — 0.04% of the 70M script limit. A zkVM verifier using Plonky3 is feasible on CKB.</p>
+            </div>
+            <div class="feature-card">
+                <h3>Cycle Counts (single permutation)</h3>
+                <p style="margin-bottom: 0.5rem;"><strong style="color: var(--green);">Goldilocks Poseidon2:</strong> 30,170 cycles (64-bit field, Plonky3/RISC Zero)</p>
+                <p style="margin-bottom: 0.5rem;"><strong style="color: var(--accent);">BN254 Poseidon2:</strong> 5,961,994 cycles (256-bit, Groth16/PLONK)</p>
+                <p style="margin-bottom: 0.5rem;"><strong style="color: var(--accent);">BLS12-381 Poseidon2:</strong> 6,009,859 cycles (256-bit, Halo2/Zcash)</p>
+                <p style="margin-bottom: 0.5rem;"><strong style="color: var(--accent2);">Blake2b-256:</strong> 14,094 cycles (CKB native ckbhash)</p>
+                <p><strong style="color: var(--accent2);">Keccak-256:</strong> 57,112 cycles (Ethereum compat)</p>
+            </div>
         </div>
 
         <hr class="divider">
