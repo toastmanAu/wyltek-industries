@@ -18,6 +18,71 @@
 const POSTS = [
   // ────────────────────────────────────────────────────────────────
   {
+    id:      "2026-04-13-cellswap-marketplace-live",
+    date:    "2026-04-13",
+    project: "CellSwap",
+    title:   "CellSwap — On-Chain Cell Marketplace Live on Testnet",
+    tags:    ["CellSwap", "CKB", "marketplace", "LSDL", "CKBFS", "React", "on-chain", "testnet"],
+    body: [
+      "CellSwap is live. A universal, fully on-chain marketplace for any CKB cell content — art, scripts, documents, data files. Not just NFTs. Everything. The cell is the listing. The lock is the market. No database, no backend, no intermediary.",
+      "Two custom smart contracts deployed to testnet, a React frontend with wallet integration, and CKBFS storage for images — all built and shipped in a single session. Live at <a href='https://cellswap.pages.dev'>cellswap.pages.dev</a>, moving to <a href='https://cellswap.xyz'>cellswap.xyz</a> once DNS propagates.",
+
+      { type: "h3", content: "Two Contracts, One Marketplace" },
+      "The marketplace runs on two on-chain scripts working together:",
+      { type: "ul", content: [
+        "<strong>market-item-type</strong> (Type Script, 11 KB) — validates the MarketItem molecule envelope. Enforces content_type, description, and content fields. Content and content_type are immutable across transfers — you can't tamper with what's being sold.",
+        "<strong>LSDL — Less Simple DEX Lock</strong> (Lock Script, 15.5 KB) — handles trustless sales with on-chain creator royalties and optional listing expiration. Fork of Nervina's SDL, stripped of FT/UDT baggage, with position-based royalty outputs for deterministic settlement.",
+      ]},
+      "Both written in Rust, compiled to RISC-V, deployed to testnet with full test suites (9/9 and 14/14 passing). Combined binary size under 27 KB. The LSDL contract is in its own repo — designed to be reusable by any CKB marketplace.",
+
+      { type: "h3", content: "The Full Loop" },
+      "CellSwap supports the complete marketplace lifecycle:",
+      { type: "ul", content: [
+        "<strong>Mint</strong> — create MarketItem cells with any content type. Text, SVG, JSON, HTML go inline. Images get client-side optimization (resize, format conversion, quality control via Canvas API) then publish to CKBFS.",
+        "<strong>List</strong> — transfer your cell to the LSDL lock with price, creator royalty percentage, and optional expiry epoch. The contract enforces the deal terms.",
+        "<strong>Browse</strong> — gallery and list views of all marketplace listings, with content-type badges and price display. CKBFS images resolve and render directly from chain data.",
+        "<strong>Buy</strong> — construct a purchase transaction that pays the seller and creator royalty at the exact output positions the LSDL contract expects. Position-based validation — no loops, no maps.",
+        "<strong>Cancel</strong> — seller reclaims their cell at any time by signing with the owner lock.",
+      ]},
+      "Every action is a CKB transaction signed client-side via JoyID. No server, no admin keys, no middleman.",
+
+      { type: "h3", content: "CKBFS Storage — Images From Chain" },
+      "Inline storage costs ~1 CKB per byte — fine for text and SVG, but a 100 KB image would cost 10,000 CKB. CKBFS V3 solves this: the actual file bytes go into transaction witnesses (prunable), while only a small index cell (~225 CKB) stays on-chain permanently.",
+      "The Mint page auto-detects large files and switches to CKBFS mode. Client-side image optimization runs first — a 2 MB PNG becomes a 60 KB JPEG at 512px before upload. The MarketItem stores a <code>ckbfs://</code> URI reference, and the ContentRenderer resolves it at display time by fetching witnesses from the publish transaction and reassembling the chunks.",
+      "The CKBFS resolver handles both V2 and V3 protocol versions, multi-chunk files, and the witness chain-following logic. Ported from the DOB minter's battle-tested resolver.",
+
+      { type: "h3", content: "Frontend Stack" },
+      { type: "ul", content: [
+        "React 18 + Vite 5 + TypeScript — static SPA, deploy anywhere",
+        "<code>@ckb-ccc/connector-react</code> for wallet connection (JoyID + MetaMask)",
+        "<code>@ckbfs/api</code> for CKBFS V3 publishing",
+        "Dark neon theme — cyan/magenta/purple palette, hexagonal background pattern, glass-blur header",
+        "Hash routing — <code>#/browse</code>, <code>#/mint</code>, <code>#/my-items</code>, <code>#/item/:outpoint</code>",
+        "Zero backend — all data from the CKB testnet indexer, all logic client-side",
+      ]},
+      "The <code>lib/</code> layer (codec, indexer, transactions, CKBFS resolver) has zero React dependencies — reusable in CLI tools, bots, or other frameworks.",
+
+      { type: "h3", content: "Forkable by Design" },
+      "CellSwap is a reference implementation, not a locked platform. All contract addresses and RPC URLs live in a single <code>config.ts</code> file. Fork the repo, change that file, deploy to any static host. The contracts are on-chain and immutable — your fork talks to the same protocol.",
+      "This is how CKB marketplaces should work: the contracts define the rules, anyone can build a frontend.",
+
+      { type: "h3", content: "What's Next" },
+      { type: "ul", content: [
+        "<strong>cellswap.xyz</strong> — domain purchased, DNS propagating to Cloudflare Pages",
+        "<strong>Spore DOB detection</strong> — render existing Spore NFTs in the marketplace alongside MarketItems",
+        "<strong>Search and filter</strong> — by content type, price range, creator",
+        "<strong>Custom node selection</strong> — point the marketplace at your own CKB node (handheld light client, anyone?)",
+      ]},
+    ],
+    links: [
+      { text: "CellSwap Live", href: "https://cellswap.pages.dev" },
+      { text: "GitHub — ckb-cell-marketplace", href: "https://github.com/toastmanAu/ckb-cell-marketplace" },
+      { text: "GitHub — ckb-lsdl", href: "https://github.com/toastmanAu/ckb-lsdl" },
+    ],
+  },
+
+  // ────────────────────────────────────────────────────────────────
+  {
     id:      "2026-04-05-nervos-expert-site-nav-moe-research",
     date:    "2026-04-05",
     project: "Nervos Expert / Wyltek Industries",
