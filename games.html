@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Games — Wyltek Industries</title>
+  <meta name="description" content="Playable Wyltek Industries browser games, experiments, and CKB-connected game prototypes.">
+  <link rel="canonical" href="https://wyltekindustries.com/games.html">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="Wyltek Industries">
+  <meta property="og:title" content="Games — Wyltek Industries">
+  <meta property="og:description" content="Playable Wyltek Industries browser games, experiments, and CKB-connected game prototypes.">
+  <meta property="og:url" content="https://wyltekindustries.com/games.html">
+  <meta property="og:image" content="https://wyltekindustries.com/games/cryptojong/assets/tiles/cryptojong/individual/crypto_ckb_01.png">
+  <link rel="icon" type="image/png" href="/favicon-32x32.png">
+  <style>
+    :root {
+      --bg:#0a0c0f; --surface:#111318; --surface2:#181c23; --border:#1e2430;
+      --accent:#00c8ff; --accent2:#7b5cfa; --green:#00e5a0; --orange:#ff8c42;
+      --text:#e2e8f0; --muted:#64748b; --tag-bg:#1a2035;
+    }
+    * { box-sizing:border-box; margin:0; padding:0; }
+    body {
+      background:
+        radial-gradient(circle at 22% 0%, rgba(0,200,255,.13), transparent 32rem),
+        radial-gradient(circle at 88% 18%, rgba(123,92,250,.12), transparent 30rem),
+        var(--bg);
+      color:var(--text);
+      font-family:'Segoe UI',system-ui,-apple-system,sans-serif;
+      min-height:100vh;
+      line-height:1.6;
+    }
+    a { color:var(--accent); text-decoration:none; }
+    a:hover { text-decoration:underline; }
+    .hero {
+      max-width:1100px;
+      margin:0 auto;
+      padding:5rem 2rem 2.5rem;
+    }
+    .eyebrow {
+      color:var(--accent);
+      font-size:.75rem;
+      font-weight:700;
+      letter-spacing:.16em;
+      text-transform:uppercase;
+      margin-bottom:1rem;
+    }
+    h1 {
+      font-size:clamp(2.2rem,5vw,4rem);
+      line-height:1.05;
+      letter-spacing:-.035em;
+      margin-bottom:1rem;
+    }
+    h1 span {
+      background:linear-gradient(90deg,var(--accent),var(--accent2));
+      -webkit-background-clip:text;
+      background-clip:text;
+      color:transparent;
+    }
+    .hero p {
+      max-width:660px;
+      color:var(--muted);
+      font-size:1.05rem;
+    }
+    .section {
+      max-width:1100px;
+      margin:0 auto;
+      padding:2rem;
+    }
+    .games-grid {
+      display:grid;
+      grid-template-columns:repeat(auto-fill,minmax(290px,1fr));
+      gap:1.2rem;
+    }
+    .game-card {
+      background:linear-gradient(180deg,var(--surface),#0d1119);
+      border:1px solid var(--border);
+      border-radius:14px;
+      overflow:hidden;
+      transition:border-color .2s, transform .16s;
+    }
+    .game-card:hover {
+      border-color:var(--accent);
+      transform:translateY(-2px);
+    }
+    .game-art {
+      min-height:180px;
+      background:
+        linear-gradient(180deg,rgba(0,0,0,.05),rgba(0,0,0,.62)),
+        url('/games/cryptojong/assets/ui/cryptojong-fantasy/fantasy-islands-bg.jpg') center / cover;
+      display:flex;
+      align-items:flex-end;
+      padding:1rem;
+    }
+    .game-art img {
+      width:74px;
+      height:102px;
+      object-fit:contain;
+      filter:drop-shadow(0 10px 20px rgba(0,0,0,.55));
+    }
+    .game-body {
+      padding:1.25rem;
+      display:flex;
+      flex-direction:column;
+      gap:.85rem;
+    }
+    .game-title {
+      font-size:1.25rem;
+      font-weight:800;
+      letter-spacing:-.02em;
+    }
+    .game-desc {
+      color:var(--muted);
+      font-size:.92rem;
+    }
+    .tags { display:flex; flex-wrap:wrap; gap:.45rem; }
+    .tag {
+      font-size:.72rem;
+      padding:.18rem .55rem;
+      border-radius:999px;
+      color:var(--muted);
+      background:var(--tag-bg);
+      border:1px solid var(--border);
+    }
+    .tag.live { color:var(--green); border-color:rgba(0,229,160,.35); background:rgba(0,229,160,.08); }
+    .tag.ckb { color:var(--orange); border-color:rgba(255,140,66,.35); background:rgba(255,140,66,.08); }
+    .actions { display:flex; flex-wrap:wrap; gap:.7rem; margin-top:.25rem; }
+    .btn {
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding:.62rem 1rem;
+      border-radius:8px;
+      font-size:.88rem;
+      font-weight:700;
+      border:1px solid var(--border);
+      background:var(--surface2);
+      color:var(--text);
+    }
+    .btn-primary { background:var(--accent); color:#001018; border-color:var(--accent); }
+    .btn:hover { text-decoration:none; border-color:var(--accent); }
+    .coming {
+      border:1px dashed var(--border);
+      border-radius:14px;
+      padding:1.25rem;
+      min-height:180px;
+      color:var(--muted);
+      background:rgba(17,19,24,.48);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      text-align:center;
+    }
+    footer {
+      border-top:1px solid var(--border);
+      padding:2rem;
+      color:var(--muted);
+      text-align:center;
+      font-size:.85rem;
+    }
+    @media (max-width:700px) {
+      .hero { padding-top:3rem; }
+      .section { padding:1rem; }
+    }
+  </style>
+</head>
+<body>
+<div id="site-header"></div>
+<script src="/js/site-header.js"></script>
+
+<main>
+  <section class="hero">
+    <div class="eyebrow">Playable experiments</div>
+    <h1>Wyltek <span>Games</span></h1>
+    <p>Browser games, CKB-connected prototypes, and small playable experiments. This page is the launch point for Cryptojong and future Wyltek game projects.</p>
+  </section>
+
+  <section class="section">
+    <div class="games-grid">
+      <article class="game-card">
+        <div class="game-art">
+          <img src="/games/cryptojong/assets/tiles/cryptojong/individual/crypto_ckb_01.png" alt="Cryptojong CKB tile">
+        </div>
+        <div class="game-body">
+          <div class="game-title">Cryptojong</div>
+          <p class="game-desc">Crypto-themed Mahjong Solitaire with custom tile art, themed UI, hints, shuffle, undo, and an experimental CKB leaderboard flow.</p>
+          <div class="tags">
+            <span class="tag live">Playable</span>
+            <span class="tag ckb">CKB experiment</span>
+            <span class="tag">Phaser</span>
+            <span class="tag">Solitaire</span>
+          </div>
+          <div class="actions">
+            <a class="btn btn-primary" href="/games/cryptojong/">Play Cryptojong</a>
+            <a class="btn" href="/fiberquest.html">FiberQuest</a>
+          </div>
+        </div>
+      </article>
+
+      <div class="coming">
+        More games will land here as they become playable.
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <p><a href="/">Wyltek Industries</a> · <a href="https://github.com/toastmanAu" target="_blank">GitHub</a> · Built in the Nervos CKB ecosystem</p>
+</footer>
+<script src="/js/member-nav.js"></script>
+</body>
+</html>

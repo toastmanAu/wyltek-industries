@@ -27,6 +27,7 @@
       label: 'Projects',
       children: [
         { href: '/fiberquest.html', label: 'FiberQuest' },
+        { href: '/games.html', label: 'Games' },
         { href: '/nervos-launcher.html', label: 'Launcher' },
         { href: '/blackbox.html', label: 'BlackBox' },
         { href: '/hardware.html', label: 'Hardware' },
