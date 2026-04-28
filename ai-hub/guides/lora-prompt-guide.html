@@ -1,0 +1,469 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LoRA & Prompt Optimizer Guide — Wyltek Studio</title>
+    <style>
+        :root {
+            --bg: #0a0c0f;
+            --surface: #111318;
+            --surface2: #181c23;
+            --border: #1e2430;
+            --accent: #00c8ff;
+            --accent2: #7b5cfa;
+            --green: #00e5a0;
+            --warn: #ffb454;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 15, 0.93);
+            z-index: 100;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        .logo { color: var(--text); font-weight: 700; font-size: 1.1rem; }
+        .guide-content {
+            max-width: 860px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        h1 { color: var(--accent); margin-bottom: 1rem; font-size: 1.8rem; }
+        h2 {
+            margin-top: 2.5rem;
+            color: var(--accent2);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.4rem;
+        }
+        h3 { margin-top: 1.75rem; color: var(--text); font-size: 1.05rem; }
+        p { margin-bottom: 0.9rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.4rem; }
+        code {
+            background: rgba(0, 200, 255, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-family: "SF Mono", Menlo, Consolas, monospace;
+            font-size: 0.88em;
+        }
+        pre {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            font-size: 0.86em;
+        }
+        pre code { background: none; border: none; padding: 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9em;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.6rem 0.75rem;
+            text-align: left;
+            vertical-align: top;
+        }
+        th { background: rgba(123, 92, 250, 0.12); font-weight: 600; }
+        tr:nth-child(even) td { background: rgba(255, 255, 255, 0.015); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .back {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--muted);
+        }
+        .back:hover { color: var(--text); }
+        .callout {
+            padding: 0.9rem 1.2rem;
+            border-radius: 6px;
+            border-left: 3px solid var(--accent);
+            background: rgba(0, 200, 255, 0.04);
+            margin: 1rem 0;
+        }
+        .callout.tip { border-left-color: var(--green); background: rgba(0, 229, 160, 0.04); }
+        .callout.warn { border-left-color: var(--warn); background: rgba(255, 180, 84, 0.05); }
+        .callout strong { color: var(--text); }
+        .preset {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 1rem 1.2rem;
+            margin: 1rem 0;
+        }
+        .preset h4 {
+            color: var(--accent);
+            margin-bottom: 0.5rem;
+            font-size: 1rem;
+        }
+        .preset dl { display: grid; grid-template-columns: max-content 1fr; gap: 0.3rem 1rem; font-size: 0.9em; }
+        .preset dt { color: var(--muted); }
+        .preset dd { color: var(--text); }
+        .toc {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            font-size: 0.92em;
+        }
+        .toc strong { color: var(--accent2); display: block; margin-bottom: 0.5rem; }
+        .toc ul { margin-left: 1.2rem; margin-bottom: 0; }
+        .toc li { margin-bottom: 0.2rem; }
+        .muted { color: var(--muted); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Wyltek Industries — AI Hub</div>
+    </header>
+
+    <div class="guide-content">
+        <a href="/ai-hub/" class="back">← Back to AI Hub</a>
+
+        <h1>🎨 LoRAs, Prompt Optimizer & Style Control</h1>
+
+        <p class="muted">A practical guide to getting sharp, intentional output from Wyltek Studio's image generator — prompt enhancement via local LLMs, style LoRAs, strength settings, and the trigger words that make them click.</p>
+
+        <div class="toc">
+            <strong>Contents</strong>
+            <ul>
+                <li><a href="#op">1. Prompt Optimizer ("OP my prompt")</a></li>
+                <li><a href="#op-models">2. Which OP model should I use?</a></li>
+                <li><a href="#loras">3. Style LoRAs — the fundamentals</a></li>
+                <li><a href="#triggers">4. Trigger words (and why your LoRA is doing nothing)</a></li>
+                <li><a href="#strength">5. LoRA strength — finding the sweet spot</a></li>
+                <li><a href="#presets">6. Three production-ready presets</a></li>
+                <li><a href="#reproduce">7. Reproduce these findings on your own hardware</a></li>
+            </ul>
+        </div>
+
+        <!-- ============================================================== -->
+        <h2 id="op">1. Prompt Optimizer — "OP my prompt"</h2>
+
+        <p>The most common reason an image comes out disappointing isn't the model — it's the prompt. Four words of crude human input ("a pokemon style cat") gives Stable Diffusion nothing to anchor on. What you actually want is something like:</p>
+
+        <pre><code>A highly detailed, adorable Pokémon-style cat character design,
+vibrant colors, professional character sheet illustration,
+dynamic pose, volumetric lighting, clean vector art style,
+trending on ArtStation.</code></pre>
+
+        <p>The <strong>Prompt Optimizer</strong> (reachable via the "OP my prompt" button next to every prompt field) does that transformation for you — a local Ollama LLM enhances your shorthand into a prompt that actually tells SDXL what you meant.</p>
+
+        <p>The enhancer also suggests a <strong>negative prompt</strong> — descriptors to avoid — which usually improves output more than people expect. That's auto-populated into the Negative prompt field when OP fires.</p>
+
+        <div class="callout tip">
+            <strong>Why local, not GPT-4?</strong> Latency, privacy, cost. A good 8B Ollama model on CPU gives you rich prompt expansion in ~10–30 s with no API keys, no rate limits, and your creative work never leaves the machine. See the <a href="/ai-hub/guides/local-inference.html">Local LLM Inference guide</a> for hardware recommendations.
+        </div>
+
+        <!-- ============================================================== -->
+        <h2 id="op-models">2. Which OP model should I use?</h2>
+
+        <p>Wyltek Studio ships with a per-prompt model dropdown next to the OP button, plus a global default you set in Settings. You can switch any time — different models produce genuinely different prompt styles, and different subjects benefit from different styles.</p>
+
+        <p>We benchmarked every model we had on disk (3B–35B parameters) on CPU-only inference, warm cache, using the server's default system prompt. Here's what held up:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>Model</th>
+                    <th>Size</th>
+                    <th>Typical latency (CPU)</th>
+                    <th>Verdict</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>gemma3n:e4b</code></td>
+                    <td>~7B Q4</td>
+                    <td>~10 s</td>
+                    <td>Speed champ. Terse 20-word enhancements, well-chosen style tokens.</td>
+                </tr>
+                <tr>
+                    <td><code>gemma4:latest</code></td>
+                    <td>~8B Q4</td>
+                    <td>~10 s</td>
+                    <td><strong>Recommended default.</strong> Rich descriptive vocabulary ("volumetric lighting", "trending on ArtStation"), stable across creative subjects.</td>
+                </tr>
+                <tr>
+                    <td><code>qwen2.5:14b</code></td>
+                    <td>14B Q4</td>
+                    <td>~40 s</td>
+                    <td>Consistent, wordy (40+ word outputs). Good fallback if gemma4 misses the subject.</td>
+                </tr>
+                <tr>
+                    <td><code>qwen3.5:35b-a3b</code></td>
+                    <td>35B MoE</td>
+                    <td>30–220 s</td>
+                    <td>Highest-quality prompts when it behaves, but latency explodes on creative subjects (reasoning-mode engages unpredictably). Keep for tricky prompts, not daily driver.</td>
+                </tr>
+                <tr>
+                    <td><code>qwen3:8b</code>, <code>qwen3:14b</code></td>
+                    <td>8B / 14B</td>
+                    <td>30–120 s</td>
+                    <td>Reasonable, but variance is high. qwen3:14b consistently runs 2× slower than qwen2.5:14b at the same size.</td>
+                </tr>
+                <tr>
+                    <td><code>qwen3.5:9b</code>, <code>carnice-9b</code></td>
+                    <td>9B</td>
+                    <td>200 s+ or timeout</td>
+                    <td>Skip. Both exhibit runaway thinking-mode or don't produce valid JSON output.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <h3>num_gpu matters even on CPU-only Ollama</h3>
+        <p>Our server passes <code>num_gpu: -1</code> to Ollama (auto-offload all GPU layers that fit). Historically this was set to <code>0</code> to avoid VRAM contention with the image generator. <strong>On hardware without a GPU-capable Ollama daemon, <code>num_gpu: -1</code> is still ~3× faster than <code>0</code></strong> because it unblocks Ollama's normal multi-threaded CPU path. The <code>0</code> value forced a strict fallback path that left performance on the floor.</p>
+
+        <div class="callout tip">
+            <strong>Our heuristic for picking an OP model</strong>
+            <ul>
+                <li>Daily driver: <code>gemma4:latest</code>. Fast enough to use on every gen.</li>
+                <li>Testing / critical output: switch to <code>qwen3.5:35b-a3b</code> for one call, accept the 30–200 s wait.</li>
+                <li>Brief / terse prompts: <code>gemma3n:e4b</code> — smallest model, tightest output.</li>
+            </ul>
+        </div>
+
+        <!-- ============================================================== -->
+        <h2 id="loras">3. Style LoRAs — the fundamentals</h2>
+
+        <p>A LoRA (Low-Rank Adaptation) is a small fine-tune — typically 40–500 MB — that nudges a base diffusion model toward a specific style without retraining the whole thing. Wyltek Studio ships with six <strong>style LoRAs</strong> plus two <strong>speed LoRAs</strong>:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>LoRA</th>
+                    <th>Type</th>
+                    <th>What it does</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>pixel-art-xl</code></td>
+                    <td>Style</td>
+                    <td>Pixel / 8-bit / retro-game art</td>
+                </tr>
+                <tr>
+                    <td><code>voxel-xl</code></td>
+                    <td>Style</td>
+                    <td>Minecraft-style blocky 3D geometry</td>
+                </tr>
+                <tr>
+                    <td><code>crayon-style-xl</code></td>
+                    <td>Style</td>
+                    <td>Crayon / wax drawing aesthetic</td>
+                </tr>
+                <tr>
+                    <td><code>watercolor-xl</code></td>
+                    <td>Style</td>
+                    <td>Soft watercolour painting</td>
+                </tr>
+                <tr>
+                    <td><code>sticker-style-xl</code></td>
+                    <td>Style</td>
+                    <td>Die-cut vinyl sticker look</td>
+                </tr>
+                <tr>
+                    <td><code>anime-detailer-xl</code></td>
+                    <td>Detailer</td>
+                    <td>Sharpens anime features. Needs an anime subject + "anime" in the prompt to engage.</td>
+                </tr>
+                <tr>
+                    <td><code>sdxl_lightning_4step / 8step</code></td>
+                    <td>Speed</td>
+                    <td>Distillation LoRAs. Let you run SDXL at 4–8 steps instead of 25–30. Pair with any style LoRA if you have the code to stack them.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <p>Picking a LoRA tells the model <em>what style</em> you want. But there are two hidden controls that make-or-break the result: <strong>trigger words</strong> and <strong>strength</strong>.</p>
+
+        <!-- ============================================================== -->
+        <h2 id="triggers">4. Trigger words — and why your LoRA is doing nothing</h2>
+
+        <p>Every style LoRA was trained with specific activator tokens in its training captions. If those tokens don't appear in your prompt, the LoRA barely fires. You'll get a tint toward the style rather than the style itself.</p>
+
+        <table>
+            <thead>
+                <tr><th>LoRA</th><th>Trigger word(s)</th></tr>
+            </thead>
+            <tbody>
+                <tr><td><code>pixel-art-xl</code></td><td>pixel art, pixel-art, 8-bit</td></tr>
+                <tr><td><code>voxel-xl</code></td><td>voxel art, voxel</td></tr>
+                <tr><td><code>crayon-style-xl</code></td><td>crayon drawing, crayon, wax crayon</td></tr>
+                <tr><td><code>watercolor-xl</code></td><td>watercolor painting, watercolor, watercolour</td></tr>
+                <tr><td><code>sticker-style-xl</code></td><td>die-cut sticker, sticker</td></tr>
+                <tr><td><code>anime-detailer-xl</code></td><td>anime, anime style</td></tr>
+            </tbody>
+        </table>
+
+        <div class="callout tip">
+            <strong>Wyltek Studio auto-injects triggers for you.</strong> When you pick a style LoRA and your prompt doesn't already contain a trigger or an explicit style cue (like "photo" or "oil painting"), Wyltek Studio silently appends the LoRA's canonical trigger before submitting. The injection is recorded in the image's JSON sidecar as <code>original_prompt</code> + <code>trigger_injected</code> so you always know what was added. This is the "hybrid" strategy — auto-help for bare prompts, hands-off for deliberate ones.
+        </div>
+
+        <h3>Empirical proof from our own testing</h3>
+        <p>In a 48-image strength × trigger sweep, the same LoRA at the same strength consistently produced <strong>dramatically more recognisable style</strong> when its trigger word was present. Voxel-xl is the clearest example:</p>
+        <ul>
+            <li><em>Without trigger:</em> a subtle geometric flattening, almost imperceptible.</li>
+            <li><em>With "voxel art" appended:</em> fully blocky 3D rendering — looks like actual Minecraft-style game art.</li>
+        </ul>
+        <p>No amount of strength alone produces the trigger effect. Strength and triggers are multiplicative — you need both.</p>
+
+        <!-- ============================================================== -->
+        <h2 id="strength">5. LoRA strength — finding the sweet spot</h2>
+
+        <p>Each LoRA exposes two strength knobs:</p>
+        <ul>
+            <li><strong>Model strength</strong> — how much the LoRA's weights modify the base model's unet (the thing that renders pixels)</li>
+            <li><strong>CLIP strength</strong> — how much the LoRA modifies the text encoder (the thing that interprets your prompt)</li>
+        </ul>
+        <p>Conventional wisdom: model strength should be slightly higher than CLIP strength. Style LoRAs want <code>model ≈ 0.8–1.2</code> with <code>clip ≈ 0.5–0.9</code>. Below <code>0.7</code> on model, the style is a faint tint. Above <code>1.2</code>, most LoRAs start to oversaturate or fry details.</p>
+
+        <h3>Our strength sweep — per-LoRA recommendations</h3>
+        <p>These are our own results running each LoRA on a pokemon-style-cat subject, juggernautXL_v9 base, gemma4-enhanced prompt, with the trigger word appended. "Sweet spot" means where the LoRA first produces its full aesthetic without visible burn:</p>
+
+        <table>
+            <thead>
+                <tr>
+                    <th>LoRA</th>
+                    <th>Sweet spot (model/clip)</th>
+                    <th>Notes</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td><code>voxel-xl</code></td>
+                    <td><strong>1.2 / 0.9</strong> +trigger</td>
+                    <td>Needs max strength + trigger to produce actual blocky 3D art. Perfect for game-ready character assets.</td>
+                </tr>
+                <tr>
+                    <td><code>pixel-art-xl</code></td>
+                    <td>1.0 / 0.7 +trigger</td>
+                    <td>Needs 1.0+ to override base model's photoreal tendency. At 0.8, you get hints of pixel style; at 1.0+, full 8-bit.</td>
+                </tr>
+                <tr>
+                    <td><code>crayon-style-xl</code></td>
+                    <td>1.0 / 0.7 +trigger</td>
+                    <td><strong>Robust — works well at all strengths.</strong> At 1.0+ with trigger it looks like elite hand-drawn crayon illustration. Usable at 0.6+ for subtle styling.</td>
+                </tr>
+                <tr>
+                    <td><code>watercolor-xl</code></td>
+                    <td>0.8–1.0 / 0.5–0.7 +trigger</td>
+                    <td>Charming at lower strengths with trigger. Burns to muddy at 1.2.</td>
+                </tr>
+                <tr>
+                    <td><code>sticker-style-xl</code></td>
+                    <td>1.0 / 0.7 +trigger</td>
+                    <td>Needs trigger + standard strength to produce the die-cut vinyl look.</td>
+                </tr>
+                <tr>
+                    <td><code>anime-detailer-xl</code></td>
+                    <td>Only useful on anime subjects</td>
+                    <td>A detailer, not a style transformer. On a pokemon cat it's largely a no-op regardless of strength. Use with anime-native prompts.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="callout warn">
+            <strong>A caveat about subject matter.</strong> These strength recommendations are from a pokemon-cat subject on juggernautXL base. LoRA behaviour varies by subject (abstract backgrounds don't exercise style LoRAs well) and by base model (photoreal-heavy bases like RealVisXL fight style LoRAs; neutral bases like SDXL 1.0 give them more room). If your results don't match these numbers, sweep the strength yourself — see section 7.
+        </div>
+
+        <!-- ============================================================== -->
+        <h2 id="presets">6. Three production-ready presets</h2>
+
+        <p>Three combinations that came out of our testing as ready-to-use. Each is a specific <code>{base, LoRA, strength_model, strength_clip, trigger}</code> tuple that reliably produces its named aesthetic:</p>
+
+        <div class="preset">
+            <h4>🎮 Voxel Game Character</h4>
+            <dl>
+                <dt>Base model</dt><dd><code>juggernautXL_v9.safetensors</code></dd>
+                <dt>LoRA</dt><dd><code>voxel-xl</code></dd>
+                <dt>Strength</dt><dd>model <strong>1.2</strong> / clip <strong>0.9</strong></dd>
+                <dt>Trigger</dt><dd>append <code>, voxel art</code> to prompt</dd>
+                <dt>Steps / CFG</dt><dd>30 / 7.0</dd>
+                <dt>Output looks like</dt><dd>Pre-rendered Minecraft / voxel-game character art. Scale-down friendly — outputs slot directly into 2D game assets without further processing.</dd>
+            </dl>
+        </div>
+
+        <div class="preset">
+            <h4>✏️ Elite Hand-Drawn (Crayon)</h4>
+            <dl>
+                <dt>Base model</dt><dd><code>juggernautXL_v9.safetensors</code></dd>
+                <dt>LoRA</dt><dd><code>crayon-style-xl</code></dd>
+                <dt>Strength</dt><dd>model <strong>1.0</strong> / clip <strong>0.7</strong></dd>
+                <dt>Trigger</dt><dd>append <code>, crayon drawing</code> to prompt</dd>
+                <dt>Steps / CFG</dt><dd>30 / 7.0</dd>
+                <dt>Output looks like</dt><dd>High-quality crayon / wax illustration with visible tooth and deliberate hand-drawn linework. Works across subjects — people, animals, objects.</dd>
+            </dl>
+        </div>
+
+        <div class="preset">
+            <h4>🎨 Watercolour Illustration</h4>
+            <dl>
+                <dt>Base model</dt><dd><code>juggernautXL_v9.safetensors</code></dd>
+                <dt>LoRA</dt><dd><code>watercolor-xl</code></dd>
+                <dt>Strength</dt><dd>model <strong>0.8–1.0</strong> / clip <strong>0.5–0.7</strong></dd>
+                <dt>Trigger</dt><dd>append <code>, watercolor painting</code> to prompt</dd>
+                <dt>Steps / CFG</dt><dd>30 / 7.0</dd>
+                <dt>Output looks like</dt><dd>Soft watercolour aesthetic with paper-texture charm. Don't push above 1.0 — watercolour LoRAs burn to muddy at high strength.</dd>
+            </dl>
+        </div>
+
+        <!-- ============================================================== -->
+        <h2 id="reproduce">7. Reproduce these findings on your own hardware</h2>
+
+        <p>Every claim in this guide was produced by two Python scripts that ship with Wyltek Studio. Running them on your own setup lets you verify the conclusions against your actual LoRAs, GPU, and Ollama models:</p>
+
+        <h3>OP-model benchmark</h3>
+        <p>Measures cold-load and warm inference latency for each Ollama model you have installed. Useful for picking a daily-driver OP model.</p>
+        <pre><code>cd ~/open-palette
+python scripts/op_latency_bench.py gemma4:latest qwen3.5:35b-a3b \
+    --trials 2 --num-gpu -1</code></pre>
+
+        <h3>Full model × LoRA matrix</h3>
+        <p>Enhances the same prompt with every OP model you have, renders it against each style LoRA. Outputs a gallery you can scroll side-by-side. ~30 minutes for a full matrix on consumer GPU.</p>
+        <pre><code>python scripts/lora_matrix_test.py "a pokemon style cat"
+python scripts/matrix_gallery.py    # renders HTML gallery of latest run</code></pre>
+
+        <h3>Strength + trigger sweep</h3>
+        <p>Holds the prompt and OP model fixed, varies LoRA strength (4 tiers) and trigger presence (A/B). Answers "what strength should I run this LoRA at?" empirically. ~10 minutes for 48 images.</p>
+        <pre><code>python scripts/lora_strength_sweep.py "a pokemon style cat" --with-trigger-ab
+python scripts/matrix_gallery.py</code></pre>
+
+        <p>Each script writes a browseable HTML gallery with hover tooltips showing the exact prompt, LoRA, and strength for every image. Compare rows/columns to find your own sweet spots.</p>
+
+        <div class="callout">
+            <strong>See also</strong>
+            <ul style="margin-top: 0.4rem; margin-bottom: 0;">
+                <li><a href="/ai-hub/guides/wyltek-studio.html">Using Wyltek Studio</a> — install, configuration, full feature map</li>
+                <li><a href="/ai-hub/guides/local-inference.html">Local LLM Inference Setup</a> — picking Ollama models for your hardware</li>
+                <li><a href="https://github.com/toastmanAu/wyltek-studio" target="_blank">Wyltek Studio source on GitHub</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>

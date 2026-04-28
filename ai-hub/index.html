@@ -501,7 +501,9 @@
         <button class="tab-button" data-tab="guides">Guides</button>
         <button class="tab-button" data-tab="graphs">Knowledge Graphs</button>
         <button class="tab-button" data-tab="creative">Creative Studio</button>
+        <button class="tab-button" data-tab="wyltek-gpt">Wyltek GPT</button>
         <button class="tab-button" data-tab="research">Research</button>
+        <a class="tab-button" href="/ai-hub/resources.html" style="text-decoration: none;">Resources →</a>
     </div>
 
     <!-- ==================== OVERVIEW TAB ==================== -->
@@ -518,6 +520,7 @@
                 <a href="/ai-hub/nervos-expert.html" class="overview-link">Nervos Expert (browser LLM)</a>
                 <a href="/ai-hub/research-api.html" class="overview-link">Research Findings API</a>
                 <a href="/ai-hub/guides/" class="overview-link">All Guides</a>
+                <a href="/ai-hub/resources.html" class="overview-link">Curated Resources (73 tools)</a>
             </div>
         </div>
 
@@ -822,6 +825,26 @@ graphify --mcp           # start MCP server mode</code></pre>
         </div>
 
         <div class="section-header">
+            <h2>Wyltek Studio — Creative Suite</h2>
+        </div>
+
+        <div class="guide-grid">
+            <a href="/ai-hub/guides/wyltek-studio.html" class="guide-card">
+                <div class="guide-label">Using the Studio</div>
+                <div class="guide-title">Using Wyltek Studio</div>
+                <div class="guide-desc">Install, configuration, feature map, and the concepts that separate "generating garbage" from "finished asset." Covers image gen, prompt optimizer, LoRAs, projects, and Claude Code integration.</div>
+                <div class="guide-time">10 min read</div>
+            </a>
+
+            <a href="/ai-hub/guides/lora-prompt-guide.html" class="guide-card">
+                <div class="guide-label">Deep Dive</div>
+                <div class="guide-title">LoRAs, Prompt Optimizer &amp; Style Control</div>
+                <div class="guide-desc">Empirical findings from ~200 test generations. Which Ollama model should enhance your prompts? What strength does pixel-art-xl need to fire? Why does voxel-xl look subtle without "voxel art" in the prompt? Includes three production-ready style presets.</div>
+                <div class="guide-time">15 min read</div>
+            </a>
+        </div>
+
+        <div class="section-header">
             <h2>More Guides</h2>
         </div>
 
@@ -1073,6 +1096,176 @@ graphify . --watch</code></pre>
                 <div class="card-tags" style="margin-top: 0.5rem;">
                     <span class="tag">AnimateDiff</span><span class="tag">Timeline</span><span class="tag">FFmpeg</span>
                 </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- ==================== WYLTEK GPT TAB ==================== -->
+    <div id="wyltek-gpt" class="tab-content">
+
+        <div class="overview-hero">
+            <h2>Wyltek GPT — Local Chatbot for Your Phone</h2>
+            <p>Mobile-first browser terminal for local Ollama models, with a 25-converter file pipeline, PWA install via Tailscale, Android share-target, and skinnable themes. Built to be a daily-driver local inference UI you can install on your phone and use to convert files between formats without ever leaving the browser.</p>
+            <div class="overview-links">
+                <a href="https://github.com/toastmanAu/wyltek-gpt" target="_blank" class="overview-link">GitHub — toastmanAu/wyltek-gpt</a>
+            </div>
+        </div>
+
+        <div class="section-header">
+            <h2>What It Does</h2>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Chat with Any Local Ollama Model</div>
+                <div class="card-desc">Model dropdown, streaming output, per-request system prompt assembled with live host facts (current date, OS, hostname) so models don't hallucinate about your environment.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Convert Between 25 Formats</div>
+                <div class="card-desc">A unified file tray that routes each conversion to the right tool: <code>markitdown</code> for "anything → md", <code>libreoffice</code> for office → pdf, <code>ffmpeg</code> per-target for video (with faststart for browser playback), <code>whisper</code> for audio → text, <code>pandoc</code> / <code>weasyprint</code> / <code>calibre</code> for documents and ebooks, <code>vips</code> / <code>cwebp</code> / <code>rsvg-convert</code> for images.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Mobile Share-Target</div>
+                <div class="card-desc">On Android, long-press any file in any app, hit Share → wyltek-gpt, and the conversion tray pre-loads with target formats filtered to what's actually possible from the file you sent.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Skinnable + Indicatif Spinners</div>
+                <div class="card-desc">Five built-in themes (tokyo-night, catppuccin-mocha, nord, classic-green, custom). Settings drawer lets you swap themes and pick from nine Unicode spinners (braille, dots, line, bar, arrow, bounce, pulse, moon, clock).</div>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>The Converter Pipeline</h2>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Documents &amp; Ebooks</div>
+                <div class="card-desc">markitdown, pandoc, weasyprint, calibre, libreoffice. Anything → markdown via markitdown; office → pdf via libreoffice; html → pdf via weasyprint; epub ↔ mobi/azw3 via calibre.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Images</div>
+                <div class="card-desc">vips for resize and format-conversion, cwebp for high-quality WebP, rsvg-convert for SVG → raster. Per-converter quality params (quality, lossless, dimensions).</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Audio &amp; Transcription</div>
+                <div class="card-desc">ffmpeg for audio re-encoding with bitrate control. whisper for audio/video → text with selectable model size per request (tiny / base / small / medium / large).</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Video</div>
+                <div class="card-desc">ffmpeg with target-aware presets. MP4 outputs use <code>+faststart</code> for browser-streamable playback. CRF, bitrate, fps, and resolution params per target.</div>
+            </div>
+        </div>
+
+        <div class="callout tip" style="margin-top: 1.5rem;">
+            <strong>Missing binaries are soft-skipped</strong>
+            At startup, each converter is checked for its binary. Missing tools are logged as warnings and dropped from the enabled list shown to the model and UI — so the menu always reflects what's actually installed.
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>Install on Your Phone</h2>
+        </div>
+
+        <div class="two-col">
+            <div>
+                <p style="color: var(--muted); margin-bottom: 1rem; font-size: 0.9rem;">Service workers — which power PWA install and Android Web Share Target — only register over <strong>HTTPS or localhost</strong>. Plain LAN IPs like <code>192.168.x.x:8000</code> silently fail. Tailscale Serve fixes this in one command, with a <code>*.ts.net</code> cert visible only inside your tailnet.</p>
+                <pre><code># On the host running uvicorn
+uvicorn backend.app:app --host 127.0.0.1 --port 8000
+
+# Expose with HTTPS via Tailscale
+tailscale serve --bg --https=443 http://127.0.0.1:8000
+tailscale serve status   # prints the URL to open on your phone</code></pre>
+            </div>
+            <div class="feature-card">
+                <h3>Per-platform notes</h3>
+                <p style="margin-bottom: 0.75rem;"><strong style="color: var(--accent);">Android</strong> — Chrome surfaces "Install app" automatically once the service worker registers. After install, wyltek-gpt appears in every app's share sheet.</p>
+                <p><strong style="color: var(--accent);">iOS</strong> — Safari → Share → "Add to Home Screen". iOS does not support Web Share Target; the workaround is an iOS Shortcut that POSTs files to <code>/api/upload</code>.</p>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>Security Model</h2>
+        </div>
+
+        <div class="grid-2">
+            <div class="card">
+                <div class="card-title">Fixed argv, never shell-assembled</div>
+                <div class="card-desc">The model never builds shell strings. Each converter has a fixed argv template in <code>config.yaml</code>. User-supplied params (quality, bitrate, model size) are validated against a per-converter whitelist before the subprocess runs.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">No <code>shell=True</code>, ever</div>
+                <div class="card-desc">All subprocess calls are <code>subprocess.run([...], shell=False)</code>. There is no code path that constructs a shell command from any input — model output, user input, or filename.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Sandboxed workspace</div>
+                <div class="card-desc">All file paths are resolved with <code>Path.resolve()</code> and checked to be inside the session workspace root before any read, write, or subprocess. Filenames at the upload boundary are normalised with <code>Path(name).name</code> to block path traversal.</div>
+            </div>
+            <div class="card">
+                <div class="card-title">Local-first by default</div>
+                <div class="card-desc">Default bind is <code>127.0.0.1</code> — nothing on the LAN. Going phone-accessible is an explicit opt-in via Tailscale, where the URL is only reachable inside your tailnet.</div>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>Quickstart</h2>
+        </div>
+
+        <pre><code>git clone https://github.com/toastmanAu/wyltek-gpt
+cd wyltek-gpt
+
+# Smart installer — audits what's installed, prompts before adding what's missing.
+# Supports Ubuntu/Debian, Fedora, Arch, and Homebrew.
+./install.sh
+
+# Make sure Ollama has at least one model
+ollama pull qwen2.5:7b
+
+# Run it
+./.venv/bin/uvicorn backend.app:app --host 127.0.0.1 --port 8000</code></pre>
+
+        <div class="callout tip">
+            <strong>Two TODO(phill) markers to fill in</strong>
+            <code>config.yaml</code> → <code>assistant.system_prompt</code> defines the assistant's voice. <code>frontend/themes/custom.css</code> ships with a deliberately-wrong orange so you spot it the first time and know what to change.
+        </div>
+
+        <hr class="divider">
+
+        <div class="section-header">
+            <h2>Roadmap</h2>
+        </div>
+
+        <div class="two-col">
+            <div class="feature-card">
+                <h3>Done</h3>
+                <p style="margin-bottom: 0.4rem;">✓ Mobile-first chat UI with streaming</p>
+                <p style="margin-bottom: 0.4rem;">✓ Ollama model dropdown + host-facts injection</p>
+                <p style="margin-bottom: 0.4rem;">✓ Skinnable theme system (5 built-in)</p>
+                <p style="margin-bottom: 0.4rem;">✓ Convert tray with format-aware targets</p>
+                <p style="margin-bottom: 0.4rem;">✓ 25 converters across docs / ebooks / images / audio / video / transcription</p>
+                <p style="margin-bottom: 0.4rem;">✓ Per-converter quality params (CRF, bitrate, model size, fps)</p>
+                <p style="margin-bottom: 0.4rem;">✓ PWA install + Android Web Share Target</p>
+                <p style="margin-bottom: 0.4rem;">✓ Settings drawer with spinner + theme picker</p>
+                <p>✓ Smart <code>install.sh</code> for Ubuntu/Debian/Fedora/Arch/Brew</p>
+            </div>
+            <div class="feature-card">
+                <h3>Next</h3>
+                <p style="margin-bottom: 0.4rem;">→ Multi-file batch upload + bulk convert</p>
+                <p style="margin-bottom: 0.4rem;">→ Conversion presets (saved recipes with pinned flags)</p>
+                <p style="margin-bottom: 0.4rem;">→ Workspace browser (manage uploaded/converted files)</p>
+                <p style="margin-bottom: 0.4rem;">→ Persistent chat history (SQLite)</p>
+                <p style="margin-bottom: 0.4rem;">→ Skill registry + filesystem.read / filesystem.write</p>
+                <p style="margin-bottom: 0.4rem;">→ Restricted shell tool</p>
+                <p style="margin-bottom: 0.4rem;">→ Auth (token) + LAN/Tailscale hardening</p>
+                <p>→ iOS Shortcut for share-to-upload</p>
             </div>
         </div>
 

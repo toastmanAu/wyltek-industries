@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Using Wyltek Studio — AI Hub</title>
+    <style>
+        :root {
+            --bg: #0a0c0f;
+            --surface: #111318;
+            --surface2: #181c23;
+            --border: #1e2430;
+            --accent: #00c8ff;
+            --accent2: #7b5cfa;
+            --green: #00e5a0;
+            --warn: #ffb454;
+            --text: #e2e8f0;
+            --muted: #64748b;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            background: var(--bg);
+            color: var(--text);
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+        header {
+            border-bottom: 1px solid var(--border);
+            padding: 0 2rem;
+            position: sticky;
+            top: 0;
+            background: rgba(10, 12, 15, 0.93);
+            z-index: 100;
+            height: 60px;
+            display: flex;
+            align-items: center;
+        }
+        .logo { color: var(--text); font-weight: 700; font-size: 1.1rem; }
+        .guide-content {
+            max-width: 860px;
+            margin: 2rem auto;
+            padding: 2rem;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+        }
+        h1 { color: var(--accent); margin-bottom: 1rem; font-size: 1.8rem; }
+        h2 {
+            margin-top: 2.5rem;
+            color: var(--accent2);
+            margin-bottom: 1rem;
+            font-size: 1.25rem;
+            border-bottom: 1px solid var(--border);
+            padding-bottom: 0.4rem;
+        }
+        h3 { margin-top: 1.5rem; color: var(--text); font-size: 1.05rem; }
+        p { margin-bottom: 0.9rem; }
+        ul, ol { margin-left: 1.5rem; margin-bottom: 1rem; }
+        li { margin-bottom: 0.4rem; }
+        code {
+            background: rgba(0, 200, 255, 0.1);
+            border: 1px solid var(--border);
+            padding: 0.15rem 0.4rem;
+            border-radius: 3px;
+            font-family: "SF Mono", Menlo, Consolas, monospace;
+            font-size: 0.88em;
+        }
+        pre {
+            background: rgba(0, 0, 0, 0.5);
+            border: 1px solid var(--border);
+            padding: 1rem;
+            border-radius: 6px;
+            overflow-x: auto;
+            margin-bottom: 1rem;
+            font-size: 0.86em;
+        }
+        pre code { background: none; border: none; padding: 0; }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.9em;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.6rem 0.75rem;
+            text-align: left;
+            vertical-align: top;
+        }
+        th { background: rgba(123, 92, 250, 0.12); font-weight: 600; }
+        tr:nth-child(even) td { background: rgba(255, 255, 255, 0.015); }
+        a { color: var(--accent); text-decoration: none; }
+        a:hover { text-decoration: underline; }
+        .back {
+            display: inline-block;
+            margin-bottom: 1rem;
+            color: var(--muted);
+        }
+        .back:hover { color: var(--text); }
+        .callout {
+            padding: 0.9rem 1.2rem;
+            border-radius: 6px;
+            border-left: 3px solid var(--accent);
+            background: rgba(0, 200, 255, 0.04);
+            margin: 1rem 0;
+        }
+        .callout.tip { border-left-color: var(--green); background: rgba(0, 229, 160, 0.04); }
+        .callout.warn { border-left-color: var(--warn); background: rgba(255, 180, 84, 0.05); }
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+            gap: 0.9rem;
+            margin: 1rem 0 1.5rem;
+        }
+        .feature-card {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 0.9rem 1rem;
+        }
+        .feature-card h4 {
+            color: var(--accent);
+            font-size: 0.98rem;
+            margin-bottom: 0.35rem;
+        }
+        .feature-card p {
+            color: var(--muted);
+            font-size: 0.88em;
+            margin: 0;
+        }
+        .feature-card p + p { margin-top: 0.35rem; }
+        .toc {
+            background: var(--surface2);
+            border: 1px solid var(--border);
+            border-radius: 6px;
+            padding: 1rem 1.2rem;
+            margin: 1.5rem 0;
+            font-size: 0.92em;
+        }
+        .toc strong { color: var(--accent2); display: block; margin-bottom: 0.5rem; }
+        .toc ul { margin-left: 1.2rem; margin-bottom: 0; }
+        .toc li { margin-bottom: 0.2rem; }
+        .muted { color: var(--muted); }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="logo">Wyltek Industries — AI Hub</div>
+    </header>
+
+    <div class="guide-content">
+        <a href="/ai-hub/" class="back">← Back to AI Hub</a>
+
+        <h1>🎬 Using Wyltek Studio</h1>
+
+        <p class="muted">A local-first creative suite for image, audio, and video generation — everything running on your own GPU, no API keys for the core workflows. This guide covers install, configuration, and the small number of concepts that separate "it's generating garbage" from "that looks like a finished asset."</p>
+
+        <div class="toc">
+            <strong>Contents</strong>
+            <ul>
+                <li><a href="#what">1. What Wyltek Studio is (and isn't)</a></li>
+                <li><a href="#install">2. Quick-start install</a></li>
+                <li><a href="#features">3. Feature map</a></li>
+                <li><a href="#image-gen">4. Image generation — choosing a model</a></li>
+                <li><a href="#prompts">5. Prompt craft & the Prompt Optimizer</a></li>
+                <li><a href="#loras">6. LoRAs — styling your output</a></li>
+                <li><a href="#projects">7. Projects — assembling outputs into timelines</a></li>
+                <li><a href="#integration">8. Claude Code integration</a></li>
+            </ul>
+        </div>
+
+        <!-- ============================================================== -->
+        <h2 id="what">1. What Wyltek Studio is (and isn't)</h2>
+
+        <p>Wyltek Studio is a local generative-AI creative suite built around <a href="https://github.com/comfyanonymous/ComfyUI" target="_blank">ComfyUI</a> and a small set of purpose-built studio pages. The single Python server coordinates:</p>
+
+        <ul>
+            <li><strong>Image generation</strong> — 15+ models (SDXL, Flux dev/schnell, SD 1.5, and full-res photoreal/artistic checkpoints) with LoRA support and compare mode</li>
+            <li><strong>Prompt enhancement</strong> — local Ollama models transform crude prompts into detailed SDXL-ready input</li>
+            <li><strong>Studio tools</strong> — frame extraction, background removal, SAM click-to-segment, TTS, voice cloning, music generation, and video via AnimateDiff</li>
+            <li><strong>Projects</strong> — shared timeline/asset system so you can assemble generations across tools</li>
+            <li><strong>Auto-scoring</strong> — CLIP aesthetic scores on every image so you can sort by quality</li>
+        </ul>
+
+        <p>It <em>isn't</em> a cloud SaaS, and it <em>isn't</em> a thin wrapper around DALL-E or Midjourney. Every generative step runs on your hardware. The trade-off is you need a capable GPU (8 GB+ VRAM minimum for SDXL) and a few gigabytes of disk for checkpoints.</p>
+
+        <!-- ============================================================== -->
+        <h2 id="install">2. Quick-start install</h2>
+
+        <pre><code>git clone https://github.com/toastmanAu/wyltek-studio ~/open-palette
+cd ~/open-palette
+./install.sh</code></pre>
+
+        <p>The install script walks you through:</p>
+        <ol>
+            <li>Python venv + dependencies</li>
+            <li>ComfyUI install (if not already present)</li>
+            <li>Ollama detection + default model pull (optional — only if you want the Prompt Optimizer)</li>
+            <li>Baseline model catalog — SDXL base, Flux Schnell, LoRAs, VAEs</li>
+        </ol>
+
+        <p>Then launch:</p>
+        <pre><code>cd ~/open-palette
+./run.sh    # or: python server.py</code></pre>
+
+        <p>Studio opens at <code>http://localhost:7860</code>. Config lives at <code>config.yaml</code> in the project root.</p>
+
+        <div class="callout">
+            <strong>Hardware sanity check.</strong> SDXL at 1024×1024 fits comfortably on 8 GB cards (RTX 3060 Ti, RTX 2070, Arc A770). Flux dev and FLUX.2-klein want 16 GB+. If you're on a CPU-only box, stick to SD 1.5 models and expect 1–3 minute gens per image.
+        </div>
+
+        <!-- ============================================================== -->
+        <h2 id="features">3. Feature map</h2>
+
+        <div class="feature-grid">
+            <div class="feature-card">
+                <h4>Image Generator</h4>
+                <p>Main page. Prompt → image, with LoRA, IP-Adapter, reference images, upscaler.</p>
+                <p>Compare mode renders the same prompt through two models side-by-side.</p>
+            </div>
+            <div class="feature-card">
+                <h4>Prompt Optimizer</h4>
+                <p>"OP my prompt" button next to every prompt field. Uses a local Ollama LLM to enrich your prompt and suggest a negative prompt.</p>
+                <p>Per-prompt model override via dropdown.</p>
+            </div>
+            <div class="feature-card">
+                <h4>Image Tools</h4>
+                <p>rembg background removal (5 models), SAM click-to-segment, manual mask tools (brush / rect / ellipse / lasso).</p>
+            </div>
+            <div class="feature-card">
+                <h4>Frame Cutter</h4>
+                <p>Extract PNG frames from any video file. Frame-by-frame scrubber. Send directly to Image Tools.</p>
+            </div>
+            <div class="feature-card">
+                <h4>TTS Studio</h4>
+                <p>Piper (fast CPU), Kokoro (expressive), XTTS v2 (voice cloning), Bark (emotions).</p>
+            </div>
+            <div class="feature-card">
+                <h4>Music Studio</h4>
+                <p>MusicGen (text-to-music), beat builder, sample packs.</p>
+            </div>
+            <div class="feature-card">
+                <h4>Video Studio</h4>
+                <p>AnimateDiff Lightning (fast text-to-video), Stable Video Diffusion, timeline compositor.</p>
+            </div>
+            <div class="feature-card">
+                <h4>Sprite Tools</h4>
+                <p>SDXL + pixel-art LoRA batch sprite generation. Auto-tile for game assets.</p>
+            </div>
+            <div class="feature-card">
+                <h4>Projects</h4>
+                <p>Shared asset + timeline system. Any output from any tool lands here with metadata for later assembly.</p>
+            </div>
+        </div>
+
+        <!-- ============================================================== -->
+        <h2 id="image-gen">4. Image generation — choosing a model</h2>
+
+        <p>Wyltek Studio's model catalog (Settings → Models) lists what's available and what's installed. Pick based on intent:</p>
+
+        <table>
+            <thead>
+                <tr><th>Intent</th><th>Model recommendation</th><th>Why</th></tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>Photoreal portraits / architecture</td>
+                    <td><code>RealVisXL V5.0</code></td>
+                    <td>Heavily finetuned photo SDXL. Excellent skin tones, interiors, landscapes.</td>
+                </tr>
+                <tr>
+                    <td>Versatile "all-rounder"</td>
+                    <td><code>juggernautXL v9</code></td>
+                    <td>Photoreal-leaning but comfortable with illustration. Good with LoRAs.</td>
+                </tr>
+                <tr>
+                    <td>Illustration / fantasy</td>
+                    <td><code>DreamShaper XL Turbo</code></td>
+                    <td>Only needs 6–10 steps (Turbo distilled). Great for concept art iteration.</td>
+                </tr>
+                <tr>
+                    <td>Neutral "canvas" for LoRA testing</td>
+                    <td><code>SDXL base 1.0 (Q4)</code></td>
+                    <td>Doesn't fight LoRAs the way heavily-finetuned bases do. Best for evaluating new LoRAs.</td>
+                </tr>
+                <tr>
+                    <td>State-of-the-art quality</td>
+                    <td><code>Flux dev</code> or <code>FLUX.2-klein</code></td>
+                    <td>Best prompt following and coherence. Slow + heavy (16 GB VRAM class).</td>
+                </tr>
+                <tr>
+                    <td>Fast iteration</td>
+                    <td><code>Flux Schnell</code> or SDXL + <code>Lightning LoRA</code></td>
+                    <td>4-step distilled. Draft-quality previews in seconds.</td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="callout tip">
+            <strong>Compare mode</strong> is the fastest way to settle arguments about which model suits a prompt. Type your prompt, pick two models, hit Compare — Wyltek Studio renders both with identical seed and lets you score them side-by-side.
+        </div>
+
+        <!-- ============================================================== -->
+        <h2 id="prompts">5. Prompt craft & the Prompt Optimizer</h2>
+
+        <p>The single biggest lever on image quality isn't the model — it's the prompt. "A cat" gives SDXL nothing; "A detailed, whimsical cat character, vibrant colors, professional illustration, trending on ArtStation" gives it a direction. The <strong>Prompt Optimizer</strong> (OP my prompt) does that transformation via a local Ollama LLM.</p>
+
+        <p>The dropdown next to the OP button lets you swap Ollama models per call. Your selection persists in localStorage across sessions; the server default (configured in Settings → Prompt Optimizer) is the fallback.</p>
+
+        <div class="callout tip">
+            <strong>Full deep-dive:</strong> see <a href="/ai-hub/guides/lora-prompt-guide.html">LoRAs, Prompt Optimizer & Style Control</a> for benchmarks of every Ollama model we tested, which to use as a daily driver, and when to reach for the MoE.
+        </div>
+
+        <!-- ============================================================== -->
+        <h2 id="loras">6. LoRAs — styling your output</h2>
+
+        <p>Style LoRAs transform the aesthetic of your output — voxel, pixel art, watercolour, crayon, etc. Wyltek Studio ships with six style LoRAs preconfigured. Three things matter when using them:</p>
+
+        <ol>
+            <li><strong>Pick one that matches your intent</strong> — voxel for game-ready 3D, crayon for hand-drawn illustration, pixel-art for retro-game sprites, and so on.</li>
+            <li><strong>Trigger words</strong> — each LoRA has activator tokens. "voxel art" for voxel-xl, "crayon drawing" for crayon-style-xl. Without them, the LoRA barely fires. Wyltek Studio auto-injects these for you when your prompt is bare.</li>
+            <li><strong>Strength</strong> — model strength ~0.8–1.2 and clip strength ~0.5–0.9 are the usable range. Below 0.7 you get a faint tint; above 1.2 images burn.</li>
+        </ol>
+
+        <div class="callout">
+            <strong>We benchmarked per-LoRA sweet spots and documented three production-ready presets</strong> (voxel game character, crayon illustration, watercolour) in <a href="/ai-hub/guides/lora-prompt-guide.html">LoRAs, Prompt Optimizer & Style Control</a>. That guide also includes the scripts you can run to empirically derive your own presets from the LoRAs you install.
+        </div>
+
+        <!-- ============================================================== -->
+        <h2 id="projects">7. Projects — assembling outputs into timelines</h2>
+
+        <p>Every image, audio clip, and video frame you generate lands in Wyltek Studio's <strong>Projects</strong> system. Each project has a shared assets folder and a timeline where you arrange generations in sequence for export. The flow:</p>
+
+        <ol>
+            <li>Create or pick a project from the Projects page.</li>
+            <li>Generate content in any studio tool — outputs auto-save into the project.</li>
+            <li>Drag assets onto the timeline, adjust durations, compose audio / video / image layers.</li>
+            <li>Render the composed timeline as a video file.</li>
+        </ol>
+
+        <p>This is what separates Wyltek Studio from a loose collection of AI tools — you can iterate on a music track, generate matching frames, run TTS for narration, and assemble them all in one place without leaving the app.</p>
+
+        <!-- ============================================================== -->
+        <h2 id="integration">8. Claude Code integration</h2>
+
+        <p>Wyltek Studio ships several skills for Claude Code that treat the studio as a callable service. Relevant ones:</p>
+
+        <ul>
+            <li><code>/cut-subject</code> — background-removal skill that wraps Wyltek Studio's rembg + SAM endpoints. Run <code>/cut-subject ~/photos/x.jpg</code> and Claude picks the right model, calls Wyltek Studio, and returns the transparent PNG.</li>
+            <li><code>/ingest-doc</code> — extracts text / frames / audio from any document and pushes it through Wyltek Studio's processing pipeline.</li>
+            <li><code>/quote-meme</code> — quote-card meme generator using Wyltek Studio's image tools.</li>
+        </ul>
+
+        <p>See <a href="/ai-hub/guides/skills-guide.html">the Skills guide</a> for the full list.</p>
+
+        <div class="callout">
+            <strong>Further reading</strong>
+            <ul style="margin-top: 0.4rem; margin-bottom: 0;">
+                <li><a href="/ai-hub/guides/lora-prompt-guide.html">LoRAs, Prompt Optimizer & Style Control</a> — the deep dive into image-gen quality</li>
+                <li><a href="/ai-hub/guides/local-inference.html">Local LLM Inference Setup</a> — picking Ollama models for your hardware</li>
+                <li><a href="https://github.com/toastmanAu/wyltek-studio" target="_blank">Wyltek Studio source on GitHub</a></li>
+            </ul>
+        </div>
+    </div>
+</body>
+</html>
