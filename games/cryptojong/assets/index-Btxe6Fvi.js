@@ -6378,7 +6378,6 @@ return new `+this.key+`();
               type="button"
               class="cj-hot-text cj-tap-start font-bold"
               style="font-size: clamp(28px, 4.5vw, 52px); animation: titleBlink 0.9s ease-in-out infinite alternate; pointer-events: auto; cursor: pointer; background: none; border: none; padding: 0.4em 1em; color: inherit; font-family: inherit;"
-              aria-label="Start Cryptojong"
             >
               TAP TO START
             </button>
