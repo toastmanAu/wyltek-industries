@@ -6362,25 +6362,31 @@ return new `+this.key+`();
         <div class="cj-title-art"></div>
         <div class="cj-scanline"></div>
         <div class="relative flex flex-col items-center justify-between pt-10 pb-16 w-full text-center h-full">
-          <div class="pointer-events-none flex flex-col items-center gap-4 px-6 mt-6">
-            <div class="cj-kicker tracking-[0.24em] text-sm md:text-base">OpenGame Prototype</div>
-            <div class="cj-title-mark text-5xl md:text-7xl font-bold">
+          <header class="pointer-events-none flex flex-col items-center gap-4 px-6 mt-6">
+            <p class="cj-kicker tracking-[0.24em] text-sm md:text-base">OpenGame Prototype</p>
+            <h1 class="cj-title-mark text-5xl md:text-7xl font-bold">
               Cryptojong
-            </div>
-            <div class="cj-soft-text max-w-3xl text-base md:text-xl leading-relaxed">
+            </h1>
+            <p class="cj-soft-text max-w-3xl text-base md:text-xl leading-relaxed">
               Match two identical free crypto tiles to clear the board. Edge tiles glow when they are available. Works with mouse clicks on desktop and taps on mobile.
-            </div>
-          </div>
+            </p>
+          </header>
 
           <div class="pointer-events-none flex flex-col items-center gap-5 px-6">
-            <div class="cj-hot-text font-bold" style="font-size: clamp(28px, 4.5vw, 52px); animation: titleBlink 0.9s ease-in-out infinite alternate;">
+            <button
+              id="title-start-btn"
+              type="button"
+              class="cj-hot-text cj-tap-start font-bold"
+              style="font-size: clamp(28px, 4.5vw, 52px); animation: titleBlink 0.9s ease-in-out infinite alternate; pointer-events: auto; cursor: pointer; background: none; border: none; padding: 0.4em 1em; color: inherit; font-family: inherit;"
+              aria-label="Start Cryptojong"
+            >
               TAP TO START
-            </div>
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-4xl w-full text-sm md:text-base">
-              <div class="cj-panel-compact px-4 py-3">Match two free tiles with the same face.</div>
-              <div class="cj-panel-compact px-4 py-3">Use <strong>H</strong> for a hint and <strong>R</strong> to reshuffle.</div>
-              <div class="cj-panel-compact px-4 py-3">Undo with <strong>Z</strong>, pause with <strong>ESC</strong>.</div>
-            </div>
+            </button>
+            <ul class="grid grid-cols-1 md:grid-cols-3 gap-3 max-w-4xl w-full text-sm md:text-base list-none p-0 m-0">
+              <li class="cj-panel-compact px-4 py-3">Match two free tiles with the same face.</li>
+              <li class="cj-panel-compact px-4 py-3">Use <strong>H</strong> for a hint and <strong>R</strong> to reshuffle.</li>
+              <li class="cj-panel-compact px-4 py-3">Undo with <strong>Z</strong>, pause with <strong>ESC</strong>.</li>
+            </ul>
           </div>
         </div>
 
@@ -6388,6 +6394,12 @@ return new `+this.key+`();
           @keyframes titleBlink {
             from { opacity: 0.45; transform: translateY(0px); }
             to { opacity: 1; transform: translateY(-4px); }
+          }
+          /* Visible focus ring so keyboard users can see when the start button is focused */
+          #title-start-btn:focus-visible {
+            outline: 3px solid #ffd66b;
+            outline-offset: 4px;
+            border-radius: 6px;
           }
         </style>
       </div>
