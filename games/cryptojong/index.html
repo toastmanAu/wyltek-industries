@@ -4,6 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" href="data:," />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Cryptojong — match identical crypto-themed mahjong tiles to clear the board. Edge tiles glow when free." />
     <title>Cryptojong</title>
 
     <style>
@@ -12,11 +13,38 @@
         margin: 0;
         padding: 0;
       }
+      /* Phaser sets touch-action: none on its canvas by default, which kills
+         browser pinch-zoom and locks out low-vision users (MDN, WCAG SC 1.4.4).
+         Allow pinch-zoom while still letting the game handle taps + drags. */
+      #game-container canvas {
+        touch-action: pan-x pan-y pinch-zoom !important;
+      }
     </style>
-    <script type="module" crossorigin src="./assets/index-DYtxMY3V.js"></script>
+    <script type="module" crossorigin src="./assets/index-2LNBIjCR.js"></script>
     <link rel="stylesheet" crossorigin href="./assets/index-OJdFaN79.css">
   </head>
   <body>
-    <div id="game-container"></div>
+    <main aria-label="Cryptojong game">
+      <div
+        id="game-container"
+        role="application"
+        aria-label="Cryptojong tile-matching game. Tap to start."
+      ></div>
+    </main>
+    <script>
+      // Make the Phaser canvas keyboard-focusable so the game's H/R/Z/ESC
+      // keystrokes work via Tab navigation, not just from a pre-focused window.
+      window.addEventListener('load', () => {
+        const c = document.querySelector('#game-container canvas');
+        if (c) {
+          c.setAttribute('tabindex', '0');
+          c.setAttribute('role', 'application');
+          c.setAttribute(
+            'aria-label',
+            'Cryptojong game board. Tap to start. Use H for hint, R to reshuffle, Z to undo, Escape to pause.',
+          );
+        }
+      });
+    </script>
   </body>
 </html>
