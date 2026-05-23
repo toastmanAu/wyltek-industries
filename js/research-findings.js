@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 238 completed research findings
+// 240 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentmemory-e2e-test",
@@ -2120,6 +2120,16 @@ const RESEARCH_FINDINGS = [
     "date": "unknown"
   },
   {
+    "id": "rag-vector-db-migration-2026-w21",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The current RAG service relies on FAISS IndexFlatL2, which loads the entire 13 GB index into RAM, causing significant memory pressure on `wyltek-10700` (32 GB RAM) upon restarts. This approach is unsu",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-05-23"
+  },
+  {
     "id": "research-decentralised-dns-on-ckb",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -2280,6 +2290,16 @@ const RESEARCH_FINDINGS = [
       "quantization"
     ],
     "date": "2026-03-22"
+  },
+  {
+    "id": "rocm-gfx1100-watch-2026-w21",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This weekly digest for ROCm and AMD GPU compute breakthroughs relevant to the Radeon RX 7900 XTX (gfx1100, RDNA 3, 24GB) reports no new findings for the current period. All designated source URLs enco",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-05-23"
   },
   {
     "id": "sensecap-lora-ckb-bridge",
