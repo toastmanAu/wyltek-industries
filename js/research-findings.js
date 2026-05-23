@@ -1,6 +1,16 @@
 // research-findings.js — auto-generated from research/*.md
-// 230 completed research findings
+// 238 completed research findings
 const RESEARCH_FINDINGS = [
+  {
+    "id": "agentmemory-e2e-test",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This research task aimed to identify key open issues and recent improvements in the `playcanvas/supersplat` browser-based 3D Gaussian Splat editor, specifically focusing on editing workflows, export t",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-05-19"
+  },
   {
     "id": "agentpay-openclaw-skill-integration",
     "status": "DONE",
@@ -113,6 +123,17 @@ const RESEARCH_FINDINGS = [
       "fiberquest"
     ],
     "date": "2026-03-22"
+  },
+  {
+    "id": "byterent-ckbfs-v3-schema-survey",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This research aimed to identify and characterize CKBFS V3 cell-data schema variants, particularly focusing on `cellswap-minted` and `cellbrary` cells, and to propose a mechanism for distinguishing the",
+    "tags": [
+      "ckb",
+      "nervos"
+    ],
+    "date": "2026-05-19"
   },
   {
     "id": "ccc-transaction-building-patterns",
@@ -485,6 +506,16 @@ const RESEARCH_FINDINGS = [
       "research"
     ],
     "date": "2026-03-05"
+  },
+  {
+    "id": "deltanet-npu-benchmark-survey",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This research task aimed to survey real-world benchmarks for hybrid NPU+CPU inference versus pure CPU `llama.cpp` on 7-14B language models, specifically targeting Intel Meteor Lake / AMD Strix Point N",
+    "tags": [
+      "quantization"
+    ],
+    "date": "2026-05-19"
   },
   {
     "id": "dilithium-falcon-rv64imc-optimisation",
@@ -882,6 +913,17 @@ const RESEARCH_FINDINGS = [
       "fiberquest"
     ],
     "date": "2026-03-05"
+  },
+  {
+    "id": "fiber-tap-pay-sse-vs-poll-esp32",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "For the Fiber Tap Pay terminal's requirement of real-time payment confirmation (1-2 second latency) on an ESP32 with battery life considerations and flaky cellular connectivity, **Server-Sent Events (",
+    "tags": [
+      "fiber",
+      "esp32"
+    ],
+    "date": "2026-05-19"
   },
   {
     "id": "fiber-testnet-reliability-assessment",
@@ -1689,6 +1731,16 @@ const RESEARCH_FINDINGS = [
       "fiber"
     ],
     "date": "2026-03-08"
+  },
+  {
+    "id": "incomplete-note",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This research task, \"incomplete-note,\" was initiated with the goal of investigating a topic similarly named. However, no source content or additional context was provided for analysis. Consequently, i",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-05-19"
   },
   {
     "id": "intel-arc-gpu-local-ai-inference-optimisation",
@@ -2572,6 +2624,16 @@ const RESEARCH_FINDINGS = [
     "date": "2026-03-08"
   },
   {
+    "id": "wyltek-llms-txt-conventions",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The `llms.txt` convention, proposed by Jeremy Howard in 2024, aims to standardize how websites provide concise, LLM-friendly information to AI agents at inference time. Unlike `robots.txt` (for access",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-05-19"
+  },
+  {
     "id": "wyltek-membership-ckb-dob-social-layer",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -2581,6 +2643,27 @@ const RESEARCH_FINDINGS = [
       "nervos"
     ],
     "date": "2026-03-04"
+  },
+  {
+    "id": "wyltek-mineru-integration-audit",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The audit of MinerU's integration patterns was severely hindered by the complete inaccessibility of its documented technical specifications. Attempts to retrieve information from the primary GitHub re",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-05-19"
+  },
+  {
+    "id": "wyltek-omnigen2-vs-flux-kontext",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This research task aimed to compare OmniGen2 and FLUX.1 Kontext for production image editing within Wyltek Studio's Edit tab, focusing on capabilities, VRAM, throughput, licensing, and ecosystem matur",
+    "tags": [
+      "quantization",
+      "lora"
+    ],
+    "date": "2026-05-19"
   },
   {
     "id": "wyltek-seo-current-audit",
