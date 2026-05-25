@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 240 completed research findings
+// 241 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentmemory-e2e-test",
@@ -2300,6 +2300,16 @@ const RESEARCH_FINDINGS = [
       "research"
     ],
     "date": "2026-05-23"
+  },
+  {
+    "id": "rocm-gfx1100-watch-2026-w22",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This weekly digest for 2026-W22 reports a critical absence of new data regarding ROCm and AMD GPU compute breakthroughs for the Radeon RX 7900 XTX (gfx1100). All designated source URLs, including offi",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-05-25"
   },
   {
     "id": "sensecap-lora-ckb-bridge",
