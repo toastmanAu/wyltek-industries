@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 241 completed research findings
+// 242 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentmemory-e2e-test",
@@ -2310,6 +2310,16 @@ const RESEARCH_FINDINGS = [
       "research"
     ],
     "date": "2026-05-25"
+  },
+  {
+    "id": "rocm-gfx1100-watch-2026-w23",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The automated data retrieval process for this week's ROCm and AMD GPU compute digest encountered critical errors. All specified source URLs, including official ROCm GitHub repositories, AMD's ROCm blo",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-06-01"
   },
   {
     "id": "sensecap-lora-ckb-bridge",
