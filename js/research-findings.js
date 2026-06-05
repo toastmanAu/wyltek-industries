@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 228 completed research findings
+// 229 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentmemory-e2e-test",
@@ -1727,6 +1727,16 @@ const RESEARCH_FINDINGS = [
       "quantization"
     ],
     "date": "2026-06-04"
+  },
+  {
+    "id": "mellum2-quant-watch-2026-06-05",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The error message indicates that there was an issue with fetching data from Reddit's search API. The specific error is:",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-06-05"
   },
   {
     "id": "nemoclaw-local-inference-fork-community-followup-1774099111",
