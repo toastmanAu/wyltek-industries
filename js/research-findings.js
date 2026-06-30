@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 249 completed research findings
+// 250 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentmemory-e2e-test",
@@ -1907,6 +1907,16 @@ const RESEARCH_FINDINGS = [
       "quantization"
     ],
     "date": "2026-06-29"
+  },
+  {
+    "id": "mellum2-quant-watch-2026-06-30",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "A comprehensive search of the Hugging Face API for community-quantized versions of JetBrains Mellum2-12B-A2.5B model variants (Thinking, Instruct, Base) published by trusted publishers within the last",
+    "tags": [
+      "quantization"
+    ],
+    "date": "2026-06-30"
   },
   {
     "id": "nemoclaw-local-inference-fork-community-followup-1774099111",
