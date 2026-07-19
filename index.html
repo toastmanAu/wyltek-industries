@@ -321,6 +321,23 @@
   fetchPrice();setInterval(fetchPrice,5*60*1000);update();setInterval(update,6000);
 })();
 </script>
+<script>
+(function(){
+  var toggle = document.getElementById('navToggle');
+  var nav = document.getElementById('mainNav');
+  if (toggle && nav) {
+    toggle.addEventListener('click', function(e) {
+      e.stopPropagation();
+      nav.classList.toggle('open');
+    });
+    document.addEventListener('click', function(e) {
+      if (nav.classList.contains('open') && !nav.contains(e.target) && e.target !== toggle) {
+        nav.classList.remove('open');
+      }
+    });
+  }
+})();
+</script>
 
 <!-- HERO -->
 <div class="hero">
