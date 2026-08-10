@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 294 completed research findings
+// 296 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentmemory-e2e-test",
@@ -2309,6 +2309,16 @@ const RESEARCH_FINDINGS = [
     "date": "2026-08-09"
   },
   {
+    "id": "mellum2-quant-watch-2026-08-10",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This report details the findings of a search for newly published community-quantized versions of JetBrains Mellum2-12B-A2.5B model variants (Thinking, Instruct, Base) on Hugging Face within the last 2",
+    "tags": [
+      "quantization"
+    ],
+    "date": "2026-08-10"
+  },
+  {
     "id": "nemoclaw-local-inference-fork-community-followup-1774099111",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -2806,6 +2816,16 @@ const RESEARCH_FINDINGS = [
       "research"
     ],
     "date": "2026-08-03"
+  },
+  {
+    "id": "rocm-gfx1100-watch-2026-w33",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "The objective for this reporting period was to compile a weekly digest on ROCm and AMD GPU compute advancements pertinent to the Radeon RX 7900 XTX (gfx1100). This included monitoring upstream ROCm re",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-08-10"
   },
   {
     "id": "sensecap-lora-ckb-bridge",
