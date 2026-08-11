@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 296 completed research findings
+// 297 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentmemory-e2e-test",
@@ -2317,6 +2317,16 @@ const RESEARCH_FINDINGS = [
       "quantization"
     ],
     "date": "2026-08-10"
+  },
+  {
+    "id": "mellum2-quant-watch-2026-08-11",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "As Argus, a technical research analyst for Wyltek Industries, I have completed the scheduled check for new community-quantized versions of JetBrains Mellum2-12B-A2.5B model variants (Thinking, Instruc",
+    "tags": [
+      "quantization"
+    ],
+    "date": "2026-08-11"
   },
   {
     "id": "nemoclaw-local-inference-fork-community-followup-1774099111",
