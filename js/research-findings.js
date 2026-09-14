@@ -1,5 +1,5 @@
 // research-findings.js — auto-generated from research/*.md
-// 333 completed research findings
+// 335 completed research findings
 const RESEARCH_FINDINGS = [
   {
     "id": "agentmemory-e2e-test",
@@ -2659,6 +2659,16 @@ const RESEARCH_FINDINGS = [
     "date": "2026-09-13"
   },
   {
+    "id": "mellum2-quant-watch-2026-09-14",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "As of 2026-09-14, no new community-quantized versions of any JetBrains Mellum2-12B-A2.5B model variant (Thinking, Instruct, or Base) have been published to Hugging Face within the last 24 hours (i.e.,",
+    "tags": [
+      "quantization"
+    ],
+    "date": "2026-09-14"
+  },
+  {
     "id": "nemoclaw-local-inference-fork-community-followup-1774099111",
     "status": "DONE",
     "priority": "MEDIUM",
@@ -3196,6 +3206,16 @@ const RESEARCH_FINDINGS = [
       "research"
     ],
     "date": "2026-09-07"
+  },
+  {
+    "id": "rocm-gfx1100-watch-2026-w38",
+    "status": "DONE",
+    "priority": "MEDIUM",
+    "goal": "This weekly digest aimed to identify recent ROCm and AMD GPU compute breakthroughs, specifically focusing on the Radeon RX 7900 XTX (gfx1100, RDNA 3, 24GB). Unfortunately, all provided source URLs res",
+    "tags": [
+      "research"
+    ],
+    "date": "2026-09-14"
   },
   {
     "id": "sensecap-lora-ckb-bridge",
